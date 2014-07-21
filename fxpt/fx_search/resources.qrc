@@ -1,0 +1,10 @@
+<RCC>
+  <qresource>
+    <file>icons/fx_search_case.png</file>
+    <file>icons/fx_search_inSelected.png</file>
+    <file>icons/fx_search_regex.png</file>
+    <file>icons/fx_search_search.png</file>
+    <file>icons/fx_search_select.png</file>
+    <file>icons/fx_search_shape.png</file>
+  </qresource>
+</RCC>

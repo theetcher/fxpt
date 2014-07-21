@@ -1,0 +1,34 @@
+<views>
+
+   <view
+      name = "Lights"
+      showShapes = "false"
+      showShapesEnable = "true"
+      showDagOnly = "true"
+      showSetMembers = "false"
+      showSetMembersEnable = "false"
+      expandObjects = "false"
+      selectSetMembersEnable = "false"
+   >
+      ambientLight
+      directionalLight
+      spotLight
+      pointLight
+      areaLight
+      volumeLight
+   </view>
+
+   <view
+      name = "Cameras"
+      showShapes = "false"
+      showShapesEnable = "true"
+      showDagOnly = "false"
+      showSetMembers = "false"
+      showSetMembersEnable = "false"
+      expandObjects = "false"
+      selectSetMembersEnable = "false"
+   >
+      camera
+   </view>
+
+</views>

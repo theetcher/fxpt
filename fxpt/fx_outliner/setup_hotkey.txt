@@ -1,0 +1,14 @@
+runTimeCommand
+	-annotation "FX Outliner"
+	-category "User"
+	-commandLanguage "python"
+	-command ("from fx_outliner import fx_outliner; fx_outliner.run();")
+	FXOutliner;
+
+nameCommand
+	-annotation "FXOutlinerNameCommand"
+	-sourceType "python"
+	-command ("FXOutliner")
+	FXOutlinerNameCommand;
+
+hotkey -keyShortcut "f10" -name ("FXOutlinerNameCommand");
