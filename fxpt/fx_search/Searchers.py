@@ -131,7 +131,6 @@ class SearcherBase(object):
         raise NotImplementedError("Call to abstract method.")
 
     def gatherSearchData(self):
-        # return [(fullPathName, searchField), (fullPathName, searchField), ...]
         raise NotImplementedError("Call to abstract method.")
 
     def prepareModelData(self, matchedData):
@@ -163,7 +162,7 @@ class SearcherSimpleBase(SearcherBase):
         return searchData
 
     def prepareModelData(self, matchedData):
-        # input [(fullPathName, shortName), ....]
+        # input [(fullPathName, searchField), ....]
         # return [(shortName, type, path, nodeInfo), ...]
         modelData = []
         for matchedItem in matchedData:
@@ -234,12 +233,12 @@ class SearcherTransforms(SearcherSimpleBase):
 
 
 #----------------------------------------------------------------------------------------------------------------------
-# CLASS: SearcherTextures
+# CLASS: SearcherTexturesBase
 #----------------------------------------------------------------------------------------------------------------------
-class SearcherTextures(SearcherBase):
+class SearcherTexturesBase(SearcherBase):
 
     def __init__(self, name):
-        super(SearcherTextures, self).__init__(name)
+        super(SearcherTexturesBase, self).__init__(name)
 
     def getColumnNames(self):
         return [
@@ -259,17 +258,26 @@ class SearcherTextures(SearcherBase):
         searchData = []
         for f in fileNodes:
             filename = m.getAttr(f + '.fileTextureName')
-            sFilename = os.path.splitext(os.path.basename(filename))[0]
+            sFilename = os.path.basename(filename)
             searchData.append((f, sFilename))
         return searchData
 
+
+#----------------------------------------------------------------------------------------------------------------------
+# CLASS: SearcherTextures
+#----------------------------------------------------------------------------------------------------------------------
+class SearcherTextures(SearcherTexturesBase):
+
+    def __init__(self, name):
+        super(SearcherTextures, self).__init__(name)
+
     def prepareModelData(self, matchedData):
-        # input [(fullPathName, shortName), ....]
+        # input [(fullPathName, searchField), ....]
         # return [(fileNodeName, textureShortName, fileNodeTexturePath, nodeInfo), ...]
         modelData = []
         for matchedItem in matchedData:
             fullPathName = matchedItem[0]
-            shortName = matchedItem[1]
+            shortName = shortNameOf(fullPathName)
 
             fileNodeTexturePath = m.getAttr(fullPathName + '.fileTextureName')
             textureShortName = os.path.basename(fileNodeTexturePath)
@@ -282,3 +290,65 @@ class SearcherTextures(SearcherBase):
             modelData.append((shortName, textureShortName, fileNodeTexturePath, ni))
 
         return modelData
+
+
+#----------------------------------------------------------------------------------------------------------------------
+# CLASS: SearcherTexturedBy
+#----------------------------------------------------------------------------------------------------------------------
+class SearcherTexturedBy(SearcherTexturesBase):
+
+    def __init__(self, name):
+        super(SearcherTexturesBase, self).__init__(name)
+        self.visitedNodes = set()
+
+    def prepareModelData(self, matchedData):
+        # input [(fullPathName, searchField), ....]
+        # return [(fileNodeName, textureShortName, fileNodeTexturePath, nodeInfo), ...]
+        modelData = []
+        for matchedItem in matchedData:
+            fullPathName = matchedItem[0]
+            shortName = shortNameOf(fullPathName)
+
+            fileNodeTexturePath = m.getAttr(fullPathName + '.fileTextureName')
+            textureShortName = os.path.basename(fileNodeTexturePath)
+
+            shadingGroups = self.getShadingGroups(fullPathName)
+
+            selectionStrings = []
+            for sg in shadingGroups:
+                selectionStrings.extend(m.sets(sg, q=True))
+
+            ni = NodeInfo()
+            ni.selectionString = selectionStrings
+            ni.fullPathName = fullPathName
+            ni.shortName = shortName
+
+            watch(selectionStrings, fullPathName + ' selection')
+
+            modelData.append((shortName, textureShortName, fileNodeTexturePath, ni))
+
+        return modelData
+
+    def getShadingGroups(self, fileNode):
+
+        self.visitedNodes.clear()
+        self.visitedNodes.add(fileNode)
+
+        res = []
+
+        destinations = m.listConnections(fileNode, s=False, d=True)
+
+        if destinations:
+            for d in destinations:
+                if d in self.visitedNodes:
+                    continue
+                if typeOf(d) == 'shadingEngine':
+                    res.append(d)
+                    continue
+                res.extend(self.getShadingGroups(d))
+
+        return res
+
+
+
+

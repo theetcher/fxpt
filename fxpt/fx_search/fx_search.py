@@ -57,6 +57,8 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
             SearcherLink(Searchers.SearcherTransforms('Transforms'), QtGui.QPushButton('Transforms'),
                          QtGui.QTableView(), QtGui.QWidget()),
             SearcherLink(Searchers.SearcherTextures('Textures'), QtGui.QPushButton('Textures'),
+                         QtGui.QTableView(), QtGui.QWidget()),
+            SearcherLink(Searchers.SearcherTexturedBy('Textured By'), QtGui.QPushButton('Textured By'),
                          QtGui.QTableView(), QtGui.QWidget())
         ]
 
