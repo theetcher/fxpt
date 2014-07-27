@@ -8,7 +8,6 @@ import functools as ft
 import copy
 import os
 import xml.etree.ElementTree
-# noinspection PyUnresolvedReferences
 import shiboken
 from PySide import QtCore
 from PySide import QtGui
@@ -30,9 +29,7 @@ OS_NAME = os.name
 SCRIPT_VERSION = 'v1.0'
 SCRIPT_NAME = 'FX Outliner'
 UI_WIN_NAME = 'fx_outliner_win'
-#UI_WIN_HELPNAME = 'fx_outliner_helpwin'
 UI_WIN_TITLE = SCRIPT_NAME + ' ' + SCRIPT_VERSION
-#UI_WIN_HELPTITLE = SCRIPT_NAME + ' ' + SCRIPT_VERSION + ' Help'
 SCRIPT_DIR = os.path.dirname(__file__)
 CFG_FILE = SCRIPT_DIR + '\\fx_outliner.cfg'
 XML_OUTLINER_CFG_FILE = SCRIPT_DIR + '\\fx_outliner.xml'
@@ -55,8 +52,8 @@ ICON_SELECT_FOUND = SCRIPT_DIR + '\\icons\\fx_outliner_select.png'
 ICON_TYPE_SEARCH = SCRIPT_DIR + '\\icons\\fx_outliner_type.png'
 ICON_SHAPE = SCRIPT_DIR + '\\icons\\fx_outliner_shape.png'
 ICON_POPUP_MENU = 'popupMenuIcon.png'
-ICON_SHOW_SHAPES = 'frameBranch.png'  # or may be selectFileContents.png
-ICON_SHOW_SET_MEMBERS = 'out_objectSet.png'  # showBatchRender.png setEdit.png
+ICON_SHOW_SHAPES = 'frameBranch.png'
+ICON_SHOW_SET_MEMBERS = 'out_objectSet.png'
 ICON_SELECT_SET_MEMBERS = 'setEdit.png'
 ICON_SORT_NAME = 'sortName.png'
 ICON_SORT_TYPE = 'sortType.png'
@@ -80,8 +77,6 @@ WAIT_WND_HEIGHT = 30
 WAIT_WND_WIDTH_RATIO = 0.7
 
 #endregion
-
-#TODO: README file with help and other stuff
 
 
 def dummyFunc():
