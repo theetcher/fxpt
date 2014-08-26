@@ -1,11 +1,9 @@
 import math
-# import time
 from array import array
 
 import maya.cmds as m
 from maya.mel import eval as meval
 import pymel.core as pm
-# from pymel.core.datatypes import Vector
 
 import maya.OpenMaya as om
 
@@ -60,156 +58,109 @@ class SelectComponentByAngleUI:
         if pm.window(WIN_NAME, exists=True):
             pm.deleteUI(WIN_NAME, window=True)
 
-        self.window = pm.window(
-            WIN_NAME,
-            title=WIN_TITLE,
-            maximizeButton=False,
-            menuBar=True,
-            menuBarVisible=True
-        )
+        with pm.window(WIN_NAME, title=WIN_TITLE, maximizeButton=False, menuBar=True, menuBarVisible=True) as window:
+            pm.menu(label='Edit', tearOff=False)
+            pm.menuItem(label='Reset Settings', command=self.ui_resetSettings)
+            pm.menu(label='Help', tearOff=False)
+            pm.menuItem(label='Help on ' + WIN_TITLE, command=pm.Callback(self.ui_showHelp, 1))
+            pm.menuItem(divider=True)
+            pm.menuItem(label='Script Information', command=pm.Callback(self.ui_showHelp, 2))
 
-        pm.menu(label='Edit', tearOff=False)
-        pm.menuItem(label='Reset Settings', command=self.ui_resetSettings)
-        pm.menu(label='Help', tearOff=False)
-        pm.menuItem(label='Help on ' + WIN_TITLE, command=pm.Callback(self.ui_showHelp, 1))
-        pm.menuItem(divider=True)
-        pm.menuItem(label='Script Information', command=pm.Callback(self.ui_showHelp, 2))
+            with pm.formLayout() as ui_mainForm:
 
-        # - - - - - - - - - - - - - - - - - - - -
+                with pm.scrollLayout(childResizable=True) as ui_LAY_mainScroll:
 
-        self.ui_mainForm = pm.formLayout()
+                    with pm.frameLayout(label='Control Panel', collapsable=True, marginHeight=3, borderStyle='etchedIn', borderVisible=True):
 
-        self.ui_LAY_mainScroll = pm.scrollLayout(
-            childResizable=True
-        )
+                        with pm.columnLayout(adjustableColumn=True):
 
-        self.ui_LAY_frameControlPanel = pm.frameLayout(
-            label='Control Panel',
-            collapsable=True,
-            marginHeight=3,
-            borderStyle='etchedIn',
-            borderVisible=True
-        )
+                            self.ui_RADBTNGRP_component = pm.radioButtonGrp(
+                                label='Component',
+                                labelArray3=['Polygons', 'Edges', 'Vertices'],
+                                numberOfRadioButtons=3,
+                                columnWidth=[1, UI_LABEL_WIDTH],
+                                columnAttach=[1, 'right', 5],
+                                changeCommand=self.selectValidGeometry,
+                            )
 
-        pm.columnLayout(adjustableColumn=True)
+                            pm.separator(style='in', height=10)
 
-        # - - - - - - - - - - - - - - - - - - - -
+                            with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
 
-        self.ui_RADBTNGRP_component = pm.radioButtonGrp(
-            label='Component',
-            labelArray3=['Polygons', 'Edges', 'Vertices'],
-            numberOfRadioButtons=3,
-            columnWidth=[1, UI_LABEL_WIDTH],
-            columnAttach=[1, 'right', 5],
-            changeCommand=self.selectValidGeometry,
-        )
+                                pm.text(label='Min Angle')
 
-        pm.separator(style='in', height=10)
+                                self.ui_FLTSLGRP_minAngle = pm.floatSliderGrp(
+                                    field=True,
+                                    minValue=0,
+                                    maxValue=180,
+                                    fieldMinValue=0,
+                                    fieldMaxValue=180,
+                                    value=0,
+                                    step=0.001,
+                                    fieldStep=0.001,
+                                    sliderStep=0.001,
+                                    changeCommand=self.selectValidGeometry,
+                                    dragCommand=self.selectValidGeometry
+                                )
 
-        pm.rowLayout(
-            numberOfColumns=2,
-            columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH],
-            columnAttach=[1, 'right', 5]
-        )
+                            with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
 
-        # - - - - - - - - - - - - - - - - - - - -
+                                pm.text(label='Max Angle')
 
-        pm.text(label='Min Angle')
+                                self.ui_FLTSLGRP_maxAngle = pm.floatSliderGrp(
+                                    field=True,
+                                    minValue=0,
+                                    maxValue=180,
+                                    fieldMinValue=0,
+                                    fieldMaxValue=180,
+                                    value=0,
+                                    step=0.001,
+                                    fieldStep=0.001,
+                                    sliderStep=0.001,
+                                    changeCommand=self.selectValidGeometry,
+                                    dragCommand=self.selectValidGeometry
+                                )
 
-        self.ui_FLTSLGRP_minAngle = pm.floatSliderGrp(
-            field=True,
-            minValue=0,
-            maxValue=180,
-            fieldMinValue=0,
-            fieldMaxValue=180,
-            value=0,
-            step=0.001,
-            fieldStep=0.001,
-            sliderStep=0.001,
-            changeCommand=self.selectValidGeometry,
-            dragCommand=self.selectValidGeometry
-        )
+                            pm.separator(style='in', height=10)
 
-        pm.setParent('..')  # local row -> frame column
+                            with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
 
-        pm.rowLayout(
-            numberOfColumns=2,
-            columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH],
-            columnAttach=[1, 'right', 5]
-        )
+                                pm.text(label='Highlight')
 
-        # - - - - - - - - - - - - - - - - - - - -
+                                self.ui_CHK_highlight = pm.checkBox(
+                                    label='',
+                                    changeCommand=self.ui_CHK_highlight_change
+                                )
 
-        pm.text(label='Max Angle')
+                self.ui_BTN_select = pm.button(
+                    label=UI_APPLY_BUTTON_STRING,
+                    command=self.ui_setTargetGeometry
+                )
 
-        self.ui_FLTSLGRP_maxAngle = pm.floatSliderGrp(
-            field=True,
-            minValue=0,
-            maxValue=180,
-            fieldMinValue=0,
-            fieldMaxValue=180,
-            value=0,
-            step=0.001,
-            fieldStep=0.001,
-            sliderStep=0.001,
-            changeCommand=self.selectValidGeometry,
-            dragCommand=self.selectValidGeometry
-        )
+                self.ui_BTN_close = pm.button(
+                    label='Close',
+                    command=self.ui_close
+                )
 
-        pm.setParent('..')  # local row -> frame column
+            ui_mainForm.attachForm(ui_LAY_mainScroll, 'top', 2)
+            ui_mainForm.attachForm(ui_LAY_mainScroll, 'left', 2)
+            ui_mainForm.attachForm(ui_LAY_mainScroll, 'right', 2)
+            ui_mainForm.attachControl(ui_LAY_mainScroll, 'bottom', 2, self.ui_BTN_select)
 
-        pm.separator(style='in', height=10)
+            ui_mainForm.attachNone(self.ui_BTN_select, 'top')
+            ui_mainForm.attachForm(self.ui_BTN_select, 'left', 2)
+            ui_mainForm.attachPosition(self.ui_BTN_select, 'right', 2, 50)
+            ui_mainForm.attachForm(self.ui_BTN_select, 'bottom', 2)
 
-        pm.rowLayout(
-            numberOfColumns=2,
-            columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH],
-            columnAttach=[1, 'right', 5]
-        )
-
-        # - - - - - - - - - - - - - - - - - - - -
-
-        pm.text(label='Highlight')
-
-        self.ui_CHK_highlight = pm.checkBox(
-            label='',
-            changeCommand=self.ui_CHK_highlight_change
-        )
-
-        # - - - - - - - - - - - - - - - - - - - -
-
-        pm.setParent(self.ui_mainForm)
-
-        self.ui_BTN_select = pm.button(
-            label=UI_APPLY_BUTTON_STRING,
-            command=self.ui_setTargetGeometry
-        )
-
-        self.ui_BTN_close = pm.button(
-            label='Close',
-            command=self.ui_close
-        )
-
-        # - - - - - Organize Main Form Layout - - - - -
-
-        self.ui_mainForm.attachForm(self.ui_LAY_mainScroll, 'top', 2)
-        self.ui_mainForm.attachForm(self.ui_LAY_mainScroll, 'left', 2)
-        self.ui_mainForm.attachForm(self.ui_LAY_mainScroll, 'right', 2)
-        self.ui_mainForm.attachControl(self.ui_LAY_mainScroll, 'bottom', 2, self.ui_BTN_select)
-
-        self.ui_mainForm.attachNone(self.ui_BTN_select, 'top')
-        self.ui_mainForm.attachForm(self.ui_BTN_select, 'left', 2)
-        self.ui_mainForm.attachPosition(self.ui_BTN_select, 'right', 2, 50)
-        self.ui_mainForm.attachForm(self.ui_BTN_select, 'bottom', 2)
-
-        self.ui_mainForm.attachNone(self.ui_BTN_close, 'top')
-        self.ui_mainForm.attachPosition(self.ui_BTN_close, 'left', 2, 50)
-        self.ui_mainForm.attachForm(self.ui_BTN_close, 'right', 2)
-        self.ui_mainForm.attachForm(self.ui_BTN_close, 'bottom', 2)
+            ui_mainForm.attachNone(self.ui_BTN_close, 'top')
+            ui_mainForm.attachPosition(self.ui_BTN_close, 'left', 2, 50)
+            ui_mainForm.attachForm(self.ui_BTN_close, 'right', 2)
+            ui_mainForm.attachForm(self.ui_BTN_close, 'bottom', 2)
 
         self.ui_initSettings()
         self.ui_loadSettings()
 
-        self.window.show()
+        window.show()
         m.refresh()
 
     def ui_initSettings(self):
@@ -327,111 +278,83 @@ class SelectComponentByAngleUI:
         if pm.window(WIN_HELPNAME, exists=True):
             pm.deleteUI(WIN_HELPNAME, window=True)
 
-        self.helpWindow = pm.window(
-            WIN_HELPNAME,
-            title=WIN_HELPTITLE,
-            maximizeButton=False
-        )
+        with pm.window(WIN_HELPNAME, title=WIN_HELPTITLE, maximizeButton=False) as helpWindow:
 
-        self.ui_LAY_formMainHelp = pm.formLayout()
+            with pm.formLayout() as ui_LAY_formMainHelp:
 
-        self.ui_LAY_tabHelp = pm.tabLayout(
-            innerMarginWidth=50,
-            innerMarginHeight=50,
-            childResizable=True
-        )
+                with pm.tabLayout(innerMarginWidth=50, innerMarginHeight=50, childResizable=True) as ui_LAY_tabHelp:
 
-        # - - - - - - - - - - - - - - - - - - - -
+                    with pm.formLayout() as ui_LAY_formHelpMargin:
 
-        self.ui_LAY_formHelpMargin = pm.formLayout()
+                        with pm.scrollLayout(childResizable=True) as ui_LAY_scrollHelp:
 
-        self.ui_LAY_scrollHelp = pm.scrollLayout(
-            childResizable=True
-        )
+                            ui_LAY_formHelpMargin.attachForm(ui_LAY_scrollHelp, 'top', 2)
+                            ui_LAY_formHelpMargin.attachForm(ui_LAY_scrollHelp, 'left', 2)
+                            ui_LAY_formHelpMargin.attachForm(ui_LAY_scrollHelp, 'right', 2)
+                            ui_LAY_formHelpMargin.attachForm(ui_LAY_scrollHelp, 'bottom', 2)
 
-        self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'top', 2)
-        self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'left', 2)
-        self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'right', 2)
-        self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'bottom', 2)
+                            with pm.frameLayout(
+                                label='Help on ' + WIN_TITLE,
+                                collapsable=False,
+                                marginHeight=3,
+                                borderStyle='etchedIn',
+                                borderVisible=True
+                            ):
 
-        pm.frameLayout(
-            label='Help on ' + WIN_TITLE,
-            collapsable=False,
-            marginHeight=3,
-            borderStyle='etchedIn',
-            borderVisible=True
-        )
+                                with pm.rowLayout(columnAttach=[1, 'both', 10]):
 
-        pm.rowLayout(
-            columnAttach=[1, 'both', 10]
-        )
+                                    ui_TXT_help = pm.text('', align='center')
 
-        self.ui_TXT_help = pm.text('', align='center')
+                    with pm.formLayout() as ui_LAY_formAboutMargin:
 
-        pm.setParent(self.ui_LAY_tabHelp)
+                        with pm.scrollLayout(childResizable=True) as ui_LAY_scrollAbout:
 
-        # - - - - - - - - - - - - - - - - - - - -
+                            ui_LAY_formAboutMargin.attachForm(ui_LAY_scrollAbout, 'top', 2)
+                            ui_LAY_formAboutMargin.attachForm(ui_LAY_scrollAbout, 'left', 2)
+                            ui_LAY_formAboutMargin.attachForm(ui_LAY_scrollAbout, 'right', 2)
+                            ui_LAY_formAboutMargin.attachForm(ui_LAY_scrollAbout, 'bottom', 2)
 
-        self.ui_LAY_formAboutMargin = pm.formLayout()
+                            with pm.frameLayout(
+                                label='About ' + WIN_TITLE,
+                                collapsable=False,
+                                marginHeight=3,
+                                borderStyle='etchedIn',
+                                borderVisible=True
+                            ):
 
-        self.ui_LAY_scrollAbout = pm.scrollLayout(
-            childResizable=True
-        )
+                                with pm.rowLayout(columnAttach=[1, 'both', 10]):
 
-        self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'top', 2)
-        self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'left', 2)
-        self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'right', 2)
-        self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'bottom', 2)
+                                    ui_TXT_about = pm.text('', align='center')
 
-        pm.frameLayout(
-            label='About ' + WIN_TITLE,
-            collapsable=False,
-            marginHeight=3,
-            borderStyle='etchedIn',
-            borderVisible=True
-        )
+                ui_BTN_closeHelp = pm.button(
+                    'Close',
+                    command=lambda x: pm.deleteUI(WIN_HELPNAME)
+                )
 
-        pm.rowLayout(
-            columnAttach=[1, 'both', 10]
-        )
+            ui_LAY_formMainHelp.attachForm(ui_LAY_tabHelp, 'top', 2)
+            ui_LAY_formMainHelp.attachForm(ui_LAY_tabHelp, 'left', 2)
+            ui_LAY_formMainHelp.attachForm(ui_LAY_tabHelp, 'right', 2)
+            ui_LAY_formMainHelp.attachControl(ui_LAY_tabHelp, 'bottom', 2, ui_BTN_closeHelp)
 
-        self.ui_TXT_about = pm.text('', align='center')
+            ui_LAY_formMainHelp.attachNone(ui_BTN_closeHelp, 'top')
+            ui_LAY_formMainHelp.attachForm(ui_BTN_closeHelp, 'left', 2)
+            ui_LAY_formMainHelp.attachForm(ui_BTN_closeHelp, 'right', 2)
+            ui_LAY_formMainHelp.attachForm(ui_BTN_closeHelp, 'bottom', 2)
 
-        pm.setParent(self.ui_LAY_formMainHelp)
+            # - - - - - - - - - - - - - - - - - - - -
 
-        # - - - - - - - - - - - - - - - - - - - -
-
-        self.ui_BTN_closeHelp = pm.button(
-            'Close',
-            command=lambda x: pm.deleteUI(WIN_HELPNAME)
-        )
-
-        # - - - - - Organize Main Form Layout - - - - -
-
-        self.ui_LAY_formMainHelp.attachForm(self.ui_LAY_tabHelp, 'top', 2)
-        self.ui_LAY_formMainHelp.attachForm(self.ui_LAY_tabHelp, 'left', 2)
-        self.ui_LAY_formMainHelp.attachForm(self.ui_LAY_tabHelp, 'right', 2)
-        self.ui_LAY_formMainHelp.attachControl(self.ui_LAY_tabHelp, 'bottom', 2, self.ui_BTN_closeHelp)
-
-        self.ui_LAY_formMainHelp.attachNone(self.ui_BTN_closeHelp, 'top')
-        self.ui_LAY_formMainHelp.attachForm(self.ui_BTN_closeHelp, 'left', 2)
-        self.ui_LAY_formMainHelp.attachForm(self.ui_BTN_closeHelp, 'right', 2)
-        self.ui_LAY_formMainHelp.attachForm(self.ui_BTN_closeHelp, 'bottom', 2)
-
-        # - - - - - - - - - - - - - - - - - - - -
-
-        pm.tabLayout(
-            self.ui_LAY_tabHelp,
-            edit=True,
-            tabLabel=(
-                (self.ui_LAY_formHelpMargin, 'Help'),
-                (self.ui_LAY_formAboutMargin, 'About')
+            pm.tabLayout(
+                ui_LAY_tabHelp,
+                edit=True,
+                tabLabel=(
+                    (ui_LAY_formHelpMargin, 'Help'),
+                    (ui_LAY_formAboutMargin, 'About')
+                )
             )
-        )
 
-        # - - - - - - - - - - - - - - - - - - - -
+            # - - - - - - - - - - - - - - - - - - - -
 
-        textHelp = """
+            textHelp = """
 - Info -
 This tool select polymesh components based on "Edge Angle",
 i.e. angle between normals of 2 polygons sharing this particular edge.
@@ -461,7 +384,7 @@ clearly observe only component selection.
 Use "Edit" -> "Reset Settings" to restore defaults
 """
 
-        textAbout = "\n" + SCRIPT_NAME + ' ' + SCRIPT_VERSION + """
+            textAbout = "\n" + SCRIPT_NAME + ' ' + SCRIPT_VERSION + """
 Programmed by Eugene Davydenko, 2012
 
 This script may be freely distributed.
@@ -470,11 +393,11 @@ Modify at your own risk.
 email: etchermail@gmail.com
 """
 
-        self.ui_TXT_help.setLabel(textHelp)
-        self.ui_TXT_about.setLabel(textAbout)
+        ui_TXT_help.setLabel(textHelp)
+        ui_TXT_about.setLabel(textAbout)
 
-        self.ui_LAY_tabHelp.setSelectTabIndex(tab)
-        self.helpWindow.show()
+        ui_LAY_tabHelp.setSelectTabIndex(tab)
+        helpWindow.show()
 
 
 class GeometryData:
@@ -496,16 +419,12 @@ class GeometryData:
 
             edgeIter = om.MItMeshEdge(dagPath)
             faceIter = om.MItMeshPolygon(dagPath)
-            # normal1 = om.MVector()
-            # normal2 = om.MVector()
             connectedFaces = om.MIntArray()
-            # dummy = om.MScriptUtil()
 
             edgeDataObj = EdgeData(dagPath, edgeIter.count())
             self.edgeData.append(edgeDataObj)
 
             _mvector = om.MVector
-            # normalCache = []
             normalCache = [_mvector() for _ in xrange(faceIter.count())]
             while not faceIter.isDone():
                 faceIter.getNormal(normalCache[faceIter.index()], om.MSpace.kWorld)
