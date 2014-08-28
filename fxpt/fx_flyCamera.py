@@ -1,8 +1,8 @@
 import time
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-import sip
+from PySide import QtCore
+from PySide import QtGui
+import shiboken
 
 import maya.cmds as m
 import maya.OpenMayaUI as omui
@@ -29,7 +29,7 @@ SPD_ROTATE_Y = 5  # y -> left, -y -> right
 
 # noinspection PyCallByClass,PyTypeChecker
 def moveCursorToOrigin():
-    QCursor.setPos(MOUSE_ORIGIN_X, MOUSE_ORIGIN_Y)
+    QtGui.QCursor.setPos(MOUSE_ORIGIN_X, MOUSE_ORIGIN_Y)
 
 
 def sign(x):
@@ -50,7 +50,7 @@ class Timer():
         return self.prevTime - pTime
 
 
-class EventCatcher(QObject):
+class EventCatcher(QtCore.QObject):
     def __init__(self):
         super(EventCatcher, self).__init__()
 
@@ -58,48 +58,48 @@ class EventCatcher(QObject):
 
         eventType = event.type()
 
-        if eventType == QEvent.KeyPress:
+        if eventType == QtCore.QEvent.KeyPress:
             flyer.setControlState(event.key(), True)
             flyer.execAction(event.key())
             return True
 
-        elif eventType == QEvent.KeyRelease:
+        elif eventType == QtCore.QEvent.KeyRelease:
             flyer.setControlState(event.key(), False)
             return True
 
-        elif eventType == QEvent.WindowDeactivate:
-            flyer.setControlState(Qt.Key_Escape, True)
+        elif eventType == QtCore.QEvent.WindowDeactivate:
+            flyer.setControlState(QtCore.Qt.Key_Escape, True)
             return True
 
         return False
 
 
-class InfoWidget(QFrame):
+class InfoWidget(QtGui.QFrame):
 
     def __init__(self, parent):
         super(InfoWidget, self).__init__(parent=parent)
-        layout = QHBoxLayout()
+        layout = QtGui.QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
-        self.label = QLabel()
-        self.label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.setFrameStyle(QFrame.Panel | QFrame.Raised)
+        self.label = QtGui.QLabel()
+        self.label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        self.setFrameStyle(QtGui.QFrame.Panel | QtGui.QFrame.Raised)
         self.label.setContentsMargins(10, 10, 10, 10)
         layout.addWidget(self.label)
-        self.setWindowFlags(Qt.Popup)
-        self.setContextMenuPolicy(Qt.PreventContextMenu)
+        self.setWindowFlags(QtCore.Qt.Popup)
+        self.setContextMenuPolicy(QtCore.Qt.PreventContextMenu)
 
     def setText(self, text):
         self.label.setText(text)
 
 
 # noinspection PyAttributeOutsideInit
-class FlyCamUI(QPushButton):
+class FlyCamUI(QtGui.QPushButton):
 
     def __init__(self):
         ptr = omui.MQtUtil.mainWindow()
         if ptr is not None:
-            self.mainWinQObject = sip.wrapinstance(long(ptr), QObject)
+            self.mainWinQObject = shiboken.wrapInstance(long(ptr), QtGui.QWidget)  # or you can use QMainWindow
         else:
             m.error('cannot find main Maya window.')
         super(FlyCamUI, self).__init__(parent=self.mainWinQObject)
@@ -120,12 +120,12 @@ class FlyCamUI(QPushButton):
         self.resize(self.mainBtnWidth, self.mainBtnHeight)
         self.move(self.mainBtnLeft, self.mainBtnTop)
 
-        font = QFont()
+        font = QtGui.QFont()
         font.setFamily("Segoe UI")
         font.setPointSize(11)
         font.setBold(True)
         font.setWeight(75)
-        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setStyleStrategy(QtGui.QFont.PreferAntialias)
         self.setFont(font)
 
         self.setStyleSheet('QPushButton:checked {color: #000000; background-color: #ffae00}')
@@ -160,7 +160,7 @@ class FlyCamUI(QPushButton):
         self.helpWindow.setText(text)
 
         winHeight = 280
-        mainBtnTopLeftGlobal = self.mapToGlobal(QPoint(0, 0))
+        mainBtnTopLeftGlobal = self.mapToGlobal(QtCore.QPoint(0, 0))
         self.helpWindow.move(mainBtnTopLeftGlobal.x(), mainBtnTopLeftGlobal.y() - winHeight - 2)
         self.helpWindow.resize(self.mainBtnWidth, winHeight)
 
@@ -180,8 +180,8 @@ class FlyCamUI(QPushButton):
 
         winHeight = 250
         winWidth = 200
-        mainBtnTopLeftGlobal = self.mapToGlobal(QPoint(0, 0))
-        self.debugInfoWindow.move(mainBtnTopLeftGlobal.x() + self.mainBtnWidth + 2, mainBtnTopLeftGlobal.y() + self.mainBtnHeight - winHeight )
+        mainBtnTopLeftGlobal = self.mapToGlobal(QtCore.QPoint(0, 0))
+        self.debugInfoWindow.move(mainBtnTopLeftGlobal.x() + self.mainBtnWidth + 2, mainBtnTopLeftGlobal.y() + self.mainBtnHeight - winHeight)
         self.debugInfoWindow.resize(winWidth, winHeight)
 
     def toggleDebugInfo(self):
@@ -199,7 +199,7 @@ class FlyCamUI(QPushButton):
 
         self.setMouseTracking(True)
         self.grabKeyboard()
-        self.grabMouse(Qt.BlankCursor)
+        self.grabMouse(QtCore.Qt.BlankCursor)
 
         self.eventCatcher = EventCatcher()
         self.installEventFilter(self.eventCatcher)
@@ -266,15 +266,15 @@ class Flyer():
         self.maxSpeedModified = None
 
         self.controls = {
-            Qt.Key_Escape: False,
-            Qt.Key_W: False,
-            Qt.Key_S: False,
-            Qt.Key_A: False,
-            Qt.Key_D: False,
-            Qt.LeftButton: False,
-            Qt.RightButton: False,
-            Qt.Key_Shift: False,
-            Qt.Key_Control: False
+            QtCore.Qt.Key_Escape: False,
+            QtCore.Qt.Key_W: False,
+            QtCore.Qt.Key_S: False,
+            QtCore.Qt.Key_A: False,
+            QtCore.Qt.Key_D: False,
+            QtCore.Qt.LeftButton: False,
+            QtCore.Qt.RightButton: False,
+            QtCore.Qt.Key_Shift: False,
+            QtCore.Qt.Key_Control: False
         }
 
         self.mouseData = {
@@ -283,16 +283,16 @@ class Flyer():
         }
 
         self.actions = {
-            Qt.Key_H: self.onShowHelp,  # help
-            Qt.Key_Minus: lambda: self.onChangeSpeed(False),  # speed-
-            Qt.Key_Equal: lambda: self.onChangeSpeed(True),  # speed+
-            Qt.Key_9: lambda: self.onChangeRotationSpeed(False),  # rotation speed-
-            Qt.Key_0: lambda: self.onChangeRotationSpeed(True),  # rotation speed+
-            Qt.Key_I: self.onInvertMouse,  # invert mouse
-            Qt.Key_O: self.onSwapMouseButtons,  # swap mouse buttons
-            Qt.Key_G: self.onGameViewToggle,  # swap mouse buttons
-            Qt.Key_QuoteLeft: self.onShowDebug,
-            Qt.Key_Home: self.settingsReset
+            QtCore.Qt.Key_H: self.onShowHelp,  # help
+            QtCore.Qt.Key_Minus: lambda: self.onChangeSpeed(False),  # speed-
+            QtCore.Qt.Key_Equal: lambda: self.onChangeSpeed(True),  # speed+
+            QtCore.Qt.Key_9: lambda: self.onChangeRotationSpeed(False),  # rotation speed-
+            QtCore.Qt.Key_0: lambda: self.onChangeRotationSpeed(True),  # rotation speed+
+            QtCore.Qt.Key_I: self.onInvertMouse,  # invert mouse
+            QtCore.Qt.Key_O: self.onSwapMouseButtons,  # swap mouse buttons
+            QtCore.Qt.Key_G: self.onGameViewToggle,  # swap mouse buttons
+            QtCore.Qt.Key_QuoteLeft: self.onShowDebug,
+            QtCore.Qt.Key_Home: self.settingsReset
         }
 
         self.speeds = {
@@ -360,13 +360,13 @@ class Flyer():
             m.setAttr(attr, self.savedCameraSettings[attr])
 
     def showError(self, txt, itxt):
-        msgBox = QMessageBox()
+        msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
         msgBox.setText(txt)
         msgBox.setInformativeText(itxt)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.setDefaultButton(QMessageBox.Ok)
-        msgBox.setIcon(QMessageBox.Critical)
+        msgBox.setStandardButtons(QtGui.QMessageBox.Ok)
+        msgBox.setDefaultButton(QtGui.QMessageBox.Ok)
+        msgBox.setIcon(QtGui.QMessageBox.Critical)
         msgBox.exec_()
 
     def fly(self):
@@ -381,8 +381,8 @@ class Flyer():
 
             self.ui.startEventsCapture()
             self.timer = Timer()
-            while not self.getControlState(Qt.Key_Escape):
-                qApp.processEvents()
+            while not self.getControlState(QtCore.Qt.Key_Escape):
+                QtGui.qApp.processEvents()
                 self.getMouseData()
                 self.delta = self.timer.delta()
                 self.calculateSpeeds()
@@ -401,27 +401,27 @@ class Flyer():
             if self.useGameView:
                 self.restoreCamera()
 
-        self.settingsSave()
+            self.settingsSave()
 
-        global flyer
-        flyer = None
+            global flyer
+            flyer = None
 
     def getMouseData(self):
-        pos = QCursor.pos()
+        pos = QtGui.QCursor.pos()
         self.mouseData[MOUSE_HOR] = pos.x() - MOUSE_ORIGIN_X
         self.mouseData[MOUSE_VER] = pos.y() - MOUSE_ORIGIN_Y
         moveCursorToOrigin()
 
-        pressedButtons = qApp.mouseButtons()
-        if pressedButtons & Qt.LeftButton:
-            self.setControlState(Qt.LeftButton, True)
+        pressedButtons = QtGui.qApp.mouseButtons()
+        if pressedButtons & QtCore.Qt.LeftButton:
+            self.setControlState(QtCore.Qt.LeftButton, True)
         else:
-            self.setControlState(Qt.LeftButton, False)
+            self.setControlState(QtCore.Qt.LeftButton, False)
 
-        if pressedButtons & Qt.RightButton:
-            self.setControlState(Qt.RightButton, True)
+        if pressedButtons & QtCore.Qt.RightButton:
+            self.setControlState(QtCore.Qt.RightButton, True)
         else:
-            self.setControlState(Qt.RightButton, False)
+            self.setControlState(QtCore.Qt.RightButton, False)
 
     def transformCamera(self):
         tx = self.speeds[SPD_MOVE_X] * self.delta
@@ -437,9 +437,9 @@ class Flyer():
     def calculateSpeeds(self):
 
         # speed modificators
-        if self.controls[Qt.Key_Shift] and not self.controls[Qt.Key_Control]:
+        if self.controls[QtCore.Qt.Key_Shift] and not self.controls[QtCore.Qt.Key_Control]:
             self.maxSpeedModified = self.maxSpeed * self.shiftSpeedMultiplier
-        elif not self.controls[Qt.Key_Shift] and self.controls[Qt.Key_Control]:
+        elif not self.controls[QtCore.Qt.Key_Shift] and self.controls[QtCore.Qt.Key_Control]:
             self.maxSpeedModified = self.maxSpeed * self.controlSpeedMultiplier
         else:
             self.maxSpeedModified = self.maxSpeed
@@ -447,25 +447,25 @@ class Flyer():
         self.acceleration = self.maxSpeedModified / self.accelerationTime
 
         # forward/backward
-        if self.controls[Qt.Key_W] and not self.controls[Qt.Key_S]:
+        if self.controls[QtCore.Qt.Key_W] and not self.controls[QtCore.Qt.Key_S]:
             self.speeds[SPD_MOVE_Z] = self.calculateNewSpeed(self.speeds[SPD_MOVE_Z], -self.acceleration)
-        elif not self.controls[Qt.Key_W] and self.controls[Qt.Key_S]:
+        elif not self.controls[QtCore.Qt.Key_W] and self.controls[QtCore.Qt.Key_S]:
             self.speeds[SPD_MOVE_Z] = self.calculateNewSpeed(self.speeds[SPD_MOVE_Z], self.acceleration)
         else:
             self.speeds[SPD_MOVE_Z] = self.calculateNewSpeed(self.speeds[SPD_MOVE_Z], 0.0)
 
         # left/right
-        if self.controls[Qt.Key_D] and not self.controls[Qt.Key_A]:
+        if self.controls[QtCore.Qt.Key_D] and not self.controls[QtCore.Qt.Key_A]:
             self.speeds[SPD_MOVE_X] = self.calculateNewSpeed(self.speeds[SPD_MOVE_X], self.acceleration)
-        elif not self.controls[Qt.Key_D] and self.controls[Qt.Key_A]:
+        elif not self.controls[QtCore.Qt.Key_D] and self.controls[QtCore.Qt.Key_A]:
             self.speeds[SPD_MOVE_X] = self.calculateNewSpeed(self.speeds[SPD_MOVE_X], -self.acceleration)
         else:
             self.speeds[SPD_MOVE_X] = self.calculateNewSpeed(self.speeds[SPD_MOVE_X], 0.0)
 
         # up/down
-        if self.controls[Qt.LeftButton] and not self.controls[Qt.RightButton]:
+        if self.controls[QtCore.Qt.LeftButton] and not self.controls[QtCore.Qt.RightButton]:
             self.speeds[SPD_MOVE_Y] = self.calculateNewSpeed(self.speeds[SPD_MOVE_Y], -self.acceleration * self.swapMouseButtons)
-        elif not self.controls[Qt.LeftButton] and self.controls[Qt.RightButton]:
+        elif not self.controls[QtCore.Qt.LeftButton] and self.controls[QtCore.Qt.RightButton]:
             self.speeds[SPD_MOVE_Y] = self.calculateNewSpeed(self.speeds[SPD_MOVE_Y], self.acceleration * self.swapMouseButtons)
         else:
             self.speeds[SPD_MOVE_Y] = self.calculateNewSpeed(self.speeds[SPD_MOVE_Y], 0.0)
@@ -574,7 +574,7 @@ class OptionVarLink():
 
     def init(self):
         optVars = pm.env.optionVars
-        if not optVars.has_key(self.ovName):
+        if self.ovName not in optVars:
             optVars[self.ovName] = self.defaultValue
 
     def applyToControl(self):
