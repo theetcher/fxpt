@@ -55,6 +55,7 @@ class EventCatcher(QObject):
         super(EventCatcher, self).__init__()
 
     def eventFilter(self, obj, event):
+
         eventType = event.type()
 
         if eventType == QEvent.KeyPress:
@@ -64,6 +65,10 @@ class EventCatcher(QObject):
 
         elif eventType == QEvent.KeyRelease:
             flyer.setControlState(event.key(), False)
+            return True
+
+        elif eventType == QEvent.WindowDeactivate:
+            flyer.setControlState(Qt.Key_Escape, True)
             return True
 
         return False
