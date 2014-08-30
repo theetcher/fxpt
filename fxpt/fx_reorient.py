@@ -12,6 +12,8 @@ LOCATOR_FLY_AWAY_DISTANCE = 100
 
 win = None
 
+from fx_utils.watch import *
+
 
 #noinspection PyAttributeOutsideInit
 #noinspection PyMethodMayBeStatic
@@ -152,7 +154,7 @@ class ReorientUI(object):
             self.ui_refresh()
         else:
             if comp == OriData.OriObject:
-                simpleWarning('Select one transform or joint.')
+                simpleWarning('Select one transform.')
             else:
                 simpleWarning('Select one transform or polygon vertex.')
 
@@ -232,7 +234,7 @@ class OriData(object):
             else:
                 return selection
 
-        if m.nodeType(node) in ('transform', 'joint'):
+        if m.nodeType(node) == 'transform':
             return node
         else:
             return None
@@ -254,15 +256,8 @@ class OrientProcessor(object):
     def __init__(self):
         pass
 
-    # def getParent(self, node):
-    #     parents = m.listRelatives(node, fullPath=True, parent=True)
-    #     if parents is None:
-    #         return None
-    #     else:
-    #         return parents[0]
-
     def fixOrient(self, oriData):
-        selectedObjects = m.ls(sl=True, l=True, fl=True)
+        # selectedObjects = m.ls(sl=True, l=True, fl=True)
 
         triPivot, triAim, triUp, aimConstraint = self.createTripod()
 
@@ -273,22 +268,28 @@ class OrientProcessor(object):
         x, y, z = self.getWorldSpaceCoords(oriData.getOriData(OriData.OriUp))
         m.move(x, y, z, triUp, absolute=True)
 
-        parentConstraint = m.parentConstraint(
-            triPivot,
-            oriData.getOriData(OriData.OriObject),
-            maintainOffset=True
-        )[0]
+        origParent = m.listRelatives(oriData.getOriData(OriData.OriObject), parent=True, fullPath=True)
+        origParent = origParent[0] if origParent else None
 
-        pivotX, pivotY, pivotZ = m.xform(triPivot, q=True, ws=True, t=True)
-        m.move(pivotX, pivotY, pivotZ + LOCATOR_FLY_AWAY_DISTANCE, triAim, absolute=True)
-        m.move(pivotX, pivotY + LOCATOR_FLY_AWAY_DISTANCE, pivotZ, triUp, absolute=True)
+        newPath = m.parent(oriData.getOriData(OriData.OriObject), triPivot)[0]
 
-        m.delete((parentConstraint, aimConstraint, triPivot, triAim, triUp))
+        try:
+            m.makeIdentity(newPath, apply=True, rotate=True)
+        except RuntimeError as e:
+            simpleWarning('Reorient failed.\n' + str(e), icon='critical')
+        finally:
+            if origParent:
+                m.parent(newPath, origParent)
+            else:
+                m.parent(newPath, world=True)
 
-        if selectedObjects:
-            m.select(selectedObjects)
-        else:
-            m.select(cl=True)
+        m.delete((aimConstraint, triPivot, triAim, triUp))
+
+        m.select(oriData.getOriData(OriData.OriObject))
+        # if selectedObjects:
+        #     m.select(selectedObjects)
+        # else:
+        #     m.select(cl=True)
 
     def createTripod(self):
         triPivot = m.spaceLocator(name='triPivot')[0]
@@ -322,8 +323,9 @@ def run():
 # Helper Functions
 #----------------------------------------------------------------------------------------------------------------------
 
-def simpleWarning(message):
+def simpleWarning(message, icon='information'):
     pm.confirmDialog(
+        icon=icon,
         title=SCRIPT_NAME,
         message=message,
         button=['Ok']
