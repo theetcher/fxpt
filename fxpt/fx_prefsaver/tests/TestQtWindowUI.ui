@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>771</width>
+    <height>584</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,1">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLineEdit" name="lineEdit"/>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox">
+          <property name="text">
+           <string>CheckBox</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>GroupBox</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QRadioButton" name="radioButton">
+             <property name="text">
+              <string>RadioButton1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_2">
+             <property name="text">
+              <string>RadioButton2</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="text">
+           <string>Check Button</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBox">
+          <item>
+           <property name="text">
+            <string>Item1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Item2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Item3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Item4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Item5</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Item6</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Item7</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBox_2">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="text">
+           <string>Show Dialog</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="currentIndex">
+         <number>2</number>
+        </property>
+        <widget class="QWidget" name="tab">
+         <attribute name="title">
+          <string>List Widget</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QListWidget" name="listWidget">
+            <property name="selectionMode">
+             <enum>QAbstractItemView::ExtendedSelection</enum>
+            </property>
+            <item>
+             <property name="text">
+              <string>Item1</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Item2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Item3</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Item4</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Item5</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Item6</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Item7</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tab_2">
+         <attribute name="title">
+          <string>Tree Widget</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QTreeView" name="treeView">
+            <property name="selectionMode">
+             <enum>QAbstractItemView::ExtendedSelection</enum>
+            </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectItems</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tab_3">
+         <attribute name="title">
+          <string>Table Widget</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QTableWidget" name="tableWidget">
+            <row>
+             <property name="text">
+              <string>Row1</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Row2</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Row3</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Row4</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Row5</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Row6</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Row7</string>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>Column1</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Column2</string>
+             </property>
+            </column>
+            <item row="0" column="0">
+             <property name="text">
+              <string>value11</string>
+             </property>
+            </item>
+            <item row="0" column="1">
+             <property name="text">
+              <string>value12</string>
+             </property>
+            </item>
+            <item row="1" column="0">
+             <property name="text">
+              <string>value21</string>
+             </property>
+            </item>
+            <item row="1" column="1">
+             <property name="text">
+              <string>value22</string>
+             </property>
+            </item>
+            <item row="2" column="0">
+             <property name="text">
+              <string>value31</string>
+             </property>
+            </item>
+            <item row="2" column="1">
+             <property name="text">
+              <string>value32</string>
+             </property>
+            </item>
+            <item row="3" column="0">
+             <property name="text">
+              <string>value41</string>
+             </property>
+            </item>
+            <item row="3" column="1">
+             <property name="text">
+              <string>value42</string>
+             </property>
+            </item>
+            <item row="4" column="0">
+             <property name="text">
+              <string>value51</string>
+             </property>
+            </item>
+            <item row="4" column="1">
+             <property name="text">
+              <string>value52</string>
+             </property>
+            </item>
+            <item row="5" column="0">
+             <property name="text">
+              <string>value61</string>
+             </property>
+            </item>
+            <item row="5" column="1">
+             <property name="text">
+              <string>value62</string>
+             </property>
+            </item>
+            <item row="6" column="0">
+             <property name="text">
+              <string>value71</string>
+             </property>
+            </item>
+            <item row="6" column="1">
+             <property name="text">
+              <string>value72</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="uiBTN_savePrefs">
+        <property name="text">
+         <string>Save Prefs</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="uiBTN_loadPrefs">
+        <property name="text">
+         <string>Load Prefs</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="uiBTN_resetPrefs">
+        <property name="text">
+         <string>Reset Prefs</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>uiBTN_savePrefs</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onSavePrefsClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>561</x>
+     <y>562</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiBTN_loadPrefs</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onLoadPrefsClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>642</x>
+     <y>562</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiBTN_resetPrefs</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onResetPrefsClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>723</x>
+     <y>562</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onSavePrefsClicked()</slot>
+  <slot>onLoadPrefsClicked()</slot>
+  <slot>onResetPrefsClicked()</slot>
+ </slots>
+</ui>
