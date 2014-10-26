@@ -1,4 +1,5 @@
 import sys
+import os
 import inspect
 from distutils import sysconfig
 
@@ -50,8 +51,9 @@ def needToBeIgnored(moduleFilename):
     # if moduleFilepath.startswith(pyStdLib) and (not moduleFilepath.startswith(pySitePkg)):
     #     continue
 
+    moduleDir = os.path.dirname(moduleFilename)
     for s in IGNORE_DIRECTORIES:
-        if s in moduleFilename:
+        if s in moduleDir:
             return True
     return False
 
