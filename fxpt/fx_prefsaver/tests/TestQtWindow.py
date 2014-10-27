@@ -1,6 +1,5 @@
 # from PyQt4 import QtGui
 
-# import TestPyQtWindowUI
 from fxpt.fx_prefsaver import PrefSaver
 
 
@@ -16,25 +15,29 @@ class TestQtWindow(object):
         if qtType == TestQtWindow.QtTypePyQt:
             from PyQt4 import QtGui
             import TestPyQtWindowUI
-            self.win = QtGui.QMainWindow(parent=parent)
             self.ui = TestPyQtWindowUI.Ui_MainWindow()
-            winTitle = 'PyQt Window'
         else:
             from PySide import QtGui
             import TestPySideWindowUI
-            self.win = QtGui.QMainWindow(parent=parent)
             self.ui = TestPySideWindowUI.Ui_MainWindow()
-            winTitle = 'PySide Window'
+
+        self.win = QtGui.QMainWindow(parent=parent)
+
+        self.dlg = QtGui.QDialog(parent=self.win)
+        self.dlg.setObjectName('uiDLG_testDialog')
+        self.dlg.setWindowTitle(str(self.dlg))
 
         self.registerSlots()
         self.initPrefs()
         self.ui.setupUi(self.win)
-        self.win.setWindowTitle(winTitle)
+
+        self.win.setWindowTitle('{}; {}'.format(str(self.win), str(self.dlg)))
 
     def registerSlots(self):
         self.win.onSavePrefsClicked = self.onSavePrefsClicked
         self.win.onLoadPrefsClicked = self.onLoadPrefsClicked
         self.win.onResetPrefsClicked = self.onResetPrefsClicked
+        self.win.onShowDialogClicked = self.onShowDialogClicked
 
     def show(self):
         self.win.show()
@@ -66,3 +69,6 @@ class TestQtWindow(object):
     def onResetPrefsClicked(self):
         print 'onResetPrefsClicked()'
         # self.prefSaver.resetPrefs()
+
+    def onShowDialogClicked(self):
+        self.dlg.show()

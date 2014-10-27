@@ -109,7 +109,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="uiBTN_showDialog">
           <property name="text">
            <string>Show Dialog</string>
           </property>
@@ -422,10 +422,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>uiBTN_showDialog</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onShowDialogClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>111</x>
+     <y>208</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSavePrefsClicked()</slot>
   <slot>onLoadPrefsClicked()</slot>
   <slot>onResetPrefsClicked()</slot>
+  <slot>onShowDialogClicked()</slot>
  </slots>
 </ui>

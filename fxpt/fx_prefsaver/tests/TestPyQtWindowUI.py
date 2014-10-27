@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'TestQtWindowUI.ui'
 #
-# Created: Sun Oct 26 22:21:13 2014
+# Created: Mon Oct 27 20:53:20 2014
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -61,9 +61,9 @@ class Ui_MainWindow(object):
         self.comboBox_2.setEditable(True)
         self.comboBox_2.setObjectName(_fromUtf8("comboBox_2"))
         self.verticalLayout.addWidget(self.comboBox_2)
-        self.pushButton_2 = QtGui.QPushButton(self.centralwidget)
-        self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
-        self.verticalLayout.addWidget(self.pushButton_2)
+        self.uiBTN_showDialog = QtGui.QPushButton(self.centralwidget)
+        self.uiBTN_showDialog.setObjectName(_fromUtf8("uiBTN_showDialog"))
+        self.verticalLayout.addWidget(self.uiBTN_showDialog)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
         self.horizontalLayout_6.addLayout(self.verticalLayout)
@@ -182,6 +182,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.uiBTN_savePrefs, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.onSavePrefsClicked)
         QtCore.QObject.connect(self.uiBTN_loadPrefs, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.onLoadPrefsClicked)
         QtCore.QObject.connect(self.uiBTN_resetPrefs, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.onResetPrefsClicked)
+        QtCore.QObject.connect(self.uiBTN_showDialog, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.onShowDialogClicked)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -198,7 +199,7 @@ class Ui_MainWindow(object):
         self.comboBox.setItemText(4, QtGui.QApplication.translate("MainWindow", "Item5", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox.setItemText(5, QtGui.QApplication.translate("MainWindow", "Item6", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox.setItemText(6, QtGui.QApplication.translate("MainWindow", "Item7", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_2.setText(QtGui.QApplication.translate("MainWindow", "Show Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiBTN_showDialog.setText(QtGui.QApplication.translate("MainWindow", "Show Dialog", None, QtGui.QApplication.UnicodeUTF8))
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
         item = self.listWidget.item(0)
