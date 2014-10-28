@@ -26,7 +26,7 @@ class WinPyMelUI(object):
                 with pm.scrollLayout(childResizable=True) as self.uiLAY_mainScroll:
                     with pm.columnLayout(adjustableColumn=True):
 
-                        with self.uiCreateFrame('uiFRM_checkBoxes', 'Check Boxes (PMCheckBox)'):
+                        with self.uiCreateFrame('uiLAY_frameCheckBoxes', 'Check Boxes (PMCheckBox)') as self.uiLAY_frameCheckBoxes:
                             with pm.columnLayout():
                                 pm.separator(style='none', height=2)
                                 with pm.rowLayout(numberOfColumns=3):
@@ -34,7 +34,7 @@ class WinPyMelUI(object):
                                     self.uiCHK_test1 = pm.checkBox('uiCHK_test1', label='test1')
                                     self.uiCHK_test2 = pm.checkBox('uiCHK_test2', label='test2')
 
-                        with self.uiCreateFrame('uiFRM_checkBoxGroups', 'Check Box Groups (PMCheckBoxGrp#)'):
+                        with self.uiCreateFrame('uiLAY_frameCheckBoxGroups', 'Check Box Groups (PMCheckBoxGrp#)') as self.uiLAY_frameCheckBoxGroups:
                             with pm.columnLayout():
                                 pm.separator(style='none', height=2)
                                 self.uiCHKGRP_test1 = pm.checkBoxGrp(
@@ -62,7 +62,7 @@ class WinPyMelUI(object):
                                     labelArray4=('test1', 'test2', 'test3', 'test4')
                                 )
 
-                        with self.uiCreateFrame('uiFRM_colorSliders', 'Color Slider Groups (PMColorSliderGrp)'):
+                        with self.uiCreateFrame('uiLAY_frameColorSliders', 'Color Slider Groups (PMColorSliderGrp)') as self.uiLAY_frameColorSliders:
                             with pm.columnLayout():
                                 pm.separator(style='none', height=2)
                                 self.uiCLRGRP_test1 = pm.colorSliderGrp(
@@ -74,7 +74,7 @@ class WinPyMelUI(object):
                                     label='test2'
                                 )
 
-                        with self.uiCreateFrame('uiFRM_floatFields', 'Float Fields (PMFloatField)'):
+                        with self.uiCreateFrame('uiLAY_frameFloatFields', 'Float Fields (PMFloatField)') as self.uiLAY_frameFloatFields:
                             with pm.columnLayout():
                                 pm.separator(style='none', height=2)
                                 with pm.rowLayout(numberOfColumns=3):
@@ -82,7 +82,7 @@ class WinPyMelUI(object):
                                     self.uiFLF_test1 = pm.floatField('uiFLF_test1')
                                     self.uiFLF_test2 = pm.floatField('uiFLF_test2')
 
-                        with self.uiCreateFrame('uiFRM_floatFieldGroups', 'Float Field Groups (PMFloatFieldGrp#)'):
+                        with self.uiCreateFrame('uiLAY_frameFloatFieldGroups', 'Float Field Groups (PMFloatFieldGrp#)') as self.uiLAY_frameFloatFieldGroups:
                             with pm.columnLayout():
                                 pm.separator(style='none', height=2)
                                 self.uiFLFGRP_test1 = pm.floatFieldGrp(
@@ -106,19 +106,19 @@ class WinPyMelUI(object):
                                     label='PMFloatFieldGrp4'
                                 )
 
-                        with self.uiCreateFrame('uiFRM_floatScrollBars', 'Float Scroll Bars (PMFloatScrollBar)'):
+                        with self.uiCreateFrame('uiLAY_frameFloatScrollBars', 'Float Scroll Bars (PMFloatScrollBar)') as self.uiLAY_frameFloatScrollBars:
                             with pm.columnLayout(adjustableColumn=True):
                                 pm.separator(style='none', height=2)
                                 self.uiFLSCRL_test1 = pm.floatScrollBar('uiFLSCRL_test1')
                                 self.uiFLSCRL_test2 = pm.floatScrollBar('uiFLSCRL_test2')
 
-                        with self.uiCreateFrame('uiFRM_floatSliders', 'Float Sliders (PMFloatSlider)'):
+                        with self.uiCreateFrame('uiLAY_frameFloatSliders', 'Float Sliders (PMFloatSlider)') as self.uiLAY_frameFloatSliders:
                             with pm.columnLayout(adjustableColumn=True):
                                 pm.separator(style='none', height=2)
                                 self.uiFLTSLD_test1 = pm.floatSlider('uiFLTSLD_test1')
                                 self.uiFLTSLD_test2 = pm.floatSlider('uiFLTSLD_test2')
 
-                        with self.uiCreateFrame('uiFRM_floatSliders2', 'Float Sliders2 (PMFloatSlider2)'):
+                        with self.uiCreateFrame('uiLAY_frameFloatSliders2', 'Float Sliders2 (PMFloatSlider2)') as self.uiLAY_frameFloatSliders2:
                             with pm.columnLayout():
                                 with pm.rowLayout(numberOfColumns=4):
                                     pm.separator(style='none', width=140)
@@ -126,7 +126,7 @@ class WinPyMelUI(object):
                                     pm.separator(style='none', width=50)
                                     self.uiFLSLD2_test2 = pm.floatSlider2('uiFLSLD2_test2')
 
-                        with self.uiCreateFrame('uiFRM_floatSliderGroups', 'Float Slider Groups (PMFloatSliderGrp)'):
+                        with self.uiCreateFrame('uiLAY_frameFloatSliderGroups', 'Float Slider Groups (PMFloatSliderGrp)') as self.uiLAY_frameFloatSliderGroups:
                             with pm.columnLayout():
                                 pm.separator(style='none', height=2)
                                 self.uiFLSGRP_test1 = pm.floatSliderGrp(
@@ -140,7 +140,7 @@ class WinPyMelUI(object):
                                     field=True
                                 )
 
-                        with self.uiCreateFrame('uiFRM_iconTextCheckBoxes', 'Icon Text Check Boxes (PMIconTextCheckBox)'):
+                        with self.uiCreateFrame('uiLAY_frameIconTextCheckBoxes', 'Icon Text Check Boxes (PMIconTextCheckBox)') as self.uiLAY_frameIconTextCheckBoxes:
                             with pm.columnLayout():
                                 with pm.rowLayout(numberOfColumns=3):
                                     pm.separator(style='none', width=140)
@@ -157,7 +157,7 @@ class WinPyMelUI(object):
                                         image1='cone'
                                     )
 
-                        with self.uiCreateFrame('uiFRM_iconTextRadioButtons', 'Icon Text Radio Buttons (PMIconTextRadioButton)'):
+                        with self.uiCreateFrame('uiLAY_frameIconTextRadioButtons', 'Icon Text Radio Buttons (PMIconTextRadioButton)') as self.uiLAY_frameIconTextRadioButtons:
                             with pm.columnLayout():
                                 with pm.rowLayout(numberOfColumns=4):
                                     pm.separator(style='none', width=140)
@@ -181,7 +181,7 @@ class WinPyMelUI(object):
                                         image1='torus'
                                     )
 
-                        with self.uiCreateFrame('uiFRM_iconTextScrollLists', 'Icon Text Scroll Lists (PMIconTextScrollList)'):
+                        with self.uiCreateFrame('uiLAY_frameIconTextScrollLists', 'Icon Text Scroll Lists (PMIconTextScrollList)') as self.uiLAY_frameIconTextScrollLists:
                             with pm.columnLayout():
                                 with pm.rowLayout(numberOfColumns=3):
                                     pm.separator(style='none', width=140)
@@ -196,7 +196,7 @@ class WinPyMelUI(object):
                                         append=('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten')
                                     )
 
-                        with self.uiCreateFrame('uiFRM_intFields', 'Int Fields (PMIntField)'):
+                        with self.uiCreateFrame('uiLAY_frameIntFields', 'Int Fields (PMIntField)') as self.uiLAY_frameIntFields:
                             with pm.columnLayout():
                                 pm.separator(style='none', height=2)
                                 with pm.rowLayout(numberOfColumns=3):
@@ -204,7 +204,7 @@ class WinPyMelUI(object):
                                     self.uiINF_test1 = pm.floatField('uiINF_test1')
                                     self.uiINF_test2 = pm.floatField('uiINF_test2')
 
-                        with self.uiCreateFrame('uiFRM_intFieldGroups', 'Int Field Groups (PMIntFieldGrp#)'):
+                        with self.uiCreateFrame('uiLAY_frameIntFieldGroups', 'Int Field Groups (PMIntFieldGrp#)') as self.uiLAY_frameIntFieldGroups:
                             with pm.columnLayout():
                                 pm.separator(style='none', height=2)
                                 self.uiINFGRP_test1 = pm.intFieldGrp(
@@ -228,19 +228,19 @@ class WinPyMelUI(object):
                                     label='PMIntFieldGrp4'
                                 )
 
-                        with self.uiCreateFrame('uiFRM_intScrollBars', 'Int Scroll Bars (PMIntScrollBar)'):
+                        with self.uiCreateFrame('uiLAY_frameIntScrollBars', 'Int Scroll Bars (PMIntScrollBar)') as self.uiLAY_frameIntScrollBars:
                             with pm.columnLayout(adjustableColumn=True):
                                 pm.separator(style='none', height=2)
                                 self.uiINSCRL_test1 = pm.intScrollBar('uiINSCRL_test1')
                                 self.uiINSCRL_test2 = pm.intScrollBar('uiINSCRL_test2')
 
-                        with self.uiCreateFrame('uiFRM_intSliders', 'Int Sliders (PMIntSlider)'):
+                        with self.uiCreateFrame('uiLAY_frameIntSliders', 'Int Sliders (PMIntSlider)') as self.uiLAY_frameIntSliders:
                             with pm.columnLayout(adjustableColumn=True):
                                 pm.separator(style='none', height=2)
                                 self.uiINTSLD_test1 = pm.intSlider('uiINTSLD_test1')
                                 self.uiINTSLD_test2 = pm.intSlider('uiINTSLD_test2')
 
-                        with self.uiCreateFrame('uiFRM_intSliderGroups', 'Int Slider Groups (PMIntSliderGrp)'):
+                        with self.uiCreateFrame('uiLAY_frameIntSliderGroups', 'Int Slider Groups (PMIntSliderGrp)') as self.uiLAY_frameIntSliderGroups:
                             with pm.columnLayout():
                                 pm.separator(style='none', height=2)
                                 self.uiINSGRP_test1 = pm.intSliderGrp(
@@ -254,7 +254,7 @@ class WinPyMelUI(object):
                                     field=True
                                 )
 
-                        with self.uiCreateFrame('uiFRM_radioButtons', 'Radio Buttons (PMRadioButton)'):
+                        with self.uiCreateFrame('uiLAY_frameRadioButtons', 'Radio Buttons (PMRadioButton)') as self.uiLAY_frameRadioButtons:
                             with pm.columnLayout():
                                 with pm.rowLayout(numberOfColumns=4):
                                     pm.separator(style='none', width=140)
@@ -263,7 +263,7 @@ class WinPyMelUI(object):
                                     self.uiRAD_test2 = pm.radioButton('uiRAD_test2', label='test2')
                                     self.uiRAD_test3 = pm.radioButton('uiRAD_test3', label='test3')
 
-                        with self.uiCreateFrame('uiFRM_symbolCheckBoxes', 'Symbol Check Boxes (PMSymbolCheckBox)'):
+                        with self.uiCreateFrame('uiLAY_frameSymbolCheckBoxes', 'Symbol Check Boxes (PMSymbolCheckBox)') as self.uiLAY_frameSymbolCheckBoxes:
                             with pm.columnLayout():
                                 with pm.rowLayout(numberOfColumns=3):
                                     pm.separator(style='none', width=140)
@@ -276,7 +276,7 @@ class WinPyMelUI(object):
                                         image='polyCone'
                                     )
 
-                        with self.uiCreateFrame('uiFRM_scriptTables', 'Script Tables (PMScriptTable)'):
+                        with self.uiCreateFrame('uiLAY_frameScriptTables', 'Script Tables (PMScriptTable)') as self.uiLAY_frameScriptTables:
                             with pm.columnLayout():
                                 with pm.rowLayout(numberOfColumns=3):
                                     pm.separator(style='none', width=140)
@@ -293,7 +293,7 @@ class WinPyMelUI(object):
                                         columns=2
                                     )
 
-                        with self.uiCreateFrame('uiFRM_scrollField', 'Scroll Field (PMScrollField)'):
+                        with self.uiCreateFrame('uiLAY_frameScrollField', 'Scroll Field (PMScrollField)') as self.uiLAY_frameScrollField:
                             with pm.columnLayout():
                                 with pm.rowLayout(numberOfColumns=3):
                                     pm.separator(style='none', width=140)
@@ -306,7 +306,7 @@ class WinPyMelUI(object):
                                         wordWrap=True
                                     )
 
-                        with self.uiCreateFrame('uiFRM_shelfTabLayout', 'Shelf Tab Layout (PMShelfTabLayout)'):
+                        with self.uiCreateFrame('uiLAY_frameShelfTabLayout', 'Shelf Tab Layout (PMShelfTabLayout)') as self.uiLAY_frameShelfTabLayout:
                             with pm.columnLayout(adjustableColumn=True):
                                 with pm.shelfTabLayout() as self.uiSHLTAB_test1:
                                     with pm.shelfLayout('test1'):
@@ -323,7 +323,7 @@ class WinPyMelUI(object):
                                     with pm.shelfLayout('test6'):
                                         pass
 
-                        with self.uiCreateFrame('uiFRM_tabLayout', 'Tab Layout (PMTabLayout)'):
+                        with self.uiCreateFrame('uiLAY_frameTabLayout', 'Tab Layout (PMTabLayout)') as self.uiLAY_frameTabLayout:
                             with pm.columnLayout(adjustableColumn=True):
                                 with pm.tabLayout() as self.uiTAB_test1:
 
@@ -355,7 +355,7 @@ class WinPyMelUI(object):
                                     tabLabel=((uiLAY_tabRow4, 'test4'), (uiLAY_tabRow5, 'test5'), (uiLAY_tabRow6, 'test6'),)
                                 )
 
-                        with self.uiCreateFrame('uiFRM_textFields', 'Text Fields (PMTextField)'):
+                        with self.uiCreateFrame('uiLAY_frameTextFields', 'Text Fields (PMTextField)') as self.uiLAY_frameTextFields:
                             with pm.columnLayout():
                                 pm.separator(style='none', height=2)
                                 with pm.rowLayout(numberOfColumns=3):
@@ -363,7 +363,7 @@ class WinPyMelUI(object):
                                     self.uiTXT_test1 = pm.textField('uiTXT_test1')
                                     self.uiTXT_test2 = pm.textField('uiTXT_test2')
 
-                        with self.uiCreateFrame('uiFRM_textFieldButtonGroups', 'Text Field Button Groups (PMTextFieldButtonGrp)'):
+                        with self.uiCreateFrame('uiLAY_frameTextFieldButtonGroups', 'Text Field Button Groups (PMTextFieldButtonGrp)') as self.uiLAY_frameTextFieldButtonGroups:
                             with pm.columnLayout():
                                 pm.separator(style='none', height=2)
                                 self.uiTXBTGR_test1 = pm.textFieldButtonGrp(
@@ -377,7 +377,7 @@ class WinPyMelUI(object):
                                     buttonLabel='button2'
                                 )
 
-                        with self.uiCreateFrame('uiFRM_textFieldGroups', 'Text Field Groups (PMTextFieldGrp)'):
+                        with self.uiCreateFrame('uiLAY_frameTextFieldGroups', 'Text Field Groups (PMTextFieldGrp)') as self.uiLAY_frameTextFieldGroups:
                             with pm.columnLayout():
                                 pm.separator(style='none', height=2)
                                 self.uiTXTGRP_test1 = pm.textFieldGrp(
@@ -389,7 +389,7 @@ class WinPyMelUI(object):
                                     label='test2'
                                 )
 
-                        with self.uiCreateFrame('uiFRM_textScrollLists', 'Text Scroll Lists (PMTextScrollList)'):
+                        with self.uiCreateFrame('uiLAY_frameTextScrollLists', 'Text Scroll Lists (PMTextScrollList)') as self.uiLAY_frameTextScrollLists:
                             with pm.columnLayout():
                                 with pm.rowLayout(numberOfColumns=3):
                                     pm.separator(style='none', width=140)
@@ -403,7 +403,6 @@ class WinPyMelUI(object):
                                         allowMultiSelection=True,
                                         append=('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten')
                                     )
-
 
                 self.uiBTN_savePrefs = pm.button(
                     label='Save Prefs',
@@ -442,6 +441,8 @@ class WinPyMelUI(object):
                 uiLAY_mainForm.attachPosition(self.uiBTN_resetPrefs, 'left', 2, 66)
                 uiLAY_mainForm.attachForm(self.uiBTN_resetPrefs, 'right', 2)
                 uiLAY_mainForm.attachForm(self.uiBTN_resetPrefs, 'bottom', 2)
+
+        self.window.setTitle(self.window.__class__)
 
     # noinspection PyMethodMayBeStatic
     def uiCreateFrame(self, controlName, name, collapsed=False):
