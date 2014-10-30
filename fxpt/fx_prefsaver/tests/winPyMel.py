@@ -8,7 +8,7 @@ MAIN_BUTTONS_HEIGHT = 30
 # noinspection PyAttributeOutsideInit
 class WinPyMelUI(object):
 
-    def __init__(self):
+    def __init__(self, serializer):
         self.uiCreate()
 
     def uiCreate(self):
@@ -462,5 +462,5 @@ class WinPyMelUI(object):
             pm.deleteUI(WIN_NAME, window=True)
 
 
-def run():
-    WinPyMelUI()
+def run(serializer):
+    WinPyMelUI(serializer)

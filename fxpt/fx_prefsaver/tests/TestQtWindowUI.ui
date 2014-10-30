@@ -6,18 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>771</width>
-    <height>584</height>
+    <width>957</width>
+    <height>753</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,1">
-      <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="handleWidth">
+       <number>10</number>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QLineEdit" name="uiLED_test1"/>
@@ -26,6 +32,16 @@
          <widget class="QCheckBox" name="uiCHK_test1">
           <property name="text">
            <string>CheckBox</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="uiCHK_testTri1">
+          <property name="text">
+           <string>TriState CheckBox</string>
+          </property>
+          <property name="tristate">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -129,396 +145,394 @@
          </spacer>
         </item>
        </layout>
-      </item>
-      <item>
-       <widget class="QTabWidget" name="uiTAB_test1">
-        <property name="currentIndex">
-         <number>5</number>
-        </property>
-        <widget class="QWidget" name="uiTABPG_listWidget">
-         <attribute name="title">
-          <string>List Widget</string>
-         </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QListWidget" name="uiLSTWID_test1">
-            <property name="selectionMode">
-             <enum>QAbstractItemView::ExtendedSelection</enum>
+      </widget>
+      <widget class="QTabWidget" name="uiTAB_test1">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="uiTABPG_listWidget">
+        <attribute name="title">
+         <string>List Widget</string>
+        </attribute>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QListWidget" name="uiLSTWID_test1">
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+           <item>
+            <property name="text">
+             <string>Item1</string>
             </property>
-            <item>
-             <property name="text">
-              <string>Item1</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Item2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Item3</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Item4</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Item5</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Item6</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Item7</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="uiTABPG_treeWidget">
-         <attribute name="title">
-          <string>Tree Widget</string>
-         </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <widget class="QTreeWidget" name="uiTREW_test1">
-            <property name="alternatingRowColors">
-             <bool>true</bool>
+           </item>
+           <item>
+            <property name="text">
+             <string>Item2</string>
             </property>
-            <property name="selectionMode">
-             <enum>QAbstractItemView::ExtendedSelection</enum>
+           </item>
+           <item>
+            <property name="text">
+             <string>Item3</string>
             </property>
-            <property name="selectionBehavior">
-             <enum>QAbstractItemView::SelectItems</enum>
+           </item>
+           <item>
+            <property name="text">
+             <string>Item4</string>
             </property>
-            <attribute name="headerDefaultSectionSize">
-             <number>200</number>
-            </attribute>
-            <attribute name="headerMinimumSectionSize">
-             <number>200</number>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>column1</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>column2</string>
-             </property>
-            </column>
-            <item>
-             <property name="text">
-              <string>folder1</string>
-             </property>
-             <property name="text">
-              <string>value1</string>
-             </property>
-             <item>
-              <property name="text">
-               <string>folder11</string>
-              </property>
-              <property name="text">
-               <string>value2</string>
-              </property>
-              <item>
-               <property name="text">
-                <string>item111</string>
-               </property>
-               <property name="text">
-                <string>value3</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>item112</string>
-               </property>
-               <property name="text">
-                <string>value4</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>item113</string>
-               </property>
-               <property name="text">
-                <string>value5</string>
-               </property>
-              </item>
-             </item>
-            </item>
-            <item>
-             <property name="text">
-              <string>folder2</string>
-             </property>
-             <property name="text">
-              <string>value6</string>
-             </property>
-             <item>
-              <property name="text">
-               <string>folder21</string>
-              </property>
-              <property name="text">
-               <string>value7</string>
-              </property>
-              <item>
-               <property name="text">
-                <string>item211</string>
-               </property>
-               <property name="text">
-                <string>value8</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>item212</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>item213</string>
-               </property>
-              </item>
-             </item>
-            </item>
-            <item>
-             <property name="text">
-              <string>folder3</string>
-             </property>
-             <item>
-              <property name="text">
-               <string>folder31</string>
-              </property>
-              <item>
-               <property name="text">
-                <string>item311</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>item312</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>item313</string>
-               </property>
-              </item>
-             </item>
-            </item>
-            <item>
-             <property name="text">
-              <string>rootItem1</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>rootItem2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>rootItem3</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="uiTABPG_tableWidget">
-         <attribute name="title">
-          <string>Table Widget</string>
-         </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="QTableWidget" name="uiTBLWID_test1">
-            <row>
-             <property name="text">
-              <string>Row1</string>
-             </property>
-            </row>
-            <row>
-             <property name="text">
-              <string>Row2</string>
-             </property>
-            </row>
-            <row>
-             <property name="text">
-              <string>Row3</string>
-             </property>
-            </row>
-            <row>
-             <property name="text">
-              <string>Row4</string>
-             </property>
-            </row>
-            <row>
-             <property name="text">
-              <string>Row5</string>
-             </property>
-            </row>
-            <row>
-             <property name="text">
-              <string>Row6</string>
-             </property>
-            </row>
-            <row>
-             <property name="text">
-              <string>Row7</string>
-             </property>
-            </row>
-            <column>
-             <property name="text">
-              <string>Column1</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Column2</string>
-             </property>
-            </column>
-            <item row="0" column="0">
-             <property name="text">
-              <string>value11</string>
-             </property>
-            </item>
-            <item row="0" column="1">
-             <property name="text">
-              <string>value12</string>
-             </property>
-            </item>
-            <item row="1" column="0">
-             <property name="text">
-              <string>value21</string>
-             </property>
-            </item>
-            <item row="1" column="1">
-             <property name="text">
-              <string>value22</string>
-             </property>
-            </item>
-            <item row="2" column="0">
-             <property name="text">
-              <string>value31</string>
-             </property>
-            </item>
-            <item row="2" column="1">
-             <property name="text">
-              <string>value32</string>
-             </property>
-            </item>
-            <item row="3" column="0">
-             <property name="text">
-              <string>value41</string>
-             </property>
-            </item>
-            <item row="3" column="1">
-             <property name="text">
-              <string>value42</string>
-             </property>
-            </item>
-            <item row="4" column="0">
-             <property name="text">
-              <string>value51</string>
-             </property>
-            </item>
-            <item row="4" column="1">
-             <property name="text">
-              <string>value52</string>
-             </property>
-            </item>
-            <item row="5" column="0">
-             <property name="text">
-              <string>value61</string>
-             </property>
-            </item>
-            <item row="5" column="1">
-             <property name="text">
-              <string>value62</string>
-             </property>
-            </item>
-            <item row="6" column="0">
-             <property name="text">
-              <string>value71</string>
-             </property>
-            </item>
-            <item row="6" column="1">
-             <property name="text">
-              <string>value72</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="uiTABPG_listView">
-         <attribute name="title">
-          <string>List View</string>
-         </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="QListView" name="uiLSTV_test1"/>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="uiTABPG_treeView">
-         <attribute name="title">
-          <string>Tree View</string>
-         </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_8">
-          <item>
-           <widget class="QTreeView" name="uiTREV_test1">
-            <property name="alternatingRowColors">
-             <bool>true</bool>
+           </item>
+           <item>
+            <property name="text">
+             <string>Item5</string>
             </property>
-            <property name="selectionMode">
-             <enum>QAbstractItemView::ExtendedSelection</enum>
+           </item>
+           <item>
+            <property name="text">
+             <string>Item6</string>
             </property>
-            <property name="selectionBehavior">
-             <enum>QAbstractItemView::SelectItems</enum>
+           </item>
+           <item>
+            <property name="text">
+             <string>Item7</string>
             </property>
-            <attribute name="headerDefaultSectionSize">
-             <number>200</number>
-            </attribute>
-            <attribute name="headerMinimumSectionSize">
-             <number>200</number>
-            </attribute>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="uiTABPG_tableView">
-         <attribute name="title">
-          <string>Table View</string>
-         </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_10">
-          <item>
-           <widget class="QTableView" name="uiTBLV_test1"/>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="uiTABPG_columnView">
-         <attribute name="title">
-          <string>Column View</string>
-         </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_9">
-          <item>
-           <widget class="QColumnView" name="uiCOLV_test1"/>
-          </item>
-         </layout>
-        </widget>
+           </item>
+          </widget>
+         </item>
+        </layout>
        </widget>
-      </item>
-     </layout>
+       <widget class="QWidget" name="uiTABPG_treeWidget">
+        <attribute name="title">
+         <string>Tree Widget</string>
+        </attribute>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QTreeWidget" name="uiTREW_test1">
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectItems</enum>
+           </property>
+           <attribute name="headerDefaultSectionSize">
+            <number>200</number>
+           </attribute>
+           <attribute name="headerMinimumSectionSize">
+            <number>200</number>
+           </attribute>
+           <column>
+            <property name="text">
+             <string>column1</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>column2</string>
+            </property>
+           </column>
+           <item>
+            <property name="text">
+             <string>folder1</string>
+            </property>
+            <property name="text">
+             <string>value1</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>folder11</string>
+             </property>
+             <property name="text">
+              <string>value2</string>
+             </property>
+             <item>
+              <property name="text">
+               <string>item111</string>
+              </property>
+              <property name="text">
+               <string>value3</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>item112</string>
+              </property>
+              <property name="text">
+               <string>value4</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>item113</string>
+              </property>
+              <property name="text">
+               <string>value5</string>
+              </property>
+             </item>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>folder2</string>
+            </property>
+            <property name="text">
+             <string>value6</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>folder21</string>
+             </property>
+             <property name="text">
+              <string>value7</string>
+             </property>
+             <item>
+              <property name="text">
+               <string>item211</string>
+              </property>
+              <property name="text">
+               <string>value8</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>item212</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>item213</string>
+              </property>
+             </item>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>folder3</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>folder31</string>
+             </property>
+             <item>
+              <property name="text">
+               <string>item311</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>item312</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>item313</string>
+              </property>
+             </item>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>rootItem1</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>rootItem2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>rootItem3</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="uiTABPG_tableWidget">
+        <attribute name="title">
+         <string>Table Widget</string>
+        </attribute>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QTableWidget" name="uiTBLWID_test1">
+           <row>
+            <property name="text">
+             <string>Row1</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Row2</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Row3</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Row4</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Row5</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Row6</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Row7</string>
+            </property>
+           </row>
+           <column>
+            <property name="text">
+             <string>Column1</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Column2</string>
+            </property>
+           </column>
+           <item row="0" column="0">
+            <property name="text">
+             <string>value11</string>
+            </property>
+           </item>
+           <item row="0" column="1">
+            <property name="text">
+             <string>value12</string>
+            </property>
+           </item>
+           <item row="1" column="0">
+            <property name="text">
+             <string>value21</string>
+            </property>
+           </item>
+           <item row="1" column="1">
+            <property name="text">
+             <string>value22</string>
+            </property>
+           </item>
+           <item row="2" column="0">
+            <property name="text">
+             <string>value31</string>
+            </property>
+           </item>
+           <item row="2" column="1">
+            <property name="text">
+             <string>value32</string>
+            </property>
+           </item>
+           <item row="3" column="0">
+            <property name="text">
+             <string>value41</string>
+            </property>
+           </item>
+           <item row="3" column="1">
+            <property name="text">
+             <string>value42</string>
+            </property>
+           </item>
+           <item row="4" column="0">
+            <property name="text">
+             <string>value51</string>
+            </property>
+           </item>
+           <item row="4" column="1">
+            <property name="text">
+             <string>value52</string>
+            </property>
+           </item>
+           <item row="5" column="0">
+            <property name="text">
+             <string>value61</string>
+            </property>
+           </item>
+           <item row="5" column="1">
+            <property name="text">
+             <string>value62</string>
+            </property>
+           </item>
+           <item row="6" column="0">
+            <property name="text">
+             <string>value71</string>
+            </property>
+           </item>
+           <item row="6" column="1">
+            <property name="text">
+             <string>value72</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="uiTABPG_listView">
+        <attribute name="title">
+         <string>List View</string>
+        </attribute>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QListView" name="uiLSTV_test1"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="uiTABPG_treeView">
+        <attribute name="title">
+         <string>Tree View</string>
+        </attribute>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QTreeView" name="uiTREV_test1">
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectItems</enum>
+           </property>
+           <attribute name="headerDefaultSectionSize">
+            <number>200</number>
+           </attribute>
+           <attribute name="headerMinimumSectionSize">
+            <number>200</number>
+           </attribute>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="uiTABPG_tableView">
+        <attribute name="title">
+         <string>Table View</string>
+        </attribute>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QTableView" name="uiTBLV_test1"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="uiTABPG_columnView">
+        <attribute name="title">
+         <string>Column View</string>
+        </attribute>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QColumnView" name="uiCOLV_test1"/>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </widget>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_5">

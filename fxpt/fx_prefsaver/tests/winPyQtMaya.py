@@ -7,7 +7,7 @@ import TestQtWindow
 mainWin = None
 
 
-def run():
+def run(serializer):
 
     global mainWin
     if not mainWin:
@@ -16,7 +16,7 @@ def run():
             mainWinQObject = sip.wrapinstance(long(ptr), QtCore.QObject)
         else:
             raise Exception('Cannot find Maya main window.')
-        mainWin = TestQtWindow.TestQtWindow(TestQtWindow.TestQtWindow.QtTypePyQt, parent=mainWinQObject)
+        mainWin = TestQtWindow.TestQtWindow(TestQtWindow.TestQtWindow.QtTypePyQt, serializer, parent=mainWinQObject)
 
     mainWin.show()
     mainWin.raise_()

@@ -12,7 +12,7 @@ class TestQtWindow(object):
     QtTypePySide = 1
 
     # noinspection PyArgumentList
-    def __init__(self, qtType, parent=None):
+    def __init__(self, qtType, ser, parent=None):
 
         global QtGui
         if qtType == TestQtWindow.QtTypePyQt:
@@ -31,7 +31,7 @@ class TestQtWindow(object):
         self.dlg.setWindowTitle(str(self.dlg))
 
         self.registerSlots()
-        self.initPrefs()
+        self.initPrefs(ser)
         self.ui.setupUi(self.win)
 
         self.win.setWindowTitle('{}; {}'.format(str(self.win), str(self.dlg)))
@@ -118,10 +118,21 @@ class TestQtWindow(object):
         self.win.raise_()
 
     # noinspection PyAttributeOutsideInit
-    def initPrefs(self):
-        self.prefSaver = PrefSaver.PrefSaverFile('aaa')
+    def initPrefs(self, ser):
 
-        # self.prefSaver.addControl(self, PrefSaver.UIType.QtWindow, (200, 200, 900, 500))
+        if ser == 'SerializerFile':
+            from fxpt.fx_prefsaver.SerializerFile import SerializerFile
+            serializer = SerializerFile('winQt.cfg')
+        elif ser == 'SerializerOptVars':
+            from fxpt.fx_prefsaver.SerializerOptVars import SerializerOptVars
+            serializer = SerializerOptVars('TestQtWindow')
+        else:
+            assert False, 'Unknown serializer type'
+
+        self.prefSaver = PrefSaver.PrefSaver(serializer)
+
+        self.prefSaver.addControl(self, PrefSaver.UITypes.PYQTWindow, (200, 200, 900, 500))
+        self.prefSaver.addControl(self, PrefSaver.UITypes.PYSIDEWindow, (200, 200, 900, 500))
         # self.prefSaver.addControl(self.uiSPLmain, PrefSaver.UIType.QtSplitter, (600, 0))
         #
         # self.lastBrowsedFolder = DIR_SCENES_SRC

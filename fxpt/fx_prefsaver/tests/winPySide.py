@@ -9,7 +9,7 @@ import TestQtWindow
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    win = TestQtWindow.TestQtWindow(TestQtWindow.TestQtWindow.QtTypePySide, parent=None)
+    win = TestQtWindow.TestQtWindow(TestQtWindow.TestQtWindow.QtTypePySide, 'SerializerFile', parent=None)
     win.show()
     app.exec_()
     sys.exit()

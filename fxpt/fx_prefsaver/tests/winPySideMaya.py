@@ -7,7 +7,7 @@ import TestQtWindow
 mainWin = None
 
 
-def run():
+def run(serializer):
 
     global mainWin
     if not mainWin:
@@ -16,7 +16,7 @@ def run():
             mainWinQObject = shiboken.wrapInstance(long(ptr), QtGui.QMainWindow)  # or you can use QMainWindow
         else:
             raise Exception('Cannot find Maya main window.')
-        mainWin = TestQtWindow.TestQtWindow(TestQtWindow.TestQtWindow.QtTypePySide, parent=mainWinQObject)
+        mainWin = TestQtWindow.TestQtWindow(TestQtWindow.TestQtWindow.QtTypePySide, serializer, parent=mainWinQObject)
 
     mainWin.show()
     mainWin.raise_()
