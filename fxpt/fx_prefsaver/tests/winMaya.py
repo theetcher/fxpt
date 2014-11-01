@@ -348,6 +348,44 @@ class WinELFUI(object):
         m.setParent(mainColumn)
 
         #--------
+        self.uiLAY_frameOptionMenus = self.uiCreateFrame('uiLAY_frameOptionMenus', 'Option Menus (PMOptionMenu)')
+
+        m.columnLayout()
+
+        m.separator(style='none', height=2)
+
+        m.rowLayout(numberOfColumns=3)
+
+        m.separator(width=110, style='none')
+        self.uiOPTMNU_test1 = m.optionMenu('uiOPTMNU_test1', label='test1')
+        m.menuItem(label='one')
+        m.menuItem(label='two')
+        m.menuItem(label='three')
+        self.uiOPTMNU_test2 = m.optionMenu('uiOPTMNU_test2', label='test2')
+        m.menuItem(label='four')
+        m.menuItem(label='five')
+        m.menuItem(label='six')
+
+        m.setParent(mainColumn)
+
+        #--------
+        self.uiLAY_frameOptionMenuGroups = self.uiCreateFrame('uiLAY_frameOptionMenuGroups', 'Option Menus Groups (PMOptionMenuGrp)')
+
+        m.columnLayout()
+
+        m.separator(style='none', height=2)
+        self.uiOPMGRP_test1 = m.optionMenuGrp('uiOPMGRP_test1', label='test1', extraLabel='extraLabel')
+        m.menuItem(label='one')
+        m.menuItem(label='two')
+        m.menuItem(label='three')
+        self.uiOPMGRP_test2 = m.optionMenuGrp('uiOPMGRP_test2', label='test2', extraLabel='extraLabel')
+        m.menuItem(label='four')
+        m.menuItem(label='five')
+        m.menuItem(label='six')
+
+        m.setParent(mainColumn)
+
+        #--------
         self.uiLAY_frameRadioButtons = self.uiCreateFrame('uiLAY_frameRadioButtons', 'Radio Buttons (PMRadioButton)')
 
         m.columnLayout()

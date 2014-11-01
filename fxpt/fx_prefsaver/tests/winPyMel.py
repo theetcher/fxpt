@@ -254,6 +254,32 @@ class WinPyMelUI(object):
                                     field=True
                                 )
 
+                        with self.uiCreateFrame('uiLAY_frameOptionMenus', 'Option Menus (PMOptionMenu)') as self.uiLAY_frameOptionMenus:
+                            with pm.columnLayout():
+                                pm.separator(style='none', height=2)
+                                with pm.rowLayout(numberOfColumns=3):
+                                    pm.separator(width=110, style='none')
+                                    self.uiOPTMNU_test1 = pm.optionMenu('uiOPTMNU_test1', label='test1')
+                                    pm.menuItem(label='one')
+                                    pm.menuItem(label='two')
+                                    pm.menuItem(label='three')
+                                    self.uiOPTMNU_test2 = pm.optionMenu('uiOPTMNU_test2', label='test2')
+                                    pm.menuItem(label='four')
+                                    pm.menuItem(label='five')
+                                    pm.menuItem(label='six')
+
+                        with self.uiCreateFrame('uiLAY_frameOptionMenuGroups', 'Option Menus Groups (PMOptionMenuGrp)') as self.uiLAY_frameOptionMenuGroups:
+                            with pm.columnLayout():
+                                pm.separator(style='none', height=2)
+                                self.uiOPMGRP_test1 = pm.optionMenuGrp('uiOPMGRP_test1', label='test1', extraLabel='extraLabel')
+                                pm.menuItem(label='one')
+                                pm.menuItem(label='two')
+                                pm.menuItem(label='three')
+                                self.uiOPMGRP_test2 = pm.optionMenuGrp('uiOPMGRP_test2', label='test2', extraLabel='extraLabel')
+                                pm.menuItem(label='four')
+                                pm.menuItem(label='five')
+                                pm.menuItem(label='six')
+
                         with self.uiCreateFrame('uiLAY_frameRadioButtons', 'Radio Buttons (PMRadioButton)') as self.uiLAY_frameRadioButtons:
                             with pm.columnLayout():
                                 with pm.rowLayout(numberOfColumns=4):

@@ -8,55 +8,83 @@ try:
 except ImportError:
     _PySide = None
 
-from UITypes import UITypes
+from PSTypes import UITypes
 from com import message
 
 
 # noinspection PyAttributeOutsideInit
-class QtControllerBase(object):
+class QtCtrlBase(object):
 
-    def __init__(self, qt, control, defaultValue,):
+    def __init__(self, qt, control, defaultValue):
         self.qt = qt
         self.control = control
+        self.controlName = str(control.objectName())
         self.defaultValue = defaultValue
+
+    def ctrl2Dict(self, prefDict):
+        raise NotImplementedError('Call to abstract method.')
+
+    def dict2Ctrl(self, prefDict):
+        raise NotImplementedError('Call to abstract method.')
+
+
+class QtCtrlWindow(QtCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlWindow, self).__init__(*args, **kwargs)
+
+    def ctrl2Dict(self, prefDict):
+        prefDict[self.controlName + 'X'] = self.control.x()
+        prefDict[self.controlName + 'Y'] = self.control.y()
+        prefDict[self.controlName + 'Width'] = self.control.width()
+        prefDict[self.controlName + 'Height'] = self.control.height()
+
+    def dict2Ctrl(self, prefDict):
+        x = prefDict[self.controlName + 'X'] if self.controlName + 'X' in prefDict else self.defaultValue[0]
+        y = prefDict[self.controlName + 'Y'] if self.controlName + 'Y' in prefDict else self.defaultValue[1]
+        width = prefDict[self.controlName + 'Width'] if self.controlName + 'Width' in prefDict else self.defaultValue[2]
+        height = prefDict[self.controlName + 'Height'] if self.controlName + 'Height' in prefDict else self.defaultValue[3]
+        self.control.move(x, y)
+        self.control.resize(width, height)
+
 
 
 constructors = {
-    UITypes.PYQTWindow: QtControllerBase,
-    UITypes.PYQTLineEdit: QtControllerBase,
-    UITypes.PYQTCheckBox: QtControllerBase,
-    UITypes.PYQTCheckBoxTri: QtControllerBase,
-    UITypes.PYQTRadioButton: QtControllerBase,
-    UITypes.PYQTCheckButton: QtControllerBase,
-    UITypes.PYQTComboBox: QtControllerBase,
-    UITypes.PYQTComboBoxNoEdit: QtControllerBase,
-    UITypes.PYQTTabControl: QtControllerBase,
-    UITypes.PYQTSplitter: QtControllerBase,
-    UITypes.PYQTListWidget: QtControllerBase,
-    UITypes.PYQTTreeWidget: QtControllerBase,
-    UITypes.PYQTTableWidget: QtControllerBase,
-    UITypes.PYQTListView: QtControllerBase,
-    UITypes.PYQTTreeView: QtControllerBase,
-    UITypes.PYQTTableView: QtControllerBase,
-    UITypes.PYQTColumnView: QtControllerBase,
+    UITypes.PYQTWindow: QtCtrlWindow,
+    UITypes.PYQTLineEdit: QtCtrlBase,
+    UITypes.PYQTCheckBox: QtCtrlBase,
+    UITypes.PYQTCheckBoxTri: QtCtrlBase,
+    UITypes.PYQTRadioButton: QtCtrlBase,
+    UITypes.PYQTCheckButton: QtCtrlBase,
+    UITypes.PYQTComboBox: QtCtrlBase,
+    UITypes.PYQTComboBoxNoEdit: QtCtrlBase,
+    UITypes.PYQTTabControl: QtCtrlBase,
+    UITypes.PYQTSplitter: QtCtrlBase,
+    UITypes.PYQTListWidget: QtCtrlBase,
+    UITypes.PYQTTreeWidget: QtCtrlBase,
+    UITypes.PYQTTableWidget: QtCtrlBase,
+    UITypes.PYQTListView: QtCtrlBase,
+    UITypes.PYQTTreeView: QtCtrlBase,
+    UITypes.PYQTTableView: QtCtrlBase,
+    UITypes.PYQTColumnView: QtCtrlBase,
 
-    UITypes.PYSIDEWindow: QtControllerBase,
-    UITypes.PYSIDELineEdit: QtControllerBase,
-    UITypes.PYSIDECheckBox: QtControllerBase,
-    UITypes.PYSIDECheckBoxTri: QtControllerBase,
-    UITypes.PYSIDERadioButton: QtControllerBase,
-    UITypes.PYSIDECheckButton: QtControllerBase,
-    UITypes.PYSIDEComboBox: QtControllerBase,
-    UITypes.PYSIDEComboBoxNoEdit: QtControllerBase,
-    UITypes.PYSIDETabControl: QtControllerBase,
-    UITypes.PYSIDESplitter: QtControllerBase,
-    UITypes.PYSIDEListWidget: QtControllerBase,
-    UITypes.PYSIDETreeWidget: QtControllerBase,
-    UITypes.PYSIDETableWidget: QtControllerBase,
-    UITypes.PYSIDEListView: QtControllerBase,
-    UITypes.PYSIDETreeView: QtControllerBase,
-    UITypes.PYSIDETableView: QtControllerBase,
-    UITypes.PYSIDEColumnView: QtControllerBase,
+    UITypes.PYSIDEWindow: QtCtrlWindow,
+    UITypes.PYSIDELineEdit: QtCtrlBase,
+    UITypes.PYSIDECheckBox: QtCtrlBase,
+    UITypes.PYSIDECheckBoxTri: QtCtrlBase,
+    UITypes.PYSIDERadioButton: QtCtrlBase,
+    UITypes.PYSIDECheckButton: QtCtrlBase,
+    UITypes.PYSIDEComboBox: QtCtrlBase,
+    UITypes.PYSIDEComboBoxNoEdit: QtCtrlBase,
+    UITypes.PYSIDETabControl: QtCtrlBase,
+    UITypes.PYSIDESplitter: QtCtrlBase,
+    UITypes.PYSIDEListWidget: QtCtrlBase,
+    UITypes.PYSIDETreeWidget: QtCtrlBase,
+    UITypes.PYSIDETableWidget: QtCtrlBase,
+    UITypes.PYSIDEListView: QtCtrlBase,
+    UITypes.PYSIDETreeView: QtCtrlBase,
+    UITypes.PYSIDETableView: QtCtrlBase,
+    UITypes.PYSIDEColumnView: QtCtrlBase,
 }
 
 

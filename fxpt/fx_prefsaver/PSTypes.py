@@ -93,35 +93,37 @@ class UITypes(object):
     MFloatFieldGrp4 = 211
     MFloatScrollBar = 212
     MFloatSlider = 213
-    MFloatSliderGrp = 214
-    MFrameLayout = 215
-    MIconTextCheckBox = 216
-    MIconTextRadioButton = 217
-    MIconTextScrollList = 218  # same as MTextScrollList
-    MIntField = 219
-    MIntFieldGrp1 = 220
-    MIntFieldGrp2 = 221
-    MIntFieldGrp3 = 222
-    MIntFieldGrp4 = 223
-    MIntScrollBar = 224
-    MIntSlider = 225
-    MIntSliderGrp = 226
-    MRadioButton = 227
-    MRadioButtonGrp1 = 228
-    MRadioButtonGrp2 = 229
-    MRadioButtonGrp3 = 230
-    MRadioButtonGrp4 = 231
-    MSymbolCheckBox = 232
-    MScriptTable = 233
-    MScrollField = 234  # the same as MTextField
-    MScrollLayout = 235
-    MShelfTabLayout = 236
-    MSwitchTable = 237
-    MTabLayout = 238
-    MTextField = 239
-    MTextFieldButtonGrp = 240
-    MTextFieldGrp = 241
-    MTextScrollList = 242
+    MFloatSlider2 = 214
+    MFloatSliderGrp = 215
+    MFrameLayout = 216
+    MIconTextCheckBox = 217
+    MIconTextRadioButton = 218
+    MIconTextScrollList = 219  # same as MTextScrollList
+    MIntField = 220
+    MIntFieldGrp1 = 221
+    MIntFieldGrp2 = 222
+    MIntFieldGrp3 = 223
+    MIntFieldGrp4 = 224
+    MIntScrollBar = 225
+    MIntSlider = 226
+    MIntSliderGrp = 227
+    MOptionMenu = 228
+    MOptionMenuGrp = 229
+    MRadioButton = 230
+    MRadioButtonGrp1 = 231
+    MRadioButtonGrp2 = 232
+    MRadioButtonGrp3 = 233
+    MRadioButtonGrp4 = 234
+    MSymbolCheckBox = 235
+    MScriptTable = 236
+    MScrollField = 237  # the same as MTextField
+    MScrollLayout = 238
+    MShelfTabLayout = 239
+    MTabLayout = 240
+    MTextField = 241
+    MTextFieldButtonGrp = 242
+    MTextFieldGrp = 243
+    MTextScrollList = 244
 
     TypesM = set([
         MCheckBox,
@@ -137,6 +139,7 @@ class UITypes(object):
         MFloatFieldGrp4,
         MFloatScrollBar,
         MFloatSlider,
+        MFloatSlider2,
         MFloatSliderGrp,
         MFrameLayout,
         MIconTextCheckBox,
@@ -150,6 +153,8 @@ class UITypes(object):
         MIntScrollBar,
         MIntSlider,
         MIntSliderGrp,
+        MOptionMenu,
+        MOptionMenuGrp,
         MRadioButton,
         MRadioButtonGrp1,
         MRadioButtonGrp2,
@@ -160,12 +165,11 @@ class UITypes(object):
         MScrollField,  # the same as MTextField
         MScrollLayout,
         MShelfTabLayout,
-        MSwitchTable,
         MTabLayout,
         MTextField,
         MTextFieldButtonGrp,
         MTextFieldGrp,
-        MTextScrollList
+        MTextScrollList,
     ])
 
     # PyMel Types
@@ -196,21 +200,23 @@ class UITypes(object):
     PMIntScrollBar = 325
     PMIntSlider = 326
     PMIntSliderGrp = 327
-    PMRadioButton = 328
-    PMRadioButtonGrp1 = 329
-    PMRadioButtonGrp2 = 330
-    PMRadioButtonGrp3 = 331
-    PMRadioButtonGrp4 = 332
-    PMSymbolCheckBox = 333
-    PMScriptTable = 334
-    PMScrollField = 335  # the same as PMTextField
-    PMScrollLayout = 336
-    PMShelfTabLayout = 337
-    PMTabLayout = 338
-    PMTextField = 339
-    PMTextFieldButtonGrp = 340
-    PMTextFieldGrp = 341
-    PMTextScrollList = 342
+    PMOptionMenu = 328
+    PMOptionMenuGrp = 329
+    PMRadioButton = 330
+    PMRadioButtonGrp1 = 331
+    PMRadioButtonGrp2 = 332
+    PMRadioButtonGrp3 = 333
+    PMRadioButtonGrp4 = 334
+    PMSymbolCheckBox = 335
+    PMScriptTable = 336
+    PMScrollField = 337  # the same as PMTextField
+    PMScrollLayout = 338
+    PMShelfTabLayout = 339
+    PMTabLayout = 340
+    PMTextField = 341
+    PMTextFieldButtonGrp = 342
+    PMTextFieldGrp = 343
+    PMTextScrollList = 344
 
     TypesPM = set([
         PMCheckBox,
@@ -240,6 +246,8 @@ class UITypes(object):
         PMIntScrollBar,
         PMIntSlider,
         PMIntSliderGrp,
+        PMOptionMenu,
+        PMOptionMenuGrp,
         PMRadioButton,
         PMRadioButtonGrp1,
         PMRadioButtonGrp2,
@@ -262,19 +270,4 @@ class UITypes(object):
     VariableOptVar = 402
 
     TypesAll = TypesPYQT | TypesPYSIDE | TypesM | TypesPM
-
-    # Constructors = {
-    #     QtWindow: QtDescWindow,
-    #     QtLineEdit: QtDescLineEdit,
-    #     QtCheckBox: QtDescCheckBox,
-    #     QtRadioButton: QtDescRadioButton,
-    #     QtButton: QtDescButton,
-    #     QtComboBox: QtDescComboBox,
-    #     QtComboBoxNoEdit: QtDescComboBoxNoEdit,
-    #     QtTabControl: QtDescTabControl,
-    #     QtSplitter: QtDescSplitter,
-    #     QtTableWidget: QtDescTableWidget,
-    #     Variable: VarDesc,
-    #     VariableOptVar: VarDescOptVar
-    # }
 

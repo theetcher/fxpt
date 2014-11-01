@@ -1,7 +1,7 @@
 #region imports
 import os
 
-from UITypes import UITypes
+from PSTypes import UITypes
 
 import CtrlQt
 try:
@@ -26,7 +26,7 @@ class PrefSaver(object):
         super(PrefSaver, self).__init__()
         self.serializer = serializer
         self.controllers = []
-        self.prefDict = {}
+        # self.prefDict = {}
 
     # noinspection PyCallingNonCallable
     def addControl(self, control, uiType, defaultValue):
@@ -65,27 +65,22 @@ class PrefSaver(object):
     #         name, getFromVarFunc, setToVarFunc, defaultValue, self.optVarPrefix))
 
     def savePrefs(self):
-        self.gatherPrefs()
-        self.pickleSave(self.prefDict, self.filename)
+        self.serializer.save(self.gatherPrefs())
 
     def loadPrefs(self):
-        if os.path.exists(self.filename):
-            self.prefDict = self.pickleLoad(self.filename)
-        else:
-            self.prefDict = {}
-        self.applyPrefs()
+        self.applyPrefs(self.serializer.load())
 
     def resetPrefs(self):
-        self.prefDict = {}
-        self.applyPrefs()
+        self.applyPrefs({})
 
     def gatherPrefs(self):
-        self.prefDict = {}
-        for ctrlDesc in self.controllers:
-            ctrlDesc.ctrlToDict(self.prefDict)
+        prefDict = {}
+        for controller in self.controllers:
+            controller.ctrl2Dict(prefDict)
+        return prefDict
 
-    def applyPrefs(self):
-        for ctrlDesc in self.controllers:
-            ctrlDesc.dictToCtrl(self.prefDict)
+    def applyPrefs(self, prefDict):
+        for controller in self.controllers:
+            controller.dict2Ctrl(prefDict)
 
 

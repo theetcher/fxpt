@@ -1,8 +1,11 @@
 # from PyQt4 import QtGui
+import os
 
 from fxpt.fx_prefsaver import PrefSaver
 
 QtGui = None
+
+CFG_FILENAME = os.path.dirname(__file__) + '/prefs.cfg'
 
 
 # noinspection PyAttributeOutsideInit
@@ -120,9 +123,9 @@ class TestQtWindow(object):
     # noinspection PyAttributeOutsideInit
     def initPrefs(self, ser):
 
-        if ser == 'SerializerFile':
-            from fxpt.fx_prefsaver.SerializerFile import SerializerFile
-            serializer = SerializerFile('winQt.cfg')
+        if ser == 'SerializerFilePickle':
+            from fxpt.fx_prefsaver.SerializerFilePickle import SerializerFilePickle
+            serializer = SerializerFilePickle(CFG_FILENAME)
         elif ser == 'SerializerOptVars':
             from fxpt.fx_prefsaver.SerializerOptVars import SerializerOptVars
             serializer = SerializerOptVars('TestQtWindow')
@@ -131,8 +134,8 @@ class TestQtWindow(object):
 
         self.prefSaver = PrefSaver.PrefSaver(serializer)
 
-        self.prefSaver.addControl(self, PrefSaver.UITypes.PYQTWindow, (200, 200, 900, 500))
-        self.prefSaver.addControl(self, PrefSaver.UITypes.PYSIDEWindow, (200, 200, 900, 500))
+        self.prefSaver.addControl(self.win, PrefSaver.UITypes.PYQTWindow, (200, 200, 900, 500))
+        # self.prefSaver.addControl(self, PrefSaver.UITypes.PYSIDEWindow, (200, 200, 900, 500))
         # self.prefSaver.addControl(self.uiSPLmain, PrefSaver.UIType.QtSplitter, (600, 0))
         #
         # self.lastBrowsedFolder = DIR_SCENES_SRC
@@ -142,16 +145,16 @@ class TestQtWindow(object):
         # self.prefSaver.addVariable('lastBrowsedFolder', lambda: self.lastBrowsedFolder, setLastBrowsedFolder, DIR_SCENES_SRC)
 
     def onSavePrefsClicked(self):
-        print 'onSavePrefsClicked()'
-        # self.prefSaver.savePrefs()
+        # print 'onSavePrefsClicked()'
+        self.prefSaver.savePrefs()
 
     def onLoadPrefsClicked(self):
-        print 'onLoadPrefsClicked()'
-        # self.prefSaver.loadPrefs()
+        # print 'onLoadPrefsClicked()'
+        self.prefSaver.loadPrefs()
 
     def onResetPrefsClicked(self):
-        print 'onResetPrefsClicked()'
-        # self.prefSaver.resetPrefs()
+        # print 'onResetPrefsClicked()'
+        self.prefSaver.resetPrefs()
 
     def onShowDialogClicked(self):
         self.dlg.show()
