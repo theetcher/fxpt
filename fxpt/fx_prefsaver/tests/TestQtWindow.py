@@ -157,8 +157,13 @@ class TestQtWindow(object):
             self.prefSaver.addControl(self.ui.uiCBX_test2, PrefSaver.UITypes.PYQTComboBoxEditable, -1)
             self.prefSaver.addControl(self.ui.uiTAB_test1, PrefSaver.UITypes.PYQTTabControl, 0)
             self.prefSaver.addControl(self.ui.uiSPL_test1, PrefSaver.UITypes.PYQTSplitter, (100, 400))
-            self.prefSaver.addControl(self.ui.uiTBLWID_test1, PrefSaver.UITypes.PYQTTableWidget, None)
+            # self.prefSaver.addControl(self.ui.uiLSTWID_test1, PrefSaver.UITypes.PYQTListWidget, None)
             # self.prefSaver.addControl(self.ui.uiTREW_test1, PrefSaver.UITypes.PYQTTreeWidget, None)
+            self.prefSaver.addControl(self.ui.uiTBLWID_test1, PrefSaver.UITypes.PYQTTableWidget, None)
+            # self.prefSaver.addControl(self.ui.uiLSTV_test1, PrefSaver.UITypes.PYQTListView, None)
+            self.prefSaver.addControl(self.ui.uiTREV_test1, PrefSaver.UITypes.PYQTTreeView, None)
+            # self.prefSaver.addControl(self.ui.uiTBLV_test1, PrefSaver.UITypes.PYQTTableView, None)
+            # self.prefSaver.addControl(self.ui.uiCOLV_test1, PrefSaver.UITypes.PYQTColumnView, None)
         else:
             self.prefSaver.addControl(self.win, PrefSaver.UITypes.PYSIDEWindow, (200, 200, 900, 500))
             self.prefSaver.addControl(self.dlg, PrefSaver.UITypes.PYSIDEWindow, (300, 300, 200, 200))
@@ -172,8 +177,13 @@ class TestQtWindow(object):
             self.prefSaver.addControl(self.ui.uiCBX_test2, PrefSaver.UITypes.PYSIDEComboBoxEditable, -1)
             self.prefSaver.addControl(self.ui.uiTAB_test1, PrefSaver.UITypes.PYSIDETabControl, 0)
             self.prefSaver.addControl(self.ui.uiSPL_test1, PrefSaver.UITypes.PYSIDESplitter, (100, 400))
-            self.prefSaver.addControl(self.ui.uiTBLWID_test1, PrefSaver.UITypes.PYSIDETableWidget, None)
+            # self.prefSaver.addControl(self.ui.uiLSTWID_test1, PrefSaver.UITypes.PYSIDEListWidget, None)
             # self.prefSaver.addControl(self.ui.uiTREW_test1, PrefSaver.UITypes.PYSIDETreeWidget, None)
+            self.prefSaver.addControl(self.ui.uiTBLWID_test1, PrefSaver.UITypes.PYSIDETableWidget, None)
+            # self.prefSaver.addControl(self.ui.uiLSTV_test1, PrefSaver.UITypes.PYSIDEListView, None)
+            self.prefSaver.addControl(self.ui.uiTREV_test1, PrefSaver.UITypes.PYSIDETreeView, None)
+            # self.prefSaver.addControl(self.ui.uiTBLV_test1, PrefSaver.UITypes.PYSIDETableView, None)
+            # self.prefSaver.addControl(self.ui.uiCOLV_test1, PrefSaver.UITypes.PYSIDEColumnView, None)
 
         # self.lastBrowsedFolder = DIR_SCENES_SRC
         #

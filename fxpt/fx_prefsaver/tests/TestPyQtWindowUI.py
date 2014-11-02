@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'TestQtWindowUI.ui'
 #
-# Created: Sun Nov 02 18:47:41 2014
+# Created: Sun Nov 02 20:56:17 2014
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -205,9 +205,11 @@ class Ui_MainWindow(object):
         self.uiTREV_test1.setAlternatingRowColors(True)
         self.uiTREV_test1.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.uiTREV_test1.setSelectionBehavior(QtGui.QAbstractItemView.SelectItems)
+        self.uiTREV_test1.setSortingEnabled(True)
         self.uiTREV_test1.setObjectName(_fromUtf8("uiTREV_test1"))
         self.uiTREV_test1.header().setDefaultSectionSize(200)
         self.uiTREV_test1.header().setMinimumSectionSize(200)
+        self.uiTREV_test1.header().setSortIndicatorShown(True)
         self.horizontalLayout_8.addWidget(self.uiTREV_test1)
         self.uiTAB_test1.addTab(self.uiTABPG_treeView, _fromUtf8(""))
         self.uiTABPG_tableView = QtGui.QWidget()
@@ -245,7 +247,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.uiTAB_test1.setCurrentIndex(1)
+        self.uiTAB_test1.setCurrentIndex(4)
         QtCore.QObject.connect(self.uiBTN_savePrefs, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.onSavePrefsClicked)
         QtCore.QObject.connect(self.uiBTN_loadPrefs, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.onLoadPrefsClicked)
         QtCore.QObject.connect(self.uiBTN_resetPrefs, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.onResetPrefsClicked)

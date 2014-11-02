@@ -148,7 +148,7 @@
       </widget>
       <widget class="QTabWidget" name="uiTAB_test1">
        <property name="currentIndex">
-        <number>1</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="uiTABPG_listWidget">
         <attribute name="title">
@@ -513,11 +513,17 @@
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectItems</enum>
            </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
            <attribute name="headerDefaultSectionSize">
             <number>200</number>
            </attribute>
            <attribute name="headerMinimumSectionSize">
             <number>200</number>
+           </attribute>
+           <attribute name="headerShowSortIndicator" stdset="0">
+            <bool>true</bool>
            </attribute>
           </widget>
          </item>

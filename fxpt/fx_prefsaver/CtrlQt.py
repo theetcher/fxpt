@@ -241,10 +241,10 @@ class QtCtrlTableWidget(QtCtrlComboBox):
             self.control.setRangeSelected(selectionRange, True)
 
 
-class QtCtrlTreeWidget(QtCtrlComboBox):
+class QtCtrlTreeView(QtCtrlComboBox):
 
     def __init__(self, *args, **kwargs):
-        super(QtCtrlTreeWidget, self).__init__(*args, **kwargs)
+        super(QtCtrlTreeView, self).__init__(*args, **kwargs)
         self.intToSortOrder = {
             0: self.qt.QtCore.Qt.AscendingOrder,
             1: self.qt.QtCore.Qt.DescendingOrder,
@@ -260,26 +260,33 @@ class QtCtrlTreeWidget(QtCtrlComboBox):
         prefDict[self.controlName + '_SortedSection'] = sortedSection
         prefDict[self.controlName + '_SortingOrder'] = self.sortOrderToInt[sortingOrder]
 
-        selectionRanges = self.control.selectedRanges()
-        if not selectionRanges:
-            return
-        rangesCount = len(selectionRanges)
-        prefDict[self.controlName] = rangesCount
+        selectionModel = self.control.selectionModel()
+        itemSelection = selectionModel.selection()
+        l = len(itemSelection)
+        selRanges = [sr for sr in itemSelection]
 
-        for i in range(rangesCount):
-            borderMappings = {
-                'Top': selectionRanges[i].topRow,
-                'Left': selectionRanges[i].leftColumn,
-                'Bottom': selectionRanges[i].bottomRow,
-                'Right': selectionRanges[i].rightColumn
-            }
-            for borderName in borderMappings:
-                prefDict[self.controlName + '_SelRange' + str(i) + borderName] = borderMappings[borderName]()
+        unpackedSelection = []
+        for sr in selRanges:
+            unpackedSelection.append((sr.top(), sr.left(), sr.bottom(), sr.right()))
+        # for sr in itemSelection:
+        #     pass
+        print 'unpackedSelection', unpackedSelection
+
+        selectedIndexes = selectionModel.selectedIndexes()
+        unpackedIndexes = [(i.row(), i.column()) for i in selectedIndexes]
+        print 'unpackedIndexes', unpackedIndexes
+
+        model = self.control.model()
+        persIndexes = model.persistentIndexList()
+        unpackedPersIndexes = [(i.row(), i.column()) for i in persIndexes]
+        print 'unpackedPersIndexes', unpackedPersIndexes
+
+
 
     def dict2Ctrl(self, prefDict):
         self.control.clearSelection()
 
-        for attribute in ('', '_SortedSection', '_SortingOrder'):
+        for attribute in ('_SortedSection', '_SortingOrder'):
             if self.controlName + attribute not in prefDict:
                 return
 
@@ -287,23 +294,6 @@ class QtCtrlTreeWidget(QtCtrlComboBox):
         sortingOrder = prefDict[self.controlName + '_SortingOrder']
         self.control.sortByColumn(sortedSection, self.intToSortOrder[sortingOrder])
 
-        rangesCount = prefDict[self.controlName]
-
-        selectionRanges = []
-
-        for i in range(rangesCount):
-            rangeValues = []
-            for borderName in ('Top', 'Left', 'Bottom', 'Right'):
-                rangeDictName = self.controlName + '_SelRange' + str(i) + borderName
-                if not rangeDictName in prefDict:
-                    return
-                else:
-                    rangeValues.append(prefDict[rangeDictName])
-
-            selectionRanges.append(self.qt.QtGui.QTableWidgetSelectionRange(*rangeValues))
-
-        for selectionRange in selectionRanges:
-            self.control.setRangeSelected(selectionRange, True)
 
 
 constructors = {
@@ -317,10 +307,10 @@ constructors = {
     UITypes.PYQTTabControl: QtCtrlComboBox,
     UITypes.PYQTSplitter: QtCtrlSplitter,
     UITypes.PYQTListWidget: QtCtrlBase,
-    UITypes.PYQTTreeWidget: QtCtrlTreeWidget,
+    UITypes.PYQTTreeWidget: QtCtrlBase,
     UITypes.PYQTTableWidget: QtCtrlTableWidget,
     UITypes.PYQTListView: QtCtrlBase,
-    UITypes.PYQTTreeView: QtCtrlBase,
+    UITypes.PYQTTreeView: QtCtrlTreeView,
     UITypes.PYQTTableView: QtCtrlBase,
     UITypes.PYQTColumnView: QtCtrlBase,
 
@@ -334,10 +324,10 @@ constructors = {
     UITypes.PYSIDETabControl: QtCtrlComboBox,
     UITypes.PYSIDESplitter: QtCtrlSplitter,
     UITypes.PYSIDEListWidget: QtCtrlBase,
-    UITypes.PYSIDETreeWidget: QtCtrlTreeWidget,
+    UITypes.PYSIDETreeWidget: QtCtrlBase,
     UITypes.PYSIDETableWidget: QtCtrlTableWidget,
     UITypes.PYSIDEListView: QtCtrlBase,
-    UITypes.PYSIDETreeView: QtCtrlBase,
+    UITypes.PYSIDETreeView: QtCtrlTreeView,
     UITypes.PYSIDETableView: QtCtrlBase,
     UITypes.PYSIDEColumnView: QtCtrlBase,
 }
