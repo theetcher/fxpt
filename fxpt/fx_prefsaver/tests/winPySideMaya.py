@@ -13,7 +13,7 @@ def run(serializer):
     if not mainWin:
         ptr = apiUI.MQtUtil.mainWindow()
         if ptr:
-            mainWinQObject = shiboken.wrapInstance(long(ptr), QtGui.QMainWindow)  # or you can use QMainWindow
+            mainWinQObject = shiboken.wrapInstance(long(ptr), QtGui.QMainWindow)
         else:
             raise Exception('Cannot find Maya main window.')
         mainWin = TestQtWindow.TestQtWindow(TestQtWindow.TestQtWindow.QtTypePySide, serializer, parent=mainWinQObject)

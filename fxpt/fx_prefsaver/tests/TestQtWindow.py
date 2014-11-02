@@ -4,6 +4,7 @@ import os
 from fxpt.fx_prefsaver import PrefSaver
 
 QtGui = None
+QtCore = None
 
 CFG_FILENAME = os.path.dirname(__file__) + '/prefs.cfg'
 
@@ -17,12 +18,17 @@ class TestQtWindow(object):
     # noinspection PyArgumentList
     def __init__(self, qtType, ser, parent=None):
 
+        self.qtType = qtType
+
+        global QtCore
         global QtGui
-        if qtType == TestQtWindow.QtTypePyQt:
+        if self.qtType == TestQtWindow.QtTypePyQt:
+            from PyQt4 import QtCore
             from PyQt4 import QtGui
             import TestPyQtWindowUI
             self.ui = TestPyQtWindowUI.Ui_MainWindow()
         else:
+            from PySide import QtCore
             from PySide import QtGui
             import TestPySideWindowUI
             self.ui = TestPySideWindowUI.Ui_MainWindow()
@@ -34,8 +40,10 @@ class TestQtWindow(object):
         self.dlg.setWindowTitle(str(self.dlg))
 
         self.registerSlots()
-        self.initPrefs(ser)
         self.ui.setupUi(self.win)
+
+        self.prefSaver = PrefSaver.PrefSaver(self.createSerializer(ser))
+        self.initPrefs()
 
         self.win.setWindowTitle('{}; {}'.format(str(self.win), str(self.dlg)))
 
@@ -120,24 +128,53 @@ class TestQtWindow(object):
     def raise_(self):
         self.win.raise_()
 
-    # noinspection PyAttributeOutsideInit
-    def initPrefs(self, ser):
-
+    # noinspection PyMethodMayBeStatic
+    def createSerializer(self, ser):
         if ser == 'SerializerFilePickle':
             from fxpt.fx_prefsaver.SerializerFilePickle import SerializerFilePickle
-            serializer = SerializerFilePickle(CFG_FILENAME)
+            return SerializerFilePickle(CFG_FILENAME)
+        if ser == 'SerializerFileJson':
+            from fxpt.fx_prefsaver.SerializerFileJson import SerializerFileJson
+            return SerializerFileJson(CFG_FILENAME)
         elif ser == 'SerializerOptVars':
             from fxpt.fx_prefsaver.SerializerOptVars import SerializerOptVars
-            serializer = SerializerOptVars('TestQtWindow')
+            return SerializerOptVars('TestQtWindow')
         else:
             assert False, 'Unknown serializer type'
 
-        self.prefSaver = PrefSaver.PrefSaver(serializer)
+    # noinspection PyAttributeOutsideInit
+    def initPrefs(self):
+        if self.qtType == TestQtWindow.QtTypePyQt:
+            self.prefSaver.addControl(self.win, PrefSaver.UITypes.PYQTWindow, (200, 200, 900, 500))
+            self.prefSaver.addControl(self.dlg, PrefSaver.UITypes.PYQTWindow, (300, 300, 200, 200))
+            self.prefSaver.addControl(self.ui.uiLED_test1, PrefSaver.UITypes.PYQTLineEdit, 'defaultValue')
+            self.prefSaver.addControl(self.ui.uiCHK_test1, PrefSaver.UITypes.PYQTCheckBox, QtCore.Qt.Unchecked)
+            self.prefSaver.addControl(self.ui.uiCHK_testTri1, PrefSaver.UITypes.PYQTCheckBox, QtCore.Qt.Unchecked)
+            self.prefSaver.addControl(self.ui.uiRAD_test1, PrefSaver.UITypes.PYQTRadioButton, True)
+            self.prefSaver.addControl(self.ui.uiRAD_test2, PrefSaver.UITypes.PYQTRadioButton, False)
+            self.prefSaver.addControl(self.ui.uiBTN_test1, PrefSaver.UITypes.PYQTCheckButton, False)
+            self.prefSaver.addControl(self.ui.uiCBX_test1, PrefSaver.UITypes.PYQTComboBox, -1)
+            self.prefSaver.addControl(self.ui.uiCBX_test2, PrefSaver.UITypes.PYQTComboBoxEditable, -1)
+            self.prefSaver.addControl(self.ui.uiTAB_test1, PrefSaver.UITypes.PYQTTabControl, 0)
+            self.prefSaver.addControl(self.ui.uiSPL_test1, PrefSaver.UITypes.PYQTSplitter, (100, 400))
+            self.prefSaver.addControl(self.ui.uiTBLWID_test1, PrefSaver.UITypes.PYQTTableWidget, None)
+            # self.prefSaver.addControl(self.ui.uiTREW_test1, PrefSaver.UITypes.PYQTTreeWidget, None)
+        else:
+            self.prefSaver.addControl(self.win, PrefSaver.UITypes.PYSIDEWindow, (200, 200, 900, 500))
+            self.prefSaver.addControl(self.dlg, PrefSaver.UITypes.PYSIDEWindow, (300, 300, 200, 200))
+            self.prefSaver.addControl(self.ui.uiLED_test1, PrefSaver.UITypes.PYSIDELineEdit, 'defaultValue')
+            self.prefSaver.addControl(self.ui.uiCHK_test1, PrefSaver.UITypes.PYSIDECheckBox, QtCore.Qt.Unchecked)
+            self.prefSaver.addControl(self.ui.uiCHK_testTri1, PrefSaver.UITypes.PYSIDECheckBox, QtCore.Qt.Unchecked)
+            self.prefSaver.addControl(self.ui.uiRAD_test1, PrefSaver.UITypes.PYSIDERadioButton, True)
+            self.prefSaver.addControl(self.ui.uiRAD_test2, PrefSaver.UITypes.PYSIDERadioButton, False)
+            self.prefSaver.addControl(self.ui.uiBTN_test1, PrefSaver.UITypes.PYSIDECheckButton, False)
+            self.prefSaver.addControl(self.ui.uiCBX_test1, PrefSaver.UITypes.PYSIDEComboBox, -1)
+            self.prefSaver.addControl(self.ui.uiCBX_test2, PrefSaver.UITypes.PYSIDEComboBoxEditable, -1)
+            self.prefSaver.addControl(self.ui.uiTAB_test1, PrefSaver.UITypes.PYSIDETabControl, 0)
+            self.prefSaver.addControl(self.ui.uiSPL_test1, PrefSaver.UITypes.PYSIDESplitter, (100, 400))
+            self.prefSaver.addControl(self.ui.uiTBLWID_test1, PrefSaver.UITypes.PYSIDETableWidget, None)
+            # self.prefSaver.addControl(self.ui.uiTREW_test1, PrefSaver.UITypes.PYSIDETreeWidget, None)
 
-        self.prefSaver.addControl(self.win, PrefSaver.UITypes.PYQTWindow, (200, 200, 900, 500))
-        # self.prefSaver.addControl(self, PrefSaver.UITypes.PYSIDEWindow, (200, 200, 900, 500))
-        # self.prefSaver.addControl(self.uiSPLmain, PrefSaver.UIType.QtSplitter, (600, 0))
-        #
         # self.lastBrowsedFolder = DIR_SCENES_SRC
         #
         # def setLastBrowsedFolder(s):

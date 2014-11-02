@@ -5,30 +5,28 @@ class UITypes(object):
     PYQTWindow = 1
     PYQTLineEdit = 2
     PYQTCheckBox = 3
-    PYQTCheckBoxTri = 4
-    PYQTRadioButton = 5
-    PYQTCheckButton = 6
-    PYQTComboBox = 7
-    PYQTComboBoxNoEdit = 8
-    PYQTTabControl = 9
-    PYQTSplitter = 10
-    PYQTListWidget = 11
-    PYQTTreeWidget = 12
-    PYQTTableWidget = 13
-    PYQTListView = 14
-    PYQTTreeView = 15
-    PYQTTableView = 16
-    PYQTColumnView = 17
+    PYQTRadioButton = 4
+    PYQTCheckButton = 5
+    PYQTComboBox = 6
+    PYQTComboBoxEditable = 7
+    PYQTTabControl = 8
+    PYQTSplitter = 9
+    PYQTListWidget = 10
+    PYQTTreeWidget = 11
+    PYQTTableWidget = 12
+    PYQTListView = 13
+    PYQTTreeView = 14
+    PYQTTableView = 15
+    PYQTColumnView = 16
 
     TypesPYQT = set([
         PYQTWindow,
         PYQTLineEdit,
         PYQTCheckBox,
-        PYQTCheckBoxTri,
         PYQTRadioButton,
         PYQTCheckButton,
         PYQTComboBox,
-        PYQTComboBoxNoEdit,
+        PYQTComboBoxEditable,
         PYQTTabControl,
         PYQTSplitter,
         PYQTListWidget,
@@ -44,30 +42,28 @@ class UITypes(object):
     PYSIDEWindow = 101
     PYSIDELineEdit = 102
     PYSIDECheckBox = 103
-    PYSIDECheckBoxTri = 104
-    PYSIDERadioButton = 105
-    PYSIDECheckButton = 106
-    PYSIDEComboBox = 107
-    PYSIDEComboBoxNoEdit = 108
-    PYSIDETabControl = 109
-    PYSIDESplitter = 110
-    PYSIDEListWidget = 111
-    PYSIDETreeWidget = 112
-    PYSIDETableWidget = 113
-    PYSIDEListView = 114
-    PYSIDETreeView = 115
-    PYSIDETableView = 116
-    PYSIDEColumnView = 117
+    PYSIDERadioButton = 104
+    PYSIDECheckButton = 105
+    PYSIDEComboBox = 106
+    PYSIDEComboBoxEditable = 107
+    PYSIDETabControl = 108
+    PYSIDESplitter = 109
+    PYSIDEListWidget = 110
+    PYSIDETreeWidget = 111
+    PYSIDETableWidget = 112
+    PYSIDEListView = 113
+    PYSIDETreeView = 114
+    PYSIDETableView = 115
+    PYSIDEColumnView = 116
 
     TypesPYSIDE = set([
         PYSIDEWindow,
         PYSIDELineEdit,
         PYSIDECheckBox,
-        PYSIDECheckBoxTri,
         PYSIDERadioButton,
         PYSIDECheckButton,
         PYSIDEComboBox,
-        PYSIDEComboBoxNoEdit,
+        PYSIDEComboBoxEditable,
         PYSIDETabControl,
         PYSIDESplitter,
         PYSIDEListWidget,

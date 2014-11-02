@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0">
     <item>
-     <widget class="QSplitter" name="splitter">
+     <widget class="QSplitter" name="uiSPL_test1">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -148,7 +148,7 @@
       </widget>
       <widget class="QTabWidget" name="uiTAB_test1">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="uiTABPG_listWidget">
         <attribute name="title">
@@ -215,11 +215,17 @@
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectItems</enum>
            </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
            <attribute name="headerDefaultSectionSize">
             <number>200</number>
            </attribute>
            <attribute name="headerMinimumSectionSize">
             <number>200</number>
+           </attribute>
+           <attribute name="headerShowSortIndicator" stdset="0">
+            <bool>true</bool>
            </attribute>
            <column>
             <property name="text">
@@ -233,40 +239,40 @@
            </column>
            <item>
             <property name="text">
-             <string>folder1</string>
+             <string>rootItem3</string>
             </property>
+           </item>
+           <item>
             <property name="text">
-             <string>value1</string>
+             <string>rootItem2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>rootItem1</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>folder3</string>
             </property>
             <item>
              <property name="text">
-              <string>folder11</string>
-             </property>
-             <property name="text">
-              <string>value2</string>
+              <string>folder31</string>
              </property>
              <item>
               <property name="text">
-               <string>item111</string>
-              </property>
-              <property name="text">
-               <string>value3</string>
+               <string>item313</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>item112</string>
-              </property>
-              <property name="text">
-               <string>value4</string>
+               <string>item312</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>item113</string>
-              </property>
-              <property name="text">
-               <string>value5</string>
+               <string>item311</string>
               </property>
              </item>
             </item>
@@ -287,10 +293,7 @@
              </property>
              <item>
               <property name="text">
-               <string>item211</string>
-              </property>
-              <property name="text">
-               <string>value8</string>
+               <string>item213</string>
               </property>
              </item>
              <item>
@@ -300,50 +303,53 @@
              </item>
              <item>
               <property name="text">
-               <string>item213</string>
+               <string>item211</string>
+              </property>
+              <property name="text">
+               <string>value8</string>
               </property>
              </item>
             </item>
            </item>
            <item>
             <property name="text">
-             <string>folder3</string>
+             <string>folder1</string>
+            </property>
+            <property name="text">
+             <string>value1</string>
             </property>
             <item>
              <property name="text">
-              <string>folder31</string>
+              <string>folder11</string>
+             </property>
+             <property name="text">
+              <string>value2</string>
              </property>
              <item>
               <property name="text">
-               <string>item311</string>
+               <string>item113</string>
+              </property>
+              <property name="text">
+               <string>value5</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>item312</string>
+               <string>item112</string>
+              </property>
+              <property name="text">
+               <string>value4</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>item313</string>
+               <string>item111</string>
+              </property>
+              <property name="text">
+               <string>value3</string>
               </property>
              </item>
             </item>
-           </item>
-           <item>
-            <property name="text">
-             <string>rootItem1</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>rootItem2</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>rootItem3</string>
-            </property>
            </item>
           </widget>
          </item>
@@ -356,6 +362,12 @@
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QTableWidget" name="uiTBLWID_test1">
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+            <bool>true</bool>
+           </attribute>
            <row>
             <property name="text">
              <string>Row1</string>
@@ -413,22 +425,22 @@
            </item>
            <item row="1" column="0">
             <property name="text">
-             <string>value21</string>
+             <string>value61</string>
             </property>
            </item>
            <item row="1" column="1">
             <property name="text">
-             <string>value22</string>
+             <string>value62</string>
             </property>
            </item>
            <item row="2" column="0">
             <property name="text">
-             <string>value31</string>
+             <string>value51</string>
             </property>
            </item>
            <item row="2" column="1">
             <property name="text">
-             <string>value32</string>
+             <string>value52</string>
             </property>
            </item>
            <item row="3" column="0">
@@ -443,22 +455,22 @@
            </item>
            <item row="4" column="0">
             <property name="text">
-             <string>value51</string>
+             <string>value31</string>
             </property>
            </item>
            <item row="4" column="1">
             <property name="text">
-             <string>value52</string>
+             <string>value32</string>
             </property>
            </item>
            <item row="5" column="0">
             <property name="text">
-             <string>value61</string>
+             <string>value21</string>
             </property>
            </item>
            <item row="5" column="1">
             <property name="text">
-             <string>value62</string>
+             <string>value22</string>
             </property>
            </item>
            <item row="6" column="0">
