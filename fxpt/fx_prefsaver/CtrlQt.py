@@ -12,6 +12,10 @@ from PSTypes import UITypes
 from com import message
 
 
+#TODO: test if there is no model connected
+#TODO: test if model is empty
+
+
 # noinspection PyAttributeOutsideInit
 class QtCtrlBase(object):
 
@@ -293,7 +297,7 @@ class QtCtrlTreeView(QtCtrlBase):
 
         self.selectedItems = []
         self.expandedItems = []
-        self.getIndexChildren(self.model.invisibleRootItem().index(), '')
+        self.getIndexChildren(self.getRootIndex(), '')
 
         prefDict[self.controlName + '_SelectedItems'] = ' '.join(self.selectedItems)
         prefDict[self.controlName + '_ExpandedItems'] = ' '.join(self.expandedItems)
