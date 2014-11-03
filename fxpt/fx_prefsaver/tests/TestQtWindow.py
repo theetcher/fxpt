@@ -23,11 +23,13 @@ class TestQtWindow(object):
         global QtCore
         global QtGui
         if self.qtType == TestQtWindow.QtTypePyQt:
+            # noinspection PyUnresolvedReferences
             from PyQt4 import QtCore
             from PyQt4 import QtGui
             import TestPyQtWindowUI
             self.ui = TestPyQtWindowUI.Ui_MainWindow()
         else:
+            # noinspection PyUnresolvedReferences
             from PySide import QtCore
             from PySide import QtGui
             import TestPySideWindowUI
@@ -42,9 +44,6 @@ class TestQtWindow(object):
         self.registerSlots()
         self.ui.setupUi(self.win)
 
-        self.prefSaver = PrefSaver.PrefSaver(self.createSerializer(ser))
-        self.initPrefs()
-
         self.win.setWindowTitle('{}; {}'.format(str(self.win), str(self.dlg)))
 
         self.fillListTreeColumnView()
@@ -52,6 +51,9 @@ class TestQtWindow(object):
 
         self.ui.uiTREW_test1.expandAll()
         self.ui.uiTREV_test1.expandAll()
+
+        self.prefSaver = PrefSaver.PrefSaver(self.createSerializer(ser))
+        self.initPrefs()
 
     def fillListTreeColumnView(self):
         model = QtGui.QStandardItemModel()
@@ -70,12 +72,17 @@ class TestQtWindow(object):
         folder11.appendRow((self.createItem('item113'), self.createItem('value113')))
 
         folder2 = self.createItem('folder2')
-        invisibleRoot.appendRow((folder2, self.createItem('value2')))
+
+        testItem = self.createItem('value2')
+
+        invisibleRoot.appendRow((folder2, testItem))
         folder21 = self.createItem('folder21')
         folder2.appendRow((folder21, self.createItem('value21')))
         folder21.appendRow((self.createItem('item211'), self.createItem('value211')))
         folder21.appendRow((self.createItem('item212'), self.createItem('value212')))
         folder21.appendRow((self.createItem('item213'), self.createItem('value213')))
+
+        testItem.appendRow((self.createItem('TEST_item1'), self.createItem('TEST_item2')))
 
         folder3 = self.createItem('folder3')
         invisibleRoot.appendRow(folder3)

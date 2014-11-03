@@ -148,7 +148,7 @@ class QtCtrlComboBoxEditable(QtCtrlComboBox):
         super(QtCtrlComboBoxEditable, self).dict2Ctrl(prefDict)
 
 
-class QtCtrlSplitter(QtCtrlComboBox):
+class QtCtrlSplitter(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlSplitter, self).__init__(*args, **kwargs)
@@ -176,7 +176,7 @@ class QtCtrlSplitter(QtCtrlComboBox):
         self.control.setSizes(sizes)
 
 
-class QtCtrlTableWidget(QtCtrlComboBox):
+class QtCtrlTableWidget(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlTableWidget, self).__init__(*args, **kwargs)
@@ -241,7 +241,7 @@ class QtCtrlTableWidget(QtCtrlComboBox):
             self.control.setRangeSelected(selectionRange, True)
 
 
-class QtCtrlTreeView(QtCtrlComboBox):
+class QtCtrlTreeView(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlTreeView, self).__init__(*args, **kwargs)
@@ -251,42 +251,58 @@ class QtCtrlTreeView(QtCtrlComboBox):
         }
         self.sortOrderToInt = dict((state, i) for i, state in self.intToSortOrder.items())
 
-    # noinspection PyCallingNonCallable
-    def ctrl2Dict(self, prefDict):
+        self.model = self.control.model()
+        self.itemSelectionModel = self.control.selectionModel()
 
+        self.selectedItems = []
+        self.expandedItems = []
+
+    def getIndexChildren(self, parentIndex, parentPath):
+        for r in xrange(self.model.rowCount(parentIndex)):
+            for c in range(self.model.columnCount(parentIndex)):
+                childIndex = self.model.index(r, c, parentIndex)
+                childPath = parentPath + '|{},{}'.format(childIndex.row(), childIndex.column())
+
+                if self.itemSelectionModel.isSelected(childIndex):
+                    self.selectedItems.append(childPath)
+                if self.control.isExpanded(childIndex):
+                    self.expandedItems.append(childPath)
+
+                self.getIndexChildren(childIndex, childPath)
+
+    def getIndexByPath(self, indexPath):
+        parentIndex = self.getRootIndex()
+        for indexStr in indexPath[1:].split('|'):
+            row, column = [int(x) for x in indexStr.split(',')]
+            childIndex = self.model.index(row, column, parentIndex)
+            if not childIndex.isValid():
+                return
+            parentIndex = childIndex
+        return parentIndex
+
+    def getRootIndex(self):
+        return self.model.invisibleRootItem().index()
+
+    # noinspection PyCallingNonCallable,PyAttributeOutsideInit
+    def ctrl2Dict(self, prefDict):
         horizontalHeader = self.control.header()
         sortedSection = horizontalHeader.sortIndicatorSection()
         sortingOrder = horizontalHeader.sortIndicatorOrder()
         prefDict[self.controlName + '_SortedSection'] = sortedSection
         prefDict[self.controlName + '_SortingOrder'] = self.sortOrderToInt[sortingOrder]
 
-        selectionModel = self.control.selectionModel()
-        itemSelection = selectionModel.selection()
-        l = len(itemSelection)
-        selRanges = [sr for sr in itemSelection]
+        self.selectedItems = []
+        self.expandedItems = []
+        self.getIndexChildren(self.model.invisibleRootItem().index(), '')
 
-        unpackedSelection = []
-        for sr in selRanges:
-            unpackedSelection.append((sr.top(), sr.left(), sr.bottom(), sr.right()))
-        # for sr in itemSelection:
-        #     pass
-        print 'unpackedSelection', unpackedSelection
-
-        selectedIndexes = selectionModel.selectedIndexes()
-        unpackedIndexes = [(i.row(), i.column()) for i in selectedIndexes]
-        print 'unpackedIndexes', unpackedIndexes
-
-        model = self.control.model()
-        persIndexes = model.persistentIndexList()
-        unpackedPersIndexes = [(i.row(), i.column()) for i in persIndexes]
-        print 'unpackedPersIndexes', unpackedPersIndexes
-
-
+        prefDict[self.controlName + '_SelectedItems'] = ' '.join(self.selectedItems)
+        prefDict[self.controlName + '_ExpandedItems'] = ' '.join(self.expandedItems)
 
     def dict2Ctrl(self, prefDict):
         self.control.clearSelection()
+        self.control.collapseAll()
 
-        for attribute in ('_SortedSection', '_SortingOrder'):
+        for attribute in ('_SortedSection', '_SortingOrder', '_SelectedItems', '_ExpandedItems'):
             if self.controlName + attribute not in prefDict:
                 return
 
@@ -294,6 +310,27 @@ class QtCtrlTreeView(QtCtrlComboBox):
         sortingOrder = prefDict[self.controlName + '_SortingOrder']
         self.control.sortByColumn(sortedSection, self.intToSortOrder[sortingOrder])
 
+        # Simple select() with QItemSelectionModel.SelectCurrent for each of indexes does not work.
+        # It only selects the last index (like QItemSelectionModel.Select).
+        # So i need to construct QItemSelection and merge all indexes to it.
+        # When i pass QItemSelection to select(), it works fine.
+        indexesToSelect = []
+        for indexPath in prefDict[self.controlName + '_SelectedItems'].split():
+            index = self.getIndexByPath(indexPath)
+            if not index:
+                break
+            indexesToSelect.append(index)
+
+        itemSelection = self.qt.QtGui.QItemSelection()
+        for index in indexesToSelect:
+            itemSelection.merge(self.qt.QtGui.QItemSelection(index, index), self.qt.QtGui.QItemSelectionModel.SelectCurrent)
+        self.itemSelectionModel.select(itemSelection, self.qt.QtGui.QItemSelectionModel.Select)
+
+        for indexPath in prefDict[self.controlName + '_ExpandedItems'].split():
+            index = self.getIndexByPath(indexPath)
+            if not index:
+                break
+            self.control.expand(self.getIndexByPath(indexPath))
 
 
 constructors = {
