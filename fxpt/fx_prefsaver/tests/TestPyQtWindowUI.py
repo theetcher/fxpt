@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'TestQtWindowUI.ui'
 #
-# Created: Mon Nov 03 17:41:49 2014
+# Created: Tue Nov 04 20:43:17 2014
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -194,6 +194,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_7 = QtGui.QHBoxLayout(self.uiTABPG_listView)
         self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
         self.uiLSTV_test1 = QtGui.QListView(self.uiTABPG_listView)
+        self.uiLSTV_test1.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.uiLSTV_test1.setObjectName(_fromUtf8("uiLSTV_test1"))
         self.horizontalLayout_7.addWidget(self.uiLSTV_test1)
         self.uiTAB_test1.addTab(self.uiTABPG_listView, _fromUtf8(""))
@@ -217,7 +218,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10 = QtGui.QHBoxLayout(self.uiTABPG_tableView)
         self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
         self.uiTBLV_test1 = QtGui.QTableView(self.uiTABPG_tableView)
+        self.uiTBLV_test1.setSortingEnabled(True)
         self.uiTBLV_test1.setObjectName(_fromUtf8("uiTBLV_test1"))
+        self.uiTBLV_test1.horizontalHeader().setSortIndicatorShown(True)
         self.horizontalLayout_10.addWidget(self.uiTBLV_test1)
         self.uiTAB_test1.addTab(self.uiTABPG_tableView, _fromUtf8(""))
         self.uiTABPG_columnView = QtGui.QWidget()
@@ -247,7 +250,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.uiTAB_test1.setCurrentIndex(4)
+        self.uiTAB_test1.setCurrentIndex(3)
         QtCore.QObject.connect(self.uiBTN_savePrefs, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.onSavePrefsClicked)
         QtCore.QObject.connect(self.uiBTN_loadPrefs, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.onLoadPrefsClicked)
         QtCore.QObject.connect(self.uiBTN_resetPrefs, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.onResetPrefsClicked)
@@ -281,11 +284,11 @@ class Ui_MainWindow(object):
         item = self.uiLSTWID_test1.item(3)
         item.setText(QtGui.QApplication.translate("MainWindow", "Item4", None, QtGui.QApplication.UnicodeUTF8))
         item = self.uiLSTWID_test1.item(4)
-        item.setText(QtGui.QApplication.translate("MainWindow", "Item5", None, QtGui.QApplication.UnicodeUTF8))
+        item.setText(QtGui.QApplication.translate("MainWindow", "Item7", None, QtGui.QApplication.UnicodeUTF8))
         item = self.uiLSTWID_test1.item(5)
         item.setText(QtGui.QApplication.translate("MainWindow", "Item6", None, QtGui.QApplication.UnicodeUTF8))
         item = self.uiLSTWID_test1.item(6)
-        item.setText(QtGui.QApplication.translate("MainWindow", "Item7", None, QtGui.QApplication.UnicodeUTF8))
+        item.setText(QtGui.QApplication.translate("MainWindow", "Item5", None, QtGui.QApplication.UnicodeUTF8))
         self.uiLSTWID_test1.setSortingEnabled(__sortingEnabled)
         self.uiTAB_test1.setTabText(self.uiTAB_test1.indexOf(self.uiTABPG_listWidget), QtGui.QApplication.translate("MainWindow", "List Widget", None, QtGui.QApplication.UnicodeUTF8))
         self.uiTREW_test1.setSortingEnabled(True)

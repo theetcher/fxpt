@@ -167,9 +167,9 @@ class TestQtWindow(object):
             # self.prefSaver.addControl(self.ui.uiLSTWID_test1, PrefSaver.UITypes.PYQTListWidget, None)
             # self.prefSaver.addControl(self.ui.uiTREW_test1, PrefSaver.UITypes.PYQTTreeWidget, None)
             self.prefSaver.addControl(self.ui.uiTBLWID_test1, PrefSaver.UITypes.PYQTTableWidget, None)
-            # self.prefSaver.addControl(self.ui.uiLSTV_test1, PrefSaver.UITypes.PYQTListView, None)
+            self.prefSaver.addControl(self.ui.uiLSTV_test1, PrefSaver.UITypes.PYQTListView, None)
             self.prefSaver.addControl(self.ui.uiTREV_test1, PrefSaver.UITypes.PYQTTreeView, None)
-            # self.prefSaver.addControl(self.ui.uiTBLV_test1, PrefSaver.UITypes.PYQTTableView, None)
+            self.prefSaver.addControl(self.ui.uiTBLV_test1, PrefSaver.UITypes.PYQTTableView, None)
             # self.prefSaver.addControl(self.ui.uiCOLV_test1, PrefSaver.UITypes.PYQTColumnView, None)
         else:
             self.prefSaver.addControl(self.win, PrefSaver.UITypes.PYSIDEWindow, (200, 200, 900, 500))
@@ -187,9 +187,9 @@ class TestQtWindow(object):
             # self.prefSaver.addControl(self.ui.uiLSTWID_test1, PrefSaver.UITypes.PYSIDEListWidget, None)
             # self.prefSaver.addControl(self.ui.uiTREW_test1, PrefSaver.UITypes.PYSIDETreeWidget, None)
             self.prefSaver.addControl(self.ui.uiTBLWID_test1, PrefSaver.UITypes.PYSIDETableWidget, None)
-            # self.prefSaver.addControl(self.ui.uiLSTV_test1, PrefSaver.UITypes.PYSIDEListView, None)
+            self.prefSaver.addControl(self.ui.uiLSTV_test1, PrefSaver.UITypes.PYSIDEListView, None)
             self.prefSaver.addControl(self.ui.uiTREV_test1, PrefSaver.UITypes.PYSIDETreeView, None)
-            # self.prefSaver.addControl(self.ui.uiTBLV_test1, PrefSaver.UITypes.PYSIDETableView, None)
+            self.prefSaver.addControl(self.ui.uiTBLV_test1, PrefSaver.UITypes.PYSIDETableView, None)
             # self.prefSaver.addControl(self.ui.uiCOLV_test1, PrefSaver.UITypes.PYSIDEColumnView, None)
 
         # self.lastBrowsedFolder = DIR_SCENES_SRC

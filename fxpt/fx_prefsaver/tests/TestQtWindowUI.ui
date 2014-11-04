@@ -148,7 +148,7 @@
       </widget>
       <widget class="QTabWidget" name="uiTAB_test1">
        <property name="currentIndex">
-        <number>4</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="uiTABPG_listWidget">
         <attribute name="title">
@@ -182,7 +182,7 @@
            </item>
            <item>
             <property name="text">
-             <string>Item5</string>
+             <string>Item7</string>
             </property>
            </item>
            <item>
@@ -192,7 +192,7 @@
            </item>
            <item>
             <property name="text">
-             <string>Item7</string>
+             <string>Item5</string>
             </property>
            </item>
           </widget>
@@ -493,7 +493,11 @@
         </attribute>
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
-          <widget class="QListView" name="uiLSTV_test1"/>
+          <widget class="QListView" name="uiLSTV_test1">
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -535,7 +539,14 @@
         </attribute>
         <layout class="QHBoxLayout" name="horizontalLayout_10">
          <item>
-          <widget class="QTableView" name="uiTBLV_test1"/>
+          <widget class="QTableView" name="uiTBLV_test1">
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+            <bool>true</bool>
+           </attribute>
+          </widget>
          </item>
         </layout>
        </widget>

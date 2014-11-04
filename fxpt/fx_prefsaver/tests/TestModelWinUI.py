@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'TestModelWinUI.ui'
 #
-# Created: Mon Nov 03 17:41:50 2014
+# Created: Tue Nov 04 20:43:18 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
