@@ -14,7 +14,7 @@ from com import message
 
 #TODO: test if there is no model connected
 #TODO: test if model is empty
-#TODO: QTableWidget selection regions saving format should be the same as QTreeView (single string)
+#TODO!: QTableWidget selection regions saving format should be the same as QTreeView (single string)
 #TODO: test list view with another selection modes (select rows, etc.)
 
 # noinspection PyAttributeOutsideInit
@@ -358,7 +358,7 @@ class QtCtrlTreeView(QtCtrlBase):
         for indexPath in prefDict[self.controlName + '_selectedItems'].split():
             index = self.getIndexByPath(indexPath)
             if not index:
-                break
+                continue
             indexesToSelect.append(index)
 
         itemSelection = self.qt.QtGui.QItemSelection()
@@ -369,7 +369,7 @@ class QtCtrlTreeView(QtCtrlBase):
         for indexPath in prefDict[self.controlName + '_expandedItems'].split():
             index = self.getIndexByPath(indexPath)
             if not index:
-                break
+                continue
             self.control.expand(self.getIndexByPath(indexPath))
 
 
