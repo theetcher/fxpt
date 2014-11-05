@@ -16,7 +16,12 @@ from com import message
 #TODO: test if model is empty
 #TODO: test views with another selection modes (select rows, etc.)
 #TODO: check for attribute in dict -> separate procedure
-#TODO: attr names to variables
+#TODO!: attribute composer and getter/setter as separate module and class
+
+
+def keyName(*args):
+    return '_'.join(args)
+
 
 # noinspection PyAttributeOutsideInit
 class QtCtrlBase(object):
@@ -40,10 +45,10 @@ class QtCtrlWindow(QtCtrlBase):
         super(QtCtrlWindow, self).__init__(*args, **kwargs)
 
     def ctrl2Dict(self, prefDict):
-        prefDict[self.controlName + '_x'] = self.control.x()
-        prefDict[self.controlName + '_y'] = self.control.y()
-        prefDict[self.controlName + '_width'] = self.control.width()
-        prefDict[self.controlName + '_height'] = self.control.height()
+        prefDict[keyName(self.controlName, 'x')] = self.control.x()
+        prefDict[keyName(self.controlName, 'y')] = self.control.y()
+        prefDict[keyName(self.controlName, 'width')] = self.control.width()
+        prefDict[keyName(self.controlName, 'height')] = self.control.height()
 
     def dict2Ctrl(self, prefDict):
         key = self.controlName + '_x'
@@ -138,14 +143,13 @@ class QtCtrlComboBoxEditable(QtCtrlComboBox):
         self.control.clear()
 
         if self.controlName + '_count' in prefDict:
-
             itemCount = prefDict[self.controlName + '_count']
 
             items = []
             for i in range(itemCount):
                 itemDictName = self.controlName + '_item' + str(i)
                 if not itemDictName in prefDict:
-                    break
+                    continue
                 else:
                     items.append(prefDict[itemDictName])
 
@@ -155,6 +159,8 @@ class QtCtrlComboBoxEditable(QtCtrlComboBox):
 
 
 class QtCtrlSplitter(QtCtrlBase):
+
+    #TODO: save item sizes in one string.
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlSplitter, self).__init__(*args, **kwargs)
