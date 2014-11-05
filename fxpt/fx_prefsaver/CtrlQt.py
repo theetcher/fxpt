@@ -14,7 +14,7 @@ from com import message
 
 #TODO: test if there is no model connected
 #TODO: test if model is empty
-#TODO!: QTableWidget selection regions saving format should be the same as QTreeView (single string)
+#TODO!: QTableWidget selection regions saving format should be the same as QTableView (single string)
 #TODO: test list view with another selection modes (select rows, etc.)
 
 # noinspection PyAttributeOutsideInit
@@ -181,80 +181,10 @@ class QtCtrlSplitter(QtCtrlBase):
         self.control.setSizes(sizes)
 
 
-class QtCtrlTableWidget(QtCtrlBase):
-
-    def __init__(self, *args, **kwargs):
-        super(QtCtrlTableWidget, self).__init__(*args, **kwargs)
-        self.intToSortOrder = {
-            0: self.qt.QtCore.Qt.AscendingOrder,
-            1: self.qt.QtCore.Qt.DescendingOrder,
-        }
-        self.sortOrderToInt = dict((state, i) for i, state in self.intToSortOrder.items())
-
-    # noinspection PyCallingNonCallable
-    def ctrl2Dict(self, prefDict):
-
-        horizontalHeader = self.control.horizontalHeader()
-        sortedSection = horizontalHeader.sortIndicatorSection()
-        sortingOrder = horizontalHeader.sortIndicatorOrder()
-        prefDict[self.controlName + '_sortedSection'] = sortedSection
-        prefDict[self.controlName + '_sortingOrder'] = self.sortOrderToInt[sortingOrder]
-
-        selectionRanges = self.control.selectedRanges()
-        if not selectionRanges:
-            return
-        rangesCount = len(selectionRanges)
-        prefDict[self.controlName] = rangesCount
-
-        for i in range(rangesCount):
-            borderMappings = {
-                'Top': selectionRanges[i].topRow,
-                'Left': selectionRanges[i].leftColumn,
-                'Bottom': selectionRanges[i].bottomRow,
-                'Right': selectionRanges[i].rightColumn
-            }
-            for borderName in borderMappings:
-                prefDict[self.controlName + '_selRange' + str(i) + borderName] = borderMappings[borderName]()
-
-    def dict2Ctrl(self, prefDict):
-        self.control.clearSelection()
-
-        for attribute in ('', '_sortedSection', '_sortingOrder'):
-            if self.controlName + attribute not in prefDict:
-                return
-
-        sortedSection = prefDict[self.controlName + '_sortedSection']
-        sortingOrder = prefDict[self.controlName + '_sortingOrder']
-        self.control.sortByColumn(sortedSection, self.intToSortOrder[sortingOrder])
-
-        rangesCount = prefDict[self.controlName]
-
-        selectionRanges = []
-
-        for i in range(rangesCount):
-            rangeValues = []
-            for borderName in ('Top', 'Left', 'Bottom', 'Right'):
-                rangeDictName = self.controlName + '_selRange' + str(i) + borderName
-                if not rangeDictName in prefDict:
-                    return
-                else:
-                    rangeValues.append(prefDict[rangeDictName])
-
-            selectionRanges.append(self.qt.QtGui.QTableWidgetSelectionRange(*rangeValues))
-
-        for selectionRange in selectionRanges:
-            self.control.setRangeSelected(selectionRange, True)
-
-
 class QtCtrlListView(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlListView, self).__init__(*args, **kwargs)
-        self.intToSortOrder = {
-            0: self.qt.QtCore.Qt.AscendingOrder,
-            1: self.qt.QtCore.Qt.DescendingOrder,
-        }
-        self.sortOrderToInt = dict((state, i) for i, state in self.intToSortOrder.items())
 
         self.model = self.control.model()
         self.itemSelectionModel = self.control.selectionModel()
@@ -322,7 +252,7 @@ class QtCtrlTreeView(QtCtrlBase):
         return parentIndex
 
     def getRootIndex(self):
-        return self.model.invisibleRootItem().index()
+        return self.control.rootIndex()
 
     def ctrl2Dict(self, prefDict):
         horizontalHeader = self.control.header()
@@ -433,9 +363,9 @@ constructors = {
     UITypes.PYQTComboBoxEditable: QtCtrlComboBoxEditable,
     UITypes.PYQTTabControl: QtCtrlComboBox,
     UITypes.PYQTSplitter: QtCtrlSplitter,
-    UITypes.PYQTListWidget: QtCtrlBase,
-    UITypes.PYQTTreeWidget: QtCtrlBase,
-    UITypes.PYQTTableWidget: QtCtrlTableWidget,
+    UITypes.PYQTListWidget: QtCtrlListView,
+    UITypes.PYQTTreeWidget: QtCtrlTreeView,
+    UITypes.PYQTTableWidget: QtCtrlTableView,
     UITypes.PYQTListView: QtCtrlListView,
     UITypes.PYQTTreeView: QtCtrlTreeView,
     UITypes.PYQTTableView: QtCtrlTableView,
@@ -450,9 +380,9 @@ constructors = {
     UITypes.PYSIDEComboBoxEditable: QtCtrlComboBoxEditable,
     UITypes.PYSIDETabControl: QtCtrlComboBox,
     UITypes.PYSIDESplitter: QtCtrlSplitter,
-    UITypes.PYSIDEListWidget: QtCtrlBase,
-    UITypes.PYSIDETreeWidget: QtCtrlBase,
-    UITypes.PYSIDETableWidget: QtCtrlTableWidget,
+    UITypes.PYSIDEListWidget: QtCtrlListView,
+    UITypes.PYSIDETreeWidget: QtCtrlTreeView,
+    UITypes.PYSIDETableWidget: QtCtrlTableView,
     UITypes.PYSIDEListView: QtCtrlListView,
     UITypes.PYSIDETreeView: QtCtrlTreeView,
     UITypes.PYSIDETableView: QtCtrlTableView,
