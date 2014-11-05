@@ -15,6 +15,8 @@ from com import message
 #TODO: test if there is no model connected
 #TODO: test if model is empty
 #TODO: test views with another selection modes (select rows, etc.)
+#TODO: check for attribute in dict -> separate procedure
+#TODO: attr names to variables
 
 # noinspection PyAttributeOutsideInit
 class QtCtrlBase(object):
@@ -180,7 +182,7 @@ class QtCtrlSplitter(QtCtrlBase):
         self.control.setSizes(sizes)
 
 
-class ViewColumnSorter(object):
+class ColumnSorter(object):
 
     def __init__(self, qt, control, header):
         self.control = control
@@ -205,20 +207,38 @@ class ViewColumnSorter(object):
         self.control.sortByColumn(sortedSection, self.intToSortOrder[sortingOrder])
 
 
+class RangeSelector(object):
+
+    def __init__(self, qt, control):
+        self.qt = qt
+        self.controlName = str(control.objectName())
+        self.model = control.model()
+        self.selectionModel = control.selectionModel()
+
+    def saveRanges(self, prefDict):
+        selectedRanges = []
+        for sr in self.selectionModel.selection():
+            selectedRanges.append(','.join((str(sr.top()), str(sr.left()), str(sr.bottom()), str(sr.right()))))
+        prefDict[self.controlName + '_selectedRanges'] = ' '.join(selectedRanges)
+
+    def loadRanges(self, prefDict):
+        itemSelection = self.qt.QtGui.QItemSelection()
+        for rangeStr in prefDict[self.controlName + '_selectedRanges'].split():
+            top, left, bottom, right = [int(x) for x in rangeStr.split(',')]
+            topLeft = self.model.index(top, left)
+            bottomRight = self.model.index(bottom, right)
+            itemSelection.merge(self.qt.QtGui.QItemSelection(topLeft, bottomRight), self.qt.QtGui.QItemSelectionModel.SelectCurrent)
+        self.selectionModel.select(itemSelection, self.qt.QtGui.QItemSelectionModel.Select)
+
+
 class QtCtrlListView(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlListView, self).__init__(*args, **kwargs)
-
-        self.model = self.control.model()
-        self.itemSelectionModel = self.control.selectionModel()
+        self.rangeSelector = RangeSelector(self.qt, self.control)
 
     def ctrl2Dict(self, prefDict):
-        selectedRanges = []
-        for sr in self.itemSelectionModel.selection():
-            selectedRanges.append(','.join((str(sr.top()), str(sr.left()), str(sr.bottom()), str(sr.right()))))
-
-        prefDict[self.controlName + '_selectedRanges'] = ' '.join(selectedRanges)
+        self.rangeSelector.saveRanges(prefDict)
 
     def dict2Ctrl(self, prefDict):
         self.control.clearSelection()
@@ -227,52 +247,29 @@ class QtCtrlListView(QtCtrlBase):
             if self.controlName + attribute not in prefDict:
                 return
 
-        itemSelection = self.qt.QtGui.QItemSelection()
-        for rangeStr in prefDict[self.controlName + '_selectedRanges'].split():
-            top, left, bottom, right = [int(x) for x in rangeStr.split(',')]
-            topLeft = self.model.index(top, left)
-            bottomRight = self.model.index(bottom, right)
-            itemSelection.merge(self.qt.QtGui.QItemSelection(topLeft, bottomRight), self.qt.QtGui.QItemSelectionModel.SelectCurrent)
-        self.itemSelectionModel.select(itemSelection, self.qt.QtGui.QItemSelectionModel.Select)
+        self.rangeSelector.loadRanges(prefDict)
 
 
 class QtCtrlTableView(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlTableView, self).__init__(*args, **kwargs)
-
-        self.model = self.control.model()
-        self.itemSelectionModel = self.control.selectionModel()
-        self.columnSorter = ViewColumnSorter(self.qt, self.control, self.control.horizontalHeader())
+        self.columnSorter = ColumnSorter(self.qt, self.control, self.control.horizontalHeader())
+        self.rangeSelector = RangeSelector(self.qt, self.control)
 
     def ctrl2Dict(self, prefDict):
         self.columnSorter.saveSorting(prefDict)
-
-        selectedRanges = []
-        for sr in self.itemSelectionModel.selection():
-            selectedRanges.append(','.join((str(sr.top()), str(sr.left()), str(sr.bottom()), str(sr.right()))))
-
-        prefDict[self.controlName + '_selectedRanges'] = ' '.join(selectedRanges)
+        self.rangeSelector.saveRanges(prefDict)
 
     def dict2Ctrl(self, prefDict):
         self.control.clearSelection()
 
-        #TODO: check for attribute in dict -> separate procedure
-        #TODO: attr names to variables
-        #TODO: range based view selection in separate class and make a composition
         for attribute in ('_sortedSection', '_sortingOrder', '_selectedRanges'):
             if self.controlName + attribute not in prefDict:
                 return
 
         self.columnSorter.loadSorting(prefDict)
-
-        itemSelection = self.qt.QtGui.QItemSelection()
-        for rangeStr in prefDict[self.controlName + '_selectedRanges'].split():
-            top, left, bottom, right = [int(x) for x in rangeStr.split(',')]
-            topLeft = self.model.index(top, left)
-            bottomRight = self.model.index(bottom, right)
-            itemSelection.merge(self.qt.QtGui.QItemSelection(topLeft, bottomRight), self.qt.QtGui.QItemSelectionModel.SelectCurrent)
-        self.itemSelectionModel.select(itemSelection, self.qt.QtGui.QItemSelectionModel.Select)
+        self.rangeSelector.loadRanges(prefDict)
 
 
 class QtCtrlTreeView(QtCtrlBase):
@@ -287,7 +284,7 @@ class QtCtrlTreeView(QtCtrlBase):
 
         self.model = self.control.model()
         self.itemSelectionModel = self.control.selectionModel()
-        self.columnSorter = ViewColumnSorter(self.qt, self.control, self.control.header())
+        self.columnSorter = ColumnSorter(self.qt, self.control, self.control.header())
 
         self.selectedItems = []
         self.expandedItems = []
