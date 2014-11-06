@@ -16,7 +16,7 @@ from com import message
 #TODO: test if model is empty
 #TODO: test views with another selection modes (select rows, etc.)
 #TODO: check for attribute in dict -> separate procedure
-#TODO!: attribute composer and getter/setter as separate module and class
+#TODO!: attribute composer, getter, setter to base controller functionality
 
 
 def keyName(*args):
