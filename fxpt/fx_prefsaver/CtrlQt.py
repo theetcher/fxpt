@@ -16,9 +16,6 @@ from com import message
 #TODO: test if there is no model connected
 #TODO: test if model is empty
 #TODO: test views with another selection modes (select rows, etc.)
-#TODO: check for attribute in dict -> separate procedure
-#TODO!: attribute composer, getter, setter to base controller functionality
-#TODO: test if you press LoadPrefs several times
 
 
 # noinspection PyAttributeOutsideInit
@@ -377,7 +374,6 @@ class QtCtrlTreeView(QtCtrlBase):
         self.treeIndexSelector.loadData()
 
 
-
 constructors = {
     UIType.PYQTWindow: QtCtrlWindow,
     UIType.PYQTLineEdit: QtCtrlLineEdit,
@@ -394,7 +390,6 @@ constructors = {
     UIType.PYQTListView: QtCtrlListView,
     UIType.PYQTTableView: QtCtrlTableView,
     UIType.PYQTTreeView: QtCtrlTreeView,
-    UIType.PYQTColumnView: QtCtrlTreeView,
 
     UIType.PYSIDEWindow: QtCtrlWindow,
     UIType.PYSIDELineEdit: QtCtrlLineEdit,
@@ -410,8 +405,7 @@ constructors = {
     UIType.PYSIDETreeWidget: QtCtrlTreeView,
     UIType.PYSIDEListView: QtCtrlListView,
     UIType.PYSIDETableView: QtCtrlTableView,
-    UIType.PYSIDETreeView: QtCtrlTreeView,
-    UIType.PYSIDEColumnView: QtCtrlTreeView,
+    UIType.PYSIDETreeView: QtCtrlTreeView
 }
 
 

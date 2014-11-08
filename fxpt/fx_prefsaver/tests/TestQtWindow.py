@@ -170,7 +170,6 @@ class TestQtWindow(object):
             self.prefSaver.addControl(self.ui.uiLSTV_test1, PrefSaver.UIType.PYQTListView, None)
             self.prefSaver.addControl(self.ui.uiTBLV_test1, PrefSaver.UIType.PYQTTableView, None)
             self.prefSaver.addControl(self.ui.uiTREV_test1, PrefSaver.UIType.PYQTTreeView, None)
-            # self.prefSaver.addControl(self.ui.uiCOLV_test1, PrefSaver.UITypes.PYQTColumnView, None)
         else:
             self.prefSaver.addControl(self.win, PrefSaver.UIType.PYSIDEWindow, (200, 200, 900, 500))
             self.prefSaver.addControl(self.dlg, PrefSaver.UIType.PYSIDEWindow, (300, 300, 200, 200))
@@ -190,7 +189,6 @@ class TestQtWindow(object):
             self.prefSaver.addControl(self.ui.uiLSTV_test1, PrefSaver.UIType.PYSIDEListView, None)
             self.prefSaver.addControl(self.ui.uiTBLV_test1, PrefSaver.UIType.PYSIDETableView, None)
             self.prefSaver.addControl(self.ui.uiTREV_test1, PrefSaver.UIType.PYSIDETreeView, None)
-            # self.prefSaver.addControl(self.ui.uiCOLV_test1, PrefSaver.UITypes.PYSIDEColumnView, None)
 
         # self.lastBrowsedFolder = DIR_SCENES_SRC
         #

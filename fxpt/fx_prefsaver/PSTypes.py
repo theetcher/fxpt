@@ -17,7 +17,6 @@ class UIType(object):
     PYQTListView = 13
     PYQTTreeView = 14
     PYQTTableView = 15
-    PYQTColumnView = 16
 
     TypesPYQT = set([
         PYQTWindow,
@@ -35,7 +34,6 @@ class UIType(object):
         PYQTListView,
         PYQTTreeView,
         PYQTTableView,
-        PYQTColumnView
     ])
 
     # PySide Types
@@ -54,7 +52,6 @@ class UIType(object):
     PYSIDEListView = 113
     PYSIDETreeView = 114
     PYSIDETableView = 115
-    PYSIDEColumnView = 116
 
     TypesPYSIDE = set([
         PYSIDEWindow,
@@ -72,7 +69,6 @@ class UIType(object):
         PYSIDEListView,
         PYSIDETreeView,
         PYSIDETableView,
-        PYSIDEColumnView
     ])
 
     # Maya Types
