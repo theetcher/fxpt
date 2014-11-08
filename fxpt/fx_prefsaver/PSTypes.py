@@ -1,5 +1,5 @@
 # noinspection PySetFunctionToLiteral
-class UITypes(object):
+class UIType(object):
 
     # PyQt Types
     PYQTWindow = 1
@@ -266,4 +266,31 @@ class UITypes(object):
     VariableOptVar = 402
 
     TypesAll = TypesPYQT | TypesPYSIDE | TypesM | TypesPM
+
+
+class Attr(object):
+
+    WinX = 'x'
+    WinY = 'y'
+    WinWidth = 'width'
+    WinHeight = 'height'
+
+    Text = 'text'
+
+    CheckState = 'checkState'
+
+    CurrentIndex = 'currentIndex'
+
+    ItemsCount = 'itemCount'
+    Item = 'item'
+
+    Sizes = 'sizes'
+
+    SortedSection = 'sortedSection'
+    SortingOrder = 'sortingOrder'
+
+    SelectedRanges = 'selectedRanges'
+
+    SelectedIndexes = 'selectedIndexes'
+    ExpandedIndexes = 'expandedIndexes'
 

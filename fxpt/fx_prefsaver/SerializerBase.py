@@ -3,7 +3,7 @@ class SerializerBase(object):
     def __init__(self):
         pass
 
-    def save(self, prefDict):
+    def save(self, prefData):
         raise NotImplementedError('Call to abstract method')
 
     def load(self):

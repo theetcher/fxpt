@@ -1,7 +1,7 @@
 #region imports
 import os
 
-from PSTypes import UITypes
+from PSTypes import UIType
 
 import CtrlQt
 try:
@@ -26,16 +26,15 @@ class PrefSaver(object):
         super(PrefSaver, self).__init__()
         self.serializer = serializer
         self.controllers = []
-        # self.prefDict = {}
 
     # noinspection PyCallingNonCallable
     def addControl(self, control, uiType, defaultValue):
 
-        if uiType not in UITypes.TypesAll:
+        if uiType not in UIType.TypesAll:
             message('Cannot add unknown control type ({}) for {}. Skipped'.format(uiType, str(control)))
             return
 
-        if uiType in (UITypes.TypesPYQT | UITypes.TypesPYSIDE):
+        if uiType in (UIType.TypesPYQT | UIType.TypesPYSIDE):
             controller = CtrlQt.getController(uiType, control, defaultValue)
             if controller:
                 self.controllers.append(controller)
@@ -43,14 +42,14 @@ class PrefSaver(object):
                 message('Failed to add controller (type={}) for {}'.format(uiType, str(control)))
             return
 
-        if uiType in UITypes.TypesM:
+        if uiType in UIType.TypesM:
             if CtrlMaya:
                 self.controllers.append(CtrlMaya.getController(uiType, control, defaultValue))
             else:
                 message('Failed to add controller (type={}) for {}'.format(uiType, str(control)))
             return
 
-        if uiType in UITypes.TypesPM:
+        if uiType in UIType.TypesPM:
             if CtrlPyMel:
                 self.controllers.append(CtrlPyMel.getController(uiType, control, defaultValue))
             else:
@@ -74,13 +73,14 @@ class PrefSaver(object):
         self.applyPrefs({})
 
     def gatherPrefs(self):
-        prefDict = {}
+        prefData = {}
         for controller in self.controllers:
-            controller.ctrl2Dict(prefDict)
-        return prefDict
+            controller.ctrl2Data()
+            prefData.update(controller.getPrefData())
+        return prefData
 
-    def applyPrefs(self, prefDict):
+    def applyPrefs(self, prefData):
         for controller in self.controllers:
-            controller.dict2Ctrl(prefDict)
+            controller.data2Ctrl(prefData)
 
 
