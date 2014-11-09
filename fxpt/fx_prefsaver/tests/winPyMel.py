@@ -1,15 +1,23 @@
+import os
 import pymel.core as pm
+
+from fxpt.fx_prefsaver import PrefSaver
 
 
 WIN_NAME = 'fxpt_pstest_pymel_win'
 MAIN_BUTTONS_HEIGHT = 30
 
+CFG_FILENAME = os.path.dirname(__file__) + '/prefsPM.cfg'
+
 
 # noinspection PyAttributeOutsideInit
 class WinPyMelUI(object):
 
-    def __init__(self, serializer):
+    def __init__(self, ser):
         self.uiCreate()
+
+        self.prefSaver = PrefSaver.PrefSaver(self.createSerializer(ser))
+        self.initPrefs()
 
     def uiCreate(self):
 
@@ -433,19 +441,19 @@ class WinPyMelUI(object):
                 self.uiBTN_savePrefs = pm.button(
                     label='Save Prefs',
                     height=MAIN_BUTTONS_HEIGHT,
-                    command=self.onCloseClicked
+                    command=self.onSavePrefsClicked
                 )
 
                 self.uiBTN_loadPrefs = pm.button(
                     label='Load Prefs',
                     height=MAIN_BUTTONS_HEIGHT,
-                    command=self.onCloseClicked
+                    command=self.onLoadPrefsClicked
                 )
 
                 self.uiBTN_resetPrefs = pm.button(
                     label='Reset Prefs',
                     height=MAIN_BUTTONS_HEIGHT,
-                    command=self.onCloseClicked
+                    command=self.onResetPrefsClicked
                 )
 
                 uiLAY_mainForm.attachForm(self.uiLAY_mainScroll, 'top', 2)
@@ -482,10 +490,41 @@ class WinPyMelUI(object):
             collapse=collapsed
         )
 
+    # noinspection PyMethodMayBeStatic
+    def createSerializer(self, ser):
+        if ser == 'SerializerFilePickle':
+            from fxpt.fx_prefsaver.SerializerFilePickle import SerializerFilePickle
+            return SerializerFilePickle(CFG_FILENAME)
+        if ser == 'SerializerFileJson':
+            from fxpt.fx_prefsaver.SerializerFileJson import SerializerFileJson
+            return SerializerFileJson(CFG_FILENAME)
+        elif ser == 'SerializerOptVars':
+            from fxpt.fx_prefsaver.SerializerOptVars import SerializerOptVars
+            return SerializerOptVars('TestQtWindow')
+        else:
+            assert False, 'Unknown serializer type'
+
+    def initPrefs(self):
+        self.prefSaver.addControl(self.uiCHK_test1, PrefSaver.UIType.PMCheckBox, False)
+        self.prefSaver.addControl(self.uiCHK_test2, PrefSaver.UIType.PMCheckBox, False)
+
+    # noinspection PyUnusedLocal
+    def onSavePrefsClicked(self, *args):
+        self.prefSaver.savePrefs()
+
+    # noinspection PyUnusedLocal
+    def onLoadPrefsClicked(self, *args):
+        self.prefSaver.loadPrefs()
+
+    # noinspection PyUnusedLocal
+    def onResetPrefsClicked(self, *args):
+        self.prefSaver.resetPrefs()
+
     # noinspection PyMethodMayBeStatic,PyUnusedLocal
     def onCloseClicked(self, *args):
         if pm.window(WIN_NAME, exists=True):
             pm.deleteUI(WIN_NAME, window=True)
+
 
 
 def run(serializer):

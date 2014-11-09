@@ -13,7 +13,6 @@ from PSTypes import UIType, Attr
 from com import message
 
 
-# noinspection PyAttributeOutsideInit
 class QtCtrlBase(CtrlBase):
 
     def __init__(self, qt, control, defaultValue):
