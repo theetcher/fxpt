@@ -30,8 +30,67 @@ class PMCtrlCheckBox(PMCtrlBase):
         self.control.setValue(prefValue if prefValue else self.defaultValue)
 
 
+class PMCtrlCheckBoxGrp1(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlCheckBoxGrp1, self).__init__(*args, **kwargs)
+        self.getters = {
+            0: self.control.getValue1,
+            1: self.control.getValue2,
+            2: self.control.getValue3,
+            3: self.control.getValue4
+        }
+        self.setters = {
+            0: self.control.setValue1,
+            1: self.control.setValue2,
+            2: self.control.setValue3,
+            3: self.control.setValue4
+        }
+        self.grpSize = 1
+
+    # noinspection PyCallingNonCallable
+    def ctrl2Data(self):
+        super(PMCtrlCheckBoxGrp1, self).ctrl2Data()
+        for i in range(self.grpSize):
+            self.setAttr(Attr.CheckState + str(i), self.getters[i]())
+
+    # noinspection PyCallingNonCallable
+    def data2Ctrl(self, prefData):
+        super(PMCtrlCheckBoxGrp1, self).data2Ctrl(prefData)
+        for i in range(self.grpSize):
+            attrName = Attr.CheckState + str(i)
+            prefValue = self.getAttr(attrName)
+            self.setters[i](prefValue if prefValue else self.defaultValue[i])
+
+
+class PMCtrlCheckBoxGrp2(PMCtrlCheckBoxGrp1):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlCheckBoxGrp2, self).__init__(*args, **kwargs)
+        self.grpSize = 2
+
+
+class PMCtrlCheckBoxGrp3(PMCtrlCheckBoxGrp1):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlCheckBoxGrp3, self).__init__(*args, **kwargs)
+        self.grpSize = 3
+
+
+class PMCtrlCheckBoxGrp4(PMCtrlCheckBoxGrp1):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlCheckBoxGrp4, self).__init__(*args, **kwargs)
+        self.grpSize = 4
+
+
 constructors = {
-    UIType.PMCheckBox: PMCtrlCheckBox
+    UIType.PMCheckBox: PMCtrlCheckBox,
+    UIType.PMCheckBoxGrp1: PMCtrlCheckBoxGrp1,
+    UIType.PMCheckBoxGrp2: PMCtrlCheckBoxGrp2,
+    UIType.PMCheckBoxGrp3: PMCtrlCheckBoxGrp3,
+    UIType.PMCheckBoxGrp4: PMCtrlCheckBoxGrp4,
+
 }
 
 

@@ -507,6 +507,10 @@ class WinPyMelUI(object):
     def initPrefs(self):
         self.prefSaver.addControl(self.uiCHK_test1, PrefSaver.UIType.PMCheckBox, False)
         self.prefSaver.addControl(self.uiCHK_test2, PrefSaver.UIType.PMCheckBox, False)
+        self.prefSaver.addControl(self.uiCHKGRP_test1, PrefSaver.UIType.PMCheckBoxGrp1, (False,))
+        self.prefSaver.addControl(self.uiCHKGRP_test2, PrefSaver.UIType.PMCheckBoxGrp2, (False, False))
+        self.prefSaver.addControl(self.uiCHKGRP_test3, PrefSaver.UIType.PMCheckBoxGrp3, (False, False, False))
+        self.prefSaver.addControl(self.uiCHKGRP_test4, PrefSaver.UIType.PMCheckBoxGrp4, (False, False, False, False))
 
     # noinspection PyUnusedLocal
     def onSavePrefsClicked(self, *args):
