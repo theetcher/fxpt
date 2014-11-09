@@ -13,11 +13,6 @@ from PSTypes import UIType, Attr
 from com import message
 
 
-#TODO: test if there is no model connected
-#TODO: test if model is empty
-#TODO: test views with another selection modes (select rows, etc.)
-
-
 # noinspection PyAttributeOutsideInit
 class QtCtrlBase(CtrlBase):
 
@@ -75,8 +70,6 @@ class QtCtrlLineEdit(QtCtrlBase):
 
 
 class QtCtrlCheckBox(QtCtrlBase):
-
-    #TODO: ask about differences in setCheckState() arg types (PyQt int ok, PySide int -> exception)
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlCheckBox, self).__init__(*args, **kwargs)
@@ -191,11 +184,19 @@ class QtCtrlSplitter(QtCtrlBase):
             self.control.setSizes(self.defaultValue)
 
 
+# Explanation about headerGetter in ColumnSorter and SelectorBase.getSelectionModel()
+# The problem is ONLY in PySide in Maya. PyQt (both in Maya and standalone) and PySide standalone is working fine.
+# When i leave a scope of a method, underlying C++ object are deleted for QHeaderView and QItemSelectionModel classes
+# EVEN if setup an instance variable for those objects (self.header or self.selectionModel).
+# looks like its a bug and seems like these guys are talking about it:
+# https://groups.google.com/d/msg/pyside/yJBsDdE9ngQ/8ITbSlFkVs0J
+# So the easiest workaround is just asking for these instances if you need them, and not to store them.
+
 class ColumnSorter(object):
 
-    def __init__(self, ctrl, header):
+    def __init__(self, ctrl, headerGetter):
         self.ctrl = ctrl
-        self.header = header
+        self.headerGetter = headerGetter
 
         self.intToSortOrder = {
             0: ctrl.qt.QtCore.Qt.AscendingOrder,
@@ -204,8 +205,9 @@ class ColumnSorter(object):
         self.sortOrderToInt = dict((state, i) for i, state in self.intToSortOrder.items())
 
     def saveSorting(self):
-        self.ctrl.setAttr(Attr.SortedSection, self.header.sortIndicatorSection())
-        self.ctrl.setAttr(Attr.SortingOrder, self.sortOrderToInt[self.header.sortIndicatorOrder()])
+        header = self.headerGetter()
+        self.ctrl.setAttr(Attr.SortedSection, header.sortIndicatorSection())
+        self.ctrl.setAttr(Attr.SortingOrder, self.sortOrderToInt[header.sortIndicatorOrder()])
 
     def loadSorting(self):
         sortedSection = self.ctrl.getAttr(Attr.SortedSection)
@@ -214,21 +216,37 @@ class ColumnSorter(object):
             self.ctrl.control.sortByColumn(sortedSection, self.intToSortOrder[sortingOrder])
 
 
-class RangeSelector(object):
+class SelectorBase(object):
 
     def __init__(self, ctrl):
         self.ctrl = ctrl
-        self.selectionModel = self.ctrl.control.selectionModel()
         self.qt = self.ctrl.qt
         self.model = self.ctrl.control.model()
 
+    def getSelectionModel(self):
+        return self.ctrl.control.selectionModel()
+
+
+class RangeSelector(SelectorBase):
+
+    def __init__(self, ctrl):
+        super(RangeSelector, self).__init__(ctrl)
+
     def saveRanges(self):
+        selectionModel = self.getSelectionModel()
+        if selectionModel is None:
+            return
+
         selectedRanges = []
-        for sr in self.selectionModel.selection():
+        for sr in selectionModel.selection():
             selectedRanges.append(','.join((str(sr.top()), str(sr.left()), str(sr.bottom()), str(sr.right()))))
         self.ctrl.setAttr(Attr.SelectedRanges, ' '.join(selectedRanges))
 
     def loadRanges(self):
+        selectionModel = self.getSelectionModel()
+        if selectionModel is None:
+            return
+
         itemSelection = self.qt.QtGui.QItemSelection()
         rangesPrefData = self.ctrl.getAttr(Attr.SelectedRanges)
 
@@ -239,28 +257,27 @@ class RangeSelector(object):
                 bottomRight = self.model.index(bottom, right)
                 itemSelection.merge(self.qt.QtGui.QItemSelection(topLeft, bottomRight), self.qt.QtGui.QItemSelectionModel.SelectCurrent)
 
-            self.selectionModel.select(itemSelection, self.ctrl.qt.QtGui.QItemSelectionModel.Select)
+            selectionModel.select(itemSelection, self.ctrl.qt.QtGui.QItemSelectionModel.Select)
 
 
-class TreeIndexSelector(object):
+class TreeIndexSelector(SelectorBase):
 
     def __init__(self, ctrl):
-        self.ctrl = ctrl
-        self.qt = self.ctrl.qt
+        super(TreeIndexSelector, self).__init__(ctrl)
         self.control = self.ctrl.control
-        self.model = self.ctrl.control.model()
-        self.selectionModel = self.ctrl.control.selectionModel()
 
         self.selectedItems = []
         self.expandedItems = []
 
     def processIndexChildren(self, parentIndex, parentPath):
+        selectionModel = self.getSelectionModel()
+
         for r in xrange(self.model.rowCount(parentIndex)):
             for c in range(self.model.columnCount(parentIndex)):
                 childIndex = self.model.index(r, c, parentIndex)
                 childPath = parentPath + '|{},{}'.format(childIndex.row(), childIndex.column())
 
-                if self.selectionModel.isSelected(childIndex):
+                if selectionModel.isSelected(childIndex):
                     self.selectedItems.append(childPath)
                 if self.control.isExpanded(childIndex):
                     self.expandedItems.append(childPath)
@@ -281,6 +298,10 @@ class TreeIndexSelector(object):
         return self.control.rootIndex()
 
     def saveData(self):
+        selectionModel = self.getSelectionModel()
+        if selectionModel is None:
+            return
+
         self.selectedItems = []
         self.expandedItems = []
         self.processIndexChildren(self.getRootIndex(), '')
@@ -288,6 +309,10 @@ class TreeIndexSelector(object):
         self.ctrl.setAttr(Attr.ExpandedIndexes, ' '.join(self.expandedItems))
 
     def loadData(self):
+        selectionModel = self.getSelectionModel()
+        if selectionModel is None:
+            return
+
         self.control.clearSelection()
         self.control.collapseAll()
 
@@ -308,7 +333,7 @@ class TreeIndexSelector(object):
         itemSelection = self.qt.QtGui.QItemSelection()
         for index in indexesToSelect:
             itemSelection.merge(self.qt.QtGui.QItemSelection(index, index), self.qt.QtGui.QItemSelectionModel.SelectCurrent)
-        self.selectionModel.select(itemSelection, self.qt.QtGui.QItemSelectionModel.Select)
+        selectionModel.select(itemSelection, self.qt.QtGui.QItemSelectionModel.Select)
 
         expandedIndexesPathsPrefValue = self.ctrl.getAttr(Attr.ExpandedIndexes)
         if expandedIndexesPathsPrefValue:
@@ -339,7 +364,7 @@ class QtCtrlTableView(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlTableView, self).__init__(*args, **kwargs)
-        self.columnSorter = ColumnSorter(self, self.control.horizontalHeader())
+        self.columnSorter = ColumnSorter(self, self.control.horizontalHeader)
         self.rangeSelector = RangeSelector(self)
 
     def ctrl2Data(self):
@@ -358,7 +383,7 @@ class QtCtrlTreeView(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlTreeView, self).__init__(*args, **kwargs)
-        self.columnSorter = ColumnSorter(self, self.control.header())
+        self.columnSorter = ColumnSorter(self, self.control.header)
         self.treeIndexSelector = TreeIndexSelector(self)
 
     def ctrl2Data(self):

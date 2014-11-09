@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'TestQtWindowUI.ui'
 #
-# Created: Tue Nov 04 20:43:17 2014
+# Created: Sun Nov 09 20:24:56 2014
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -250,7 +250,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.uiTAB_test1.setCurrentIndex(3)
+        self.uiTAB_test1.setCurrentIndex(0)
         QtCore.QObject.connect(self.uiBTN_savePrefs, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.onSavePrefsClicked)
         QtCore.QObject.connect(self.uiBTN_loadPrefs, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.onLoadPrefsClicked)
         QtCore.QObject.connect(self.uiBTN_resetPrefs, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.onResetPrefsClicked)

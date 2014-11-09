@@ -148,7 +148,7 @@
       </widget>
       <widget class="QTabWidget" name="uiTAB_test1">
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="uiTABPG_listWidget">
         <attribute name="title">

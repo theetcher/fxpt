@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'TestQtWindowUI.ui'
 #
-# Created: Tue Nov 04 20:43:18 2014
+# Created: Sun Nov 09 20:24:56 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -238,7 +238,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.uiTAB_test1.setCurrentIndex(3)
+        self.uiTAB_test1.setCurrentIndex(0)
         QtCore.QObject.connect(self.uiBTN_savePrefs, QtCore.SIGNAL("clicked()"), MainWindow.onSavePrefsClicked)
         QtCore.QObject.connect(self.uiBTN_loadPrefs, QtCore.SIGNAL("clicked()"), MainWindow.onLoadPrefsClicked)
         QtCore.QObject.connect(self.uiBTN_resetPrefs, QtCore.SIGNAL("clicked()"), MainWindow.onResetPrefsClicked)
