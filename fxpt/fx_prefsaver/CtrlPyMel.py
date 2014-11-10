@@ -1,3 +1,5 @@
+from functools import partial
+
 import pymel.core as pm
 
 from CtrlBase import CtrlBase
@@ -15,25 +17,24 @@ class PMCtrlBase(CtrlBase):
         return self.control.getFullPathName().split('|')[-1]
 
 
-class PMCtrlCheckBox(PMCtrlBase):
-
+class PMCtrlSimple(PMCtrlBase):
     def __init__(self, *args, **kwargs):
-        super(PMCtrlCheckBox, self).__init__(*args, **kwargs)
+        super(PMCtrlSimple, self).__init__(*args, **kwargs)
 
     def ctrl2Data(self):
-        super(PMCtrlCheckBox, self).ctrl2Data()
-        self.setAttr(Attr.CheckState, self.control.getValue())
+        super(PMCtrlSimple, self).ctrl2Data()
+        self.setAttr(Attr.Value, self.control.getValue())
 
     def data2Ctrl(self, prefData):
-        super(PMCtrlCheckBox, self).data2Ctrl(prefData)
-        prefValue = self.getAttr(Attr.CheckState)
-        self.control.setValue(prefValue if prefValue else self.defaultValue)
+        super(PMCtrlSimple, self).data2Ctrl(prefData)
+        self.control.setValue(self.getAttr(Attr.Value))
 
 
-class PMCtrlCheckBoxGrp1(PMCtrlBase):
+class PMCtrlGrp4Simple(PMCtrlBase):
 
-    def __init__(self, *args, **kwargs):
-        super(PMCtrlCheckBoxGrp1, self).__init__(*args, **kwargs)
+    def __init__(self, grpSize, *args, **kwargs):
+        super(PMCtrlGrp4Simple, self).__init__(*args, **kwargs)
+        self.grpSize = grpSize
         self.getters = {
             0: self.control.getValue1,
             1: self.control.getValue2,
@@ -46,49 +47,98 @@ class PMCtrlCheckBoxGrp1(PMCtrlBase):
             2: self.control.setValue3,
             3: self.control.setValue4
         }
-        self.grpSize = 1
 
     # noinspection PyCallingNonCallable
     def ctrl2Data(self):
-        super(PMCtrlCheckBoxGrp1, self).ctrl2Data()
-        self.setAttr(Attr.CheckState, [self.getters[i]() for i in range(self.grpSize)])
+        super(PMCtrlGrp4Simple, self).ctrl2Data()
+        self.setAttr(Attr.Value, [self.getters[i]() for i in range(self.grpSize)])
 
     # noinspection PyCallingNonCallable
     def data2Ctrl(self, prefData):
-        super(PMCtrlCheckBoxGrp1, self).data2Ctrl(prefData)
-        prefValue = self.getAttr(Attr.CheckState)
+        super(PMCtrlGrp4Simple, self).data2Ctrl(prefData)
+        prefValue = self.getAttr(Attr.Value)
         for i in range(self.grpSize):
             self.setters[i](prefValue[i])
 
 
-class PMCtrlCheckBoxGrp2(PMCtrlCheckBoxGrp1):
+class PMCtrlColorSliderGrp(PMCtrlBase):
 
     def __init__(self, *args, **kwargs):
-        super(PMCtrlCheckBoxGrp2, self).__init__(*args, **kwargs)
-        self.grpSize = 2
+        super(PMCtrlColorSliderGrp, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(PMCtrlColorSliderGrp, self).ctrl2Data()
+        self.setAttr(Attr.ColorRGB, self.control.getRgbValue())
+
+    def data2Ctrl(self, prefData):
+        super(PMCtrlColorSliderGrp, self).data2Ctrl(prefData)
+        self.control.setRgbValue(self.getAttr(Attr.ColorRGB))
 
 
-class PMCtrlCheckBoxGrp3(PMCtrlCheckBoxGrp1):
-
+class PMCtrlFloatSlider2(PMCtrlBase):
     def __init__(self, *args, **kwargs):
-        super(PMCtrlCheckBoxGrp3, self).__init__(*args, **kwargs)
-        self.grpSize = 3
+        super(PMCtrlFloatSlider2, self).__init__(*args, **kwargs)
 
+    # def retrieveControlName(self):
+    #     print self.control.getFullPathName()
+    #     return 'aaa'
 
-class PMCtrlCheckBoxGrp4(PMCtrlCheckBoxGrp1):
+    def ctrl2Data(self):
+        super(PMCtrlFloatSlider2, self).ctrl2Data()
+        self.setAttr(Attr.Value, [self.control.getValue1(), self.control.getValue2()])
 
-    def __init__(self, *args, **kwargs):
-        super(PMCtrlCheckBoxGrp4, self).__init__(*args, **kwargs)
-        self.grpSize = 4
+    def data2Ctrl(self, prefData):
+        super(PMCtrlFloatSlider2, self).data2Ctrl(prefData)
+        prefValue = self.getAttr(Attr.Value)
+        self.control.setValue1(prefValue[0])
+        self.control.setValue2(prefValue[1])
 
 
 constructors = {
-    UIType.PMCheckBox: PMCtrlCheckBox,
-    UIType.PMCheckBoxGrp1: PMCtrlCheckBoxGrp1,
-    UIType.PMCheckBoxGrp2: PMCtrlCheckBoxGrp2,
-    UIType.PMCheckBoxGrp3: PMCtrlCheckBoxGrp3,
-    UIType.PMCheckBoxGrp4: PMCtrlCheckBoxGrp4,
-
+    # UIType.PMCheckBox: PMCtrlCheckBox,
+    UIType.PMCheckBox: PMCtrlSimple,
+    UIType.PMCheckBoxGrp1: partial(PMCtrlGrp4Simple, 1),
+    UIType.PMCheckBoxGrp2: partial(PMCtrlGrp4Simple, 2),
+    UIType.PMCheckBoxGrp3: partial(PMCtrlGrp4Simple, 3),
+    UIType.PMCheckBoxGrp4: partial(PMCtrlGrp4Simple, 4),
+    UIType.PMColorSliderGrp: PMCtrlColorSliderGrp,
+    UIType.PMFloatField: PMCtrlSimple,
+    UIType.PMFloatFieldGrp1: partial(PMCtrlGrp4Simple, 1),
+    UIType.PMFloatFieldGrp2: partial(PMCtrlGrp4Simple, 2),
+    UIType.PMFloatFieldGrp3: partial(PMCtrlGrp4Simple, 3),
+    UIType.PMFloatFieldGrp4: partial(PMCtrlGrp4Simple, 4),
+    UIType.PMFloatScrollBar: PMCtrlSimple,
+    UIType.PMFloatSlider: PMCtrlSimple,
+    UIType.PMFloatSliderGrp: PMCtrlBase,
+    UIType.PMFrameLayout: PMCtrlBase,
+    UIType.PMIconTextCheckBox: PMCtrlBase,
+    UIType.PMIconTextRadioButton: PMCtrlBase,
+    UIType.PMIconTextScrollList: PMCtrlBase,
+    UIType.PMIntField: PMCtrlBase,
+    UIType.PMIntFieldGrp1: PMCtrlBase,
+    UIType.PMIntFieldGrp2: PMCtrlBase,
+    UIType.PMIntFieldGrp3: PMCtrlBase,
+    UIType.PMIntFieldGrp4: PMCtrlBase,
+    UIType.PMIntScrollBar: PMCtrlBase,
+    UIType.PMIntSlider: PMCtrlBase,
+    UIType.PMIntSliderGrp: PMCtrlBase,
+    UIType.PMOptionMenu: PMCtrlBase,
+    UIType.PMOptionMenuGrp: PMCtrlBase,
+    UIType.PMRadioButton: PMCtrlBase,
+    UIType.PMRadioButtonGrp1: PMCtrlBase,
+    UIType.PMRadioButtonGrp2: PMCtrlBase,
+    UIType.PMRadioButtonGrp3: PMCtrlBase,
+    UIType.PMRadioButtonGrp4: PMCtrlBase,
+    UIType.PMSymbolCheckBox: PMCtrlBase,
+    UIType.PMScriptTable: PMCtrlBase,
+    UIType.PMScrollField: PMCtrlBase,
+    UIType.PMScrollLayout: PMCtrlBase,
+    UIType.PMShelfTabLayout: PMCtrlBase,
+    UIType.PMTabLayout: PMCtrlBase,
+    UIType.PMTextField: PMCtrlBase,
+    UIType.PMTextFieldButtonGrp: PMCtrlBase,
+    UIType.PMTextFieldGrp: PMCtrlBase,
+    UIType.PMTextScrollList: PMCtrlBase
 }
 
 

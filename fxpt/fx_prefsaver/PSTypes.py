@@ -178,7 +178,7 @@ class UIType(object):
     PMFloatFieldGrp4 = 311
     PMFloatScrollBar = 312
     PMFloatSlider = 313
-    PMFloatSlider2 = 314
+    # PMFloatSlider2 = 314  # is not implemented cause getFullPathName() stops with an error
     PMFloatSliderGrp = 315
     PMFrameLayout = 316
     PMIconTextCheckBox = 317
@@ -224,7 +224,7 @@ class UIType(object):
         PMFloatFieldGrp4,
         PMFloatScrollBar,
         PMFloatSlider,
-        PMFloatSlider2,
+        # PMFloatSlider2,  # is not implemented cause getFullPathName() stops with an error
         PMFloatSliderGrp,
         PMFrameLayout,
         PMIconTextCheckBox,
@@ -266,24 +266,17 @@ class UIType(object):
 
 class Attr(object):
 
-    WinGeom = 'winGeom'
-
-    Text = 'text'
-
     CheckState = 'checkState'
-
+    ColorRGB = 'colorRGB'
     CurrentIndex = 'currentIndex'
-
-    ItemsCount = 'itemCount'
+    ExpandedIndexes = 'expandedIndexes'
     Item = 'item'
-
+    ItemsCount = 'itemCount'
+    SelectedIndexes = 'selectedIndexes'
+    SelectedRanges = 'selectedRanges'
     Sizes = 'sizes'
-
     SortedSection = 'sortedSection'
     SortingOrder = 'sortingOrder'
-
-    SelectedRanges = 'selectedRanges'
-
-    SelectedIndexes = 'selectedIndexes'
-    ExpandedIndexes = 'expandedIndexes'
-
+    Text = 'text'
+    Value = 'value'
+    WinGeom = 'winGeom'

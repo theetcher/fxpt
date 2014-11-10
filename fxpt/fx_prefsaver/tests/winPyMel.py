@@ -126,7 +126,7 @@ class WinPyMelUI(object):
                                 self.uiFLTSLD_test1 = pm.floatSlider('uiFLTSLD_test1')
                                 self.uiFLTSLD_test2 = pm.floatSlider('uiFLTSLD_test2')
 
-                        with self.uiCreateFrame('uiLAY_frameFloatSliders2', 'Float Sliders2 (PMFloatSlider2)') as self.uiLAY_frameFloatSliders2:
+                        with self.uiCreateFrame('uiLAY_frameFloatSliders2', 'Float Sliders2 (PMFloatSlider2) - Not Implemented(PyMel bug)') as self.uiLAY_frameFloatSliders2:
                             with pm.columnLayout():
                                 with pm.rowLayout(numberOfColumns=4):
                                     pm.separator(style='none', width=140)
@@ -507,10 +507,22 @@ class WinPyMelUI(object):
     def initPrefs(self):
         self.prefSaver.addControl(self.uiCHK_test1, PrefSaver.UIType.PMCheckBox, False)
         self.prefSaver.addControl(self.uiCHK_test2, PrefSaver.UIType.PMCheckBox, False)
-        self.prefSaver.addControl(self.uiCHKGRP_test1, PrefSaver.UIType.PMCheckBoxGrp1, (False,))
-        self.prefSaver.addControl(self.uiCHKGRP_test2, PrefSaver.UIType.PMCheckBoxGrp2, (False, False))
-        self.prefSaver.addControl(self.uiCHKGRP_test3, PrefSaver.UIType.PMCheckBoxGrp3, (False, False, False))
-        self.prefSaver.addControl(self.uiCHKGRP_test4, PrefSaver.UIType.PMCheckBoxGrp4, (False, False, False, False))
+        self.prefSaver.addControl(self.uiCHKGRP_test1, PrefSaver.UIType.PMCheckBoxGrp1, [False])
+        self.prefSaver.addControl(self.uiCHKGRP_test2, PrefSaver.UIType.PMCheckBoxGrp2, [False, False])
+        self.prefSaver.addControl(self.uiCHKGRP_test3, PrefSaver.UIType.PMCheckBoxGrp3, [False, False, False])
+        self.prefSaver.addControl(self.uiCHKGRP_test4, PrefSaver.UIType.PMCheckBoxGrp4, [False, False, False, False])
+        self.prefSaver.addControl(self.uiCLRGRP_test1, PrefSaver.UIType.PMColorSliderGrp, [1, 0.5, 0.5])
+        self.prefSaver.addControl(self.uiCLRGRP_test2, PrefSaver.UIType.PMColorSliderGrp, [0.5, 1, 0.5])
+        self.prefSaver.addControl(self.uiFLF_test1, PrefSaver.UIType.PMFloatField, 4.568)
+        self.prefSaver.addControl(self.uiFLF_test2, PrefSaver.UIType.PMFloatField, 15.5)
+        self.prefSaver.addControl(self.uiFLFGRP_test1, PrefSaver.UIType.PMCheckBoxGrp1, [1.1])
+        self.prefSaver.addControl(self.uiFLFGRP_test2, PrefSaver.UIType.PMCheckBoxGrp2, [1.1, 2.2])
+        self.prefSaver.addControl(self.uiFLFGRP_test3, PrefSaver.UIType.PMCheckBoxGrp3, [1.1, 2.2, 3.3])
+        self.prefSaver.addControl(self.uiFLFGRP_test4, PrefSaver.UIType.PMCheckBoxGrp4, [1.1, 2.2, 3.3, 4.4])
+        self.prefSaver.addControl(self.uiFLSCRL_test1, PrefSaver.UIType.PMFloatScrollBar, 40)
+        self.prefSaver.addControl(self.uiFLSCRL_test2, PrefSaver.UIType.PMFloatScrollBar, 60)
+        self.prefSaver.addControl(self.uiFLTSLD_test1, PrefSaver.UIType.PMFloatSlider, 40)
+        self.prefSaver.addControl(self.uiFLTSLD_test2, PrefSaver.UIType.PMFloatSlider, 60)
 
     # noinspection PyUnusedLocal
     def onSavePrefsClicked(self, *args):
