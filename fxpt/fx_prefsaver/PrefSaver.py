@@ -73,14 +73,14 @@ class PrefSaver(object):
         self.applyPrefs({})
 
     def gatherPrefs(self):
-        prefData = {}
+        prefDataGlobal = {}
         for controller in self.controllers:
             controller.ctrl2Data()
-            prefData.update(controller.getPrefData())
-        return prefData
+            prefDataGlobal[controller.getControlName()] = controller.getPrefData()
+        return prefDataGlobal
 
-    def applyPrefs(self, prefData):
+    def applyPrefs(self, prefDataGlobal):
         for controller in self.controllers:
-            controller.data2Ctrl(prefData)
+            controller.data2Ctrl(prefDataGlobal)
 
 

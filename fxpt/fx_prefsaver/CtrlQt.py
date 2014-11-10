@@ -19,7 +19,7 @@ class QtCtrlBase(CtrlBase):
         super(QtCtrlBase, self).__init__(control, defaultValue)
         self.qt = qt
 
-    def getControlName(self):
+    def retrieveControlName(self):
         return str(self.control.objectName())
 
 
@@ -30,24 +30,12 @@ class QtCtrlWindow(QtCtrlBase):
 
     def ctrl2Data(self):
         super(QtCtrlWindow, self).ctrl2Data()
-
-        self.setAttr(Attr.WinX, self.control.x())
-        self.setAttr(Attr.WinY, self.control.y())
-        self.setAttr(Attr.WinWidth, self.control.width())
-        self.setAttr(Attr.WinHeight, self.control.height())
+        self.setAttr(Attr.WinGeom, [self.control.x(), self.control.y(), self.control.width(), self.control.height()])
 
     def data2Ctrl(self, prefData):
         super(QtCtrlWindow, self).data2Ctrl(prefData)
 
-        prefValue = self.getAttr(Attr.WinX)
-        x = prefValue if prefValue else self.defaultValue[0]
-        prefValue = self.getAttr(Attr.WinY)
-        y = prefValue if prefValue else self.defaultValue[1]
-        prefValue = self.getAttr(Attr.WinWidth)
-        width = prefValue if prefValue else self.defaultValue[2]
-        prefValue = self.getAttr(Attr.WinHeight)
-        height = prefValue if prefValue else self.defaultValue[3]
-
+        x, y, width, height = self.getAttr(Attr.WinGeom)
         self.control.move(x, y)
         self.control.resize(width, height)
 
@@ -171,16 +159,11 @@ class QtCtrlSplitter(QtCtrlBase):
 
     def ctrl2Data(self):
         super(QtCtrlSplitter, self).ctrl2Data()
-        self.setAttr(Attr.Sizes, ','.join([str(s) for s in self.control.sizes()]))
+        self.setAttr(Attr.Sizes, self.control.sizes())
 
     def data2Ctrl(self, prefData):
         super(QtCtrlSplitter, self).data2Ctrl(prefData)
-        prefValue = self.getAttr(Attr.Sizes)
-        if prefValue:
-            sizes = [int(s) for s in prefValue.split(',')]
-            self.control.setSizes(sizes)
-        else:
-            self.control.setSizes(self.defaultValue)
+        self.control.setSizes(self.getAttr(Attr.Sizes))
 
 
 # Explanation about headerGetter in ColumnSorter and SelectorBase.getSelectionModel()

@@ -11,7 +11,7 @@ class PMCtrlBase(CtrlBase):
     def __init__(self, control, defaultValue):
         super(PMCtrlBase, self).__init__(control, defaultValue)
 
-    def getControlName(self):
+    def retrieveControlName(self):
         return self.control.getFullPathName().split('|')[-1]
 
 
@@ -51,16 +51,14 @@ class PMCtrlCheckBoxGrp1(PMCtrlBase):
     # noinspection PyCallingNonCallable
     def ctrl2Data(self):
         super(PMCtrlCheckBoxGrp1, self).ctrl2Data()
-        for i in range(self.grpSize):
-            self.setAttr(Attr.CheckState + str(i), self.getters[i]())
+        self.setAttr(Attr.CheckState, [self.getters[i]() for i in range(self.grpSize)])
 
     # noinspection PyCallingNonCallable
     def data2Ctrl(self, prefData):
         super(PMCtrlCheckBoxGrp1, self).data2Ctrl(prefData)
+        prefValue = self.getAttr(Attr.CheckState)
         for i in range(self.grpSize):
-            attrName = Attr.CheckState + str(i)
-            prefValue = self.getAttr(attrName)
-            self.setters[i](prefValue if prefValue else self.defaultValue[i])
+            self.setters[i](prefValue[i])
 
 
 class PMCtrlCheckBoxGrp2(PMCtrlCheckBoxGrp1):

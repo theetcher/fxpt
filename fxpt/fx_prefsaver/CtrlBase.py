@@ -2,36 +2,37 @@ class CtrlBase(object):
 
     def __init__(self, control, defaultValue):
         self.control = control
-        self.controlName = self.getControlName()
+        self.controlName = self.retrieveControlName()
         self.defaultValue = defaultValue
         self.prefData = {}
 
-    def getControlName(self):
+    def retrieveControlName(self):
         raise NotImplementedError('Call to abstract method.')
+
+    def getControlName(self):
+        return self.controlName
 
     def ctrl2Data(self):
         self.setData()
 
-    def data2Ctrl(self, prefData):
-        self.setData(prefData)
+    def data2Ctrl(self, prefDataGlobal):
+        self.setData(prefDataGlobal)
 
     def getPrefData(self):
         return self.prefData
 
-    def key(self, attr):
-        return '{}_{}'.format(self.controlName, attr)
-
-    def setData(self, prefData=None):
-        if prefData is None:
+    def setData(self, prefDataGlobal=None):
+        if (prefDataGlobal is None) or (self.getControlName() not in prefDataGlobal):
             self.prefData = {}
         else:
-            self.prefData = prefData
+            self.prefData = prefDataGlobal[self.getControlName()]
 
     def setAttr(self, attr, value):
-        self.prefData[self.key(attr)] = value
+        self.prefData[attr] = value
 
     def getAttr(self, attr):
-        key = self.key(attr)
-        if key in self.prefData:
-            return self.prefData[key]
+        if attr in self.prefData:
+            return self.prefData[attr]
+        else:
+            return self.defaultValue
 

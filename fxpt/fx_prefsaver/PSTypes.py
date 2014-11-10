@@ -266,10 +266,7 @@ class UIType(object):
 
 class Attr(object):
 
-    WinX = 'x'
-    WinY = 'y'
-    WinWidth = 'width'
-    WinHeight = 'height'
+    WinGeom = 'winGeom'
 
     Text = 'text'
 
