@@ -9,7 +9,7 @@ class UIType(object):
     PYQTCheckButton = 5
     PYQTComboBox = 6
     PYQTComboBoxEditable = 7
-    PYQTTabControl = 8
+    PYQTTabWidget = 8
     PYQTSplitter = 9
     PYQTListWidget = 10
     PYQTTreeWidget = 11
@@ -26,7 +26,7 @@ class UIType(object):
         PYQTCheckButton,
         PYQTComboBox,
         PYQTComboBoxEditable,
-        PYQTTabControl,
+        PYQTTabWidget,
         PYQTSplitter,
         PYQTListWidget,
         PYQTTreeWidget,
@@ -44,7 +44,7 @@ class UIType(object):
     PYSIDECheckButton = 105
     PYSIDEComboBox = 106
     PYSIDEComboBoxEditable = 107
-    PYSIDETabControl = 108
+    PYSIDETabWidget = 108
     PYSIDESplitter = 109
     PYSIDEListWidget = 110
     PYSIDETreeWidget = 111
@@ -61,7 +61,7 @@ class UIType(object):
         PYSIDECheckButton,
         PYSIDEComboBox,
         PYSIDEComboBoxEditable,
-        PYSIDETabControl,
+        PYSIDETabWidget,
         PYSIDESplitter,
         PYSIDEListWidget,
         PYSIDETreeWidget,

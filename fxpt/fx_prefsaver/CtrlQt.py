@@ -12,6 +12,22 @@ from CtrlBase import CtrlBase
 from PSTypes import UIType, Attr
 from com import message
 
+#TODO: refactor Qt Controls using new default get and set attr value
+
+#TODO: ScrollArea
+#TODO: QToolBox
+#TODO: QStackedWidget
+#TODO: QTextEdit
+#TODO: QPlainTextEdit
+#TODO: QSpinBox
+#TODO: QDoubleSpinBox
+#TODO: QTimeEdit
+#TODO: QDateEdit
+#TODO: QDateTimeEdit
+#TODO: QDial
+#TODO: QScrollArea
+#TODO: QScrollBar
+#TODO: QSlider
 
 class QtCtrlBase(CtrlBase):
 
@@ -389,7 +405,7 @@ constructors = {
     UIType.PYQTCheckButton: QtCtrlCheckButton,
     UIType.PYQTComboBox: QtCtrlComboBox,
     UIType.PYQTComboBoxEditable: QtCtrlComboBoxEditable,
-    UIType.PYQTTabControl: QtCtrlComboBox,
+    UIType.PYQTTabWidget: QtCtrlComboBox,
     UIType.PYQTSplitter: QtCtrlSplitter,
     UIType.PYQTListWidget: QtCtrlListView,
     UIType.PYQTTableWidget: QtCtrlTableView,
@@ -405,7 +421,7 @@ constructors = {
     UIType.PYSIDECheckButton: QtCtrlCheckButton,
     UIType.PYSIDEComboBox: QtCtrlComboBox,
     UIType.PYSIDEComboBoxEditable: QtCtrlComboBoxEditable,
-    UIType.PYSIDETabControl: QtCtrlComboBox,
+    UIType.PYSIDETabWidget: QtCtrlComboBox,
     UIType.PYSIDESplitter: QtCtrlSplitter,
     UIType.PYSIDEListWidget: QtCtrlListView,
     UIType.PYSIDETableWidget: QtCtrlTableView,
