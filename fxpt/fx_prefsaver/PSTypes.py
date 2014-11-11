@@ -108,7 +108,7 @@ class UIType(object):
     MRadioButtonGrp4 = 234
     MSymbolCheckBox = 235
     MScriptTable = 236
-    MScrollField = 237  # the same as MTextField
+    MScrollField = 237
     MScrollLayout = 238
     MShelfTabLayout = 239
     MTabLayout = 240
@@ -154,7 +154,7 @@ class UIType(object):
         MRadioButtonGrp4,
         MSymbolCheckBox,
         MScriptTable,
-        MScrollField,  # the same as MTextField
+        MScrollField,
         MScrollLayout,
         MShelfTabLayout,
         MTabLayout,
@@ -201,7 +201,7 @@ class UIType(object):
     PMRadioButtonGrp4 = 334
     PMSymbolCheckBox = 335
     PMScriptTable = 336
-    PMScrollField = 337  # the same as PMTextField
+    PMScrollField = 337
     PMScrollLayout = 338
     PMShelfTabLayout = 339
     PMTabLayout = 340
@@ -247,7 +247,7 @@ class UIType(object):
         PMRadioButtonGrp4,
         PMSymbolCheckBox,
         PMScriptTable,
-        PMScrollField,  # the same as PMTextField
+        PMScrollField,
         PMScrollLayout,
         PMShelfTabLayout,
         PMTabLayout,

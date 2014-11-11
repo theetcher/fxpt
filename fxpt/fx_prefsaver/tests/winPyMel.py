@@ -615,6 +615,10 @@ class WinPyMelUI(object):
         self.prefSaver.addControl(self.uiRADGRP_test2, PrefSaver.UIType.PMRadioButtonGrp2, 2)
         self.prefSaver.addControl(self.uiRADGRP_test3, PrefSaver.UIType.PMRadioButtonGrp3, 3)
         self.prefSaver.addControl(self.uiRADGRP_test4, PrefSaver.UIType.PMRadioButtonGrp4, 4)
+        self.prefSaver.addControl(self.uiSYMCHK_test1, PrefSaver.UIType.PMSymbolCheckBox, False)
+        self.prefSaver.addControl(self.uiSYMCHK_test2, PrefSaver.UIType.PMSymbolCheckBox, True)
+        self.prefSaver.addControl(self.uiSCRTBL_test1, PrefSaver.UIType.PMScriptTable, [0, 0])  # [0, 0] equals to "select nothing"
+        self.prefSaver.addControl(self.uiSCRTBL_test2, PrefSaver.UIType.PMScriptTable, [0, 0])
 
     # noinspection PyUnusedLocal
     def onSavePrefsClicked(self, *args):

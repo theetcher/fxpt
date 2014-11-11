@@ -129,12 +129,26 @@ class PMCtrlIconTextScrollList(PMCtrlBase):
 
     def ctrl2Data(self):
         super(PMCtrlIconTextScrollList, self).ctrl2Data()
-        self.setAttr(Attr.SelectedIndexes, (self.control.getSelectIndexedItem() or []))
+        self.setAttr(Attr.SelectedIndexes, self.control.getSelectIndexedItem() or [])
 
     def data2Ctrl(self, prefData):
         super(PMCtrlIconTextScrollList, self).data2Ctrl(prefData)
         self.control.deselectAll()
         self.control.setSelectIndexedItem(self.getAttr(Attr.SelectedIndexes))
+
+
+class PMCtrlScriptTable(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlScriptTable, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(PMCtrlScriptTable, self).ctrl2Data()
+        self.setAttr(Attr.SelectedIndexes, self.control.getSelectedCells() or [])
+
+    def data2Ctrl(self, prefData):
+        super(PMCtrlScriptTable, self).data2Ctrl(prefData)
+        self.control.setSelectedCells(self.getAttr(Attr.SelectedIndexes))
 
 
 constructors = {
@@ -171,8 +185,8 @@ constructors = {
     UIType.PMRadioButtonGrp2: PMCtrlRadioButton,
     UIType.PMRadioButtonGrp3: PMCtrlRadioButton,
     UIType.PMRadioButtonGrp4: PMCtrlRadioButton,
-    UIType.PMSymbolCheckBox: PMCtrlBase,
-    UIType.PMScriptTable: PMCtrlBase,
+    UIType.PMSymbolCheckBox: PMCtrlSimple,
+    UIType.PMScriptTable: PMCtrlScriptTable,
     UIType.PMScrollField: PMCtrlBase,
     UIType.PMScrollLayout: PMCtrlScrollLayout,
     UIType.PMShelfTabLayout: PMCtrlBase,
