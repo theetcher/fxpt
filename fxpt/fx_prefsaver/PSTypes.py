@@ -268,7 +268,6 @@ class Attr(object):
 
     CheckState = 'checkState'
     Collapsed = 'collapsed'
-    ColorRGB = 'colorRGB'
     CurrentIndex = 'currentIndex'
     ExpandedIndexes = 'expandedIndexes'
     Item = 'item'

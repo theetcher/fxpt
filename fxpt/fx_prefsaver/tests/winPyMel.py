@@ -554,6 +554,7 @@ class WinPyMelUI(object):
         self.prefSaver.addControl(self.uiLAY_frameOptionMenus, PrefSaver.UIType.PMFrameLayout, False)
         self.prefSaver.addControl(self.uiLAY_frameOptionMenuGroups, PrefSaver.UIType.PMFrameLayout, False)
         self.prefSaver.addControl(self.uiLAY_frameRadioButtons, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameRadioButtonGroups, PrefSaver.UIType.PMFrameLayout, False)
         self.prefSaver.addControl(self.uiLAY_frameSymbolCheckBoxes, PrefSaver.UIType.PMFrameLayout, False)
         self.prefSaver.addControl(self.uiLAY_frameScriptTables, PrefSaver.UIType.PMFrameLayout, False)
         self.prefSaver.addControl(self.uiLAY_frameScrollField, PrefSaver.UIType.PMFrameLayout, False)

@@ -13,6 +13,29 @@ class PMCtrlBase(CtrlBase):
     def __init__(self, control, defaultValue):
         super(PMCtrlBase, self).__init__(control, defaultValue)
 
+        self.attr = None
+        self.ctrlGetter = None
+        self.ctrlSetter = None
+
+    def ctrl2Data(self):
+        super(PMCtrlBase, self).ctrl2Data()
+        self.ctrl2DataProcedure()
+
+    def data2Ctrl(self, prefDataGlobal):
+        super(PMCtrlBase, self).data2Ctrl(prefDataGlobal)
+        self.data2CtrlProcedure()
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(self.attr, self.ctrlGetter())
+
+    def data2CtrlProcedure(self):
+        self.ctrlSetter(self.getAttr(self.attr))
+
+    def setupGetSetVars(self, attr, getter, setter):
+        self.attr = attr
+        self.ctrlGetter = getter
+        self.ctrlSetter = setter
+
     def retrieveControlName(self):
         return self.control.getFullPathName().split('|')[-1]
 
@@ -20,14 +43,49 @@ class PMCtrlBase(CtrlBase):
 class PMCtrlSimple(PMCtrlBase):
     def __init__(self, *args, **kwargs):
         super(PMCtrlSimple, self).__init__(*args, **kwargs)
+        self.setupGetSetVars(Attr.Value, self.control.getValue, self.control.setValue)
 
-    def ctrl2Data(self):
-        super(PMCtrlSimple, self).ctrl2Data()
-        self.setAttr(Attr.Value, self.control.getValue())
 
-    def data2Ctrl(self, prefData):
-        super(PMCtrlSimple, self).data2Ctrl(prefData)
-        self.control.setValue(self.getAttr(Attr.Value))
+class PMCtrlColorSliderGrp(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlColorSliderGrp, self).__init__(*args, **kwargs)
+        self.setupGetSetVars(Attr.Value, self.control.getRgbValue, self.control.setRgbValue)
+
+
+class PMCtrlFrameLayout(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlFrameLayout, self).__init__(*args, **kwargs)
+        self.setupGetSetVars(Attr.Value, self.control.getCollapse, self.control.setCollapse)
+
+
+class PMCtrlRadioButton(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlRadioButton, self).__init__(*args, **kwargs)
+        self.setupGetSetVars(Attr.Value, self.control.getSelect, self.control.setSelect)
+
+
+class PMCtrlScrollField(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlScrollField, self).__init__(*args, **kwargs)
+        self.setupGetSetVars(Attr.Value, self.control.getText, self.control.setText)
+
+
+class PMCtrlTabLayout(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlTabLayout, self).__init__(*args, **kwargs)
+        self.setupGetSetVars(Attr.Value, self.control.getSelectTabIndex, self.control.setSelectTabIndex)
+
+
+class PMCtrlTextField(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlTextField, self).__init__(*args, **kwargs)
+        self.setupGetSetVars(Attr.Value, self.control.getText, self.control.setText)
 
 
 class PMCtrlGrp4Simple(PMCtrlBase):
@@ -49,30 +107,14 @@ class PMCtrlGrp4Simple(PMCtrlBase):
         }
 
     # noinspection PyCallingNonCallable
-    def ctrl2Data(self):
-        super(PMCtrlGrp4Simple, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         self.setAttr(Attr.Value, [self.getters[i]() for i in range(self.grpSize)])
 
     # noinspection PyCallingNonCallable
-    def data2Ctrl(self, prefData):
-        super(PMCtrlGrp4Simple, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
         prefValue = self.getAttr(Attr.Value)
         for i in range(self.grpSize):
             self.setters[i](prefValue[i])
-
-
-class PMCtrlColorSliderGrp(PMCtrlBase):
-
-    def __init__(self, *args, **kwargs):
-        super(PMCtrlColorSliderGrp, self).__init__(*args, **kwargs)
-
-    def ctrl2Data(self):
-        super(PMCtrlColorSliderGrp, self).ctrl2Data()
-        self.setAttr(Attr.ColorRGB, self.control.getRgbValue())
-
-    def data2Ctrl(self, prefData):
-        super(PMCtrlColorSliderGrp, self).data2Ctrl(prefData)
-        self.control.setRgbValue(self.getAttr(Attr.ColorRGB))
 
 
 class PMCtrlScrollLayout(PMCtrlBase):
@@ -80,12 +122,10 @@ class PMCtrlScrollLayout(PMCtrlBase):
     def __init__(self, *args, **kwargs):
         super(PMCtrlScrollLayout, self).__init__(*args, **kwargs)
 
-    def ctrl2Data(self):
-        super(PMCtrlScrollLayout, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         self.setAttr(Attr.ScrollValues, self.control.getScrollAreaValue())
 
-    def data2Ctrl(self, prefData):
-        super(PMCtrlScrollLayout, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
         currentScrollDown, currentScrollRight = self.control.getScrollAreaValue()
         prefValue = self.getAttr(Attr.ScrollValues)
         self.control.scrollByPixel(['up', currentScrollDown])
@@ -94,45 +134,15 @@ class PMCtrlScrollLayout(PMCtrlBase):
         self.control.scrollByPixel(['right', prefValue[1]])
 
 
-class PMCtrlFrameLayout(PMCtrlBase):
-
-    def __init__(self, *args, **kwargs):
-        super(PMCtrlFrameLayout, self).__init__(*args, **kwargs)
-
-    def ctrl2Data(self):
-        super(PMCtrlFrameLayout, self).ctrl2Data()
-        self.setAttr(Attr.Collapsed, self.control.getCollapse())
-
-    def data2Ctrl(self, prefData):
-        super(PMCtrlFrameLayout, self).data2Ctrl(prefData)
-        self.control.setCollapse(self.getAttr(Attr.Collapsed))
-
-
-class PMCtrlRadioButton(PMCtrlBase):
-
-    def __init__(self, *args, **kwargs):
-        super(PMCtrlRadioButton, self).__init__(*args, **kwargs)
-
-    def ctrl2Data(self):
-        super(PMCtrlRadioButton, self).ctrl2Data()
-        self.setAttr(Attr.Value, self.control.getSelect())
-
-    def data2Ctrl(self, prefData):
-        super(PMCtrlRadioButton, self).data2Ctrl(prefData)
-        self.control.setSelect(self.getAttr(Attr.Value))
-
-
 class PMCtrlTextScrollList(PMCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(PMCtrlTextScrollList, self).__init__(*args, **kwargs)
 
-    def ctrl2Data(self):
-        super(PMCtrlTextScrollList, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         self.setAttr(Attr.SelectedIndexes, self.control.getSelectIndexedItem() or [])
 
-    def data2Ctrl(self, prefData):
-        super(PMCtrlTextScrollList, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
         self.control.deselectAll()
         self.control.setSelectIndexedItem(self.getAttr(Attr.SelectedIndexes))
 
@@ -142,56 +152,12 @@ class PMCtrlScriptTable(PMCtrlBase):
     def __init__(self, *args, **kwargs):
         super(PMCtrlScriptTable, self).__init__(*args, **kwargs)
 
-    def ctrl2Data(self):
-        super(PMCtrlScriptTable, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         controlData = self.control.getSelectedCells()
         self.setAttr(Attr.SelectedIndexes, [0, 0] if controlData is None else controlData)
 
-    def data2Ctrl(self, prefData):
-        super(PMCtrlScriptTable, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
         self.control.setSelectedCells(self.getAttr(Attr.SelectedIndexes))
-
-
-class PMCtrlScrollField(PMCtrlBase):
-
-    def __init__(self, *args, **kwargs):
-        super(PMCtrlScrollField, self).__init__(*args, **kwargs)
-
-    def ctrl2Data(self):
-        super(PMCtrlScrollField, self).ctrl2Data()
-        self.setAttr(Attr.Value, self.control.getText())
-
-    def data2Ctrl(self, prefData):
-        super(PMCtrlScrollField, self).data2Ctrl(prefData)
-        self.control.setText(self.getAttr(Attr.Value))
-
-
-class PMCtrlTabLayout(PMCtrlBase):
-
-    def __init__(self, *args, **kwargs):
-        super(PMCtrlTabLayout, self).__init__(*args, **kwargs)
-
-    def ctrl2Data(self):
-        super(PMCtrlTabLayout, self).ctrl2Data()
-        self.setAttr(Attr.Value, self.control.getSelectTabIndex())
-
-    def data2Ctrl(self, prefData):
-        super(PMCtrlTabLayout, self).data2Ctrl(prefData)
-        self.control.setSelectTabIndex(self.getAttr(Attr.Value))
-
-
-class PMCtrlTextField(PMCtrlBase):
-
-    def __init__(self, *args, **kwargs):
-        super(PMCtrlTextField, self).__init__(*args, **kwargs)
-
-    def ctrl2Data(self):
-        super(PMCtrlTextField, self).ctrl2Data()
-        self.setAttr(Attr.Value, self.control.getText())
-
-    def data2Ctrl(self, prefData):
-        super(PMCtrlTextField, self).data2Ctrl(prefData)
-        self.control.setText(self.getAttr(Attr.Value))
 
 
 constructors = {
