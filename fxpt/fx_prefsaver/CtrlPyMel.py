@@ -122,17 +122,17 @@ class PMCtrlRadioButton(PMCtrlBase):
         self.control.setSelect(self.getAttr(Attr.Value))
 
 
-class PMCtrlIconTextScrollList(PMCtrlBase):
+class PMCtrlTextScrollList(PMCtrlBase):
 
     def __init__(self, *args, **kwargs):
-        super(PMCtrlIconTextScrollList, self).__init__(*args, **kwargs)
+        super(PMCtrlTextScrollList, self).__init__(*args, **kwargs)
 
     def ctrl2Data(self):
-        super(PMCtrlIconTextScrollList, self).ctrl2Data()
+        super(PMCtrlTextScrollList, self).ctrl2Data()
         self.setAttr(Attr.SelectedIndexes, self.control.getSelectIndexedItem() or [])
 
     def data2Ctrl(self, prefData):
-        super(PMCtrlIconTextScrollList, self).data2Ctrl(prefData)
+        super(PMCtrlTextScrollList, self).data2Ctrl(prefData)
         self.control.deselectAll()
         self.control.setSelectIndexedItem(self.getAttr(Attr.SelectedIndexes))
 
@@ -144,11 +144,54 @@ class PMCtrlScriptTable(PMCtrlBase):
 
     def ctrl2Data(self):
         super(PMCtrlScriptTable, self).ctrl2Data()
-        self.setAttr(Attr.SelectedIndexes, self.control.getSelectedCells() or [])
+        controlData = self.control.getSelectedCells()
+        self.setAttr(Attr.SelectedIndexes, [0, 0] if controlData is None else controlData)
 
     def data2Ctrl(self, prefData):
         super(PMCtrlScriptTable, self).data2Ctrl(prefData)
         self.control.setSelectedCells(self.getAttr(Attr.SelectedIndexes))
+
+
+class PMCtrlScrollField(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlScrollField, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(PMCtrlScrollField, self).ctrl2Data()
+        self.setAttr(Attr.Value, self.control.getText())
+
+    def data2Ctrl(self, prefData):
+        super(PMCtrlScrollField, self).data2Ctrl(prefData)
+        self.control.setText(self.getAttr(Attr.Value))
+
+
+class PMCtrlTabLayout(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlTabLayout, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(PMCtrlTabLayout, self).ctrl2Data()
+        self.setAttr(Attr.Value, self.control.getSelectTabIndex())
+
+    def data2Ctrl(self, prefData):
+        super(PMCtrlTabLayout, self).data2Ctrl(prefData)
+        self.control.setSelectTabIndex(self.getAttr(Attr.Value))
+
+
+class PMCtrlTextField(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlTextField, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(PMCtrlTextField, self).ctrl2Data()
+        self.setAttr(Attr.Value, self.control.getText())
+
+    def data2Ctrl(self, prefData):
+        super(PMCtrlTextField, self).data2Ctrl(prefData)
+        self.control.setText(self.getAttr(Attr.Value))
 
 
 constructors = {
@@ -169,7 +212,7 @@ constructors = {
     UIType.PMFrameLayout: PMCtrlFrameLayout,
     UIType.PMIconTextCheckBox: PMCtrlSimple,
     UIType.PMIconTextRadioButton: PMCtrlRadioButton,
-    UIType.PMIconTextScrollList: PMCtrlIconTextScrollList,
+    UIType.PMIconTextScrollList: PMCtrlTextScrollList,
     UIType.PMIntField: PMCtrlSimple,
     UIType.PMIntFieldGrp1: partial(PMCtrlGrp4Simple, 1),
     UIType.PMIntFieldGrp2: partial(PMCtrlGrp4Simple, 2),
@@ -187,14 +230,14 @@ constructors = {
     UIType.PMRadioButtonGrp4: PMCtrlRadioButton,
     UIType.PMSymbolCheckBox: PMCtrlSimple,
     UIType.PMScriptTable: PMCtrlScriptTable,
-    UIType.PMScrollField: PMCtrlBase,
+    UIType.PMScrollField: PMCtrlScrollField,
     UIType.PMScrollLayout: PMCtrlScrollLayout,
-    UIType.PMShelfTabLayout: PMCtrlBase,
-    UIType.PMTabLayout: PMCtrlBase,
-    UIType.PMTextField: PMCtrlBase,
-    UIType.PMTextFieldButtonGrp: PMCtrlBase,
-    UIType.PMTextFieldGrp: PMCtrlBase,
-    UIType.PMTextScrollList: PMCtrlBase
+    UIType.PMShelfTabLayout: PMCtrlTabLayout,
+    UIType.PMTabLayout: PMCtrlTabLayout,
+    UIType.PMTextField: PMCtrlTextField,
+    UIType.PMTextFieldButtonGrp: PMCtrlTextField,
+    UIType.PMTextFieldGrp: PMCtrlTextField,
+    UIType.PMTextScrollList: PMCtrlTextScrollList
 }
 
 

@@ -619,6 +619,20 @@ class WinPyMelUI(object):
         self.prefSaver.addControl(self.uiSYMCHK_test2, PrefSaver.UIType.PMSymbolCheckBox, True)
         self.prefSaver.addControl(self.uiSCRTBL_test1, PrefSaver.UIType.PMScriptTable, [0, 0])  # [0, 0] equals to "select nothing"
         self.prefSaver.addControl(self.uiSCRTBL_test2, PrefSaver.UIType.PMScriptTable, [0, 0])
+        self.prefSaver.addControl(self.uiSCRFLD_test1, PrefSaver.UIType.PMScrollField, 'default text')
+        self.prefSaver.addControl(self.uiSCRFLD_test2, PrefSaver.UIType.PMScrollField, 'default text')
+        self.prefSaver.addControl(self.uiSHLTAB_test1, PrefSaver.UIType.PMShelfTabLayout, 1)
+        self.prefSaver.addControl(self.uiSHLTAB_test2, PrefSaver.UIType.PMShelfTabLayout, 1)
+        self.prefSaver.addControl(self.uiTAB_test1, PrefSaver.UIType.PMTabLayout, 1)
+        self.prefSaver.addControl(self.uiTAB_test2, PrefSaver.UIType.PMTabLayout, 1)
+        self.prefSaver.addControl(self.uiTXT_test1, PrefSaver.UIType.PMTextField, 'default text')
+        self.prefSaver.addControl(self.uiTXT_test2, PrefSaver.UIType.PMTextField, 'default text')
+        self.prefSaver.addControl(self.uiTXBTGR_test1, PrefSaver.UIType.PMTextFieldButtonGrp, 'default text')
+        self.prefSaver.addControl(self.uiTXBTGR_test2, PrefSaver.UIType.PMTextFieldButtonGrp, 'default text')
+        self.prefSaver.addControl(self.uiTXTGRP_test1, PrefSaver.UIType.PMTextFieldGrp, 'default text')
+        self.prefSaver.addControl(self.uiTXTGRP_test2, PrefSaver.UIType.PMTextFieldGrp, 'default text')
+        self.prefSaver.addControl(self.uiTXTLST_test1, PrefSaver.UIType.PMTextScrollList, [])
+        self.prefSaver.addControl(self.uiTXTLST_test2, PrefSaver.UIType.PMTextScrollList, [])
 
     # noinspection PyUnusedLocal
     def onSavePrefsClicked(self, *args):
@@ -636,7 +650,6 @@ class WinPyMelUI(object):
     def onCloseClicked(self, *args):
         if pm.window(WIN_NAME, exists=True):
             pm.deleteUI(WIN_NAME, window=True)
-
 
 
 def run(serializer):
