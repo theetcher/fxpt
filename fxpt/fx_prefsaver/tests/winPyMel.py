@@ -209,8 +209,8 @@ class WinPyMelUI(object):
                                 pm.separator(style='none', height=2)
                                 with pm.rowLayout(numberOfColumns=3):
                                     pm.separator(width=140, style='none')
-                                    self.uiINF_test1 = pm.floatField('uiINF_test1')
-                                    self.uiINF_test2 = pm.floatField('uiINF_test2')
+                                    self.uiINF_test1 = pm.intField('uiINF_test1')
+                                    self.uiINF_test2 = pm.intField('uiINF_test2')
 
                         with self.uiCreateFrame('uiLAY_frameIntFieldGroups', 'Int Field Groups (PMIntFieldGrp#)') as self.uiLAY_frameIntFieldGroups:
                             with pm.columnLayout():
@@ -296,6 +296,34 @@ class WinPyMelUI(object):
                                     self.uiRAD_test1 = pm.radioButton('uiRAD_test1', label='test1')
                                     self.uiRAD_test2 = pm.radioButton('uiRAD_test2', label='test2')
                                     self.uiRAD_test3 = pm.radioButton('uiRAD_test3', label='test3')
+
+                        with self.uiCreateFrame('uiLAY_frameRadioButtonGroups', 'Radio Button Groups (PMRadioButtonGrp#)') as self.uiLAY_frameRadioButtonGroups:
+                            with pm.columnLayout():
+                                pm.separator(style='none', height=2)
+                                self.uiRADGRP_test1 = pm.radioButtonGrp(
+                                    'uiRADGRP_test1',
+                                    numberOfRadioButtons=1,
+                                    label='PMRadioButtonGrp1',
+                                    label1='test1'
+                                )
+                                self.uiRADGRP_test2 = pm.radioButtonGrp(
+                                    'uiRADGRP_test2',
+                                    numberOfRadioButtons=2,
+                                    label='PMRadioButtonGrp2',
+                                    labelArray2=('test1', 'test2')
+                                )
+                                self.uiRADGRP_test3 = pm.radioButtonGrp(
+                                    'uiRADGRP_test3',
+                                    numberOfRadioButtons=3,
+                                    label='PMRadioButtonGrp3',
+                                    labelArray3=('test1', 'test2', 'test3')
+                                )
+                                self.uiRADGRP_test4 = pm.radioButtonGrp(
+                                    'uiRADGRP_test4',
+                                    numberOfRadioButtons=4,
+                                    label='PMRadioButtonGrp4',
+                                    labelArray4=('test1', 'test2', 'test3', 'test4')
+                                )
 
                         with self.uiCreateFrame('uiLAY_frameSymbolCheckBoxes', 'Symbol Check Boxes (PMSymbolCheckBox)') as self.uiLAY_frameSymbolCheckBoxes:
                             with pm.columnLayout():
@@ -504,7 +532,38 @@ class WinPyMelUI(object):
         else:
             assert False, 'Unknown serializer type'
 
+    # noinspection PyUnresolvedReferences
     def initPrefs(self):
+        self.prefSaver.addControl(self.uiLAY_frameCheckBoxes, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameCheckBoxGroups, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameColorSliders, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameFloatFields, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameFloatFieldGroups, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameFloatScrollBars, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameFloatSliders, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameFloatSliders2, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameFloatSliderGroups, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameIconTextCheckBoxes, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameIconTextRadioButtons, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameIconTextScrollLists, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameIntFields, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameIntFieldGroups, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameIntScrollBars, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameIntSliders, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameIntSliderGroups, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameOptionMenus, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameOptionMenuGroups, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameRadioButtons, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameSymbolCheckBoxes, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameScriptTables, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameScrollField, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameShelfTabLayout, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameTabLayout, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameTextFields, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameTextFieldButtonGroups, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameTextFieldGroups, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.uiLAY_frameTextScrollLists, PrefSaver.UIType.PMFrameLayout, False)
+
         self.prefSaver.addControl(self.uiCHK_test1, PrefSaver.UIType.PMCheckBox, False)
         self.prefSaver.addControl(self.uiCHK_test2, PrefSaver.UIType.PMCheckBox, False)
         self.prefSaver.addControl(self.uiCHKGRP_test1, PrefSaver.UIType.PMCheckBoxGrp1, [False])
@@ -523,6 +582,39 @@ class WinPyMelUI(object):
         self.prefSaver.addControl(self.uiFLSCRL_test2, PrefSaver.UIType.PMFloatScrollBar, 60)
         self.prefSaver.addControl(self.uiFLTSLD_test1, PrefSaver.UIType.PMFloatSlider, 40)
         self.prefSaver.addControl(self.uiFLTSLD_test2, PrefSaver.UIType.PMFloatSlider, 60)
+        self.prefSaver.addControl(self.uiFLSGRP_test1, PrefSaver.UIType.PMFloatSliderGrp, 40)
+        self.prefSaver.addControl(self.uiFLSGRP_test2, PrefSaver.UIType.PMFloatSliderGrp, 60)
+        self.prefSaver.addControl(self.uiLAY_mainScroll, PrefSaver.UIType.PMScrollLayout, [0, 0])
+        self.prefSaver.addControl(self.uiITCHK_test1, PrefSaver.UIType.PMIconTextCheckBox, False)
+        self.prefSaver.addControl(self.uiITCHK_test2, PrefSaver.UIType.PMIconTextCheckBox, False)
+        self.prefSaver.addControl(self.uiITRAD_test1, PrefSaver.UIType.PMIconTextRadioButton, False)
+        self.prefSaver.addControl(self.uiITRAD_test2, PrefSaver.UIType.PMIconTextRadioButton, False)
+        self.prefSaver.addControl(self.uiITRAD_test3, PrefSaver.UIType.PMIconTextRadioButton, True)
+        self.prefSaver.addControl(self.uiITSLST_test1, PrefSaver.UIType.PMIconTextScrollList, [])
+        self.prefSaver.addControl(self.uiITSLST_test2, PrefSaver.UIType.PMIconTextScrollList, [])
+        self.prefSaver.addControl(self.uiINF_test1, PrefSaver.UIType.PMIntField, 1)
+        self.prefSaver.addControl(self.uiINF_test2, PrefSaver.UIType.PMIntField, 2)
+        self.prefSaver.addControl(self.uiINFGRP_test1, PrefSaver.UIType.PMIntFieldGrp1, [1])
+        self.prefSaver.addControl(self.uiINFGRP_test2, PrefSaver.UIType.PMIntFieldGrp2, [2, 2])
+        self.prefSaver.addControl(self.uiINFGRP_test3, PrefSaver.UIType.PMIntFieldGrp3, [3, 3, 3])
+        self.prefSaver.addControl(self.uiINFGRP_test4, PrefSaver.UIType.PMIntFieldGrp4, [4, 4, 4, 4])
+        self.prefSaver.addControl(self.uiINSCRL_test1, PrefSaver.UIType.PMIntScrollBar, 40)
+        self.prefSaver.addControl(self.uiINSCRL_test2, PrefSaver.UIType.PMIntScrollBar, 60)
+        self.prefSaver.addControl(self.uiINTSLD_test1, PrefSaver.UIType.PMIntSlider, 40)
+        self.prefSaver.addControl(self.uiINTSLD_test2, PrefSaver.UIType.PMIntSlider, 60)
+        self.prefSaver.addControl(self.uiINSGRP_test1, PrefSaver.UIType.PMIntSliderGrp, 40)
+        self.prefSaver.addControl(self.uiINSGRP_test2, PrefSaver.UIType.PMIntSliderGrp, 60)
+        self.prefSaver.addControl(self.uiOPTMNU_test1, PrefSaver.UIType.PMOptionMenu, 1)
+        self.prefSaver.addControl(self.uiOPTMNU_test2, PrefSaver.UIType.PMOptionMenu, 2)
+        self.prefSaver.addControl(self.uiOPMGRP_test1, PrefSaver.UIType.PMOptionMenuGrp, 1)
+        self.prefSaver.addControl(self.uiOPMGRP_test2, PrefSaver.UIType.PMOptionMenuGrp, 2)
+        self.prefSaver.addControl(self.uiRAD_test1, PrefSaver.UIType.PMRadioButton, False)
+        self.prefSaver.addControl(self.uiRAD_test2, PrefSaver.UIType.PMRadioButton, False)
+        self.prefSaver.addControl(self.uiRAD_test3, PrefSaver.UIType.PMRadioButton, True)
+        self.prefSaver.addControl(self.uiRADGRP_test1, PrefSaver.UIType.PMRadioButtonGrp1, 1)
+        self.prefSaver.addControl(self.uiRADGRP_test2, PrefSaver.UIType.PMRadioButtonGrp2, 2)
+        self.prefSaver.addControl(self.uiRADGRP_test3, PrefSaver.UIType.PMRadioButtonGrp3, 3)
+        self.prefSaver.addControl(self.uiRADGRP_test4, PrefSaver.UIType.PMRadioButtonGrp4, 4)
 
     # noinspection PyUnusedLocal
     def onSavePrefsClicked(self, *args):

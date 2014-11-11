@@ -267,11 +267,13 @@ class UIType(object):
 class Attr(object):
 
     CheckState = 'checkState'
+    Collapsed = 'collapsed'
     ColorRGB = 'colorRGB'
     CurrentIndex = 'currentIndex'
     ExpandedIndexes = 'expandedIndexes'
     Item = 'item'
     ItemsCount = 'itemCount'
+    ScrollValues = 'scrollValues'
     SelectedIndexes = 'selectedIndexes'
     SelectedRanges = 'selectedRanges'
     Sizes = 'sizes'

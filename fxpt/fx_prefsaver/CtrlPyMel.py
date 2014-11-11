@@ -75,27 +75,69 @@ class PMCtrlColorSliderGrp(PMCtrlBase):
         self.control.setRgbValue(self.getAttr(Attr.ColorRGB))
 
 
-class PMCtrlFloatSlider2(PMCtrlBase):
-    def __init__(self, *args, **kwargs):
-        super(PMCtrlFloatSlider2, self).__init__(*args, **kwargs)
+class PMCtrlScrollLayout(PMCtrlBase):
 
-    # def retrieveControlName(self):
-    #     print self.control.getFullPathName()
-    #     return 'aaa'
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlScrollLayout, self).__init__(*args, **kwargs)
 
     def ctrl2Data(self):
-        super(PMCtrlFloatSlider2, self).ctrl2Data()
-        self.setAttr(Attr.Value, [self.control.getValue1(), self.control.getValue2()])
+        super(PMCtrlScrollLayout, self).ctrl2Data()
+        self.setAttr(Attr.ScrollValues, self.control.getScrollAreaValue())
 
     def data2Ctrl(self, prefData):
-        super(PMCtrlFloatSlider2, self).data2Ctrl(prefData)
-        prefValue = self.getAttr(Attr.Value)
-        self.control.setValue1(prefValue[0])
-        self.control.setValue2(prefValue[1])
+        super(PMCtrlScrollLayout, self).data2Ctrl(prefData)
+        currentScrollDown, currentScrollRight = self.control.getScrollAreaValue()
+        prefValue = self.getAttr(Attr.ScrollValues)
+        self.control.scrollByPixel(['up', currentScrollDown])
+        self.control.scrollByPixel(['left', currentScrollRight])
+        self.control.scrollByPixel(['down', prefValue[0]])
+        self.control.scrollByPixel(['right', prefValue[1]])
+
+
+class PMCtrlFrameLayout(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlFrameLayout, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(PMCtrlFrameLayout, self).ctrl2Data()
+        self.setAttr(Attr.Collapsed, self.control.getCollapse())
+
+    def data2Ctrl(self, prefData):
+        super(PMCtrlFrameLayout, self).data2Ctrl(prefData)
+        self.control.setCollapse(self.getAttr(Attr.Collapsed))
+
+
+class PMCtrlRadioButton(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlRadioButton, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(PMCtrlRadioButton, self).ctrl2Data()
+        self.setAttr(Attr.Value, self.control.getSelect())
+
+    def data2Ctrl(self, prefData):
+        super(PMCtrlRadioButton, self).data2Ctrl(prefData)
+        self.control.setSelect(self.getAttr(Attr.Value))
+
+
+class PMCtrlIconTextScrollList(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlIconTextScrollList, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(PMCtrlIconTextScrollList, self).ctrl2Data()
+        self.setAttr(Attr.SelectedIndexes, (self.control.getSelectIndexedItem() or []))
+
+    def data2Ctrl(self, prefData):
+        super(PMCtrlIconTextScrollList, self).data2Ctrl(prefData)
+        self.control.deselectAll()
+        self.control.setSelectIndexedItem(self.getAttr(Attr.SelectedIndexes))
 
 
 constructors = {
-    # UIType.PMCheckBox: PMCtrlCheckBox,
     UIType.PMCheckBox: PMCtrlSimple,
     UIType.PMCheckBoxGrp1: partial(PMCtrlGrp4Simple, 1),
     UIType.PMCheckBoxGrp2: partial(PMCtrlGrp4Simple, 2),
@@ -109,30 +151,30 @@ constructors = {
     UIType.PMFloatFieldGrp4: partial(PMCtrlGrp4Simple, 4),
     UIType.PMFloatScrollBar: PMCtrlSimple,
     UIType.PMFloatSlider: PMCtrlSimple,
-    UIType.PMFloatSliderGrp: PMCtrlBase,
-    UIType.PMFrameLayout: PMCtrlBase,
-    UIType.PMIconTextCheckBox: PMCtrlBase,
-    UIType.PMIconTextRadioButton: PMCtrlBase,
-    UIType.PMIconTextScrollList: PMCtrlBase,
-    UIType.PMIntField: PMCtrlBase,
-    UIType.PMIntFieldGrp1: PMCtrlBase,
-    UIType.PMIntFieldGrp2: PMCtrlBase,
-    UIType.PMIntFieldGrp3: PMCtrlBase,
-    UIType.PMIntFieldGrp4: PMCtrlBase,
-    UIType.PMIntScrollBar: PMCtrlBase,
-    UIType.PMIntSlider: PMCtrlBase,
-    UIType.PMIntSliderGrp: PMCtrlBase,
-    UIType.PMOptionMenu: PMCtrlBase,
-    UIType.PMOptionMenuGrp: PMCtrlBase,
-    UIType.PMRadioButton: PMCtrlBase,
-    UIType.PMRadioButtonGrp1: PMCtrlBase,
-    UIType.PMRadioButtonGrp2: PMCtrlBase,
-    UIType.PMRadioButtonGrp3: PMCtrlBase,
-    UIType.PMRadioButtonGrp4: PMCtrlBase,
+    UIType.PMFloatSliderGrp: PMCtrlSimple,
+    UIType.PMFrameLayout: PMCtrlFrameLayout,
+    UIType.PMIconTextCheckBox: PMCtrlSimple,
+    UIType.PMIconTextRadioButton: PMCtrlRadioButton,
+    UIType.PMIconTextScrollList: PMCtrlIconTextScrollList,
+    UIType.PMIntField: PMCtrlSimple,
+    UIType.PMIntFieldGrp1: partial(PMCtrlGrp4Simple, 1),
+    UIType.PMIntFieldGrp2: partial(PMCtrlGrp4Simple, 2),
+    UIType.PMIntFieldGrp3: partial(PMCtrlGrp4Simple, 3),
+    UIType.PMIntFieldGrp4: partial(PMCtrlGrp4Simple, 4),
+    UIType.PMIntScrollBar: PMCtrlSimple,
+    UIType.PMIntSlider: PMCtrlSimple,
+    UIType.PMIntSliderGrp: PMCtrlSimple,
+    UIType.PMOptionMenu: PMCtrlRadioButton,
+    UIType.PMOptionMenuGrp: PMCtrlRadioButton,
+    UIType.PMRadioButton: PMCtrlRadioButton,
+    UIType.PMRadioButtonGrp1: PMCtrlRadioButton,
+    UIType.PMRadioButtonGrp2: PMCtrlRadioButton,
+    UIType.PMRadioButtonGrp3: PMCtrlRadioButton,
+    UIType.PMRadioButtonGrp4: PMCtrlRadioButton,
     UIType.PMSymbolCheckBox: PMCtrlBase,
     UIType.PMScriptTable: PMCtrlBase,
     UIType.PMScrollField: PMCtrlBase,
-    UIType.PMScrollLayout: PMCtrlBase,
+    UIType.PMScrollLayout: PMCtrlScrollLayout,
     UIType.PMShelfTabLayout: PMCtrlBase,
     UIType.PMTabLayout: PMCtrlBase,
     UIType.PMTextField: PMCtrlBase,
