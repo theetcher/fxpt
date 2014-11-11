@@ -126,14 +126,6 @@ class WinPyMelUI(object):
                                 self.uiFLTSLD_test1 = pm.floatSlider('uiFLTSLD_test1')
                                 self.uiFLTSLD_test2 = pm.floatSlider('uiFLTSLD_test2')
 
-                        with self.uiCreateFrame('uiLAY_frameFloatSliders2', 'Float Sliders2 (PMFloatSlider2) - Not Implemented(PyMel bug)') as self.uiLAY_frameFloatSliders2:
-                            with pm.columnLayout():
-                                with pm.rowLayout(numberOfColumns=4):
-                                    pm.separator(style='none', width=140)
-                                    self.uiFLSLD2_test1 = pm.floatSlider2('uiFLSLD2_test1')
-                                    pm.separator(style='none', width=50)
-                                    self.uiFLSLD2_test2 = pm.floatSlider2('uiFLSLD2_test2')
-
                         with self.uiCreateFrame('uiLAY_frameFloatSliderGroups', 'Float Slider Groups (PMFloatSliderGrp)') as self.uiLAY_frameFloatSliderGroups:
                             with pm.columnLayout():
                                 pm.separator(style='none', height=2)
@@ -541,7 +533,6 @@ class WinPyMelUI(object):
         self.prefSaver.addControl(self.uiLAY_frameFloatFieldGroups, PrefSaver.UIType.PMFrameLayout, False)
         self.prefSaver.addControl(self.uiLAY_frameFloatScrollBars, PrefSaver.UIType.PMFrameLayout, False)
         self.prefSaver.addControl(self.uiLAY_frameFloatSliders, PrefSaver.UIType.PMFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameFloatSliders2, PrefSaver.UIType.PMFrameLayout, False)
         self.prefSaver.addControl(self.uiLAY_frameFloatSliderGroups, PrefSaver.UIType.PMFrameLayout, False)
         self.prefSaver.addControl(self.uiLAY_frameIconTextCheckBoxes, PrefSaver.UIType.PMFrameLayout, False)
         self.prefSaver.addControl(self.uiLAY_frameIconTextRadioButtons, PrefSaver.UIType.PMFrameLayout, False)

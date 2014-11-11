@@ -85,7 +85,6 @@ class UIType(object):
     MFloatFieldGrp4 = 211
     MFloatScrollBar = 212
     MFloatSlider = 213
-    MFloatSlider2 = 214
     MFloatSliderGrp = 215
     MFrameLayout = 216
     MIconTextCheckBox = 217
@@ -131,7 +130,6 @@ class UIType(object):
         MFloatFieldGrp4,
         MFloatScrollBar,
         MFloatSlider,
-        MFloatSlider2,
         MFloatSliderGrp,
         MFrameLayout,
         MIconTextCheckBox,
@@ -178,7 +176,6 @@ class UIType(object):
     PMFloatFieldGrp4 = 311
     PMFloatScrollBar = 312
     PMFloatSlider = 313
-    # PMFloatSlider2 = 314  # is not implemented cause getFullPathName() stops with an error
     PMFloatSliderGrp = 315
     PMFrameLayout = 316
     PMIconTextCheckBox = 317
@@ -224,7 +221,6 @@ class UIType(object):
         PMFloatFieldGrp4,
         PMFloatScrollBar,
         PMFloatSlider,
-        # PMFloatSlider2,  # is not implemented cause getFullPathName() stops with an error
         PMFloatSliderGrp,
         PMFrameLayout,
         PMIconTextCheckBox,

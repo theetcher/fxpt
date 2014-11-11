@@ -37,7 +37,8 @@ class PMCtrlBase(CtrlBase):
         self.ctrlSetter = setter
 
     def retrieveControlName(self):
-        return self.control.getFullPathName().split('|')[-1]
+        # return self.control.getFullPathName().split('|')[-1]
+        return self.control.shortName()
 
 
 class PMCtrlSimple(PMCtrlBase):

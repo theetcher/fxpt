@@ -158,20 +158,6 @@ class WinELFUI(object):
         m.setParent(mainColumn)
 
         #--------
-        self.uiLAY_frameFloatSliders2 = self.uiCreateFrame('uiLAY_frameFloatSliders2', 'Float Sliders2 (PMFloatSlider2)')
-
-        m.columnLayout()
-
-        m.rowLayout(numberOfColumns=4)
-
-        m.separator(style='none', width=140)
-        self.uiFLSLD2_test1 = m.floatSlider2('uiFLSLD2_test1')
-        m.separator(style='none', width=50)
-        self.uiFLSLD2_test2 = m.floatSlider2('uiFLSLD2_test2')
-
-        m.setParent(mainColumn)
-
-        #--------
         self.uiLAY_frameFloatSliderGroups = self.uiCreateFrame('uiLAY_frameFloatSliderGroups', 'Float Slider Groups (PMFloatSliderGrp)')
         m.columnLayout()
         m.separator(style='none', height=2)
