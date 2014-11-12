@@ -1,7 +1,5 @@
 from functools import partial
 
-import pymel.core as pm
-
 from CtrlBase import CtrlBase
 from PSTypes import UIType, Attr
 
@@ -37,7 +35,6 @@ class PMCtrlBase(CtrlBase):
         self.ctrlSetter = setter
 
     def retrieveControlName(self):
-        # return self.control.getFullPathName().split('|')[-1]
         return self.control.shortName()
 
 

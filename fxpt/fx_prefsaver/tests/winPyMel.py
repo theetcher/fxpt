@@ -520,7 +520,7 @@ class WinPyMelUI(object):
             return SerializerFileJson(CFG_FILENAME)
         elif ser == 'SerializerOptVars':
             from fxpt.fx_prefsaver.SerializerOptVars import SerializerOptVars
-            return SerializerOptVars('TestQtWindow')
+            return SerializerOptVars('TestPyMelWindow')
         else:
             assert False, 'Unknown serializer type'
 
@@ -566,10 +566,10 @@ class WinPyMelUI(object):
         self.prefSaver.addControl(self.uiCLRGRP_test2, PrefSaver.UIType.PMColorSliderGrp, [0.5, 1, 0.5])
         self.prefSaver.addControl(self.uiFLF_test1, PrefSaver.UIType.PMFloatField, 4.568)
         self.prefSaver.addControl(self.uiFLF_test2, PrefSaver.UIType.PMFloatField, 15.5)
-        self.prefSaver.addControl(self.uiFLFGRP_test1, PrefSaver.UIType.PMCheckBoxGrp1, [1.1])
-        self.prefSaver.addControl(self.uiFLFGRP_test2, PrefSaver.UIType.PMCheckBoxGrp2, [1.1, 2.2])
-        self.prefSaver.addControl(self.uiFLFGRP_test3, PrefSaver.UIType.PMCheckBoxGrp3, [1.1, 2.2, 3.3])
-        self.prefSaver.addControl(self.uiFLFGRP_test4, PrefSaver.UIType.PMCheckBoxGrp4, [1.1, 2.2, 3.3, 4.4])
+        self.prefSaver.addControl(self.uiFLFGRP_test1, PrefSaver.UIType.PMFloatFieldGrp1, [1.1])
+        self.prefSaver.addControl(self.uiFLFGRP_test2, PrefSaver.UIType.PMFloatFieldGrp2, [1.1, 2.2])
+        self.prefSaver.addControl(self.uiFLFGRP_test3, PrefSaver.UIType.PMFloatFieldGrp3, [1.1, 2.2, 3.3])
+        self.prefSaver.addControl(self.uiFLFGRP_test4, PrefSaver.UIType.PMFloatFieldGrp4, [1.1, 2.2, 3.3, 4.4])
         self.prefSaver.addControl(self.uiFLSCRL_test1, PrefSaver.UIType.PMFloatScrollBar, 40)
         self.prefSaver.addControl(self.uiFLSCRL_test2, PrefSaver.UIType.PMFloatScrollBar, 60)
         self.prefSaver.addControl(self.uiFLTSLD_test1, PrefSaver.UIType.PMFloatSlider, 40)
