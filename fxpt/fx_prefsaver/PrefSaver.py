@@ -1,5 +1,4 @@
 #region imports
-import os
 
 from PSTypes import UIType
 

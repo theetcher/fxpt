@@ -1,7 +1,9 @@
 import os
+
 import maya.cmds as m
 
 from fxpt.fx_prefsaver import PrefSaver
+
 
 WIN_NAME = 'fxpt_pstest_maya_win'
 MAIN_BUTTONS_HEIGHT = 30

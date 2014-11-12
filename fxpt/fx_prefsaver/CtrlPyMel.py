@@ -2,7 +2,6 @@ from functools import partial
 
 from CtrlBase import CtrlBase
 from PSTypes import UIType, Attr
-
 from com import message
 
 

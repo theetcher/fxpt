@@ -1,8 +1,10 @@
-from PySide import QtGui
 import shiboken
+
+from PySide import QtGui
 import maya.OpenMayaUI as apiUI
 
 import TestQtWindow
+
 
 mainWin = None
 

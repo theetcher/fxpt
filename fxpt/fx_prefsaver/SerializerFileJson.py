@@ -1,9 +1,7 @@
 import os
-
 import json
 
 from SerializerBase import SerializerBase
-
 from com import message
 
 

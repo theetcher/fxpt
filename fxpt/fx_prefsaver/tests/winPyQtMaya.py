@@ -1,8 +1,10 @@
-from PyQt4 import QtGui
 import sip
+
+from PyQt4 import QtGui
 import maya.OpenMayaUI as apiUI
 
 import TestQtWindow
+
 
 mainWin = None
 

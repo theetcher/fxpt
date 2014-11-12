@@ -2,7 +2,6 @@ import pymel.core.uitypes as pmui
 
 from CtrlPyMel import getController as pmGetController
 from PSTypes import UIType
-
 from com import message
 
 IDX_PM_TYPE = 0

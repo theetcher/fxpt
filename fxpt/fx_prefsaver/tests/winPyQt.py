@@ -2,6 +2,7 @@
 # import fxptToSysPath
 
 import sys
+
 from PyQt4 import QtGui
 
 import TestQtWindow
