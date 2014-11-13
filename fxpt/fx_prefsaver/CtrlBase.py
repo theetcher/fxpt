@@ -30,9 +30,12 @@ class CtrlBase(object):
     def setAttr(self, attr, value):
         self.prefData[attr] = value
 
-    def getAttr(self, attr):
+    def getAttr(self, attr, noDefault=False):
         if attr in self.prefData:
             return self.prefData[attr]
         else:
-            return self.defaultValue
+            if noDefault:
+                return None
+            else:
+                return self.defaultValue
 

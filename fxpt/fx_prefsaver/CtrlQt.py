@@ -16,11 +16,6 @@ from com import message
 #TODO: QStackedWidget
 #TODO: QTextEdit
 #TODO: QPlainTextEdit
-#TODO: QSpinBox
-#TODO: QDoubleSpinBox
-#TODO: QTimeEdit
-#TODO: QDateEdit
-#TODO: QDateTimeEdit
 #TODO: QDial
 #TODO: QScrollArea
 #TODO: QScrollBar
@@ -66,6 +61,77 @@ class QtCtrlLineEdit(QtCtrlBase):
     def data2Ctrl(self, prefData):
         super(QtCtrlLineEdit, self).data2Ctrl(prefData)
         self.control.setText(self.getAttr(Attr.Value))
+
+
+class QtCtrlSpinBox(QtCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlSpinBox, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(QtCtrlSpinBox, self).ctrl2Data()
+        self.setAttr(Attr.Value, self.control.value())
+
+    def data2Ctrl(self, prefData):
+        super(QtCtrlSpinBox, self).data2Ctrl(prefData)
+        self.control.setValue(self.getAttr(Attr.Value))
+
+
+class QtCtrlTimeEdit(QtCtrlBase):
+
+    timeFormat = 'HH:mm:ss.zzz'
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlTimeEdit, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(QtCtrlTimeEdit, self).ctrl2Data()
+        self.setAttr(Attr.Value, str(self.control.time().toString(QtCtrlTimeEdit.timeFormat)))
+
+    def data2Ctrl(self, prefData):
+        super(QtCtrlTimeEdit, self).data2Ctrl(prefData)
+        time = self.getAttr(Attr.Value)
+        if not isinstance(time, self.qt.QtCore.QTime):
+            time = self.qt.QtCore.QTime.fromString(time, QtCtrlTimeEdit.timeFormat)
+        self.control.setTime(time)
+
+
+class QtCtrlDateEdit(QtCtrlBase):
+
+    dateFormat = 'yyyy.MM.dd'
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlDateEdit, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(QtCtrlDateEdit, self).ctrl2Data()
+        self.setAttr(Attr.Value, str(self.control.date().toString(QtCtrlDateEdit.dateFormat)))
+
+    def data2Ctrl(self, prefData):
+        super(QtCtrlDateEdit, self).data2Ctrl(prefData)
+        date = self.getAttr(Attr.Value)
+        if not isinstance(date, self.qt.QtCore.QDate):
+            date = self.qt.QtCore.QDate.fromString(date, QtCtrlDateEdit.dateFormat)
+        self.control.setDate(date)
+
+
+class QtCtrlDateTimeEdit(QtCtrlBase):
+
+    dateTimeFormat = '{} {}'.format(QtCtrlDateEdit.dateFormat, QtCtrlTimeEdit.timeFormat)
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlDateTimeEdit, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(QtCtrlDateTimeEdit, self).ctrl2Data()
+        self.setAttr(Attr.Value, str(self.control.dateTime().toString(QtCtrlDateTimeEdit.dateTimeFormat)))
+
+    def data2Ctrl(self, prefData):
+        super(QtCtrlDateTimeEdit, self).data2Ctrl(prefData)
+        dateTime = self.getAttr(Attr.Value)
+        if not isinstance(dateTime, self.qt.QtCore.QDateTime):
+            dateTime = self.qt.QtCore.QDate.fromString(dateTime, QtCtrlDateTimeEdit.dateTimeFormat)
+        self.control.setDateTime(dateTime)
 
 
 class QtCtrlCheckBox(QtCtrlBase):
@@ -140,10 +206,11 @@ class QtCtrlComboBoxEditable(QtCtrlComboBox):
 
     def restoreItems(self):
         self.control.clear()
-        items = self.getAttr(Attr.Items)
-        itemsCount = len(items)
-        if itemsCount:
-            self.control.addItems(items)
+        items = self.getAttr(Attr.Items, noDefault=True)
+        if items is not None:
+            itemsCount = len(items)
+            if itemsCount:
+                self.control.addItems(items)
 
 
 class QtCtrlSplitter(QtCtrlBase):
@@ -377,10 +444,15 @@ class QtCtrlTreeView(QtCtrlBase):
 
 constructors = {
     UIType.PYQTWindow: QtCtrlWindow,
-    UIType.PYQTLineEdit: QtCtrlLineEdit,
     UIType.PYQTCheckBox: QtCtrlCheckBox,
     UIType.PYQTRadioButton: QtCtrlCheckButton,
     UIType.PYQTCheckButton: QtCtrlCheckButton,
+    UIType.PYQTLineEdit: QtCtrlLineEdit,
+    UIType.PYQTSpinBox: QtCtrlSpinBox,
+    UIType.PYQTDoubleSpinBox: QtCtrlSpinBox,
+    UIType.PYQTTimeEdit: QtCtrlTimeEdit,
+    UIType.PYQTDateEdit: QtCtrlDateEdit,
+    UIType.PYQTDateTimeEdit: QtCtrlDateTimeEdit,
     UIType.PYQTComboBox: QtCtrlComboBox,
     UIType.PYQTComboBoxEditable: QtCtrlComboBoxEditable,
     UIType.PYQTTabWidget: QtCtrlComboBox,
@@ -393,10 +465,15 @@ constructors = {
     UIType.PYQTTreeView: QtCtrlTreeView,
 
     UIType.PYSIDEWindow: QtCtrlWindow,
-    UIType.PYSIDELineEdit: QtCtrlLineEdit,
     UIType.PYSIDECheckBox: QtCtrlCheckBox,
     UIType.PYSIDERadioButton: QtCtrlCheckButton,
     UIType.PYSIDECheckButton: QtCtrlCheckButton,
+    UIType.PYSIDELineEdit: QtCtrlLineEdit,
+    UIType.PYSIDESpinBox: QtCtrlSpinBox,
+    UIType.PYSIDEDoubleSpinBox: QtCtrlSpinBox,
+    UIType.PYSIDETimeEdit: QtCtrlTimeEdit,
+    UIType.PYSIDEDateEdit: QtCtrlDateEdit,
+    UIType.PYSIDEDateTimeEdit: QtCtrlDateTimeEdit,
     UIType.PYSIDEComboBox: QtCtrlComboBox,
     UIType.PYSIDEComboBoxEditable: QtCtrlComboBoxEditable,
     UIType.PYSIDETabWidget: QtCtrlComboBox,
