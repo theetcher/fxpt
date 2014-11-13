@@ -124,6 +124,8 @@ class TestQtWindow(object):
         pass
 
     def registerSlots(self):
+        self.win.onStackedWidgetPageDec = self.onStackedWidgetPageDec
+        self.win.onStackedWidgetPageInc = self.onStackedWidgetPageInc
         self.win.onSavePrefsClicked = self.onSavePrefsClicked
         self.win.onLoadPrefsClicked = self.onLoadPrefsClicked
         self.win.onResetPrefsClicked = self.onResetPrefsClicked
@@ -196,16 +198,22 @@ class TestQtWindow(object):
         #     self.lastBrowsedFolder = s
         # self.prefSaver.addVariable('lastBrowsedFolder', lambda: self.lastBrowsedFolder, setLastBrowsedFolder, DIR_SCENES_SRC)
 
+    def onStackedWidgetPageDec(self):
+        self.nextStackIdx(-1)
+
+    def onStackedWidgetPageInc(self):
+        self.nextStackIdx(1)
+
+    def nextStackIdx(self, inc):
+        self.ui.uiSTK_test1.setCurrentIndex((self.ui.uiSTK_test1.currentIndex() + inc) % 3)
+
     def onSavePrefsClicked(self):
-        # print 'onSavePrefsClicked()'
         self.prefSaver.savePrefs()
 
     def onLoadPrefsClicked(self):
-        # print 'onLoadPrefsClicked()'
         self.prefSaver.loadPrefs()
 
     def onResetPrefsClicked(self):
-        # print 'onResetPrefsClicked()'
         self.prefSaver.resetPrefs()
 
     def onShowDialogClicked(self):

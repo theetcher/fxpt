@@ -12,9 +12,6 @@ from CtrlBase import CtrlBase
 from PSTypes import UIType, Attr
 from com import message
 
-#TODO: refactor Qt Controls using new default get and set attr value
-
-#TODO: ScrollArea
 #TODO: QToolBox
 #TODO: QStackedWidget
 #TODO: QTextEdit
@@ -64,13 +61,11 @@ class QtCtrlLineEdit(QtCtrlBase):
 
     def ctrl2Data(self):
         super(QtCtrlLineEdit, self).ctrl2Data()
-        self.setAttr(Attr.Text, str(self.control.text()))
-        return self.prefData
+        self.setAttr(Attr.Value, str(self.control.text()))
 
     def data2Ctrl(self, prefData):
         super(QtCtrlLineEdit, self).data2Ctrl(prefData)
-        prefValue = self.getAttr(Attr.Text)
-        self.control.setText(prefValue if prefValue else self.defaultValue)
+        self.control.setText(self.getAttr(Attr.Value))
 
 
 class QtCtrlCheckBox(QtCtrlBase):
@@ -86,13 +81,11 @@ class QtCtrlCheckBox(QtCtrlBase):
 
     def ctrl2Data(self):
         super(QtCtrlCheckBox, self).ctrl2Data()
-        self.setAttr(Attr.CheckState, self.stateToInt[self.control.checkState()])
+        self.setAttr(Attr.Value, self.stateToInt[self.control.checkState()])
 
     def data2Ctrl(self, prefData):
         super(QtCtrlCheckBox, self).data2Ctrl(prefData)
-        prefValue = self.getAttr(Attr.CheckState)
-        state = prefValue if prefValue else self.defaultValue
-        self.control.setCheckState(self.intToState[state])
+        self.control.setCheckState(self.intToState[self.getAttr(Attr.Value)])
 
 
 class QtCtrlCheckButton(QtCtrlBase):
@@ -106,9 +99,7 @@ class QtCtrlCheckButton(QtCtrlBase):
 
     def data2Ctrl(self, prefData):
         super(QtCtrlCheckButton, self).data2Ctrl(prefData)
-        prefValue = self.getAttr(Attr.CheckState)
-        state = prefValue if prefValue else self.defaultValue
-        self.control.setChecked(state)
+        self.control.setChecked(self.getAttr(Attr.CheckState))
 
 
 class QtCtrlComboBox(QtCtrlBase):
@@ -126,9 +117,7 @@ class QtCtrlComboBox(QtCtrlBase):
         self.restoreCurrentIndex()
 
     def restoreCurrentIndex(self):
-        prefValue = self.getAttr(Attr.CurrentIndex)
-        index = prefValue if prefValue else self.defaultValue
-        self.control.setCurrentIndex(index)
+        self.control.setCurrentIndex(self.getAttr(Attr.CurrentIndex))
 
     def restoreItems(self):
         pass
@@ -141,31 +130,19 @@ class QtCtrlComboBoxEditable(QtCtrlComboBox):
 
     def ctrl2Data(self):
         super(QtCtrlComboBoxEditable, self).ctrl2Data()
-
         itemCount = self.control.count()
         if itemCount == 0:
             return
-
-        self.setAttr(Attr.ItemsCount, itemCount)
-        for i in range(itemCount):
-            self.setAttr(Attr.Item + str(i), str(self.control.itemText(i)))
+        self.setAttr(Attr.Items, [str(self.control.itemText(i)) for i in range(itemCount)])
 
     def data2Ctrl(self, prefData):
         super(QtCtrlComboBoxEditable, self).data2Ctrl(prefData)
 
     def restoreItems(self):
         self.control.clear()
-
-        itemsCount = self.getAttr(Attr.ItemsCount)
+        items = self.getAttr(Attr.Items)
+        itemsCount = len(items)
         if itemsCount:
-
-            items = []
-            for i in range(itemsCount):
-
-                itemValue = self.getAttr(Attr.Item + str(i))
-                if itemValue is not None:
-                    items.append(itemValue)
-
             self.control.addItems(items)
 
 

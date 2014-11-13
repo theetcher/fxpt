@@ -5,70 +5,122 @@ class UIType(object):
     PYQTWindow = 1
     PYQTLineEdit = 2
     PYQTCheckBox = 3
-    PYQTRadioButton = 4
-    PYQTCheckButton = 5
-    PYQTComboBox = 6
-    PYQTComboBoxEditable = 7
-    PYQTTabWidget = 8
-    PYQTSplitter = 9
-    PYQTListWidget = 10
-    PYQTTreeWidget = 11
-    PYQTTableWidget = 12
-    PYQTListView = 13
-    PYQTTreeView = 14
-    PYQTTableView = 15
+    PYQTSpinBox = 4
+    PYQTDoubleSpinBox = 5
+    PYQTTimeEdit = 6
+    PYQTDateEdit = 7
+    PYQTDateTimeEdit = 8
+    PYQTRadioButton = 9
+    PYQTCheckButton = 10
+    PYQTComboBox = 11
+    PYQTComboBoxEditable = 12
+    PYQTTabWidget = 13
+    PYQTStackedWidget = 14
+    PYQTToolBox = 15
+    PYQTSplitter = 16
+    PYQTScrollBar = 17
+    PYQTScrollArea = 18
+    PYQTSlider = 19
+    PYQTDial = 20
+    PYQTTextEdit = 21
+    PYQTPlainTextEdit = 22
+    PYQTListWidget = 23
+    PYQTTreeWidget = 24
+    PYQTTableWidget = 25
+    PYQTListView = 26
+    PYQTTreeView = 27
+    PYQTTableView = 28
 
     TypesPYQT = set([
         PYQTWindow,
         PYQTLineEdit,
         PYQTCheckBox,
+        PYQTSpinBox,
+        PYQTDoubleSpinBox,
+        PYQTTimeEdit,
+        PYQTDateEdit,
+        PYQTDateTimeEdit,
         PYQTRadioButton,
         PYQTCheckButton,
         PYQTComboBox,
         PYQTComboBoxEditable,
         PYQTTabWidget,
+        PYQTStackedWidget,
+        PYQTToolBox,
         PYQTSplitter,
+        PYQTScrollBar,
+        PYQTScrollArea,
+        PYQTSlider,
+        PYQTDial,
+        PYQTTextEdit,
+        PYQTPlainTextEdit,
         PYQTListWidget,
         PYQTTreeWidget,
         PYQTTableWidget,
         PYQTListView,
         PYQTTreeView,
-        PYQTTableView,
+        PYQTTableView
     ])
 
     # PySide Types
     PYSIDEWindow = 101
     PYSIDELineEdit = 102
     PYSIDECheckBox = 103
-    PYSIDERadioButton = 104
-    PYSIDECheckButton = 105
-    PYSIDEComboBox = 106
-    PYSIDEComboBoxEditable = 107
-    PYSIDETabWidget = 108
-    PYSIDESplitter = 109
-    PYSIDEListWidget = 110
-    PYSIDETreeWidget = 111
-    PYSIDETableWidget = 112
-    PYSIDEListView = 113
-    PYSIDETreeView = 114
-    PYSIDETableView = 115
+    PYSIDESpinBox = 104
+    PYSIDEDoubleSpinBox = 105
+    PYSIDETimeEdit = 106
+    PYSIDEDateEdit = 107
+    PYSIDEDateTimeEdit = 108
+    PYSIDERadioButton = 109
+    PYSIDECheckButton = 110
+    PYSIDEComboBox = 111
+    PYSIDEComboBoxEditable = 112
+    PYSIDETabWidget = 113
+    PYSIDEStackedWidget = 114
+    PYSIDEToolBox = 115
+    PYSIDESplitter = 116
+    PYSIDEScrollBar = 117
+    PYSIDEScrollArea = 118
+    PYSIDESlider = 119
+    PYSIDEDial = 120
+    PYSIDETextEdit = 121
+    PYSIDEPlainTextEdit = 122
+    PYSIDEListWidget = 123
+    PYSIDETreeWidget = 124
+    PYSIDETableWidget = 125
+    PYSIDEListView = 126
+    PYSIDETreeView = 127
+    PYSIDETableView = 128
 
     TypesPYSIDE = set([
         PYSIDEWindow,
         PYSIDELineEdit,
         PYSIDECheckBox,
+        PYSIDESpinBox,
+        PYSIDEDoubleSpinBox,
+        PYSIDETimeEdit,
+        PYSIDEDateEdit,
+        PYSIDEDateTimeEdit,
         PYSIDERadioButton,
         PYSIDECheckButton,
         PYSIDEComboBox,
         PYSIDEComboBoxEditable,
         PYSIDETabWidget,
+        PYSIDEStackedWidget,
+        PYSIDEToolBox,
         PYSIDESplitter,
+        PYSIDEScrollBar,
+        PYSIDEScrollArea,
+        PYSIDESlider,
+        PYSIDEDial,
+        PYSIDETextEdit,
+        PYSIDEPlainTextEdit,
         PYSIDEListWidget,
         PYSIDETreeWidget,
         PYSIDETableWidget,
         PYSIDEListView,
         PYSIDETreeView,
-        PYSIDETableView,
+        PYSIDETableView
     ])
 
     # Maya Types
@@ -89,7 +141,7 @@ class UIType(object):
     MFrameLayout = 216
     MIconTextCheckBox = 217
     MIconTextRadioButton = 218
-    MIconTextScrollList = 219  # same as MTextScrollList
+    MIconTextScrollList = 219
     MIntField = 220
     MIntFieldGrp1 = 221
     MIntFieldGrp2 = 222
@@ -134,7 +186,7 @@ class UIType(object):
         MFrameLayout,
         MIconTextCheckBox,
         MIconTextRadioButton,
-        MIconTextScrollList,  # same as MTextScrollList
+        MIconTextScrollList,
         MIntField,
         MIntFieldGrp1,
         MIntFieldGrp2,
@@ -180,7 +232,7 @@ class UIType(object):
     PMFrameLayout = 316
     PMIconTextCheckBox = 317
     PMIconTextRadioButton = 318
-    PMIconTextScrollList = 319  # same as PMTextScrollList
+    PMIconTextScrollList = 319
     PMIntField = 320
     PMIntFieldGrp1 = 321
     PMIntFieldGrp2 = 322
@@ -225,7 +277,7 @@ class UIType(object):
         PMFrameLayout,
         PMIconTextCheckBox,
         PMIconTextRadioButton,
-        PMIconTextScrollList,  # same as PMTextScrollList
+        PMIconTextScrollList,
         PMIntField,
         PMIntFieldGrp1,
         PMIntFieldGrp2,
@@ -267,6 +319,7 @@ class Attr(object):
     CurrentIndex = 'currentIndex'
     ExpandedIndexes = 'expandedIndexes'
     Item = 'item'
+    Items = 'items'
     ItemsCount = 'itemCount'
     ScrollValues = 'scrollValues'
     SelectedIndexes = 'selectedIndexes'
