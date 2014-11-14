@@ -12,15 +12,6 @@ from CtrlBase import CtrlBase
 from PSTypes import UIType, Attr
 from com import message
 
-#TODO: QToolBox
-#TODO: QStackedWidget
-#TODO: QTextEdit
-#TODO: QPlainTextEdit
-#TODO: QDial
-#TODO: QScrollArea
-#TODO: QScrollBar
-#TODO: QSlider
-
 
 class QtCtrlBase(CtrlBase):
 
@@ -130,7 +121,7 @@ class QtCtrlDateTimeEdit(QtCtrlBase):
         super(QtCtrlDateTimeEdit, self).data2Ctrl(prefData)
         dateTime = self.getAttr(Attr.Value)
         if not isinstance(dateTime, self.qt.QtCore.QDateTime):
-            dateTime = self.qt.QtCore.QDate.fromString(dateTime, QtCtrlDateTimeEdit.dateTimeFormat)
+            dateTime = self.qt.QtCore.QDateTime.fromString(dateTime, QtCtrlDateTimeEdit.dateTimeFormat)
         self.control.setDateTime(dateTime)
 
 
@@ -225,6 +216,52 @@ class QtCtrlSplitter(QtCtrlBase):
     def data2Ctrl(self, prefData):
         super(QtCtrlSplitter, self).data2Ctrl(prefData)
         self.control.setSizes(self.getAttr(Attr.Sizes))
+
+
+class QtCtrlScrollArea(QtCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlScrollArea, self).__init__(*args, **kwargs)
+        self.horScrollBar = self.control.horizontalScrollBar()
+        self.verScrollBar = self.control.verticalScrollBar()
+
+    def ctrl2Data(self):
+        super(QtCtrlScrollArea, self).ctrl2Data()
+        self.setAttr(Attr.Value, (self.horScrollBar.value(), self.verScrollBar.value()))
+
+    def data2Ctrl(self, prefData):
+        super(QtCtrlScrollArea, self).data2Ctrl(prefData)
+        horScrollValue, verScrollValue = self.getAttr(Attr.Value)
+        self.horScrollBar.setValue(horScrollValue)
+        self.verScrollBar.setValue(verScrollValue)
+
+
+class QtCtrlTextEdit(QtCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlTextEdit, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(QtCtrlTextEdit, self).ctrl2Data()
+        self.setAttr(Attr.Value, str(self.control.toHtml()))
+
+    def data2Ctrl(self, prefData):
+        super(QtCtrlTextEdit, self).data2Ctrl(prefData)
+        self.control.setHtml(self.getAttr(Attr.Value))
+
+
+class QtCtrlPlainTextEdit(QtCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlPlainTextEdit, self).__init__(*args, **kwargs)
+
+    def ctrl2Data(self):
+        super(QtCtrlPlainTextEdit, self).ctrl2Data()
+        self.setAttr(Attr.Value, str(self.control.toPlainText()))
+
+    def data2Ctrl(self, prefData):
+        super(QtCtrlPlainTextEdit, self).data2Ctrl(prefData)
+        self.control.setPlainText(self.getAttr(Attr.Value))
 
 
 # Explanation about headerGetter in ColumnSorter and SelectorBase.getSelectionModel()
@@ -456,7 +493,15 @@ constructors = {
     UIType.PYQTComboBox: QtCtrlComboBox,
     UIType.PYQTComboBoxEditable: QtCtrlComboBoxEditable,
     UIType.PYQTTabWidget: QtCtrlComboBox,
+    UIType.PYQTStackedWidget: QtCtrlComboBox,
+    UIType.PYQTToolBox: QtCtrlComboBox,
     UIType.PYQTSplitter: QtCtrlSplitter,
+    UIType.PYQTScrollBar: QtCtrlSpinBox,
+    UIType.PYQTScrollArea: QtCtrlScrollArea,
+    UIType.PYQTSlider: QtCtrlSpinBox,
+    UIType.PYQTDial: QtCtrlSpinBox,
+    UIType.PYQTTextEdit: QtCtrlTextEdit,
+    UIType.PYQTPlainTextEdit: QtCtrlPlainTextEdit,
     UIType.PYQTListWidget: QtCtrlListView,
     UIType.PYQTTableWidget: QtCtrlTableView,
     UIType.PYQTTreeWidget: QtCtrlTreeView,
@@ -477,7 +522,15 @@ constructors = {
     UIType.PYSIDEComboBox: QtCtrlComboBox,
     UIType.PYSIDEComboBoxEditable: QtCtrlComboBoxEditable,
     UIType.PYSIDETabWidget: QtCtrlComboBox,
+    UIType.PYSIDEStackedWidget: QtCtrlComboBox,
+    UIType.PYSIDEToolBox: QtCtrlComboBox,
     UIType.PYSIDESplitter: QtCtrlSplitter,
+    UIType.PYSIDEScrollBar: QtCtrlSpinBox,
+    UIType.PYSIDEScrollArea: QtCtrlScrollArea,
+    UIType.PYSIDESlider: QtCtrlSpinBox,
+    UIType.PYSIDEDial: QtCtrlSpinBox,
+    UIType.PYSIDETextEdit: QtCtrlTextEdit,
+    UIType.PYSIDEPlainTextEdit: QtCtrlPlainTextEdit,
     UIType.PYSIDEListWidget: QtCtrlListView,
     UIType.PYSIDETableWidget: QtCtrlTableView,
     UIType.PYSIDETreeWidget: QtCtrlTreeView,
