@@ -197,6 +197,15 @@ class QtCtrlComboBoxEditable(QtCtrlComboBox):
             if itemsCount:
                 self.control.addItems(items)
 
+# TODO: looks like any PySide object which i can get from ui will be deleted in maya. To techart forum?
+# current problems are:
+# QtCtrlScrollArea.horizontalScrollBar()
+# QtCtrlScrollArea.verticalScrollBar()
+# QtCtrlTreeView.header()
+# QtCtrlTableView.horizontalHeader()
+# Q...View/Widget.selectionModel()
+# I need to try it with QString. just get it from QLineEdit.
+
 
 # The same problem as below. PySide in Maya deletes scrollbar c++ objects so i cannot cache them in constructor.
 class QtCtrlScrollArea(QtCtrlBase):
