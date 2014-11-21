@@ -6,6 +6,15 @@ class CtrlBase(object):
         self.defaultValue = defaultValue
         self.prefData = {}
 
+        self.attr = None
+        self.ctrlGetter = None
+        self.ctrlSetter = None
+
+    def setupGetSetVars(self, attr, getter, setter):
+        self.attr = attr
+        self.ctrlGetter = getter
+        self.ctrlSetter = setter
+
     def retrieveControlName(self):
         raise NotImplementedError('Call to abstract method.')
 
@@ -14,9 +23,17 @@ class CtrlBase(object):
 
     def ctrl2Data(self):
         self.setData()
+        self.ctrl2DataProcedure()
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(self.attr, self.ctrlGetter())
 
     def data2Ctrl(self, prefDataGlobal):
         self.setData(prefDataGlobal)
+        self.data2CtrlProcedure()
+
+    def data2CtrlProcedure(self):
+        self.ctrlSetter(self.getAttr(self.attr))
 
     def getPrefData(self):
         return self.prefData
@@ -38,4 +55,5 @@ class CtrlBase(object):
                 return None
             else:
                 return self.defaultValue
+
 

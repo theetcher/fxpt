@@ -10,29 +10,6 @@ class PMCtrlBase(CtrlBase):
     def __init__(self, control, defaultValue):
         super(PMCtrlBase, self).__init__(control, defaultValue)
 
-        self.attr = None
-        self.ctrlGetter = None
-        self.ctrlSetter = None
-
-    def ctrl2Data(self):
-        super(PMCtrlBase, self).ctrl2Data()
-        self.ctrl2DataProcedure()
-
-    def data2Ctrl(self, prefDataGlobal):
-        super(PMCtrlBase, self).data2Ctrl(prefDataGlobal)
-        self.data2CtrlProcedure()
-
-    def ctrl2DataProcedure(self):
-        self.setAttr(self.attr, self.ctrlGetter())
-
-    def data2CtrlProcedure(self):
-        self.ctrlSetter(self.getAttr(self.attr))
-
-    def setupGetSetVars(self, attr, getter, setter):
-        self.attr = attr
-        self.ctrlGetter = getter
-        self.ctrlSetter = setter
-
     def retrieveControlName(self):
         return self.control.shortName()
 

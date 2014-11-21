@@ -23,49 +23,69 @@ class QtCtrlBase(CtrlBase):
         return str(self.control.objectName())
 
 
-class QtCtrlWindow(QtCtrlBase):
+class QtCtrlCheckButton(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
-        super(QtCtrlWindow, self).__init__(*args, **kwargs)
-
-    def ctrl2Data(self):
-        super(QtCtrlWindow, self).ctrl2Data()
-        self.setAttr(Attr.WinGeom, [self.control.x(), self.control.y(), self.control.width(), self.control.height()])
-
-    def data2Ctrl(self, prefData):
-        super(QtCtrlWindow, self).data2Ctrl(prefData)
-
-        x, y, width, height = self.getAttr(Attr.WinGeom)
-        self.control.move(x, y)
-        self.control.resize(width, height)
-
-
-class QtCtrlLineEdit(QtCtrlBase):
-
-    def __init__(self, *args, **kwargs):
-        super(QtCtrlLineEdit, self).__init__(*args, **kwargs)
-
-    def ctrl2Data(self):
-        super(QtCtrlLineEdit, self).ctrl2Data()
-        self.setAttr(Attr.Value, str(self.control.text()))
-
-    def data2Ctrl(self, prefData):
-        super(QtCtrlLineEdit, self).data2Ctrl(prefData)
-        self.control.setText(self.getAttr(Attr.Value))
+        super(QtCtrlCheckButton, self).__init__(*args, **kwargs)
+        self.setupGetSetVars(Attr.CheckState, self.control.isChecked, self.control.setChecked)
 
 
 class QtCtrlSpinBox(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlSpinBox, self).__init__(*args, **kwargs)
+        self.setupGetSetVars(Attr.Value, self.control.value, self.control.setValue)
 
-    def ctrl2Data(self):
-        super(QtCtrlSpinBox, self).ctrl2Data()
-        self.setAttr(Attr.Value, self.control.value())
 
-    def data2Ctrl(self, prefData):
-        super(QtCtrlSpinBox, self).data2Ctrl(prefData)
-        self.control.setValue(self.getAttr(Attr.Value))
+class QtCtrlSplitter(QtCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlSplitter, self).__init__(*args, **kwargs)
+        self.setupGetSetVars(Attr.Sizes, self.control.sizes, self.control.setSizes)
+
+
+class QtCtrlStrGetter(QtCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlStrGetter, self).__init__(*args, **kwargs)
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(self.attr, str(self.ctrlGetter()))
+
+
+class QtCtrlLineEdit(QtCtrlStrGetter):
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlLineEdit, self).__init__(*args, **kwargs)
+        self.setupGetSetVars(Attr.Text, self.control.text, self.control.setText)
+
+
+class QtCtrlTextEdit(QtCtrlStrGetter):
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlTextEdit, self).__init__(*args, **kwargs)
+        self.setupGetSetVars(Attr.Text, self.control.toHtml, self.control.setHtml)
+
+
+class QtCtrlPlainTextEdit(QtCtrlStrGetter):
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlPlainTextEdit, self).__init__(*args, **kwargs)
+        self.setupGetSetVars(Attr.Text, self.control.toPlainText, self.control.setPlainText)
+
+
+class QtCtrlWindow(QtCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlWindow, self).__init__(*args, **kwargs)
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(Attr.WinGeom, [self.control.x(), self.control.y(), self.control.width(), self.control.height()])
+
+    def data2CtrlProcedure(self):
+        x, y, width, height = self.getAttr(Attr.WinGeom)
+        self.control.move(x, y)
+        self.control.resize(width, height)
 
 
 class QtCtrlTimeEdit(QtCtrlBase):
@@ -75,12 +95,10 @@ class QtCtrlTimeEdit(QtCtrlBase):
     def __init__(self, *args, **kwargs):
         super(QtCtrlTimeEdit, self).__init__(*args, **kwargs)
 
-    def ctrl2Data(self):
-        super(QtCtrlTimeEdit, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         self.setAttr(Attr.Value, str(self.control.time().toString(QtCtrlTimeEdit.timeFormat)))
 
-    def data2Ctrl(self, prefData):
-        super(QtCtrlTimeEdit, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
         time = self.getAttr(Attr.Value)
         if not isinstance(time, self.qt.QtCore.QTime):
             time = self.qt.QtCore.QTime.fromString(time, QtCtrlTimeEdit.timeFormat)
@@ -94,12 +112,10 @@ class QtCtrlDateEdit(QtCtrlBase):
     def __init__(self, *args, **kwargs):
         super(QtCtrlDateEdit, self).__init__(*args, **kwargs)
 
-    def ctrl2Data(self):
-        super(QtCtrlDateEdit, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         self.setAttr(Attr.Value, str(self.control.date().toString(QtCtrlDateEdit.dateFormat)))
 
-    def data2Ctrl(self, prefData):
-        super(QtCtrlDateEdit, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
         date = self.getAttr(Attr.Value)
         if not isinstance(date, self.qt.QtCore.QDate):
             date = self.qt.QtCore.QDate.fromString(date, QtCtrlDateEdit.dateFormat)
@@ -113,12 +129,10 @@ class QtCtrlDateTimeEdit(QtCtrlBase):
     def __init__(self, *args, **kwargs):
         super(QtCtrlDateTimeEdit, self).__init__(*args, **kwargs)
 
-    def ctrl2Data(self):
-        super(QtCtrlDateTimeEdit, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         self.setAttr(Attr.Value, str(self.control.dateTime().toString(QtCtrlDateTimeEdit.dateTimeFormat)))
 
-    def data2Ctrl(self, prefData):
-        super(QtCtrlDateTimeEdit, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
         dateTime = self.getAttr(Attr.Value)
         if not isinstance(dateTime, self.qt.QtCore.QDateTime):
             dateTime = self.qt.QtCore.QDateTime.fromString(dateTime, QtCtrlDateTimeEdit.dateTimeFormat)
@@ -136,27 +150,11 @@ class QtCtrlCheckBox(QtCtrlBase):
         }
         self.stateToInt = dict((state, i) for i, state in self.intToState.items())
 
-    def ctrl2Data(self):
-        super(QtCtrlCheckBox, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         self.setAttr(Attr.Value, self.stateToInt[self.control.checkState()])
 
-    def data2Ctrl(self, prefData):
-        super(QtCtrlCheckBox, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
         self.control.setCheckState(self.intToState[self.getAttr(Attr.Value)])
-
-
-class QtCtrlCheckButton(QtCtrlBase):
-
-    def __init__(self, *args, **kwargs):
-        super(QtCtrlCheckButton, self).__init__(*args, **kwargs)
-
-    def ctrl2Data(self):
-        super(QtCtrlCheckButton, self).ctrl2Data()
-        self.setAttr(Attr.CheckState, self.control.isChecked())
-
-    def data2Ctrl(self, prefData):
-        super(QtCtrlCheckButton, self).data2Ctrl(prefData)
-        self.control.setChecked(self.getAttr(Attr.CheckState))
 
 
 class QtCtrlComboBox(QtCtrlBase):
@@ -164,12 +162,10 @@ class QtCtrlComboBox(QtCtrlBase):
     def __init__(self, *args, **kwargs):
         super(QtCtrlComboBox, self).__init__(*args, **kwargs)
 
-    def ctrl2Data(self):
-        super(QtCtrlComboBox, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         self.setAttr(Attr.CurrentIndex, self.control.currentIndex())
 
-    def data2Ctrl(self, prefData):
-        super(QtCtrlComboBox, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
         self.restoreItems()
         self.restoreCurrentIndex()
 
@@ -185,15 +181,14 @@ class QtCtrlComboBoxEditable(QtCtrlComboBox):
     def __init__(self, *args, **kwargs):
         super(QtCtrlComboBoxEditable, self).__init__(*args, **kwargs)
 
-    def ctrl2Data(self):
-        super(QtCtrlComboBoxEditable, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         itemCount = self.control.count()
         if itemCount == 0:
             return
         self.setAttr(Attr.Items, [str(self.control.itemText(i)) for i in range(itemCount)])
 
-    def data2Ctrl(self, prefData):
-        super(QtCtrlComboBoxEditable, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
+        super(QtCtrlComboBoxEditable, self).data2CtrlProcedure()
 
     def restoreItems(self):
         self.control.clear()
@@ -204,20 +199,6 @@ class QtCtrlComboBoxEditable(QtCtrlComboBox):
                 self.control.addItems(items)
 
 
-class QtCtrlSplitter(QtCtrlBase):
-
-    def __init__(self, *args, **kwargs):
-        super(QtCtrlSplitter, self).__init__(*args, **kwargs)
-
-    def ctrl2Data(self):
-        super(QtCtrlSplitter, self).ctrl2Data()
-        self.setAttr(Attr.Sizes, self.control.sizes())
-
-    def data2Ctrl(self, prefData):
-        super(QtCtrlSplitter, self).data2Ctrl(prefData)
-        self.control.setSizes(self.getAttr(Attr.Sizes))
-
-
 class QtCtrlScrollArea(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
@@ -225,43 +206,13 @@ class QtCtrlScrollArea(QtCtrlBase):
         self.horScrollBar = self.control.horizontalScrollBar()
         self.verScrollBar = self.control.verticalScrollBar()
 
-    def ctrl2Data(self):
-        super(QtCtrlScrollArea, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         self.setAttr(Attr.Value, (self.horScrollBar.value(), self.verScrollBar.value()))
 
-    def data2Ctrl(self, prefData):
-        super(QtCtrlScrollArea, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
         horScrollValue, verScrollValue = self.getAttr(Attr.Value)
         self.horScrollBar.setValue(horScrollValue)
         self.verScrollBar.setValue(verScrollValue)
-
-
-class QtCtrlTextEdit(QtCtrlBase):
-
-    def __init__(self, *args, **kwargs):
-        super(QtCtrlTextEdit, self).__init__(*args, **kwargs)
-
-    def ctrl2Data(self):
-        super(QtCtrlTextEdit, self).ctrl2Data()
-        self.setAttr(Attr.Value, str(self.control.toHtml()))
-
-    def data2Ctrl(self, prefData):
-        super(QtCtrlTextEdit, self).data2Ctrl(prefData)
-        self.control.setHtml(self.getAttr(Attr.Value))
-
-
-class QtCtrlPlainTextEdit(QtCtrlBase):
-
-    def __init__(self, *args, **kwargs):
-        super(QtCtrlPlainTextEdit, self).__init__(*args, **kwargs)
-
-    def ctrl2Data(self):
-        super(QtCtrlPlainTextEdit, self).ctrl2Data()
-        self.setAttr(Attr.Value, str(self.control.toPlainText()))
-
-    def data2Ctrl(self, prefData):
-        super(QtCtrlPlainTextEdit, self).data2Ctrl(prefData)
-        self.control.setPlainText(self.getAttr(Attr.Value))
 
 
 # Explanation about headerGetter in ColumnSorter and SelectorBase.getSelectionModel()
@@ -430,12 +381,10 @@ class QtCtrlListView(QtCtrlBase):
         super(QtCtrlListView, self).__init__(*args, **kwargs)
         self.rangeSelector = RangeSelector(self)
 
-    def ctrl2Data(self):
-        super(QtCtrlListView, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         self.rangeSelector.saveRanges()
 
-    def data2Ctrl(self, prefData):
-        super(QtCtrlListView, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
         self.control.clearSelection()
         self.rangeSelector.loadRanges()
 
@@ -447,13 +396,11 @@ class QtCtrlTableView(QtCtrlBase):
         self.columnSorter = ColumnSorter(self, self.control.horizontalHeader)
         self.rangeSelector = RangeSelector(self)
 
-    def ctrl2Data(self):
-        super(QtCtrlTableView, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         self.columnSorter.saveSorting()
         self.rangeSelector.saveRanges()
 
-    def data2Ctrl(self, prefData):
-        super(QtCtrlTableView, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
         self.control.clearSelection()
         self.columnSorter.loadSorting()
         self.rangeSelector.loadRanges()
@@ -466,13 +413,11 @@ class QtCtrlTreeView(QtCtrlBase):
         self.columnSorter = ColumnSorter(self, self.control.header)
         self.treeIndexSelector = TreeIndexSelector(self)
 
-    def ctrl2Data(self):
-        super(QtCtrlTreeView, self).ctrl2Data()
+    def ctrl2DataProcedure(self):
         self.columnSorter.saveSorting()
         self.treeIndexSelector.saveData()
 
-    def data2Ctrl(self, prefData):
-        super(QtCtrlTreeView, self).data2Ctrl(prefData)
+    def data2CtrlProcedure(self):
         self.control.clearSelection()
         self.control.collapseAll()
         self.columnSorter.loadSorting()
