@@ -74,6 +74,56 @@ class QtCtrlPlainTextEdit(QtCtrlStrGetter):
         self.setupGetSetVars(Attr.Text, self.control.toPlainText, self.control.setPlainText)
 
 
+# noinspection PyAttributeOutsideInit
+class QtCtrlDateTimeBase(QtCtrlBase):
+
+    dateTimeFormat = None
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlDateTimeBase, self).__init__(*args, **kwargs)
+
+    def setupVars(self, dateTimeObjGetter, setter, dateTimeClass):
+        self.dateTimeObjGetter = dateTimeObjGetter
+        self.setter = setter
+        self.dateTimeClass = dateTimeClass
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(Attr.Value, str(self.dateTimeObjGetter().toString(self.__class__.dateTimeFormat)))
+
+    def data2CtrlProcedure(self):
+        dateTime = self.getAttr(Attr.Value)
+        if not isinstance(dateTime, self.dateTimeClass):
+            dateTime = self.dateTimeClass.fromString(dateTime, self.__class__.dateTimeFormat)
+        self.setter(dateTime)
+
+
+class QtCtrlTimeEdit(QtCtrlDateTimeBase):
+
+    dateTimeFormat = 'HH:mm:ss.zzz'
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlTimeEdit, self).__init__(*args, **kwargs)
+        self.setupVars(self.control.time, self.control.setTime, self.qt.QtCore.QTime)
+
+
+class QtCtrlDateEdit(QtCtrlDateTimeBase):
+
+    dateTimeFormat = 'yyyy.MM.dd'
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlDateEdit, self).__init__(*args, **kwargs)
+        self.setupVars(self.control.date, self.control.setDate, self.qt.QtCore.QDate)
+
+
+class QtCtrlDateTimeEdit(QtCtrlDateTimeBase):
+
+    dateTimeFormat = '{} {}'.format(QtCtrlDateEdit.dateTimeFormat, QtCtrlTimeEdit.dateTimeFormat)
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlDateTimeEdit, self).__init__(*args, **kwargs)
+        self.setupVars(self.control.dateTime, self.control.setDateTime, self.qt.QtCore.QDateTime)
+
+
 class QtCtrlWindow(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
@@ -86,57 +136,6 @@ class QtCtrlWindow(QtCtrlBase):
         x, y, width, height = self.getAttr(Attr.WinGeom)
         self.control.move(x, y)
         self.control.resize(width, height)
-
-
-class QtCtrlTimeEdit(QtCtrlBase):
-
-    timeFormat = 'HH:mm:ss.zzz'
-
-    def __init__(self, *args, **kwargs):
-        super(QtCtrlTimeEdit, self).__init__(*args, **kwargs)
-
-    def ctrl2DataProcedure(self):
-        self.setAttr(Attr.Value, str(self.control.time().toString(QtCtrlTimeEdit.timeFormat)))
-
-    def data2CtrlProcedure(self):
-        time = self.getAttr(Attr.Value)
-        if not isinstance(time, self.qt.QtCore.QTime):
-            time = self.qt.QtCore.QTime.fromString(time, QtCtrlTimeEdit.timeFormat)
-        self.control.setTime(time)
-
-
-class QtCtrlDateEdit(QtCtrlBase):
-
-    dateFormat = 'yyyy.MM.dd'
-
-    def __init__(self, *args, **kwargs):
-        super(QtCtrlDateEdit, self).__init__(*args, **kwargs)
-
-    def ctrl2DataProcedure(self):
-        self.setAttr(Attr.Value, str(self.control.date().toString(QtCtrlDateEdit.dateFormat)))
-
-    def data2CtrlProcedure(self):
-        date = self.getAttr(Attr.Value)
-        if not isinstance(date, self.qt.QtCore.QDate):
-            date = self.qt.QtCore.QDate.fromString(date, QtCtrlDateEdit.dateFormat)
-        self.control.setDate(date)
-
-
-class QtCtrlDateTimeEdit(QtCtrlBase):
-
-    dateTimeFormat = '{} {}'.format(QtCtrlDateEdit.dateFormat, QtCtrlTimeEdit.timeFormat)
-
-    def __init__(self, *args, **kwargs):
-        super(QtCtrlDateTimeEdit, self).__init__(*args, **kwargs)
-
-    def ctrl2DataProcedure(self):
-        self.setAttr(Attr.Value, str(self.control.dateTime().toString(QtCtrlDateTimeEdit.dateTimeFormat)))
-
-    def data2CtrlProcedure(self):
-        dateTime = self.getAttr(Attr.Value)
-        if not isinstance(dateTime, self.qt.QtCore.QDateTime):
-            dateTime = self.qt.QtCore.QDateTime.fromString(dateTime, QtCtrlDateTimeEdit.dateTimeFormat)
-        self.control.setDateTime(dateTime)
 
 
 class QtCtrlCheckBox(QtCtrlBase):
