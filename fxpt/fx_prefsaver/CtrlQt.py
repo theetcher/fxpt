@@ -198,20 +198,19 @@ class QtCtrlComboBoxEditable(QtCtrlComboBox):
                 self.control.addItems(items)
 
 
+# The same problem as below. PySide in Maya deletes scrollbar c++ objects so i cannot cache them in constructor.
 class QtCtrlScrollArea(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlScrollArea, self).__init__(*args, **kwargs)
-        self.horScrollBar = self.control.horizontalScrollBar()
-        self.verScrollBar = self.control.verticalScrollBar()
 
     def ctrl2DataProcedure(self):
-        self.setAttr(Attr.Value, (self.horScrollBar.value(), self.verScrollBar.value()))
+        self.setAttr(Attr.Value, (self.control.horizontalScrollBar().value(), self.control.verticalScrollBar().value()))
 
     def data2CtrlProcedure(self):
         horScrollValue, verScrollValue = self.getAttr(Attr.Value)
-        self.horScrollBar.setValue(horScrollValue)
-        self.verScrollBar.setValue(verScrollValue)
+        self.control.horizontalScrollBar().setValue(horScrollValue)
+        self.control.verticalScrollBar().setValue(verScrollValue)
 
 
 # Explanation about headerGetter in ColumnSorter and SelectorBase.getSelectionModel()
