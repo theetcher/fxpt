@@ -3,12 +3,13 @@ import os
 import pymel.core as pm
 
 from fxpt.fx_prefsaver import PrefSaver
+from fxpt.fx_prefsaver.Serializers import SerializerOptVar, SerializerFileJson, SerializerFilePickle
 
 
 WIN_NAME = 'fxpt_pstest_pymel_win'
 MAIN_BUTTONS_HEIGHT = 30
 
-CFG_FILENAME = os.path.dirname(__file__) + '/prefsPM.cfg'
+CFG_FILENAME = os.path.dirname(__file__) + '\prefsPM.cfg'
 
 
 # noinspection PyAttributeOutsideInit
@@ -514,14 +515,11 @@ class WinPyMelUI(object):
     # noinspection PyMethodMayBeStatic
     def createSerializer(self, ser):
         if ser == 'SerializerFilePickle':
-            from fxpt.fx_prefsaver.SerializerFilePickle import SerializerFilePickle
             return SerializerFilePickle(CFG_FILENAME)
         if ser == 'SerializerFileJson':
-            from fxpt.fx_prefsaver.SerializerFileJson import SerializerFileJson
             return SerializerFileJson(CFG_FILENAME)
-        elif ser == 'SerializerOptVars':
-            from fxpt.fx_prefsaver.SerializerOptVars import SerializerOptVars
-            return SerializerOptVars('TestPyMelWindow')
+        elif ser == 'SerializerOptVar':
+            return SerializerOptVar('TestPyMelWindow')
         else:
             assert False, 'Unknown serializer type'
 

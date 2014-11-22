@@ -2,11 +2,12 @@
 import os
 
 from fxpt.fx_prefsaver import PrefSaver
+from fxpt.fx_prefsaver.Serializers import SerializerOptVar, SerializerFileJson, SerializerFilePickle
 
 QtGui = None
 QtCore = None
 
-CFG_FILENAME = os.path.dirname(__file__) + '/prefs.cfg'
+CFG_FILENAME = os.path.dirname(__file__) + '\\prefs.cfg'
 
 
 # noinspection PyAttributeOutsideInit
@@ -140,14 +141,11 @@ class TestQtWindow(object):
     # noinspection PyMethodMayBeStatic
     def createSerializer(self, ser):
         if ser == 'SerializerFilePickle':
-            from fxpt.fx_prefsaver.SerializerFilePickle import SerializerFilePickle
             return SerializerFilePickle(CFG_FILENAME)
         if ser == 'SerializerFileJson':
-            from fxpt.fx_prefsaver.SerializerFileJson import SerializerFileJson
             return SerializerFileJson(CFG_FILENAME)
-        elif ser == 'SerializerOptVars':
-            from fxpt.fx_prefsaver.SerializerOptVars import SerializerOptVars
-            return SerializerOptVars('TestQtWindow')
+        elif ser == 'SerializerOptVar':
+            return SerializerOptVar('TestQtWindow')
         else:
             assert False, 'Unknown serializer type'
 

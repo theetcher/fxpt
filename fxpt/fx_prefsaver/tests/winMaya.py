@@ -3,12 +3,13 @@ import os
 import maya.cmds as m
 
 from fxpt.fx_prefsaver import PrefSaver
+from fxpt.fx_prefsaver.Serializers import SerializerOptVar, SerializerFileJson, SerializerFilePickle
 
 
 WIN_NAME = 'fxpt_pstest_maya_win'
 MAIN_BUTTONS_HEIGHT = 30
 
-CFG_FILENAME = os.path.dirname(__file__) + '/prefsM.cfg'
+CFG_FILENAME = os.path.dirname(__file__) + '\\prefsM.cfg'
 
 
 # noinspection PyAttributeOutsideInit
@@ -686,14 +687,11 @@ class WinMayaUI(object):
     # noinspection PyMethodMayBeStatic
     def createSerializer(self, ser):
         if ser == 'SerializerFilePickle':
-            from fxpt.fx_prefsaver.SerializerFilePickle import SerializerFilePickle
             return SerializerFilePickle(CFG_FILENAME)
         if ser == 'SerializerFileJson':
-            from fxpt.fx_prefsaver.SerializerFileJson import SerializerFileJson
             return SerializerFileJson(CFG_FILENAME)
-        elif ser == 'SerializerOptVars':
-            from fxpt.fx_prefsaver.SerializerOptVars import SerializerOptVars
-            return SerializerOptVars('TestMayaWindow')
+        elif ser == 'SerializerOptVar':
+            return SerializerOptVar('TestMayaWindow')
         else:
             assert False, 'Unknown serializer type'
 
