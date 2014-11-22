@@ -13,10 +13,7 @@ try:
 except:
     m = None
 
-
 from com import message
-
-#TODO!: what about serializing non ascii characters?
 
 
 class SerializerBase(object):

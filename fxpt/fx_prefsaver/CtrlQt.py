@@ -50,7 +50,7 @@ class QtCtrlStrGetter(QtCtrlBase):
         super(QtCtrlStrGetter, self).__init__(*args, **kwargs)
 
     def ctrl2DataProcedure(self):
-        self.setAttr(self.attr, str(self.ctrlGetter()))
+        self.setAttr(self.attr, unicode(self.ctrlGetter()))
 
 
 class QtCtrlLineEdit(QtCtrlStrGetter):
@@ -181,10 +181,11 @@ class QtCtrlComboBoxEditable(QtCtrlComboBox):
         super(QtCtrlComboBoxEditable, self).__init__(*args, **kwargs)
 
     def ctrl2DataProcedure(self):
+        super(QtCtrlComboBoxEditable, self).ctrl2DataProcedure()
         itemCount = self.control.count()
         if itemCount == 0:
             return
-        self.setAttr(Attr.Items, [str(self.control.itemText(i)) for i in range(itemCount)])
+        self.setAttr(Attr.Items, [unicode(self.control.itemText(i)) for i in range(itemCount)])
 
     def data2CtrlProcedure(self):
         super(QtCtrlComboBoxEditable, self).data2CtrlProcedure()
