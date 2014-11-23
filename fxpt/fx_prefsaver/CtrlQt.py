@@ -198,16 +198,6 @@ class QtCtrlComboBoxEditable(QtCtrlComboBox):
             if itemsCount:
                 self.control.addItems(items)
 
-# TODO: looks like any PySide object which i can get from ui will be deleted in maya. To techart forum?
-# current problems are:
-# QtCtrlScrollArea.horizontalScrollBar()
-# QtCtrlScrollArea.verticalScrollBar()
-# QtCtrlTreeView.header()
-# QtCtrlTableView.horizontalHeader()
-# Q...View/Widget.selectionModel()
-# I need to try it with QString. just get it from QLineEdit.
-
-
 # The same problem as below. PySide in Maya deletes scrollbar c++ objects so i cannot cache them in constructor.
 class QtCtrlScrollArea(QtCtrlBase):
 
@@ -226,7 +216,7 @@ class QtCtrlScrollArea(QtCtrlBase):
 # Explanation about headerGetter in ColumnSorter and SelectorBase.getSelectionModel()
 # The problem is ONLY in PySide in Maya. PyQt (both in Maya and standalone) and PySide standalone is working fine.
 # When i leave a scope of a method, underlying C++ object are deleted for QHeaderView and QItemSelectionModel classes
-# EVEN if setup an instance variable for those objects (self.header or self.selectionModel).
+# EVEN if i setup an instance variable for those objects (self.header or self.selectionModel).
 # looks like its a bug and seems like these guys are talking about it:
 # https://groups.google.com/d/msg/pyside/yJBsDdE9ngQ/8ITbSlFkVs0J
 # So the easiest workaround is just asking for these instances if you need them, and not to store them.
