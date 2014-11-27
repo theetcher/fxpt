@@ -1,6 +1,3 @@
-#TODO!: CtrlVar is base?
-
-
 class CtrlBase(object):
 
     def __init__(self, control, defaultValue):
