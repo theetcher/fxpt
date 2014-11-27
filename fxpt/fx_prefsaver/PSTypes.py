@@ -62,7 +62,13 @@ class UIType(object):
         PYQTTableView
     ])
 
+    # TypesPYSIDE_Flag = 0x010000
+    # TypesPYSIDE_Flag = 0x020000
+    # TypesPYSIDE_Flag = 0x040000
+
     # PySide Types
+    # PYSIDEWindow = next(TypesPYSIDE_Flag)
+    # PYSIDELineEdit = TypesPYSIDE_Flag + 102
     PYSIDEWindow = 101
     PYSIDELineEdit = 102
     PYSIDECheckBox = 103
