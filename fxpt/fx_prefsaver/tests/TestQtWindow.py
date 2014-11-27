@@ -149,6 +149,7 @@ class TestQtWindow(object):
         else:
             assert False, 'Unknown serializer type'
 
+    #TODO!: defaultValue by default should be None. No need to supply it in addControl
     # noinspection PyAttributeOutsideInit
     def initPrefs(self):
         if self.qtType == TestQtWindow.QtTypePyQt:
