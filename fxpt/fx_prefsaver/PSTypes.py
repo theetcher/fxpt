@@ -1,321 +1,180 @@
+_typesCounter = 0
+
+
+def _getTypeID(typeSet):
+    global _typesCounter
+    _typesCounter += 1
+    return typeSet + _typesCounter
+
+
 # noinspection PySetFunctionToLiteral
 class UIType(object):
 
+    TypesMisc = 0x0100
+    TypesPYQT = 0x0200
+    TypesPYSIDE = 0x0400
+    TypesM = 0x0800
+    TypesPM = 0x1000
+    TypesAll = TypesMisc | TypesPYQT | TypesPYSIDE | TypesM | TypesPM
+
     # PyQt Types
-    PYQTWindow = 1
-    PYQTLineEdit = 2
-    PYQTCheckBox = 3
-    PYQTSpinBox = 4
-    PYQTDoubleSpinBox = 5
-    PYQTTimeEdit = 6
-    PYQTDateEdit = 7
-    PYQTDateTimeEdit = 8
-    PYQTRadioButton = 9
-    PYQTCheckButton = 10
-    PYQTComboBox = 11
-    PYQTComboBoxEditable = 12
-    PYQTTabWidget = 13
-    PYQTStackedWidget = 14
-    PYQTToolBox = 15
-    PYQTSplitter = 16
-    PYQTScrollBar = 17
-    PYQTScrollArea = 18
-    PYQTSlider = 19
-    PYQTDial = 20
-    PYQTTextEdit = 21
-    PYQTPlainTextEdit = 22
-    PYQTListWidget = 23
-    PYQTTreeWidget = 24
-    PYQTTableWidget = 25
-    PYQTListView = 26
-    PYQTTreeView = 27
-    PYQTTableView = 28
-
-    TypesPYQT = set([
-        PYQTWindow,
-        PYQTLineEdit,
-        PYQTCheckBox,
-        PYQTSpinBox,
-        PYQTDoubleSpinBox,
-        PYQTTimeEdit,
-        PYQTDateEdit,
-        PYQTDateTimeEdit,
-        PYQTRadioButton,
-        PYQTCheckButton,
-        PYQTComboBox,
-        PYQTComboBoxEditable,
-        PYQTTabWidget,
-        PYQTStackedWidget,
-        PYQTToolBox,
-        PYQTSplitter,
-        PYQTScrollBar,
-        PYQTScrollArea,
-        PYQTSlider,
-        PYQTDial,
-        PYQTTextEdit,
-        PYQTPlainTextEdit,
-        PYQTListWidget,
-        PYQTTreeWidget,
-        PYQTTableWidget,
-        PYQTListView,
-        PYQTTreeView,
-        PYQTTableView
-    ])
-
-    # TypesPYSIDE_Flag = 0x010000
-    # TypesPYSIDE_Flag = 0x020000
-    # TypesPYSIDE_Flag = 0x040000
+    PYQTWindow = _getTypeID(TypesPYQT)
+    PYQTLineEdit = _getTypeID(TypesPYQT)
+    PYQTCheckBox = _getTypeID(TypesPYQT)
+    PYQTSpinBox = _getTypeID(TypesPYQT)
+    PYQTDoubleSpinBox = _getTypeID(TypesPYQT)
+    PYQTTimeEdit = _getTypeID(TypesPYQT)
+    PYQTDateEdit = _getTypeID(TypesPYQT)
+    PYQTDateTimeEdit = _getTypeID(TypesPYQT)
+    PYQTRadioButton = _getTypeID(TypesPYQT)
+    PYQTCheckButton = _getTypeID(TypesPYQT)
+    PYQTComboBox = _getTypeID(TypesPYQT)
+    PYQTComboBoxEditable = _getTypeID(TypesPYQT)
+    PYQTTabWidget = _getTypeID(TypesPYQT)
+    PYQTStackedWidget = _getTypeID(TypesPYQT)
+    PYQTToolBox = _getTypeID(TypesPYQT)
+    PYQTSplitter = _getTypeID(TypesPYQT)
+    PYQTScrollBar = _getTypeID(TypesPYQT)
+    PYQTScrollArea = _getTypeID(TypesPYQT)
+    PYQTSlider = _getTypeID(TypesPYQT)
+    PYQTDial = _getTypeID(TypesPYQT)
+    PYQTTextEdit = _getTypeID(TypesPYQT)
+    PYQTPlainTextEdit = _getTypeID(TypesPYQT)
+    PYQTListWidget = _getTypeID(TypesPYQT)
+    PYQTTreeWidget = _getTypeID(TypesPYQT)
+    PYQTTableWidget = _getTypeID(TypesPYQT)
+    PYQTListView = _getTypeID(TypesPYQT)
+    PYQTTreeView = _getTypeID(TypesPYQT)
+    PYQTTableView = _getTypeID(TypesPYQT)
 
     # PySide Types
-    # PYSIDEWindow = next(TypesPYSIDE_Flag)
-    # PYSIDELineEdit = TypesPYSIDE_Flag + 102
-    PYSIDEWindow = 101
-    PYSIDELineEdit = 102
-    PYSIDECheckBox = 103
-    PYSIDESpinBox = 104
-    PYSIDEDoubleSpinBox = 105
-    PYSIDETimeEdit = 106
-    PYSIDEDateEdit = 107
-    PYSIDEDateTimeEdit = 108
-    PYSIDERadioButton = 109
-    PYSIDECheckButton = 110
-    PYSIDEComboBox = 111
-    PYSIDEComboBoxEditable = 112
-    PYSIDETabWidget = 113
-    PYSIDEStackedWidget = 114
-    PYSIDEToolBox = 115
-    PYSIDESplitter = 116
-    PYSIDEScrollBar = 117
-    PYSIDEScrollArea = 118
-    PYSIDESlider = 119
-    PYSIDEDial = 120
-    PYSIDETextEdit = 121
-    PYSIDEPlainTextEdit = 122
-    PYSIDEListWidget = 123
-    PYSIDETreeWidget = 124
-    PYSIDETableWidget = 125
-    PYSIDEListView = 126
-    PYSIDETreeView = 127
-    PYSIDETableView = 128
-
-    TypesPYSIDE = set([
-        PYSIDEWindow,
-        PYSIDELineEdit,
-        PYSIDECheckBox,
-        PYSIDESpinBox,
-        PYSIDEDoubleSpinBox,
-        PYSIDETimeEdit,
-        PYSIDEDateEdit,
-        PYSIDEDateTimeEdit,
-        PYSIDERadioButton,
-        PYSIDECheckButton,
-        PYSIDEComboBox,
-        PYSIDEComboBoxEditable,
-        PYSIDETabWidget,
-        PYSIDEStackedWidget,
-        PYSIDEToolBox,
-        PYSIDESplitter,
-        PYSIDEScrollBar,
-        PYSIDEScrollArea,
-        PYSIDESlider,
-        PYSIDEDial,
-        PYSIDETextEdit,
-        PYSIDEPlainTextEdit,
-        PYSIDEListWidget,
-        PYSIDETreeWidget,
-        PYSIDETableWidget,
-        PYSIDEListView,
-        PYSIDETreeView,
-        PYSIDETableView
-    ])
+    PYSIDEWindow = _getTypeID(TypesPYSIDE)
+    PYSIDELineEdit = _getTypeID(TypesPYSIDE)
+    PYSIDECheckBox = _getTypeID(TypesPYSIDE)
+    PYSIDESpinBox = _getTypeID(TypesPYSIDE)
+    PYSIDEDoubleSpinBox = _getTypeID(TypesPYSIDE)
+    PYSIDETimeEdit = _getTypeID(TypesPYSIDE)
+    PYSIDEDateEdit = _getTypeID(TypesPYSIDE)
+    PYSIDEDateTimeEdit = _getTypeID(TypesPYSIDE)
+    PYSIDERadioButton = _getTypeID(TypesPYSIDE)
+    PYSIDECheckButton = _getTypeID(TypesPYSIDE)
+    PYSIDEComboBox = _getTypeID(TypesPYSIDE)
+    PYSIDEComboBoxEditable = _getTypeID(TypesPYSIDE)
+    PYSIDETabWidget = _getTypeID(TypesPYSIDE)
+    PYSIDEStackedWidget = _getTypeID(TypesPYSIDE)
+    PYSIDEToolBox = _getTypeID(TypesPYSIDE)
+    PYSIDESplitter = _getTypeID(TypesPYSIDE)
+    PYSIDEScrollBar = _getTypeID(TypesPYSIDE)
+    PYSIDEScrollArea = _getTypeID(TypesPYSIDE)
+    PYSIDESlider = _getTypeID(TypesPYSIDE)
+    PYSIDEDial = _getTypeID(TypesPYSIDE)
+    PYSIDETextEdit = _getTypeID(TypesPYSIDE)
+    PYSIDEPlainTextEdit = _getTypeID(TypesPYSIDE)
+    PYSIDEListWidget = _getTypeID(TypesPYSIDE)
+    PYSIDETreeWidget = _getTypeID(TypesPYSIDE)
+    PYSIDETableWidget = _getTypeID(TypesPYSIDE)
+    PYSIDEListView = _getTypeID(TypesPYSIDE)
+    PYSIDETreeView = _getTypeID(TypesPYSIDE)
+    PYSIDETableView = _getTypeID(TypesPYSIDE)
 
     # Maya Types
-    MCheckBox = 201
-    MCheckBoxGrp1 = 202
-    MCheckBoxGrp2 = 203
-    MCheckBoxGrp3 = 204
-    MCheckBoxGrp4 = 205
-    MColorSliderGrp = 206
-    MFloatField = 207
-    MFloatFieldGrp1 = 208
-    MFloatFieldGrp2 = 209
-    MFloatFieldGrp3 = 210
-    MFloatFieldGrp4 = 211
-    MFloatScrollBar = 212
-    MFloatSlider = 213
-    MFloatSliderGrp = 215
-    MFrameLayout = 216
-    MIconTextCheckBox = 217
-    MIconTextRadioButton = 218
-    MIconTextScrollList = 219
-    MIntField = 220
-    MIntFieldGrp1 = 221
-    MIntFieldGrp2 = 222
-    MIntFieldGrp3 = 223
-    MIntFieldGrp4 = 224
-    MIntScrollBar = 225
-    MIntSlider = 226
-    MIntSliderGrp = 227
-    MOptionMenu = 228
-    MOptionMenuGrp = 229
-    MRadioButton = 230
-    MRadioButtonGrp1 = 231
-    MRadioButtonGrp2 = 232
-    MRadioButtonGrp3 = 233
-    MRadioButtonGrp4 = 234
-    MSymbolCheckBox = 235
-    MScriptTable = 236
-    MScrollField = 237
-    MScrollLayout = 238
-    MShelfTabLayout = 239
-    MTabLayout = 240
-    MTextField = 241
-    MTextFieldButtonGrp = 242
-    MTextFieldGrp = 243
-    MTextScrollList = 244
-
-    TypesM = set([
-        MCheckBox,
-        MCheckBoxGrp1,
-        MCheckBoxGrp2,
-        MCheckBoxGrp3,
-        MCheckBoxGrp4,
-        MColorSliderGrp,
-        MFloatField,
-        MFloatFieldGrp1,
-        MFloatFieldGrp2,
-        MFloatFieldGrp3,
-        MFloatFieldGrp4,
-        MFloatScrollBar,
-        MFloatSlider,
-        MFloatSliderGrp,
-        MFrameLayout,
-        MIconTextCheckBox,
-        MIconTextRadioButton,
-        MIconTextScrollList,
-        MIntField,
-        MIntFieldGrp1,
-        MIntFieldGrp2,
-        MIntFieldGrp3,
-        MIntFieldGrp4,
-        MIntScrollBar,
-        MIntSlider,
-        MIntSliderGrp,
-        MOptionMenu,
-        MOptionMenuGrp,
-        MRadioButton,
-        MRadioButtonGrp1,
-        MRadioButtonGrp2,
-        MRadioButtonGrp3,
-        MRadioButtonGrp4,
-        MSymbolCheckBox,
-        MScriptTable,
-        MScrollField,
-        MScrollLayout,
-        MShelfTabLayout,
-        MTabLayout,
-        MTextField,
-        MTextFieldButtonGrp,
-        MTextFieldGrp,
-        MTextScrollList,
-    ])
+    MCheckBox = _getTypeID(TypesM)
+    MCheckBoxGrp1 = _getTypeID(TypesM)
+    MCheckBoxGrp2 = _getTypeID(TypesM)
+    MCheckBoxGrp3 = _getTypeID(TypesM)
+    MCheckBoxGrp4 = _getTypeID(TypesM)
+    MColorSliderGrp = _getTypeID(TypesM)
+    MFloatField = _getTypeID(TypesM)
+    MFloatFieldGrp1 = _getTypeID(TypesM)
+    MFloatFieldGrp2 = _getTypeID(TypesM)
+    MFloatFieldGrp3 = _getTypeID(TypesM)
+    MFloatFieldGrp4 = _getTypeID(TypesM)
+    MFloatScrollBar = _getTypeID(TypesM)
+    MFloatSlider = _getTypeID(TypesM)
+    MFloatSliderGrp = _getTypeID(TypesM)
+    MFrameLayout = _getTypeID(TypesM)
+    MIconTextCheckBox = _getTypeID(TypesM)
+    MIconTextRadioButton = _getTypeID(TypesM)
+    MIconTextScrollList = _getTypeID(TypesM)
+    MIntField = _getTypeID(TypesM)
+    MIntFieldGrp1 = _getTypeID(TypesM)
+    MIntFieldGrp2 = _getTypeID(TypesM)
+    MIntFieldGrp3 = _getTypeID(TypesM)
+    MIntFieldGrp4 = _getTypeID(TypesM)
+    MIntScrollBar = _getTypeID(TypesM)
+    MIntSlider = _getTypeID(TypesM)
+    MIntSliderGrp = _getTypeID(TypesM)
+    MOptionMenu = _getTypeID(TypesM)
+    MOptionMenuGrp = _getTypeID(TypesM)
+    MRadioButton = _getTypeID(TypesM)
+    MRadioButtonGrp1 = _getTypeID(TypesM)
+    MRadioButtonGrp2 = _getTypeID(TypesM)
+    MRadioButtonGrp3 = _getTypeID(TypesM)
+    MRadioButtonGrp4 = _getTypeID(TypesM)
+    MSymbolCheckBox = _getTypeID(TypesM)
+    MScriptTable = _getTypeID(TypesM)
+    MScrollField = _getTypeID(TypesM)
+    MScrollLayout = _getTypeID(TypesM)
+    MShelfTabLayout = _getTypeID(TypesM)
+    MTabLayout = _getTypeID(TypesM)
+    MTextField = _getTypeID(TypesM)
+    MTextFieldButtonGrp = _getTypeID(TypesM)
+    MTextFieldGrp = _getTypeID(TypesM)
+    MTextScrollList = _getTypeID(TypesM)
 
     # PyMel Types
-    PMCheckBox = 301
-    PMCheckBoxGrp1 = 302
-    PMCheckBoxGrp2 = 303
-    PMCheckBoxGrp3 = 304
-    PMCheckBoxGrp4 = 305
-    PMColorSliderGrp = 306
-    PMFloatField = 307
-    PMFloatFieldGrp1 = 308
-    PMFloatFieldGrp2 = 309
-    PMFloatFieldGrp3 = 310
-    PMFloatFieldGrp4 = 311
-    PMFloatScrollBar = 312
-    PMFloatSlider = 313
-    PMFloatSliderGrp = 315
-    PMFrameLayout = 316
-    PMIconTextCheckBox = 317
-    PMIconTextRadioButton = 318
-    PMIconTextScrollList = 319
-    PMIntField = 320
-    PMIntFieldGrp1 = 321
-    PMIntFieldGrp2 = 322
-    PMIntFieldGrp3 = 323
-    PMIntFieldGrp4 = 324
-    PMIntScrollBar = 325
-    PMIntSlider = 326
-    PMIntSliderGrp = 327
-    PMOptionMenu = 328
-    PMOptionMenuGrp = 329
-    PMRadioButton = 330
-    PMRadioButtonGrp1 = 331
-    PMRadioButtonGrp2 = 332
-    PMRadioButtonGrp3 = 333
-    PMRadioButtonGrp4 = 334
-    PMSymbolCheckBox = 335
-    PMScriptTable = 336
-    PMScrollField = 337
-    PMScrollLayout = 338
-    PMShelfTabLayout = 339
-    PMTabLayout = 340
-    PMTextField = 341
-    PMTextFieldButtonGrp = 342
-    PMTextFieldGrp = 343
-    PMTextScrollList = 344
-
-    TypesPM = set([
-        PMCheckBox,
-        PMCheckBoxGrp1,
-        PMCheckBoxGrp2,
-        PMCheckBoxGrp3,
-        PMCheckBoxGrp4,
-        PMColorSliderGrp,
-        PMFloatField,
-        PMFloatFieldGrp1,
-        PMFloatFieldGrp2,
-        PMFloatFieldGrp3,
-        PMFloatFieldGrp4,
-        PMFloatScrollBar,
-        PMFloatSlider,
-        PMFloatSliderGrp,
-        PMFrameLayout,
-        PMIconTextCheckBox,
-        PMIconTextRadioButton,
-        PMIconTextScrollList,
-        PMIntField,
-        PMIntFieldGrp1,
-        PMIntFieldGrp2,
-        PMIntFieldGrp3,
-        PMIntFieldGrp4,
-        PMIntScrollBar,
-        PMIntSlider,
-        PMIntSliderGrp,
-        PMOptionMenu,
-        PMOptionMenuGrp,
-        PMRadioButton,
-        PMRadioButtonGrp1,
-        PMRadioButtonGrp2,
-        PMRadioButtonGrp3,
-        PMRadioButtonGrp4,
-        PMSymbolCheckBox,
-        PMScriptTable,
-        PMScrollField,
-        PMScrollLayout,
-        PMShelfTabLayout,
-        PMTabLayout,
-        PMTextField,
-        PMTextFieldButtonGrp,
-        PMTextFieldGrp,
-        PMTextScrollList
-    ])
+    PMCheckBox = _getTypeID(TypesPM)
+    PMCheckBoxGrp1 = _getTypeID(TypesPM)
+    PMCheckBoxGrp2 = _getTypeID(TypesPM)
+    PMCheckBoxGrp3 = _getTypeID(TypesPM)
+    PMCheckBoxGrp4 = _getTypeID(TypesPM)
+    PMColorSliderGrp = _getTypeID(TypesPM)
+    PMFloatField = _getTypeID(TypesPM)
+    PMFloatFieldGrp1 = _getTypeID(TypesPM)
+    PMFloatFieldGrp2 = _getTypeID(TypesPM)
+    PMFloatFieldGrp3 = _getTypeID(TypesPM)
+    PMFloatFieldGrp4 = _getTypeID(TypesPM)
+    PMFloatScrollBar = _getTypeID(TypesPM)
+    PMFloatSlider = _getTypeID(TypesPM)
+    PMFloatSliderGrp = _getTypeID(TypesPM)
+    PMFrameLayout = _getTypeID(TypesPM)
+    PMIconTextCheckBox = _getTypeID(TypesPM)
+    PMIconTextRadioButton = _getTypeID(TypesPM)
+    PMIconTextScrollList = _getTypeID(TypesPM)
+    PMIntField = _getTypeID(TypesPM)
+    PMIntFieldGrp1 = _getTypeID(TypesPM)
+    PMIntFieldGrp2 = _getTypeID(TypesPM)
+    PMIntFieldGrp3 = _getTypeID(TypesPM)
+    PMIntFieldGrp4 = _getTypeID(TypesPM)
+    PMIntScrollBar = _getTypeID(TypesPM)
+    PMIntSlider = _getTypeID(TypesPM)
+    PMIntSliderGrp = _getTypeID(TypesPM)
+    PMOptionMenu = _getTypeID(TypesPM)
+    PMOptionMenuGrp = _getTypeID(TypesPM)
+    PMRadioButton = _getTypeID(TypesPM)
+    PMRadioButtonGrp1 = _getTypeID(TypesPM)
+    PMRadioButtonGrp2 = _getTypeID(TypesPM)
+    PMRadioButtonGrp3 = _getTypeID(TypesPM)
+    PMRadioButtonGrp4 = _getTypeID(TypesPM)
+    PMSymbolCheckBox = _getTypeID(TypesPM)
+    PMScriptTable = _getTypeID(TypesPM)
+    PMScrollField = _getTypeID(TypesPM)
+    PMScrollLayout = _getTypeID(TypesPM)
+    PMShelfTabLayout = _getTypeID(TypesPM)
+    PMTabLayout = _getTypeID(TypesPM)
+    PMTextField = _getTypeID(TypesPM)
+    PMTextFieldButtonGrp = _getTypeID(TypesPM)
+    PMTextFieldGrp = _getTypeID(TypesPM)
+    PMTextScrollList = _getTypeID(TypesPM)
 
     # Misc
-    Variable = 401
-    VariableOptVar = 402
+    #TODO!: implement variables
+    # Variable = _getTypeID(TypesMisc)
+    # VariableOptVar = _getTypeID(TypesMisc)
 
-    TypesAll = TypesPYQT | TypesPYSIDE | TypesM | TypesPM
+    @classmethod
+    def isTypeOf(cls, t, typeSet):
+        return t & typeSet
 
 
 class Attr(object):

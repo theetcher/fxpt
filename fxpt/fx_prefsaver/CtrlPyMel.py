@@ -184,7 +184,7 @@ constructors = {
 # noinspection PyCallingNonCallable
 def getController(uiType, control, defaultValue):
 
-    if uiType in UIType.TypesPM:
+    if uiType in constructors:
         return constructors[uiType](control, defaultValue)
     else:
         message('Cannot create controller: Unknown controller type: {}.'.format(str(uiType)))

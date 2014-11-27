@@ -29,11 +29,11 @@ class PrefSaver(object):
     # noinspection PyCallingNonCallable
     def addControl(self, control, uiType, defaultValue):
 
-        if uiType not in UIType.TypesAll:
+        if not UIType.isTypeOf(uiType, UIType.TypesAll):
             message('Cannot add unknown control type ({}) for {}. Skipped'.format(uiType, str(control)))
             return
 
-        if uiType in (UIType.TypesPYQT | UIType.TypesPYSIDE):
+        if UIType.isTypeOf(uiType, UIType.TypesPYQT | UIType.TypesPYSIDE):
             controller = CtrlQt.getController(uiType, control, defaultValue)
             if controller:
                 self.controllers.append(controller)
@@ -41,14 +41,14 @@ class PrefSaver(object):
                 message('Failed to add controller (type={}) for {}'.format(uiType, str(control)))
             return
 
-        if uiType in UIType.TypesM:
+        if UIType.isTypeOf(uiType, UIType.TypesM):
             if CtrlMaya:
                 self.controllers.append(CtrlMaya.getController(uiType, control, defaultValue))
             else:
                 message('Failed to add controller (type={}) for {}'.format(uiType, str(control)))
             return
 
-        if uiType in UIType.TypesPM:
+        if UIType.isTypeOf(uiType, UIType.TypesPM):
             if CtrlPyMel:
                 self.controllers.append(CtrlPyMel.getController(uiType, control, defaultValue))
             else:
@@ -56,11 +56,6 @@ class PrefSaver(object):
             return
 
         assert False, 'Failed to add a controller.'
-
-    # noinspection PyCallingNonCallable
-    # def addVariable(self, name, getFromVarFunc, setToVarFunc, defaultValue):
-    #     self.controls.append(UIType.Constructors[UIType.Variable](
-    #         name, getFromVarFunc, setToVarFunc, defaultValue, self.optVarPrefix))
 
     def savePrefs(self):
         self.serializer.save(self.gatherPrefs())

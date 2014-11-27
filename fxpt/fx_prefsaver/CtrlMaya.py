@@ -56,7 +56,7 @@ constructors = {
 
 
 def getController(uiType, control, defaultValue):
-    if uiType in UIType.TypesM:
+    if uiType in constructors:
         pmUiType = constructors[uiType][IDX_PM_TYPE]
         pmClass = constructors[uiType][IDX_PM_CLASS]
         return pmGetController(pmUiType, pmClass(control), defaultValue)

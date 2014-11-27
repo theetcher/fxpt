@@ -486,17 +486,19 @@ constructors = {
 # noinspection PyCallingNonCallable
 def getController(uiType, control, defaultValue):
 
-    if uiType in UIType.TypesPYQT:
-        if _PyQt4:
-            return constructors[uiType](_PyQt4, control, defaultValue)
-        else:
-            message('Cannot create controller: PyQt is not available.')
-            return
+    if uiType in constructors:
 
-    if uiType in UIType.TypesPYSIDE:
-        if _PySide:
-            return constructors[uiType](_PySide, control, defaultValue)
-        else:
-            message('Cannot create controller: PySide is not available.')
-            return
+        if UIType.isTypeOf(uiType, UIType.TypesPYQT):
+            if _PyQt4:
+                return constructors[uiType](_PyQt4, control, defaultValue)
+            else:
+                message('Cannot create controller: PyQt is not available.')
+                return
+
+        if UIType.isTypeOf(uiType, UIType.TypesPYSIDE):
+            if _PySide:
+                return constructors[uiType](_PySide, control, defaultValue)
+            else:
+                message('Cannot create controller: PySide is not available.')
+                return
 
