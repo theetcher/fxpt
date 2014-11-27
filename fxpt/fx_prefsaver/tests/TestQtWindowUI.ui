@@ -157,6 +157,20 @@
          <widget class="QDial" name="uiDIA_test1"/>
         </item>
         <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_15">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Variable:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="uiLED_testVariable1"/>
+          </item>
+         </layout>
+        </item>
+        <item>
          <widget class="QPushButton" name="uiBTN_showDialog">
           <property name="text">
            <string>Show Dialog</string>
@@ -605,10 +619,10 @@
            <widget class="QWidget" name="scrollAreaWidgetContents">
             <property name="geometry">
              <rect>
-              <x>-110</x>
+              <x>0</x>
               <y>0</y>
-              <width>624</width>
-              <height>659</height>
+              <width>634</width>
+              <height>676</height>
              </rect>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_11">
@@ -732,8 +746,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>244</width>
-                      <height>556</height>
+                      <width>100</width>
+                      <height>30</height>
                      </rect>
                     </property>
                     <attribute name="label">
@@ -745,8 +759,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>244</width>
-                      <height>556</height>
+                      <width>100</width>
+                      <height>30</height>
                      </rect>
                     </property>
                     <attribute name="label">
@@ -754,6 +768,14 @@
                     </attribute>
                    </widget>
                    <widget class="QWidget" name="page_5">
+                    <property name="geometry">
+                     <rect>
+                      <x>0</x>
+                      <y>0</y>
+                      <width>318</width>
+                      <height>557</height>
+                     </rect>
+                    </property>
                     <attribute name="label">
                      <string>Page 3</string>
                     </attribute>
@@ -770,8 +792,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>244</width>
-                      <height>583</height>
+                      <width>100</width>
+                      <height>30</height>
                      </rect>
                     </property>
                     <attribute name="label">
@@ -783,8 +805,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>244</width>
-                      <height>556</height>
+                      <width>100</width>
+                      <height>30</height>
                      </rect>
                     </property>
                     <attribute name="label">
@@ -792,6 +814,14 @@
                     </attribute>
                    </widget>
                    <widget class="QWidget" name="page_6">
+                    <property name="geometry">
+                     <rect>
+                      <x>0</x>
+                      <y>0</y>
+                      <width>318</width>
+                      <height>557</height>
+                     </rect>
+                    </property>
                     <attribute name="label">
                      <string>Page 3</string>
                     </attribute>

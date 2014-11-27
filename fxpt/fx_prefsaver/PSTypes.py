@@ -167,11 +167,6 @@ class UIType(object):
     PMTextFieldGrp = _getTypeID(TypesPM)
     PMTextScrollList = _getTypeID(TypesPM)
 
-    # Misc
-    #TODO!: implement variables
-    # Variable = _getTypeID(TypesMisc)
-    # VariableOptVar = _getTypeID(TypesMisc)
-
     @classmethod
     def isTypeOf(cls, t, typeSet):
         return t & typeSet

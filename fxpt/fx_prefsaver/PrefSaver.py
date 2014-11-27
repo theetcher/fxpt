@@ -2,7 +2,9 @@
 
 from PSTypes import UIType
 
+import CtrlVar
 import CtrlQt
+
 try:
     import CtrlMaya
 except ImportError:
@@ -56,6 +58,9 @@ class PrefSaver(object):
             return
 
         assert False, 'Failed to add a controller.'
+
+    def addVariable(self, name, getter, setter, defaultValue):
+        self.controllers.append(CtrlVar.CtrlVar(name, getter, setter, defaultValue))
 
     def savePrefs(self):
         self.serializer.save(self.gatherPrefs())

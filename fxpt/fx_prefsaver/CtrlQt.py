@@ -198,6 +198,7 @@ class QtCtrlComboBoxEditable(QtCtrlComboBox):
             if itemsCount:
                 self.control.addItems(items)
 
+
 # The same problem as below. PySide in Maya deletes scrollbar c++ objects so i cannot cache them in constructor.
 class QtCtrlScrollArea(QtCtrlBase):
 

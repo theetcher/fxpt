@@ -218,11 +218,13 @@ class TestQtWindow(object):
             self.prefSaver.addControl(self.ui.uiTBLV_test1, PrefSaver.UIType.PYSIDETableView, None)
             self.prefSaver.addControl(self.ui.uiTREV_test1, PrefSaver.UIType.PYSIDETreeView, None)
 
-        # self.lastBrowsedFolder = DIR_SCENES_SRC
-        #
-        # def setLastBrowsedFolder(s):
-        #     self.lastBrowsedFolder = s
-        # self.prefSaver.addVariable('lastBrowsedFolder', lambda: self.lastBrowsedFolder, setLastBrowsedFolder, DIR_SCENES_SRC)
+        def variable1Getter():
+            return self.ui.uiLED_testVariable1.text()
+
+        def variable1Setter(arg):
+            self.ui.uiLED_testVariable1.setText(arg)
+
+        self.prefSaver.addVariable('variable1', variable1Getter, variable1Setter, 'defaultVariable1Value')
 
     def onStackedWidgetPageDec(self):
         self.nextStackIdx(-1)
