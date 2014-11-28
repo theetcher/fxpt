@@ -27,6 +27,7 @@ class QtCtrlCheckButton(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlCheckButton, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = False
         self.setupGetSetVars(Attr.CheckState, self.control.isChecked, self.control.setChecked)
 
 
@@ -34,6 +35,7 @@ class QtCtrlSpinBox(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlSpinBox, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = 0
         self.setupGetSetVars(Attr.Value, self.control.value, self.control.setValue)
 
 
@@ -41,13 +43,23 @@ class QtCtrlSplitter(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlSplitter, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = (200, 200)
         self.setupGetSetVars(Attr.Sizes, self.control.sizes, self.control.setSizes)
+
+
+class QtCtrlTabWidget(QtCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(QtCtrlTabWidget, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = 0
+        self.setupGetSetVars(Attr.CurrentIndex, self.control.currentIndex, self.control.setCurrentIndex)
 
 
 class QtCtrlStrGetter(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlStrGetter, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = ''
 
     def ctrl2DataProcedure(self):
         self.setAttr(self.attr, unicode(self.ctrlGetter()))
@@ -82,10 +94,11 @@ class QtCtrlDateTimeBase(QtCtrlBase):
     def __init__(self, *args, **kwargs):
         super(QtCtrlDateTimeBase, self).__init__(*args, **kwargs)
 
-    def setupVars(self, dateTimeObjGetter, setter, dateTimeClass):
+    def setupVars(self, dateTimeObjGetter, setter, dateTimeClass, globalDefault):
         self.dateTimeObjGetter = dateTimeObjGetter
         self.setter = setter
         self.dateTimeClass = dateTimeClass
+        self.defaultValueGlobal = globalDefault
 
     def ctrl2DataProcedure(self):
         self.setAttr(Attr.Value, str(self.dateTimeObjGetter().toString(self.__class__.dateTimeFormat)))
@@ -103,7 +116,7 @@ class QtCtrlTimeEdit(QtCtrlDateTimeBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlTimeEdit, self).__init__(*args, **kwargs)
-        self.setupVars(self.control.time, self.control.setTime, self.qt.QtCore.QTime)
+        self.setupVars(self.control.time, self.control.setTime, self.qt.QtCore.QTime, self.qt.QtCore.QTime.currentTime())
 
 
 class QtCtrlDateEdit(QtCtrlDateTimeBase):
@@ -112,7 +125,7 @@ class QtCtrlDateEdit(QtCtrlDateTimeBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlDateEdit, self).__init__(*args, **kwargs)
-        self.setupVars(self.control.date, self.control.setDate, self.qt.QtCore.QDate)
+        self.setupVars(self.control.date, self.control.setDate, self.qt.QtCore.QDate, self.qt.QtCore.QDate.currentDate())
 
 
 class QtCtrlDateTimeEdit(QtCtrlDateTimeBase):
@@ -121,13 +134,14 @@ class QtCtrlDateTimeEdit(QtCtrlDateTimeBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlDateTimeEdit, self).__init__(*args, **kwargs)
-        self.setupVars(self.control.dateTime, self.control.setDateTime, self.qt.QtCore.QDateTime)
+        self.setupVars(self.control.dateTime, self.control.setDateTime, self.qt.QtCore.QDateTime, self.qt.QtCore.QDateTime.currentDateTime())
 
 
 class QtCtrlWindow(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlWindow, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = (200, 200, 600, 400)
 
     def ctrl2DataProcedure(self):
         self.setAttr(Attr.WinGeom, [self.control.x(), self.control.y(), self.control.width(), self.control.height()])
@@ -142,6 +156,8 @@ class QtCtrlCheckBox(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlCheckBox, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = self.qt.QtCore.Qt.Unchecked
+
         self.intToState = {
             0: self.qt.QtCore.Qt.Unchecked,
             1: self.qt.QtCore.Qt.PartiallyChecked,
@@ -160,6 +176,7 @@ class QtCtrlComboBox(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlComboBox, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = -1
 
     def ctrl2DataProcedure(self):
         self.setAttr(Attr.CurrentIndex, self.control.currentIndex())
@@ -204,6 +221,7 @@ class QtCtrlScrollArea(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlScrollArea, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = (0, 0)
 
     def ctrl2DataProcedure(self):
         self.setAttr(Attr.Value, (self.control.horizontalScrollBar().value(), self.control.verticalScrollBar().value()))
@@ -436,9 +454,9 @@ constructors = {
     UIType.PYQTDateTimeEdit: QtCtrlDateTimeEdit,
     UIType.PYQTComboBox: QtCtrlComboBox,
     UIType.PYQTComboBoxEditable: QtCtrlComboBoxEditable,
-    UIType.PYQTTabWidget: QtCtrlComboBox,
-    UIType.PYQTStackedWidget: QtCtrlComboBox,
-    UIType.PYQTToolBox: QtCtrlComboBox,
+    UIType.PYQTTabWidget: QtCtrlTabWidget,
+    UIType.PYQTStackedWidget: QtCtrlTabWidget,
+    UIType.PYQTToolBox: QtCtrlTabWidget,
     UIType.PYQTSplitter: QtCtrlSplitter,
     UIType.PYQTScrollBar: QtCtrlSpinBox,
     UIType.PYQTScrollArea: QtCtrlScrollArea,
@@ -465,9 +483,9 @@ constructors = {
     UIType.PYSIDEDateTimeEdit: QtCtrlDateTimeEdit,
     UIType.PYSIDEComboBox: QtCtrlComboBox,
     UIType.PYSIDEComboBoxEditable: QtCtrlComboBoxEditable,
-    UIType.PYSIDETabWidget: QtCtrlComboBox,
-    UIType.PYSIDEStackedWidget: QtCtrlComboBox,
-    UIType.PYSIDEToolBox: QtCtrlComboBox,
+    UIType.PYSIDETabWidget: QtCtrlTabWidget,
+    UIType.PYSIDEStackedWidget: QtCtrlTabWidget,
+    UIType.PYSIDEToolBox: QtCtrlTabWidget,
     UIType.PYSIDESplitter: QtCtrlSplitter,
     UIType.PYSIDEScrollBar: QtCtrlSpinBox,
     UIType.PYSIDEScrollArea: QtCtrlScrollArea,

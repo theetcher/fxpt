@@ -4,6 +4,7 @@ class CtrlBase(object):
         self.control = control
         self.controlName = self.retrieveControlName()
         self.defaultValue = defaultValue
+        self.defaultValueGlobal = None
         self.prefData = {}
 
         self.attr = None
@@ -51,6 +52,9 @@ class CtrlBase(object):
             if noDefault:
                 return None
             else:
-                return self.defaultValue
+                if self.defaultValue is None:
+                    return self.defaultValueGlobal
+                else:
+                    return self.defaultValue
 
 

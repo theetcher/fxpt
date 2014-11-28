@@ -29,7 +29,7 @@ class PrefSaver(object):
         self.controllers = []
 
     # noinspection PyCallingNonCallable
-    def addControl(self, control, uiType, defaultValue):
+    def addControl(self, control, uiType, defaultValue=None):
 
         if not UIType.isTypeOf(uiType, UIType.TypesAll):
             message('Cannot add unknown control type ({}) for {}. Skipped'.format(uiType, str(control)))
