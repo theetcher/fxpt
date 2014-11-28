@@ -17,12 +17,9 @@ class CtrlVar(object):
     def ctrl2Data(self):
         self.prefData = self.getter()
 
-    def data2Ctrl(self, prefDataGlobal):
-        self.setData(prefDataGlobal)
+    def data2Ctrl(self, value):
+        self.setData(value)
         self.setter(self.prefData)
 
-    def setData(self, prefDataGlobal=None):
-        if (prefDataGlobal is None) or (self.getControlName() not in prefDataGlobal):
-            self.prefData = self.defaultValue
-        else:
-            self.prefData = prefDataGlobal[self.getControlName()]
+    def setData(self, prefData=None):
+        self.prefData = prefData if prefData else self.defaultValue

@@ -78,9 +78,8 @@ class PrefSaver(object):
             prefDataGlobal[controller.getControlName()] = controller.getPrefData()
         return prefDataGlobal
 
-    #TODO!: controllers should not operate on global data
     def applyPrefs(self, prefDataGlobal):
         for controller in self.controllers:
-            controller.data2Ctrl(prefDataGlobal)
+            controller.data2Ctrl(prefDataGlobal.get(controller.getControlName(), None))
 
 

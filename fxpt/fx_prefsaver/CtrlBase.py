@@ -1,6 +1,3 @@
-#TODO!: CtrlVar is base?
-
-
 class CtrlBase(object):
 
     def __init__(self, control, defaultValue):
@@ -31,8 +28,8 @@ class CtrlBase(object):
     def ctrl2DataProcedure(self):
         self.setAttr(self.attr, self.ctrlGetter())
 
-    def data2Ctrl(self, prefDataGlobal):
-        self.setData(prefDataGlobal)
+    def data2Ctrl(self, prefData):
+        self.setData(prefData)
         self.data2CtrlProcedure()
 
     def data2CtrlProcedure(self):
@@ -41,11 +38,8 @@ class CtrlBase(object):
     def getPrefData(self):
         return self.prefData
 
-    def setData(self, prefDataGlobal=None):
-        if (prefDataGlobal is None) or (self.getControlName() not in prefDataGlobal):
-            self.prefData = {}
-        else:
-            self.prefData = prefDataGlobal[self.getControlName()]
+    def setData(self, prefData=None):
+        self.prefData = prefData if prefData else {}
 
     def setAttr(self, attr, value):
         self.prefData[attr] = value
