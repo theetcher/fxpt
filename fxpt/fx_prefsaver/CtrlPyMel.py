@@ -15,8 +15,9 @@ class PMCtrlBase(CtrlBase):
 
 
 class PMCtrlSimple(PMCtrlBase):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, globalDefault, *args, **kwargs):
         super(PMCtrlSimple, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = globalDefault
         self.setupGetSetVars(Attr.Value, self.control.getValue, self.control.setValue)
 
 
@@ -24,6 +25,7 @@ class PMCtrlColorSliderGrp(PMCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(PMCtrlColorSliderGrp, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = (0, 0, 0)
         self.setupGetSetVars(Attr.Value, self.control.getRgbValue, self.control.setRgbValue)
 
 
@@ -31,6 +33,7 @@ class PMCtrlFrameLayout(PMCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(PMCtrlFrameLayout, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = False
         self.setupGetSetVars(Attr.Value, self.control.getCollapse, self.control.setCollapse)
 
 
@@ -38,34 +41,53 @@ class PMCtrlRadioButton(PMCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(PMCtrlRadioButton, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = False
         self.setupGetSetVars(Attr.Value, self.control.getSelect, self.control.setSelect)
 
 
-class PMCtrlScrollField(PMCtrlBase):
+class PMCtrlOptionMenu(PMCtrlBase):
 
     def __init__(self, *args, **kwargs):
-        super(PMCtrlScrollField, self).__init__(*args, **kwargs)
-        self.setupGetSetVars(Attr.Value, self.control.getText, self.control.setText)
+        super(PMCtrlOptionMenu, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = 1
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(Attr.CurrentIndex, self.control.getSelect())
+
+    def data2CtrlProcedure(self):
+        prefValue = self.getAttr(Attr.CurrentIndex)
+        if 0 < prefValue <= self.control.getNumberOfItems():
+            self.control.setSelect(prefValue)
 
 
 class PMCtrlTabLayout(PMCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(PMCtrlTabLayout, self).__init__(*args, **kwargs)
-        self.setupGetSetVars(Attr.Value, self.control.getSelectTabIndex, self.control.setSelectTabIndex)
+        self.defaultValueGlobal = 1
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(Attr.Value, self.control.getSelectTabIndex())
+
+    def data2CtrlProcedure(self):
+        prefValue = self.getAttr(Attr.Value)
+        if 0 < prefValue <= self.control.getNumberOfChildren():
+            self.control.setSelectTabIndex(prefValue)
 
 
 class PMCtrlTextField(PMCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(PMCtrlTextField, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = ''
         self.setupGetSetVars(Attr.Value, self.control.getText, self.control.setText)
 
 
 class PMCtrlGrp4Simple(PMCtrlBase):
 
-    def __init__(self, grpSize, *args, **kwargs):
+    def __init__(self, globalDefault, grpSize, *args, **kwargs):
         super(PMCtrlGrp4Simple, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = globalDefault
         self.grpSize = grpSize
         self.getters = {
             0: self.control.getValue1,
@@ -95,6 +117,7 @@ class PMCtrlScrollLayout(PMCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(PMCtrlScrollLayout, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = (0, 0)
 
     def ctrl2DataProcedure(self):
         self.setAttr(Attr.ScrollValues, self.control.getScrollAreaValue())
@@ -112,19 +135,26 @@ class PMCtrlTextScrollList(PMCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(PMCtrlTextScrollList, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = ()
 
     def ctrl2DataProcedure(self):
         self.setAttr(Attr.SelectedIndexes, self.control.getSelectIndexedItem() or [])
 
     def data2CtrlProcedure(self):
         self.control.deselectAll()
-        self.control.setSelectIndexedItem(self.getAttr(Attr.SelectedIndexes))
+        # in case of invalid index. IconTextScrollList does not have a method for getting number of items.
+        # so i cannot check a validity of index.
+        try:
+            self.control.setSelectIndexedItem(self.getAttr(Attr.SelectedIndexes))
+        except RuntimeError:
+            pass
 
 
 class PMCtrlScriptTable(PMCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(PMCtrlScriptTable, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = (0, 0)
 
     def ctrl2DataProcedure(self):
         controlData = self.control.getSelectedCells()
@@ -135,42 +165,42 @@ class PMCtrlScriptTable(PMCtrlBase):
 
 
 constructors = {
-    UIType.PMCheckBox: PMCtrlSimple,
-    UIType.PMCheckBoxGrp1: partial(PMCtrlGrp4Simple, 1),
-    UIType.PMCheckBoxGrp2: partial(PMCtrlGrp4Simple, 2),
-    UIType.PMCheckBoxGrp3: partial(PMCtrlGrp4Simple, 3),
-    UIType.PMCheckBoxGrp4: partial(PMCtrlGrp4Simple, 4),
+    UIType.PMCheckBox: partial(PMCtrlSimple, False),
+    UIType.PMCheckBoxGrp1: partial(PMCtrlGrp4Simple, [False], 1),
+    UIType.PMCheckBoxGrp2: partial(PMCtrlGrp4Simple, [False, False], 2),
+    UIType.PMCheckBoxGrp3: partial(PMCtrlGrp4Simple, [False, False, False], 3),
+    UIType.PMCheckBoxGrp4: partial(PMCtrlGrp4Simple, [False, False, False, False], 4),
     UIType.PMColorSliderGrp: PMCtrlColorSliderGrp,
-    UIType.PMFloatField: PMCtrlSimple,
-    UIType.PMFloatFieldGrp1: partial(PMCtrlGrp4Simple, 1),
-    UIType.PMFloatFieldGrp2: partial(PMCtrlGrp4Simple, 2),
-    UIType.PMFloatFieldGrp3: partial(PMCtrlGrp4Simple, 3),
-    UIType.PMFloatFieldGrp4: partial(PMCtrlGrp4Simple, 4),
-    UIType.PMFloatScrollBar: PMCtrlSimple,
-    UIType.PMFloatSlider: PMCtrlSimple,
-    UIType.PMFloatSliderGrp: PMCtrlSimple,
+    UIType.PMFloatField: partial(PMCtrlSimple, 0),
+    UIType.PMFloatFieldGrp1: partial(PMCtrlGrp4Simple, [0], 1),
+    UIType.PMFloatFieldGrp2: partial(PMCtrlGrp4Simple, [0, 0], 2),
+    UIType.PMFloatFieldGrp3: partial(PMCtrlGrp4Simple, [0, 0, 0], 3),
+    UIType.PMFloatFieldGrp4: partial(PMCtrlGrp4Simple, [0, 0, 0, 0], 4),
+    UIType.PMFloatScrollBar: partial(PMCtrlSimple, 0),
+    UIType.PMFloatSlider: partial(PMCtrlSimple, 0),
+    UIType.PMFloatSliderGrp: partial(PMCtrlSimple, 0),
     UIType.PMFrameLayout: PMCtrlFrameLayout,
-    UIType.PMIconTextCheckBox: PMCtrlSimple,
+    UIType.PMIconTextCheckBox: partial(PMCtrlSimple, False),
     UIType.PMIconTextRadioButton: PMCtrlRadioButton,
     UIType.PMIconTextScrollList: PMCtrlTextScrollList,
-    UIType.PMIntField: PMCtrlSimple,
-    UIType.PMIntFieldGrp1: partial(PMCtrlGrp4Simple, 1),
-    UIType.PMIntFieldGrp2: partial(PMCtrlGrp4Simple, 2),
-    UIType.PMIntFieldGrp3: partial(PMCtrlGrp4Simple, 3),
-    UIType.PMIntFieldGrp4: partial(PMCtrlGrp4Simple, 4),
-    UIType.PMIntScrollBar: PMCtrlSimple,
-    UIType.PMIntSlider: PMCtrlSimple,
-    UIType.PMIntSliderGrp: PMCtrlSimple,
-    UIType.PMOptionMenu: PMCtrlRadioButton,
-    UIType.PMOptionMenuGrp: PMCtrlRadioButton,
+    UIType.PMIntField: partial(PMCtrlSimple, 0),
+    UIType.PMIntFieldGrp1: partial(PMCtrlGrp4Simple, [0], 1),
+    UIType.PMIntFieldGrp2: partial(PMCtrlGrp4Simple, [0, 0], 2),
+    UIType.PMIntFieldGrp3: partial(PMCtrlGrp4Simple, [0, 0, 0], 3),
+    UIType.PMIntFieldGrp4: partial(PMCtrlGrp4Simple, [0, 0, 0, 0], 4),
+    UIType.PMIntScrollBar: partial(PMCtrlSimple, 0),
+    UIType.PMIntSlider: partial(PMCtrlSimple, 0),
+    UIType.PMIntSliderGrp: partial(PMCtrlSimple, 0),
+    UIType.PMOptionMenu: PMCtrlOptionMenu,
+    UIType.PMOptionMenuGrp: PMCtrlOptionMenu,
     UIType.PMRadioButton: PMCtrlRadioButton,
     UIType.PMRadioButtonGrp1: PMCtrlRadioButton,
     UIType.PMRadioButtonGrp2: PMCtrlRadioButton,
     UIType.PMRadioButtonGrp3: PMCtrlRadioButton,
     UIType.PMRadioButtonGrp4: PMCtrlRadioButton,
-    UIType.PMSymbolCheckBox: PMCtrlSimple,
+    UIType.PMSymbolCheckBox: partial(PMCtrlSimple, False),
     UIType.PMScriptTable: PMCtrlScriptTable,
-    UIType.PMScrollField: PMCtrlScrollField,
+    UIType.PMScrollField: PMCtrlTextField,
     UIType.PMScrollLayout: PMCtrlScrollLayout,
     UIType.PMShelfTabLayout: PMCtrlTabLayout,
     UIType.PMTabLayout: PMCtrlTabLayout,

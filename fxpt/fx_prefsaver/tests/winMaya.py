@@ -696,106 +696,115 @@ class WinMayaUI(object):
             assert False, 'Unknown serializer type'
 
     # noinspection PyUnresolvedReferences
-    def initPrefs(self):
-        self.prefSaver.addControl(self.uiLAY_frameCheckBoxes, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameCheckBoxGroups, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameColorSliders, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameFloatFields, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameFloatFieldGroups, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameFloatScrollBars, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameFloatSliders, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameFloatSliderGroups, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameIconTextCheckBoxes, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameIconTextRadioButtons, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameIconTextScrollLists, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameIntFields, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameIntFieldGroups, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameIntScrollBars, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameIntSliders, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameIntSliderGroups, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameOptionMenus, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameOptionMenuGroups, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameRadioButtons, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameRadioButtonGroups, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameSymbolCheckBoxes, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameScriptTables, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameScrollField, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameShelfTabLayout, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameTabLayout, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameTextFields, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameTextFieldButtonGroups, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameTextFieldGroups, PrefSaver.UIType.MFrameLayout, False)
-        self.prefSaver.addControl(self.uiLAY_frameTextScrollLists, PrefSaver.UIType.MFrameLayout, False)
+    def initPrefs(self, defaults=False):
 
-        self.prefSaver.addControl(self.uiCHK_test1, PrefSaver.UIType.MCheckBox, False)
-        self.prefSaver.addControl(self.uiCHK_test2, PrefSaver.UIType.MCheckBox, False)
-        self.prefSaver.addControl(self.uiCHKGRP_test1, PrefSaver.UIType.MCheckBoxGrp1, [False])
-        self.prefSaver.addControl(self.uiCHKGRP_test2, PrefSaver.UIType.MCheckBoxGrp2, [False, False])
-        self.prefSaver.addControl(self.uiCHKGRP_test3, PrefSaver.UIType.MCheckBoxGrp3, [False, False, False])
-        self.prefSaver.addControl(self.uiCHKGRP_test4, PrefSaver.UIType.MCheckBoxGrp4, [False, False, False, False])
-        self.prefSaver.addControl(self.uiCLRGRP_test1, PrefSaver.UIType.MColorSliderGrp, [1, 0.5, 0.5])
-        self.prefSaver.addControl(self.uiCLRGRP_test2, PrefSaver.UIType.MColorSliderGrp, [0.5, 1, 0.5])
-        self.prefSaver.addControl(self.uiFLF_test1, PrefSaver.UIType.MFloatField, 4.568)
-        self.prefSaver.addControl(self.uiFLF_test2, PrefSaver.UIType.MFloatField, 15.5)
-        self.prefSaver.addControl(self.uiFLFGRP_test1, PrefSaver.UIType.MFloatFieldGrp1, [1.1])
-        self.prefSaver.addControl(self.uiFLFGRP_test2, PrefSaver.UIType.MFloatFieldGrp2, [1.1, 2.2])
-        self.prefSaver.addControl(self.uiFLFGRP_test3, PrefSaver.UIType.MFloatFieldGrp3, [1.1, 2.2, 3.3])
-        self.prefSaver.addControl(self.uiFLFGRP_test4, PrefSaver.UIType.MFloatFieldGrp4, [1.1, 2.2, 3.3, 4.4])
-        self.prefSaver.addControl(self.uiFLSCRL_test1, PrefSaver.UIType.MFloatScrollBar, 40)
-        self.prefSaver.addControl(self.uiFLSCRL_test2, PrefSaver.UIType.MFloatScrollBar, 60)
-        self.prefSaver.addControl(self.uiFLTSLD_test1, PrefSaver.UIType.MFloatSlider, 40)
-        self.prefSaver.addControl(self.uiFLTSLD_test2, PrefSaver.UIType.MFloatSlider, 60)
-        self.prefSaver.addControl(self.uiFLSGRP_test1, PrefSaver.UIType.MFloatSliderGrp, 40)
-        self.prefSaver.addControl(self.uiFLSGRP_test2, PrefSaver.UIType.MFloatSliderGrp, 60)
-        self.prefSaver.addControl(self.uiLAY_mainScroll, PrefSaver.UIType.MScrollLayout, [0, 0])
-        self.prefSaver.addControl(self.uiITCHK_test1, PrefSaver.UIType.MIconTextCheckBox, False)
-        self.prefSaver.addControl(self.uiITCHK_test2, PrefSaver.UIType.MIconTextCheckBox, False)
-        self.prefSaver.addControl(self.uiITRAD_test1, PrefSaver.UIType.MIconTextRadioButton, False)
-        self.prefSaver.addControl(self.uiITRAD_test2, PrefSaver.UIType.MIconTextRadioButton, False)
-        self.prefSaver.addControl(self.uiITRAD_test3, PrefSaver.UIType.MIconTextRadioButton, True)
-        self.prefSaver.addControl(self.uiITSLST_test1, PrefSaver.UIType.MIconTextScrollList, [])
-        self.prefSaver.addControl(self.uiITSLST_test2, PrefSaver.UIType.MIconTextScrollList, [])
-        self.prefSaver.addControl(self.uiINF_test1, PrefSaver.UIType.MIntField, 1)
-        self.prefSaver.addControl(self.uiINF_test2, PrefSaver.UIType.MIntField, 2)
-        self.prefSaver.addControl(self.uiINFGRP_test1, PrefSaver.UIType.MIntFieldGrp1, [1])
-        self.prefSaver.addControl(self.uiINFGRP_test2, PrefSaver.UIType.MIntFieldGrp2, [2, 2])
-        self.prefSaver.addControl(self.uiINFGRP_test3, PrefSaver.UIType.MIntFieldGrp3, [3, 3, 3])
-        self.prefSaver.addControl(self.uiINFGRP_test4, PrefSaver.UIType.MIntFieldGrp4, [4, 4, 4, 4])
-        self.prefSaver.addControl(self.uiINSCRL_test1, PrefSaver.UIType.MIntScrollBar, 40)
-        self.prefSaver.addControl(self.uiINSCRL_test2, PrefSaver.UIType.MIntScrollBar, 60)
-        self.prefSaver.addControl(self.uiINTSLD_test1, PrefSaver.UIType.MIntSlider, 40)
-        self.prefSaver.addControl(self.uiINTSLD_test2, PrefSaver.UIType.MIntSlider, 60)
-        self.prefSaver.addControl(self.uiINSGRP_test1, PrefSaver.UIType.MIntSliderGrp, 40)
-        self.prefSaver.addControl(self.uiINSGRP_test2, PrefSaver.UIType.MIntSliderGrp, 60)
-        self.prefSaver.addControl(self.uiOPTMNU_test1, PrefSaver.UIType.MOptionMenu, 1)
-        self.prefSaver.addControl(self.uiOPTMNU_test2, PrefSaver.UIType.MOptionMenu, 2)
-        self.prefSaver.addControl(self.uiOPMGRP_test1, PrefSaver.UIType.MOptionMenuGrp, 1)
-        self.prefSaver.addControl(self.uiOPMGRP_test2, PrefSaver.UIType.MOptionMenuGrp, 2)
-        self.prefSaver.addControl(self.uiRAD_test1, PrefSaver.UIType.MRadioButton, False)
-        self.prefSaver.addControl(self.uiRAD_test2, PrefSaver.UIType.MRadioButton, False)
-        self.prefSaver.addControl(self.uiRAD_test3, PrefSaver.UIType.MRadioButton, True)
-        self.prefSaver.addControl(self.uiRADGRP_test1, PrefSaver.UIType.MRadioButtonGrp1, 1)
-        self.prefSaver.addControl(self.uiRADGRP_test2, PrefSaver.UIType.MRadioButtonGrp2, 2)
-        self.prefSaver.addControl(self.uiRADGRP_test3, PrefSaver.UIType.MRadioButtonGrp3, 3)
-        self.prefSaver.addControl(self.uiRADGRP_test4, PrefSaver.UIType.MRadioButtonGrp4, 4)
-        self.prefSaver.addControl(self.uiSYMCHK_test1, PrefSaver.UIType.MSymbolCheckBox, False)
-        self.prefSaver.addControl(self.uiSYMCHK_test2, PrefSaver.UIType.MSymbolCheckBox, True)
-        self.prefSaver.addControl(self.uiSCRTBL_test1, PrefSaver.UIType.MScriptTable, [0, 0])  # [0, 0] equals to "select nothing"
-        self.prefSaver.addControl(self.uiSCRTBL_test2, PrefSaver.UIType.MScriptTable, [0, 0])
-        self.prefSaver.addControl(self.uiSCRFLD_test1, PrefSaver.UIType.MScrollField, 'default text')
-        self.prefSaver.addControl(self.uiSCRFLD_test2, PrefSaver.UIType.MScrollField, 'default text')
-        self.prefSaver.addControl(self.uiSHLTAB_test1, PrefSaver.UIType.MShelfTabLayout, 1)
-        self.prefSaver.addControl(self.uiSHLTAB_test2, PrefSaver.UIType.MShelfTabLayout, 1)
-        self.prefSaver.addControl(self.uiTAB_test1, PrefSaver.UIType.MTabLayout, 1)
-        self.prefSaver.addControl(self.uiTAB_test2, PrefSaver.UIType.MTabLayout, 1)
-        self.prefSaver.addControl(self.uiTXT_test1, PrefSaver.UIType.MTextField, 'default text')
-        self.prefSaver.addControl(self.uiTXT_test2, PrefSaver.UIType.MTextField, 'default text')
-        self.prefSaver.addControl(self.uiTXBTGR_test1, PrefSaver.UIType.MTextFieldButtonGrp, 'default text')
-        self.prefSaver.addControl(self.uiTXBTGR_test2, PrefSaver.UIType.MTextFieldButtonGrp, 'default text')
-        self.prefSaver.addControl(self.uiTXTGRP_test1, PrefSaver.UIType.MTextFieldGrp, 'default text')
-        self.prefSaver.addControl(self.uiTXTGRP_test2, PrefSaver.UIType.MTextFieldGrp, 'default text')
-        self.prefSaver.addControl(self.uiTXTLST_test1, PrefSaver.UIType.MTextScrollList, [])
-        self.prefSaver.addControl(self.uiTXTLST_test2, PrefSaver.UIType.MTextScrollList, [])
+        controlList = [
+            (self.uiLAY_frameCheckBoxes, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameCheckBoxGroups, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameColorSliders, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameFloatFields, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameFloatFieldGroups, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameFloatScrollBars, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameFloatSliders, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameFloatSliderGroups, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameIconTextCheckBoxes, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameIconTextRadioButtons, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameIconTextScrollLists, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameIntFields, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameIntFieldGroups, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameIntScrollBars, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameIntSliders, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameIntSliderGroups, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameOptionMenus, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameOptionMenuGroups, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameRadioButtons, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameRadioButtonGroups, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameSymbolCheckBoxes, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameScriptTables, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameScrollField, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameShelfTabLayout, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameTabLayout, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameTextFields, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameTextFieldButtonGroups, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameTextFieldGroups, PrefSaver.UIType.MFrameLayout, False),
+            (self.uiLAY_frameTextScrollLists, PrefSaver.UIType.MFrameLayout, False),
+
+            (self.uiCHK_test1, PrefSaver.UIType.MCheckBox, False),
+            (self.uiCHK_test2, PrefSaver.UIType.MCheckBox, False),
+            (self.uiCHKGRP_test1, PrefSaver.UIType.MCheckBoxGrp1, [False]),
+            (self.uiCHKGRP_test2, PrefSaver.UIType.MCheckBoxGrp2, [False, False]),
+            (self.uiCHKGRP_test3, PrefSaver.UIType.MCheckBoxGrp3, [False, False, False]),
+            (self.uiCHKGRP_test4, PrefSaver.UIType.MCheckBoxGrp4, [False, False, False, False]),
+            (self.uiCLRGRP_test1, PrefSaver.UIType.MColorSliderGrp, [1, 0.5, 0.5]),
+            (self.uiCLRGRP_test2, PrefSaver.UIType.MColorSliderGrp, [0.5, 1, 0.5]),
+            (self.uiFLF_test1, PrefSaver.UIType.MFloatField, 4.568),
+            (self.uiFLF_test2, PrefSaver.UIType.MFloatField, 15.5),
+            (self.uiFLFGRP_test1, PrefSaver.UIType.MFloatFieldGrp1, [1.1]),
+            (self.uiFLFGRP_test2, PrefSaver.UIType.MFloatFieldGrp2, [1.1, 2.2]),
+            (self.uiFLFGRP_test3, PrefSaver.UIType.MFloatFieldGrp3, [1.1, 2.2, 3.3]),
+            (self.uiFLFGRP_test4, PrefSaver.UIType.MFloatFieldGrp4, [1.1, 2.2, 3.3, 4.4]),
+            (self.uiFLSCRL_test1, PrefSaver.UIType.MFloatScrollBar, 40),
+            (self.uiFLSCRL_test2, PrefSaver.UIType.MFloatScrollBar, 60),
+            (self.uiFLTSLD_test1, PrefSaver.UIType.MFloatSlider, 40),
+            (self.uiFLTSLD_test2, PrefSaver.UIType.MFloatSlider, 60),
+            (self.uiFLSGRP_test1, PrefSaver.UIType.MFloatSliderGrp, 40),
+            (self.uiFLSGRP_test2, PrefSaver.UIType.MFloatSliderGrp, 60),
+            (self.uiLAY_mainScroll, PrefSaver.UIType.MScrollLayout, [0, 0]),
+            (self.uiITCHK_test1, PrefSaver.UIType.MIconTextCheckBox, False),
+            (self.uiITCHK_test2, PrefSaver.UIType.MIconTextCheckBox, False),
+            (self.uiITRAD_test1, PrefSaver.UIType.MIconTextRadioButton, False),
+            (self.uiITRAD_test2, PrefSaver.UIType.MIconTextRadioButton, False),
+            (self.uiITRAD_test3, PrefSaver.UIType.MIconTextRadioButton, True),
+            (self.uiITSLST_test1, PrefSaver.UIType.MIconTextScrollList, []),
+            (self.uiITSLST_test2, PrefSaver.UIType.MIconTextScrollList, []),
+            (self.uiINF_test1, PrefSaver.UIType.MIntField, 1),
+            (self.uiINF_test2, PrefSaver.UIType.MIntField, 2),
+            (self.uiINFGRP_test1, PrefSaver.UIType.MIntFieldGrp1, [1]),
+            (self.uiINFGRP_test2, PrefSaver.UIType.MIntFieldGrp2, [2, 2]),
+            (self.uiINFGRP_test3, PrefSaver.UIType.MIntFieldGrp3, [3, 3, 3]),
+            (self.uiINFGRP_test4, PrefSaver.UIType.MIntFieldGrp4, [4, 4, 4, 4]),
+            (self.uiINSCRL_test1, PrefSaver.UIType.MIntScrollBar, 40),
+            (self.uiINSCRL_test2, PrefSaver.UIType.MIntScrollBar, 60),
+            (self.uiINTSLD_test1, PrefSaver.UIType.MIntSlider, 40),
+            (self.uiINTSLD_test2, PrefSaver.UIType.MIntSlider, 60),
+            (self.uiINSGRP_test1, PrefSaver.UIType.MIntSliderGrp, 40),
+            (self.uiINSGRP_test2, PrefSaver.UIType.MIntSliderGrp, 60),
+            (self.uiOPTMNU_test1, PrefSaver.UIType.MOptionMenu, 1),
+            (self.uiOPTMNU_test2, PrefSaver.UIType.MOptionMenu, 2),
+            (self.uiOPMGRP_test1, PrefSaver.UIType.MOptionMenuGrp, 1),
+            (self.uiOPMGRP_test2, PrefSaver.UIType.MOptionMenuGrp, 2),
+            (self.uiRAD_test1, PrefSaver.UIType.MRadioButton, False),
+            (self.uiRAD_test2, PrefSaver.UIType.MRadioButton, False),
+            (self.uiRAD_test3, PrefSaver.UIType.MRadioButton, True),
+            (self.uiRADGRP_test1, PrefSaver.UIType.MRadioButtonGrp1, 1),
+            (self.uiRADGRP_test2, PrefSaver.UIType.MRadioButtonGrp2, 2),
+            (self.uiRADGRP_test3, PrefSaver.UIType.MRadioButtonGrp3, 3),
+            (self.uiRADGRP_test4, PrefSaver.UIType.MRadioButtonGrp4, 4),
+            (self.uiSYMCHK_test1, PrefSaver.UIType.MSymbolCheckBox, False),
+            (self.uiSYMCHK_test2, PrefSaver.UIType.MSymbolCheckBox, True),
+            (self.uiSCRTBL_test1, PrefSaver.UIType.MScriptTable, [0, 0]),  # [0, 0] equals to "select nothing"
+            (self.uiSCRTBL_test2, PrefSaver.UIType.MScriptTable, [0, 0]),
+            (self.uiSCRFLD_test1, PrefSaver.UIType.MScrollField, 'default text'),
+            (self.uiSCRFLD_test2, PrefSaver.UIType.MScrollField, 'default text'),
+            (self.uiSHLTAB_test1, PrefSaver.UIType.MShelfTabLayout, 1),
+            (self.uiSHLTAB_test2, PrefSaver.UIType.MShelfTabLayout, 1),
+            (self.uiTAB_test1, PrefSaver.UIType.MTabLayout, 1),
+            (self.uiTAB_test2, PrefSaver.UIType.MTabLayout, 1),
+            (self.uiTXT_test1, PrefSaver.UIType.MTextField, 'default text'),
+            (self.uiTXT_test2, PrefSaver.UIType.MTextField, 'default text'),
+            (self.uiTXBTGR_test1, PrefSaver.UIType.MTextFieldButtonGrp, 'default text'),
+            (self.uiTXBTGR_test2, PrefSaver.UIType.MTextFieldButtonGrp, 'default text'),
+            (self.uiTXTGRP_test1, PrefSaver.UIType.MTextFieldGrp, 'default text'),
+            (self.uiTXTGRP_test2, PrefSaver.UIType.MTextFieldGrp, 'default text'),
+            (self.uiTXTLST_test1, PrefSaver.UIType.MTextScrollList, []),
+            (self.uiTXTLST_test2, PrefSaver.UIType.MTextScrollList, [])
+        ]
+
+        for control, cType, default in controlList:
+            if defaults:
+                self.prefSaver.addControl(control, cType, default)
+            else:
+                self.prefSaver.addControl(control, cType)
 
     # noinspection PyUnusedLocal
     def onSavePrefsClicked(self, *args):
