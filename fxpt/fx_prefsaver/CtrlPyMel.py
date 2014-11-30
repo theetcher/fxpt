@@ -45,6 +45,14 @@ class PMCtrlRadioButton(PMCtrlBase):
         self.setupGetSetVars(Attr.Value, self.control.getSelect, self.control.setSelect)
 
 
+class PMCtrlRadioButtonGrp(PMCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(PMCtrlRadioButtonGrp, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = 1
+        self.setupGetSetVars(Attr.Value, self.control.getSelect, self.control.setSelect)
+
+
 class PMCtrlOptionMenu(PMCtrlBase):
 
     def __init__(self, *args, **kwargs):
@@ -194,10 +202,10 @@ constructors = {
     UIType.PMOptionMenu: PMCtrlOptionMenu,
     UIType.PMOptionMenuGrp: PMCtrlOptionMenu,
     UIType.PMRadioButton: PMCtrlRadioButton,
-    UIType.PMRadioButtonGrp1: PMCtrlRadioButton,
-    UIType.PMRadioButtonGrp2: PMCtrlRadioButton,
-    UIType.PMRadioButtonGrp3: PMCtrlRadioButton,
-    UIType.PMRadioButtonGrp4: PMCtrlRadioButton,
+    UIType.PMRadioButtonGrp1: PMCtrlRadioButtonGrp,
+    UIType.PMRadioButtonGrp2: PMCtrlRadioButtonGrp,
+    UIType.PMRadioButtonGrp3: PMCtrlRadioButtonGrp,
+    UIType.PMRadioButtonGrp4: PMCtrlRadioButtonGrp,
     UIType.PMSymbolCheckBox: partial(PMCtrlSimple, False),
     UIType.PMScriptTable: PMCtrlScriptTable,
     UIType.PMScrollField: PMCtrlTextField,
