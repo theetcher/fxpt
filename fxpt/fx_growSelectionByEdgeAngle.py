@@ -2,11 +2,12 @@ import math
 from array import array
 
 from pymel.core import *
-# from pymel.core.datatypes import Vector
+
+from fxpt.fx_prefsaver import PrefSaver, Serializers
 
 import maya.OpenMaya as om
 
-SCRIPT_VERSION = 'v1.1'
+SCRIPT_VERSION = 'v1.2'
 SCRIPT_NAME = 'Grow Selection By Edge Angle'
 WIN_NAME = 'fx_growSelectionByAngle_win'
 WIN_HELPNAME = 'fx_growSelectionByAngle_helpwin'
@@ -15,12 +16,15 @@ WIN_HELPTITLE = SCRIPT_NAME + ' ' + SCRIPT_VERSION + ' Help'
 UI_LABEL_WIDTH = 100
 UI_INPUT_WIDTH = 240
 UI_APPLY_BUTTON_STRING = 'Set Target Geometry'
+OPT_VAR_NAME = 'fx_growSelectionByAngle_prefs'
 
 
 # noinspection PyAttributeOutsideInit
 class SelectComponentByAngleUI:
 
     def __init__(self):
+
+        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
         
         self.targetGeom = []
         self.geometryData = GeometryData()
@@ -35,125 +39,105 @@ class SelectComponentByAngleUI:
         if window(WIN_NAME, exists=True):
             deleteUI(WIN_NAME, window=True)
 
-        self.window = window(
+        with window(
             WIN_NAME,
             title=WIN_TITLE,
             maximizeButton=False,
             menuBar=True,
             menuBarVisible=True
-        )
+        ) as self.window:
 
-        menu(label='Edit', tearOff=False)
-        menuItem(label='Reset Settings', command=self.ui_resetSettings)
-        menu(label='Help', tearOff=False)
-        menuItem(label='Help on ' + WIN_TITLE, command=Callback(self.ui_showHelp, 1))
-        menuItem(divider=True)
-        menuItem(label='Script Information', command=Callback(self.ui_showHelp, 2))
+            menu(label='Edit', tearOff=False)
+            menuItem(label='Reset Settings', command=self.ui_resetSettings)
+            menu(label='Help', tearOff=False)
+            menuItem(label='Help on ' + WIN_TITLE, command=Callback(self.ui_showHelp, 1))
+            menuItem(divider=True)
+            menuItem(label='Script Information', command=Callback(self.ui_showHelp, 2))
 
-        # - - - - - - - - - - - - - - - - - - - -
+            with formLayout() as self.ui_mainForm:
 
-        self.ui_mainForm = formLayout()
+                with scrollLayout(childResizable=True) as self.ui_LAY_mainScroll:
 
-        self.ui_LAY_mainScroll = scrollLayout(
-            childResizable=True
-        )
+                    with frameLayout(
+                        label='Control Panel',
+                        collapsable=True,
+                        marginHeight=3,
+                        borderStyle='etchedIn',
+                        borderVisible=True
+                    ) as self.ui_LAY_frameControlPanel:
 
-        self.ui_LAY_frameControlPanel = frameLayout(
-            label='Control Panel',
-            collapsable=True,
-            marginHeight=3,
-            borderStyle='etchedIn',
-            borderVisible=True
-        )
+                        with columnLayout(adjustableColumn=True):
 
-        columnLayout(adjustableColumn=True)
+                            with rowLayout(
+                                numberOfColumns=2,
+                                columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH],
+                                columnAttach=[1, 'right', 5]
+                            ):
 
-        # - - - - - - - - - - - - - - - - - - - -
+                                text(label='Min Angle')
 
-        rowLayout(
-            numberOfColumns=2,
-            columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH],
-            columnAttach=[1, 'right', 5]
-        )
+                                self.ui_FLTSLGRP_minAngle = floatSliderGrp(
+                                    'ui_FLTSLGRP_minAngle',
+                                    field=True,
+                                    minValue=0,
+                                    maxValue=180,
+                                    fieldMinValue=0,
+                                    fieldMaxValue=180,
+                                    value=0,
+                                    step=0.001,
+                                    fieldStep=0.001,
+                                    sliderStep=0.001,
+                                    changeCommand=self.selectValidGeometry,
+                                    dragCommand=self.selectValidGeometry
+                                )
 
-        # - - - - - - - - - - - - - - - - - - - -
+                            with rowLayout(
+                                numberOfColumns=2,
+                                columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH],
+                                columnAttach=[1, 'right', 5]
+                            ):
 
-        text(label='Min Angle')
+                                text(label='Max Angle')
 
-        self.ui_FLTSLGRP_minAngle = floatSliderGrp(
-            field=True,
-            minValue=0,
-            maxValue=180,
-            fieldMinValue=0,
-            fieldMaxValue=180,
-            value=0,
-            step=0.001,
-            fieldStep=0.001,
-            sliderStep=0.001,
-            changeCommand=self.selectValidGeometry,
-            dragCommand=self.selectValidGeometry
-        )
+                                self.ui_FLTSLGRP_maxAngle = floatSliderGrp(
+                                    'ui_FLTSLGRP_maxAngle',
+                                    field=True,
+                                    minValue=0,
+                                    maxValue=180,
+                                    fieldMinValue=0,
+                                    fieldMaxValue=180,
+                                    value=0,
+                                    step=0.001,
+                                    fieldStep=0.001,
+                                    sliderStep=0.001,
+                                    changeCommand=self.selectValidGeometry,
+                                    dragCommand=self.selectValidGeometry
+                                )
 
-        setParent('..')  # local row -> frame column
+                            separator(style='in', height=10)
 
-        rowLayout(
-            numberOfColumns=2,
-            columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH],
-            columnAttach=[1, 'right', 5]
-        )
+                            with rowLayout(
+                                numberOfColumns=2,
+                                columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH],
+                                columnAttach=[1, 'right', 5]
+                            ):
+                                text(label='Highlight')
 
-        # - - - - - - - - - - - - - - - - - - - -
+                                self.ui_CHK_highlight = checkBox(
+                                    'ui_CHK_highlight',
+                                    label='',
+                                    changeCommand=self.ui_CHK_highlight_change
+                                )
 
-        text(label='Max Angle')
+                self.ui_BTN_select = button(
+                    label=UI_APPLY_BUTTON_STRING,
+                    command=self.ui_setTargetGeometry
+                )
 
-        self.ui_FLTSLGRP_maxAngle = floatSliderGrp(
-            field=True,
-            minValue=0,
-            maxValue=180,
-            fieldMinValue=0,
-            fieldMaxValue=180,
-            value=0,
-            step=0.001,
-            fieldStep=0.001,
-            sliderStep=0.001,
-            changeCommand=self.selectValidGeometry,
-            dragCommand=self.selectValidGeometry
-        )
-
-        setParent('..')  # local row -> frame column
-
-        separator(style='in', height=10)
-
-        rowLayout(
-            numberOfColumns=2,
-            columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH],
-            columnAttach=[1, 'right', 5]
-        )
-
-        # - - - - - - - - - - - - - - - - - - - -
-
-        text(label='Highlight')
-
-        self.ui_CHK_highlight = checkBox(
-            label='',
-            changeCommand=self.ui_CHK_highlight_change
-        )
-
-        # - - - - - - - - - - - - - - - - - - - -
-
-        setParent(self.ui_mainForm)
-
-        self.ui_BTN_select = button(
-            label=UI_APPLY_BUTTON_STRING,
-            command=self.ui_setTargetGeometry
-        )
-
-        self.ui_BTN_close = button(
-            label='Close',
-            command=self.ui_close
-        )
-
-        # - - - - - Organize Main Form Layout - - - - -
+                self.ui_BTN_close = button(
+                    label='Close',
+                    command=self.ui_close
+                )
 
         self.ui_mainForm.attachForm(self.ui_LAY_mainScroll, 'top', 2)
         self.ui_mainForm.attachForm(self.ui_LAY_mainScroll, 'left', 2)
@@ -170,8 +154,6 @@ class SelectComponentByAngleUI:
         self.ui_mainForm.attachForm(self.ui_BTN_close, 'right', 2)
         self.ui_mainForm.attachForm(self.ui_BTN_close, 'bottom', 2)
 
-        # ################# UI Creation  Finished ################
-
         self.ui_initSettings()
         self.ui_loadSettings()
 
@@ -180,38 +162,23 @@ class SelectComponentByAngleUI:
 
     # noinspection PyMethodMayBeStatic
     def ui_initSettings(self):
-        optVars = env.optionVars
-        if not optVars.has_key('fx_growSelectionByAngle_minAngle'):
-            optVars['fx_growSelectionByAngle_minAngle'] = 0.0
-        if not optVars.has_key('fx_growSelectionByAngle_maxAngle'):
-            optVars['fx_growSelectionByAngle_maxAngle'] = 45.0
-        if not optVars.has_key('fx_growSelectionByAngle_highlight'):
-            optVars['fx_growSelectionByAngle_highlight'] = 1
+        print('ui_initSettings()')
+        self.prefSaver.addControl(self.ui_FLTSLGRP_minAngle, PrefSaver.UIType.PMFloatSliderGrp, 0)
+        self.prefSaver.addControl(self.ui_FLTSLGRP_maxAngle, PrefSaver.UIType.PMFloatSliderGrp, 45)
+        self.prefSaver.addControl(self.ui_CHK_highlight, PrefSaver.UIType.PMCheckBox, True)
 
     def ui_loadSettings(self):
-        optVars = env.optionVars
-        self.ui_FLTSLGRP_minAngle.setValue(optVars['fx_growSelectionByAngle_minAngle'])
-        self.ui_FLTSLGRP_maxAngle.setValue(optVars['fx_growSelectionByAngle_maxAngle'])
-        self.ui_CHK_highlight.setValue(optVars['fx_growSelectionByAngle_highlight'])
+        print('ui_loadSettings()')
+        self.prefSaver.loadPrefs()
 
     def ui_saveSettings(self):
-        optVars = env.optionVars
-        optVars['fx_growSelectionByAngle_minAngle'] = self.ui_FLTSLGRP_minAngle.getValue()
-        optVars['fx_growSelectionByAngle_maxAngle'] = self.ui_FLTSLGRP_maxAngle.getValue()
-        optVars['fx_growSelectionByAngle_highlight'] = self.ui_CHK_highlight.getValue()
+        print('ui_saveSettings()')
+        self.prefSaver.savePrefs()
 
     # noinspection PyUnusedLocal
     def ui_resetSettings(self, *args):
-        optionVarsList = (
-            'fx_growSelectionByAngle_minAngle',
-            'fx_growSelectionByAngle_maxAngle',
-            'fx_growSelectionByAngle_highlight'
-        )
-        optVars = env.optionVars
-        for var in optionVarsList:
-            optVars.pop(var)
-        self.ui_initSettings()
-        self.ui_loadSettings()
+        print('ui_resetSettings()')
+        self.prefSaver.resetPrefs()
         self.selectValidGeometry()
 
     # noinspection PyUnusedLocal
@@ -300,112 +267,90 @@ class SelectComponentByAngleUI:
     # noinspection PyUnusedLocal
     def ui_showHelp(self, tab, *args):
 
-        # ################ UI Creation ################
-
         if window(WIN_HELPNAME, exists=True):
             deleteUI(WIN_HELPNAME, window=True)
 
-        self.helpWindow = window(
+        with window(
             WIN_HELPNAME,
             title=WIN_HELPTITLE,
             maximizeButton=False
-        )
+        ) as self.helpWindow:
 
-        self.ui_LAY_formMainHelp = formLayout()
+            with formLayout() as self.ui_LAY_formMainHelp:
 
-        self.ui_LAY_tabHelp = tabLayout(
-            innerMarginWidth=50,
-            innerMarginHeight=50,
-            childResizable=True
-        )
+                with tabLayout(
+                    innerMarginWidth=50,
+                    innerMarginHeight=50,
+                    childResizable=True
+                ) as self.ui_LAY_tabHelp:
 
-        # - - - - - - - - - - - - - - - - - - - -
+                    with formLayout() as self.ui_LAY_formHelpMargin:
 
-        self.ui_LAY_formHelpMargin = formLayout()
+                        with scrollLayout(childResizable=True) as self.ui_LAY_scrollHelp:
 
-        self.ui_LAY_scrollHelp = scrollLayout(
-            childResizable=True
-        )
+                            self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'top', 2)
+                            self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'left', 2)
+                            self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'right', 2)
+                            self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'bottom', 2)
 
-        self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'top', 2)
-        self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'left', 2)
-        self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'right', 2)
-        self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'bottom', 2)
+                            with frameLayout(
+                                label='Help on ' + WIN_TITLE,
+                                collapsable=False,
+                                marginHeight=3,
+                                borderStyle='etchedIn',
+                                borderVisible=True
+                            ):
 
-        frameLayout(
-            label='Help on ' + WIN_TITLE,
-            collapsable=False,
-            marginHeight=3,
-            borderStyle='etchedIn',
-            borderVisible=True
-        )
+                                with rowLayout(columnAttach=[1, 'both', 10]):
 
-        rowLayout(
-            columnAttach=[1, 'both', 10]
-        )
+                                    self.ui_TXT_help = text('', align='center')
 
-        self.ui_TXT_help = text('', align='center')
+                    with formLayout() as self.ui_LAY_formAboutMargin:
 
-        setParent(self.ui_LAY_tabHelp)
+                        with scrollLayout(childResizable=True) as self.ui_LAY_scrollAbout:
 
-        # - - - - - - - - - - - - - - - - - - - -
+                            self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'top', 2)
+                            self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'left', 2)
+                            self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'right', 2)
+                            self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'bottom', 2)
 
-        self.ui_LAY_formAboutMargin = formLayout()
+                            with frameLayout(
+                                label='About ' + WIN_TITLE,
+                                collapsable=False,
+                                marginHeight=3,
+                                borderStyle='etchedIn',
+                                borderVisible=True
+                            ):
 
-        self.ui_LAY_scrollAbout = scrollLayout(
-            childResizable=True
-        )
+                                with rowLayout(
+                                    columnAttach=[1, 'both', 10]
+                                ):
 
-        self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'top', 2)
-        self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'left', 2)
-        self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'right', 2)
-        self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'bottom', 2)
+                                    self.ui_TXT_about = text('', align='center')
 
-        frameLayout(
-            label='About ' + WIN_TITLE,
-            collapsable=False,
-            marginHeight=3,
-            borderStyle='etchedIn',
-            borderVisible=True
-        )
+                self.ui_BTN_closeHelp = button(
+                    'Close',
+                    command=lambda x: deleteUI(WIN_HELPNAME)
+                )
 
-        rowLayout(
-            columnAttach=[1, 'both', 10]
-        )
+            self.ui_LAY_formMainHelp.attachForm(self.ui_LAY_tabHelp, 'top', 2)
+            self.ui_LAY_formMainHelp.attachForm(self.ui_LAY_tabHelp, 'left', 2)
+            self.ui_LAY_formMainHelp.attachForm(self.ui_LAY_tabHelp, 'right', 2)
+            self.ui_LAY_formMainHelp.attachControl(self.ui_LAY_tabHelp, 'bottom', 2, self.ui_BTN_closeHelp)
 
-        self.ui_TXT_about = text('', align='center')
+            self.ui_LAY_formMainHelp.attachNone(self.ui_BTN_closeHelp, 'top')
+            self.ui_LAY_formMainHelp.attachForm(self.ui_BTN_closeHelp, 'left', 2)
+            self.ui_LAY_formMainHelp.attachForm(self.ui_BTN_closeHelp, 'right', 2)
+            self.ui_LAY_formMainHelp.attachForm(self.ui_BTN_closeHelp, 'bottom', 2)
 
-        setParent(self.ui_LAY_formMainHelp)
-
-        # - - - - - - - - - - - - - - - - - - - -
-
-        self.ui_BTN_closeHelp = button(
-            'Close',
-            command=lambda x: deleteUI(WIN_HELPNAME)
-        )
-
-        # - - - - - Organize Main Form Layout - - - - -
-
-        self.ui_LAY_formMainHelp.attachForm(self.ui_LAY_tabHelp, 'top', 2)
-        self.ui_LAY_formMainHelp.attachForm(self.ui_LAY_tabHelp, 'left', 2)
-        self.ui_LAY_formMainHelp.attachForm(self.ui_LAY_tabHelp, 'right', 2)
-        self.ui_LAY_formMainHelp.attachControl(self.ui_LAY_tabHelp, 'bottom', 2, self.ui_BTN_closeHelp)
-
-        self.ui_LAY_formMainHelp.attachNone(self.ui_BTN_closeHelp, 'top')
-        self.ui_LAY_formMainHelp.attachForm(self.ui_BTN_closeHelp, 'left', 2)
-        self.ui_LAY_formMainHelp.attachForm(self.ui_BTN_closeHelp, 'right', 2)
-        self.ui_LAY_formMainHelp.attachForm(self.ui_BTN_closeHelp, 'bottom', 2)
-
-        # - - - - - - - - - - - - - - - - - - - -
-
-        tabLayout(
-            self.ui_LAY_tabHelp,
-            edit=True,
-            tabLabel=(
-                (self.ui_LAY_formHelpMargin, 'Help'),
-                (self.ui_LAY_formAboutMargin, 'About')
+            tabLayout(
+                self.ui_LAY_tabHelp,
+                edit=True,
+                tabLabel=(
+                    (self.ui_LAY_formHelpMargin, 'Help'),
+                    (self.ui_LAY_formAboutMargin, 'About')
+                )
             )
-        )
 
         # - - - - - - - - - - - - - - - - - - - -
 
