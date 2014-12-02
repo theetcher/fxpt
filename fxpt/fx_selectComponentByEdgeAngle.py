@@ -7,6 +7,8 @@ import pymel.core as pm
 
 import maya.OpenMaya as om
 
+from fxpt.fx_prefsaver import PrefSaver, Serializers
+
 SCRIPT_VERSION = 'v1.0'
 SCRIPT_NAME = 'Select Component By Edge Angle'
 WIN_NAME = 'fx_selectComponentByAngle_win'
@@ -16,6 +18,7 @@ WIN_HELPTITLE = SCRIPT_NAME + ' ' + SCRIPT_VERSION + ' Help'
 UI_LABEL_WIDTH = 100
 UI_INPUT_WIDTH = 240
 UI_APPLY_BUTTON_STRING = 'Set Target Geometry'
+OPT_VAR_NAME = 'fx_selectComponentByEdgeAngle_prefs'
 
 
 def getParent(node):
@@ -45,6 +48,8 @@ class SelectComponentByAngleUI:
 
     def __init__(self):
         
+        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
+
         self.targetGeom = []
         self.geometryData = GeometryData()
 
@@ -75,6 +80,7 @@ class SelectComponentByAngleUI:
                         with pm.columnLayout(adjustableColumn=True):
 
                             self.ui_RADBTNGRP_component = pm.radioButtonGrp(
+                                'ui_RADBTNGRP_component',
                                 label='Component',
                                 labelArray3=['Polygons', 'Edges', 'Vertices'],
                                 numberOfRadioButtons=3,
@@ -90,6 +96,7 @@ class SelectComponentByAngleUI:
                                 pm.text(label='Min Angle')
 
                                 self.ui_FLTSLGRP_minAngle = pm.floatSliderGrp(
+                                    'ui_FLTSLGRP_minAngle',
                                     field=True,
                                     minValue=0,
                                     maxValue=180,
@@ -108,6 +115,7 @@ class SelectComponentByAngleUI:
                                 pm.text(label='Max Angle')
 
                                 self.ui_FLTSLGRP_maxAngle = pm.floatSliderGrp(
+                                    'ui_FLTSLGRP_maxAngle',
                                     field=True,
                                     minValue=0,
                                     maxValue=180,
@@ -128,6 +136,7 @@ class SelectComponentByAngleUI:
                                 pm.text(label='Highlight')
 
                                 self.ui_CHK_highlight = pm.checkBox(
+                                    'ui_CHK_highlight',
                                     label='',
                                     changeCommand=self.ui_CHK_highlight_change
                                 )
@@ -164,43 +173,20 @@ class SelectComponentByAngleUI:
         m.refresh()
 
     def ui_initSettings(self):
-        optVars = pm.env.optionVars
-        if 'fx_selectComponentByAngle_component' not in optVars:
-            optVars['fx_selectComponentByAngle_component'] = 1
-        if 'fx_selectComponentByAngle_minAngle' not in optVars:
-            optVars['fx_selectComponentByAngle_minAngle'] = 0.0
-        if 'fx_selectComponentByAngle_maxAngle' not in optVars:
-            optVars['fx_selectComponentByAngle_maxAngle'] = 45.0
-        if 'fx_selectComponentByAngle_highlight' not in optVars:
-            optVars['fx_selectComponentByAngle_highlight'] = 1
+        self.prefSaver.addControl(self.ui_RADBTNGRP_component, PrefSaver.UIType.PMRadioButtonGrp3, 1)
+        self.prefSaver.addControl(self.ui_FLTSLGRP_minAngle, PrefSaver.UIType.PMFloatSliderGrp, 0)
+        self.prefSaver.addControl(self.ui_FLTSLGRP_maxAngle, PrefSaver.UIType.PMFloatSliderGrp, 45)
+        self.prefSaver.addControl(self.ui_CHK_highlight, PrefSaver.UIType.PMCheckBox, True)
 
     def ui_loadSettings(self):
-        optVars = pm.env.optionVars
-        self.ui_RADBTNGRP_component.setSelect(optVars['fx_selectComponentByAngle_component'])
-        self.ui_FLTSLGRP_minAngle.setValue(optVars['fx_selectComponentByAngle_minAngle'])
-        self.ui_FLTSLGRP_maxAngle.setValue(optVars['fx_selectComponentByAngle_maxAngle'])
-        self.ui_CHK_highlight.setValue(optVars['fx_selectComponentByAngle_highlight'])
+        self.prefSaver.loadPrefs()
 
     def ui_saveSettings(self):
-        optVars = pm.env.optionVars
-        optVars['fx_selectComponentByAngle_component'] = self.ui_RADBTNGRP_component.getSelect()
-        optVars['fx_selectComponentByAngle_minAngle'] = self.ui_FLTSLGRP_minAngle.getValue()
-        optVars['fx_selectComponentByAngle_maxAngle'] = self.ui_FLTSLGRP_maxAngle.getValue()
-        optVars['fx_selectComponentByAngle_highlight'] = self.ui_CHK_highlight.getValue()
+        self.prefSaver.savePrefs()
 
     # noinspection PyUnusedLocal
     def ui_resetSettings(self, *args):
-        optionVarsList = (
-            'fx_selectComponentByAngle_component',
-            'fx_selectComponentByAngle_minAngle',
-            'fx_selectComponentByAngle_maxAngle',
-            'fx_selectComponentByAngle_highlight'
-        )
-        optVars = pm.env.optionVars
-        for var in optionVarsList:
-            optVars.pop(var)
-        self.ui_initSettings()
-        self.ui_loadSettings()
+        self.prefSaver.resetPrefs()
         self.selectValidGeometry()
 
     # noinspection PyUnusedLocal
@@ -217,13 +203,31 @@ class SelectComponentByAngleUI:
             return
 
         self.geometryData.generateGeometryInfo(self.targetGeom)
-        self.selectValidGeometry()
+
+        #TODO: fix stuff below with highlight option
+        # strange things to make highlight working on window show and "Set Target Geometry" if option is false
+        if not self.getHighlightState():
+            self.setHighlight(False)
+            self.selectValidGeometry()
+            self.setHighlight(True)
+            self.selectValidGeometry()
+        else:
+            self.selectValidGeometry()
 
     # noinspection PyUnusedLocal
-    def ui_CHK_highlight_change(self, *args):
+    def ui_CHK_highlight_change(self, arg):
+        self.selectValidGeometry()
+
+    def getHighlightState(self):
+        return self.ui_CHK_highlight.getValue()
+
+    def doHighlight(self):
+        self.setHighlight(self.getHighlightState())
+
+    def setHighlight(self, state):
         if not self.targetGeom:
             return
-        if self.ui_CHK_highlight.getValue():
+        if state:
             m.hilite(self.targetGeom, replace=True)
         else:
             m.hilite(self.targetGeom, unHilite=True)
@@ -258,9 +262,10 @@ class SelectComponentByAngleUI:
         _max = self.ui_FLTSLGRP_maxAngle.getValue()
 
         meval('changeSelectMode -component; setComponentPickMask "All" 0; setComponentPickMask "Line" true;')
-        self.ui_CHK_highlight_change(True)
+        self.doHighlight()
 
         validEdges = self.geometryData.getValidEdges(_min, _max)
+        # noinspection PyTypeChecker
         om.MGlobal.setActiveSelectionList(validEdges)
 
         if self.ui_RADBTNGRP_component.getSelect() == 1:

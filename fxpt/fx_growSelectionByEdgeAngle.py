@@ -162,22 +162,18 @@ class SelectComponentByAngleUI:
 
     # noinspection PyMethodMayBeStatic
     def ui_initSettings(self):
-        print('ui_initSettings()')
         self.prefSaver.addControl(self.ui_FLTSLGRP_minAngle, PrefSaver.UIType.PMFloatSliderGrp, 0)
         self.prefSaver.addControl(self.ui_FLTSLGRP_maxAngle, PrefSaver.UIType.PMFloatSliderGrp, 45)
         self.prefSaver.addControl(self.ui_CHK_highlight, PrefSaver.UIType.PMCheckBox, True)
 
     def ui_loadSettings(self):
-        print('ui_loadSettings()')
         self.prefSaver.loadPrefs()
 
     def ui_saveSettings(self):
-        print('ui_saveSettings()')
         self.prefSaver.savePrefs()
 
     # noinspection PyUnusedLocal
     def ui_resetSettings(self, *args):
-        print('ui_resetSettings()')
         self.prefSaver.resetPrefs()
         self.selectValidGeometry()
 
