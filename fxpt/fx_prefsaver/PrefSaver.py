@@ -40,6 +40,11 @@ Typical usage:
     To reset control states to defaults (even if you did not supply them - there are global defaults for each control):
         myPrefSaver.resetPrefs()
 
+IMPORTANT: when creating PyMel or MayaControls always provide your own custom name. In that case
+            control name always be the same and will not change from run to run. For example:
+            myPyMelCheckBox = pymel.core.checkBox('myPyMelCheckBox', label='My PyMel Check Box')
+            myMelCheckBox = maya.cmds.checkBox('myMelCheckBox', label='My Mel Check Box')
+
 Available serializers:
 
     SerializerFilePickle('path/to/pref/file/prefs.cfg')
