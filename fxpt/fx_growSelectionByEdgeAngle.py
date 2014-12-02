@@ -2,11 +2,9 @@ import math
 from array import array
 
 from pymel.core import *
-from pymel.core.datatypes import Vector
+# from pymel.core.datatypes import Vector
 
 import maya.OpenMaya as om
-
-#######################################################################################################################
 
 SCRIPT_VERSION = 'v1.1'
 SCRIPT_NAME = 'Grow Selection By Edge Angle'
@@ -18,11 +16,10 @@ UI_LABEL_WIDTH = 100
 UI_INPUT_WIDTH = 240
 UI_APPLY_BUTTON_STRING = 'Set Target Geometry'
 
-#######################################################################################################################
 
+# noinspection PyAttributeOutsideInit
 class SelectComponentByAngleUI:
 
-#----------------------------------------------------------------------------------------------------------------------
     def __init__(self):
         
         self.targetGeom = []
@@ -31,61 +28,57 @@ class SelectComponentByAngleUI:
         self.ui_createUI()
         self.ui_setTargetGeometry()
 
-
-#----------------------------------------------------------------------------------------------------------------------
     def ui_createUI(self):
         self.winName = WIN_NAME
         self.winTitle = WIN_TITLE
 
-        ################# UI Creation ################
-
-        if window(WIN_NAME, exists = True):
-            deleteUI(WIN_NAME, window = True)
+        if window(WIN_NAME, exists=True):
+            deleteUI(WIN_NAME, window=True)
 
         self.window = window(
             WIN_NAME,
-            title = WIN_TITLE,
-            maximizeButton = False,
-            menuBar = True,
-            menuBarVisible = True
+            title=WIN_TITLE,
+            maximizeButton=False,
+            menuBar=True,
+            menuBarVisible=True
         )
 
-        menu(label = 'Edit', tearOff = False)
-        menuItem(label = 'Reset Settings', command = self.ui_resetSettings)
-        menu(label = 'Help', tearOff = False)
-        menuItem(label = 'Help on ' + WIN_TITLE, command = Callback( self.ui_showHelp, 1 ) )
-        menuItem(divider = True)
-        menuItem(label = 'Script Information', command = Callback( self.ui_showHelp, 2 ) )
+        menu(label='Edit', tearOff=False)
+        menuItem(label='Reset Settings', command=self.ui_resetSettings)
+        menu(label='Help', tearOff=False)
+        menuItem(label='Help on ' + WIN_TITLE, command=Callback(self.ui_showHelp, 1))
+        menuItem(divider=True)
+        menuItem(label='Script Information', command=Callback(self.ui_showHelp, 2))
 
         # - - - - - - - - - - - - - - - - - - - -
 
         self.ui_mainForm = formLayout()
 
         self.ui_LAY_mainScroll = scrollLayout(
-            childResizable = True
+            childResizable=True
         )
 
         self.ui_LAY_frameControlPanel = frameLayout(
-            label = 'Control Panel',
-            collapsable = True,
-            marginHeight = 3,
-            borderStyle  = 'etchedIn',
-            borderVisible = True
+            label='Control Panel',
+            collapsable=True,
+            marginHeight=3,
+            borderStyle='etchedIn',
+            borderVisible=True
         )
 
-        columnLayout(adjustableColumn = True)
+        columnLayout(adjustableColumn=True)
 
         # - - - - - - - - - - - - - - - - - - - -
 
         rowLayout(
-            numberOfColumns = 2,
-            columnWidth2 = [UI_LABEL_WIDTH, UI_INPUT_WIDTH],
-            columnAttach = [1, 'right', 5]
+            numberOfColumns=2,
+            columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH],
+            columnAttach=[1, 'right', 5]
         )
 
         # - - - - - - - - - - - - - - - - - - - -
 
-        text(label = 'Min Angle')
+        text(label='Min Angle')
 
         self.ui_FLTSLGRP_minAngle = floatSliderGrp(
             field=True,
@@ -94,24 +87,24 @@ class SelectComponentByAngleUI:
             fieldMinValue=0,
             fieldMaxValue=180,
             value=0,
-            step = 0.001,
-            fieldStep = 0.001,
-            sliderStep = 0.001,
-            changeCommand = self.selectValidGeometry,
-            dragCommand = self.selectValidGeometry
+            step=0.001,
+            fieldStep=0.001,
+            sliderStep=0.001,
+            changeCommand=self.selectValidGeometry,
+            dragCommand=self.selectValidGeometry
         )
 
-        setParent('..') # local row -> frame column
+        setParent('..')  # local row -> frame column
 
         rowLayout(
-            numberOfColumns = 2,
-            columnWidth2 = [UI_LABEL_WIDTH, UI_INPUT_WIDTH],
-            columnAttach = [1, 'right', 5]
+            numberOfColumns=2,
+            columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH],
+            columnAttach=[1, 'right', 5]
         )
 
         # - - - - - - - - - - - - - - - - - - - -
 
-        text(label = 'Max Angle')
+        text(label='Max Angle')
 
         self.ui_FLTSLGRP_maxAngle = floatSliderGrp(
             field=True,
@@ -120,30 +113,30 @@ class SelectComponentByAngleUI:
             fieldMinValue=0,
             fieldMaxValue=180,
             value=0,
-            step = 0.001,
-            fieldStep = 0.001,
-            sliderStep = 0.001,
-            changeCommand = self.selectValidGeometry,
-            dragCommand = self.selectValidGeometry
+            step=0.001,
+            fieldStep=0.001,
+            sliderStep=0.001,
+            changeCommand=self.selectValidGeometry,
+            dragCommand=self.selectValidGeometry
         )
 
-        setParent('..') # local row -> frame column
+        setParent('..')  # local row -> frame column
 
-        separator(style = 'in', height = 10)
+        separator(style='in', height=10)
 
         rowLayout(
-            numberOfColumns = 2,
-            columnWidth2 = [UI_LABEL_WIDTH, UI_INPUT_WIDTH],
-            columnAttach = [1, 'right', 5]
+            numberOfColumns=2,
+            columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH],
+            columnAttach=[1, 'right', 5]
         )
 
         # - - - - - - - - - - - - - - - - - - - -
 
-        text(label = 'Highlight')
+        text(label='Highlight')
 
         self.ui_CHK_highlight = checkBox(
-            label = '',
-            changeCommand = self.ui_CHK_highlight_change
+            label='',
+            changeCommand=self.ui_CHK_highlight_change
         )
 
         # - - - - - - - - - - - - - - - - - - - -
@@ -151,13 +144,13 @@ class SelectComponentByAngleUI:
         setParent(self.ui_mainForm)
 
         self.ui_BTN_select = button(
-            label = UI_APPLY_BUTTON_STRING,
-            command = self.ui_setTargetGeometry
+            label=UI_APPLY_BUTTON_STRING,
+            command=self.ui_setTargetGeometry
         )
 
         self.ui_BTN_close = button(
-            label = 'Close',
-            command = self.ui_close
+            label='Close',
+            command=self.ui_close
         )
 
         # - - - - - Organize Main Form Layout - - - - -
@@ -177,7 +170,7 @@ class SelectComponentByAngleUI:
         self.ui_mainForm.attachForm(self.ui_BTN_close, 'right', 2)
         self.ui_mainForm.attachForm(self.ui_BTN_close, 'bottom', 2)
 
-        ################## UI Creation  Finished ################
+        # ################# UI Creation  Finished ################
 
         self.ui_initSettings()
         self.ui_loadSettings()
@@ -185,8 +178,7 @@ class SelectComponentByAngleUI:
         self.window.show()
         refresh()
 
-
-#----------------------------------------------------------------------------------------------------------------------
+    # noinspection PyMethodMayBeStatic
     def ui_initSettings(self):
         optVars = env.optionVars
         if not optVars.has_key('fx_growSelectionByAngle_minAngle'):
@@ -196,21 +188,19 @@ class SelectComponentByAngleUI:
         if not optVars.has_key('fx_growSelectionByAngle_highlight'):
             optVars['fx_growSelectionByAngle_highlight'] = 1
 
-#----------------------------------------------------------------------------------------------------------------------
     def ui_loadSettings(self):
         optVars = env.optionVars
         self.ui_FLTSLGRP_minAngle.setValue(optVars['fx_growSelectionByAngle_minAngle'])
         self.ui_FLTSLGRP_maxAngle.setValue(optVars['fx_growSelectionByAngle_maxAngle'])
         self.ui_CHK_highlight.setValue(optVars['fx_growSelectionByAngle_highlight'])
 
-#----------------------------------------------------------------------------------------------------------------------
     def ui_saveSettings(self):
         optVars = env.optionVars
         optVars['fx_growSelectionByAngle_minAngle'] = self.ui_FLTSLGRP_minAngle.getValue()
         optVars['fx_growSelectionByAngle_maxAngle'] = self.ui_FLTSLGRP_maxAngle.getValue()
         optVars['fx_growSelectionByAngle_highlight'] = self.ui_CHK_highlight.getValue()
 
-#----------------------------------------------------------------------------------------------------------------------
+    # noinspection PyUnusedLocal
     def ui_resetSettings(self, *args):
         optionVarsList = (
             'fx_growSelectionByAngle_minAngle',
@@ -218,37 +208,39 @@ class SelectComponentByAngleUI:
             'fx_growSelectionByAngle_highlight'
         )
         optVars = env.optionVars
-        for var in optionVarsList: optVars.pop(var)
+        for var in optionVarsList:
+            optVars.pop(var)
         self.ui_initSettings()
         self.ui_loadSettings()
         self.selectValidGeometry()
 
-#----------------------------------------------------------------------------------------------------------------------
+    # noinspection PyUnusedLocal
     def ui_close(self, *args):
         self.ui_saveSettings()
-        if window(WIN_NAME, exists = True): deleteUI(WIN_NAME, window = True)
+        if window(WIN_NAME, exists=True):
+            deleteUI(WIN_NAME, window=True)
 
-#----------------------------------------------------------------------------------------------------------------------
-    def ui_badSelectionWarining(self):
+    # noinspection PyMethodMayBeStatic
+    def ui_badSelectionWarning(self):
         confirmDialog(
-            title = 'Error',
-            message = 'Invalid selection.\nSelect at least one polygon and press "' + UI_APPLY_BUTTON_STRING + '".',
-            button = ['OK'],
-            defaultButton = 'OK',
-            icon = 'critical'
+            title='Error',
+            message='Invalid selection.\nSelect at least one polygon and press "' + UI_APPLY_BUTTON_STRING + '".',
+            button=['OK'],
+            defaultButton='OK',
+            icon='critical'
         )
 
-
-#----------------------------------------------------------------------------------------------------------------------
+    # noinspection PyUnusedLocal
     def ui_setTargetGeometry(self, *args):
 
         self.targetGeom = []
 
         selList = om.MSelectionList()
+        # noinspection PyCallByClass,PyTypeChecker
         om.MGlobal.getActiveSelectionList(selList)
 
         if selList.isEmpty():
-            self.ui_badSelectionWarining()
+            self.ui_badSelectionWarning()
             return
 
         selListIter = om.MItSelectionList(selList)
@@ -274,55 +266,57 @@ class SelectComponentByAngleUI:
 
             selListIter.next()
 
-        if not self.targetGeom :
-            self.ui_badSelectionWarining()
+        if not self.targetGeom:
+            self.ui_badSelectionWarning()
             return
 
         self.geometryData.generateGeometryInfo(self.targetGeom)
         self.selectValidGeometry()
 
-#----------------------------------------------------------------------------------------------------------------------
+    # noinspection PyUnusedLocal
     def ui_CHK_highlight_change(self, *args):
-        if not self.targetGeom: return
+        if not self.targetGeom:
+            return
 
         selList = om.MSelectionList()
         if self.ui_CHK_highlight.getValue():
-            for obj in self.targetGeom :
+            for obj in self.targetGeom:
                 selList.add(obj.dagPath)
+        # noinspection PyCallByClass,PyTypeChecker
         om.MGlobal.setHiliteList(selList)
 
-#----------------------------------------------------------------------------------------------------------------------
+    # noinspection PyUnusedLocal
     def selectValidGeometry(self, *args):
-
-        min = self.ui_FLTSLGRP_minAngle.getValue()
-        max = self.ui_FLTSLGRP_maxAngle.getValue()
+        _min = self.ui_FLTSLGRP_minAngle.getValue()
+        _max = self.ui_FLTSLGRP_maxAngle.getValue()
 
         mel.eval('changeSelectMode -component; setComponentPickMask "All" 0; setComponentPickMask "Facet" true;')
         self.ui_CHK_highlight_change(True)
 
-        validEdges = self.geometryData.getValidEdges(min, max)
+        validEdges = self.geometryData.getValidEdges(_min, _max)
+        # noinspection PyCallByClass,PyTypeChecker
         om.MGlobal.setActiveSelectionList(validEdges)
 
-#----------------------------------------------------------------------------------------------------------------------
+    # noinspection PyUnusedLocal
     def ui_showHelp(self, tab, *args):
 
-        ################# UI Creation ################
+        # ################ UI Creation ################
 
-        if window(WIN_HELPNAME, exists = True):
-            deleteUI(WIN_HELPNAME, window = True)
+        if window(WIN_HELPNAME, exists=True):
+            deleteUI(WIN_HELPNAME, window=True)
 
         self.helpWindow = window(
             WIN_HELPNAME,
-            title = WIN_HELPTITLE,
-            maximizeButton = False
+            title=WIN_HELPTITLE,
+            maximizeButton=False
         )
 
         self.ui_LAY_formMainHelp = formLayout()
 
         self.ui_LAY_tabHelp = tabLayout(
-            innerMarginWidth = 50,
-            innerMarginHeight = 50,
-            childResizable = True
+            innerMarginWidth=50,
+            innerMarginHeight=50,
+            childResizable=True
         )
 
         # - - - - - - - - - - - - - - - - - - - -
@@ -330,7 +324,7 @@ class SelectComponentByAngleUI:
         self.ui_LAY_formHelpMargin = formLayout()
 
         self.ui_LAY_scrollHelp = scrollLayout(
-            childResizable = True
+            childResizable=True
         )
 
         self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'top', 2)
@@ -338,19 +332,19 @@ class SelectComponentByAngleUI:
         self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'right', 2)
         self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'bottom', 2)
 
-        frameLayout (
-            label = 'Help on ' + WIN_TITLE,
-            collapsable = False,
-            marginHeight = 3,
-            borderStyle  = 'etchedIn',
-            borderVisible = True
+        frameLayout(
+            label='Help on ' + WIN_TITLE,
+            collapsable=False,
+            marginHeight=3,
+            borderStyle='etchedIn',
+            borderVisible=True
         )
 
         rowLayout(
-            columnAttach = [1, 'both', 10]
+            columnAttach=[1, 'both', 10]
         )
 
-        self.ui_TXT_help = text('', align = 'center')
+        self.ui_TXT_help = text('', align='center')
 
         setParent(self.ui_LAY_tabHelp)
 
@@ -359,7 +353,7 @@ class SelectComponentByAngleUI:
         self.ui_LAY_formAboutMargin = formLayout()
 
         self.ui_LAY_scrollAbout = scrollLayout(
-            childResizable = True
+            childResizable=True
         )
 
         self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'top', 2)
@@ -367,27 +361,27 @@ class SelectComponentByAngleUI:
         self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'right', 2)
         self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'bottom', 2)
 
-        frameLayout (
-            label = 'About ' + WIN_TITLE,
-            collapsable = False,
-            marginHeight = 3,
-            borderStyle  = 'etchedIn',
-            borderVisible = True
+        frameLayout(
+            label='About ' + WIN_TITLE,
+            collapsable=False,
+            marginHeight=3,
+            borderStyle='etchedIn',
+            borderVisible=True
         )
 
         rowLayout(
-            columnAttach = [1, 'both', 10]
+            columnAttach=[1, 'both', 10]
         )
 
-        self.ui_TXT_about = text('', align = 'center')
+        self.ui_TXT_about = text('', align='center')
 
-        setParent( self.ui_LAY_formMainHelp )
+        setParent(self.ui_LAY_formMainHelp)
 
         # - - - - - - - - - - - - - - - - - - - -
 
         self.ui_BTN_closeHelp = button(
             'Close',
-            command = lambda x : deleteUI(WIN_HELPNAME)
+            command=lambda x: deleteUI(WIN_HELPNAME)
         )
 
         # - - - - - Organize Main Form Layout - - - - -
@@ -464,21 +458,15 @@ email: etchermail@gmail.com
         self.ui_LAY_tabHelp.setSelectTabIndex(tab)
         self.helpWindow.show()
 
-#######################################################################################################################
 
 class GeometryData:
-
-#----------------------------------------------------------------------------------------------------------------------
     def __init__(self):
-        
+
         self.polyData = []
 
-#----------------------------------------------------------------------------------------------------------------------
     def generateGeometryInfo(self, objList):
 
         pi = math.pi
-        normal1 = om.MVector()
-        normal2 = om.MVector()
         connectedFaces = om.MIntArray()
         polyEdgesIds = om.MIntArray()
         edgeFaces = om.MIntArray()
@@ -487,7 +475,7 @@ class GeometryData:
 
         self.polyData = []
 
-        for obj in objList :
+        for obj in objList:
 
             edgeIter = om.MItMeshEdge(obj.dagPath)
             faceIter = om.MItMeshPolygon(obj.dagPath)
@@ -508,7 +496,7 @@ class GeometryData:
 
                 cfLength = edgeIter.getConnectedFaces(connectedFaces)
 
-                if cfLength == 2 :
+                if cfLength == 2:
                     normal1 = normalCache[connectedFaces[0]]
                     normal2 = normalCache[connectedFaces[1]]
                     edgeAnglesCache[i] = normal1.angle(normal2) * 180 / pi
@@ -535,84 +523,77 @@ class GeometryData:
                     edgeIter.setIndex(edgeId, dummyIntPtr)
                     cfLength = edgeIter.getConnectedFaces(edgeFaces)
 
-                    if cfLength == 2 :
+                    if cfLength == 2:
                         otherFace = edgeFaces[1] if edgeFaces[0] == i else edgeFaces[0]
                         polyData.connectedFaces[otherFace] = edgeAnglesCache[edgeId]
 
                 i += 1
                 faceIter.next()
 
-            for p in obj.polyIds :
+            for p in obj.polyIds:
                 objPolyData.polygons[p].selected = True
                 objPolyData.polygons[p].initSelection = True
 
-#----------------------------------------------------------------------------------------------------------------------
-    def growSelection(self, min, max):
+    def growSelection(self, _min, _max):
 
-        for obj in self.polyData :
+        for obj in self.polyData:
 
-            polysToGrow = []
             polysToGrowNextIter = [i for i, poly in enumerate(obj.polygons) if poly.selected]
 
-            while True :
+            while True:
                 selectionWasGrown = False
 
                 polysToGrow = polysToGrowNextIter
                 polysToGrowNextIter = []
 
-                for polyId in polysToGrow :
-                    for polyNeighbourId in obj.polygons[polyId].connectedFaces :
+                for polyId in polysToGrow:
+                    for polyNeighbourId in obj.polygons[polyId].connectedFaces:
                         if (
-                            (min <= obj.polygons[polyId].connectedFaces[polyNeighbourId] <= max) and
-                            (not obj.polygons[polyNeighbourId].selected)
+                                (_min <= obj.polygons[polyId].connectedFaces[polyNeighbourId] <= _max) and
+                                (not obj.polygons[polyNeighbourId].selected)
                         ):
-
                             polysToGrowNextIter.append(polyNeighbourId)
                             obj.polygons[polyNeighbourId].selected = True
                             selectionWasGrown = True
 
-                if not selectionWasGrown : break
+                if not selectionWasGrown:
+                    break
 
-#----------------------------------------------------------------------------------------------------------------------
     def resetSelection(self):
-        
-        for obj in self.polyData :
-            for poly in obj.polygons :
+
+        for obj in self.polyData:
+            for poly in obj.polygons:
                 poly.selected = poly.initSelection
 
-#----------------------------------------------------------------------------------------------------------------------
-    def getValidEdges(self, min, max):
+    def getValidEdges(self, _min, _max):
 
         self.resetSelection()
-        self.growSelection(min, max)
+        self.growSelection(_min, _max)
 
         selList = om.MSelectionList()
         compListFn = om.MFnSingleIndexedComponent()
         indexes = om.MIntArray()
 
-        for obj in self.polyData :
+        for obj in self.polyData:
             components = compListFn.create(om.MFn.kMeshPolygonComponent)
             indexes.clear()
 
-            for i, poly in enumerate(obj.polygons) :
-                if poly.selected : indexes.append(i)
+            for i, poly in enumerate(obj.polygons):
+                if poly.selected:
+                    indexes.append(i)
 
             compListFn.addElements(indexes)
             selList.add(obj.dagPath, components)
 
         return selList
 
-#######################################################################################################################
 
 class PolyData:
-
-#----------------------------------------------------------------------------------------------------------------------
     def __init__(self):
         self.selected = False
         self.initSelection = False
         self.connectedFaces = {}
 
-#----------------------------------------------------------------------------------------------------------------------
     def __str__(self):
         endStr = '\n'
         outStr = ''
@@ -621,16 +602,12 @@ class PolyData:
             outStr += '[' + str(key) + '] = ' + str(self.connectedFaces[key]) + endStr
         return outStr
 
-#######################################################################################################################
 
 class ObjectPolyData:
-
-#----------------------------------------------------------------------------------------------------------------------
     def __init__(self):
         self.dagPath = None
         self.polygons = []
 
-#----------------------------------------------------------------------------------------------------------------------
     def __str__(self):
         endStr = '\n'
         outStr = ''
@@ -640,16 +617,12 @@ class ObjectPolyData:
             outStr += str(poly) + endStr
         return outStr
 
-#######################################################################################################################
 
 class SelectionItem:
-
-#----------------------------------------------------------------------------------------------------------------------
     def __init__(self, dagPath, polyIds):
         self.dagPath = dagPath
         self.polyIds = polyIds
 
-#----------------------------------------------------------------------------------------------------------------------
     def __str__(self):
         endStr = '\n'
         outStr = ''
@@ -658,7 +631,6 @@ class SelectionItem:
             outStr += 'polyIds[' + str(i) + '] = ' + str(self.polyIds[i]) + endStr
         return outStr
 
-#######################################################################################################################
 
 def run():
     SelectComponentByAngleUI()
