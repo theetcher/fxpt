@@ -3,24 +3,23 @@
 from fxpt.side_utils import pyperclip
 
 from PySide import QtCore
-from PySide import QtGui
 import shiboken
 
-import maya.cmds as m
 import maya.OpenMayaUI as omui
-
 import pymel.core as pm
 
+from fxpt.fx_prefsaver import PrefSaver, Serializers
 import MainWindowUI
 import Searchers
 from Com import *
 
-#from watch import *
 #endregion imports
 
 mainWin = None
 
 #TODO: if string in table is too long, popup full string in some widget
+
+OPT_VAR_NAME = 'fx_search_prefs'
 
 
 # noinspection PyMethodMayBeStatic,PyUnusedLocal
@@ -43,10 +42,35 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
         self.searchers = []
         self.initSearchersAndControls()
 
-        self.optionVarLinks = []
-        self.ui_setupOptionVars()
-
         self.ui_setState(SEARCH_STATE_WELCOME)
+
+        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
+        self.ui_initSettings()
+        self.ui_loadSettings()
+
+    # noinspection PyMethodMayBeStatic
+    def ui_initSettings(self):
+        self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (100, 100, 900, 600))
+        self.prefSaver.addControl(self.ui_LED_search, PrefSaver.UIType.PYSIDELineEdit)
+        self.prefSaver.addControl(self.ui_BTN_soCaseSensitive, PrefSaver.UIType.PYSIDECheckButton, False)
+        self.prefSaver.addControl(self.ui_BTN_soRegex, PrefSaver.UIType.PYSIDECheckButton, False)
+        self.prefSaver.addControl(self.ui_BTN_soSelectFound, PrefSaver.UIType.PYSIDECheckButton, False)
+        self.prefSaver.addControl(self.ui_BTN_soIncludeShapes, PrefSaver.UIType.PYSIDECheckButton, False)
+        self.prefSaver.addControl(self.ui_BTN_soSearchSelected, PrefSaver.UIType.PYSIDECheckButton, False)
+        self.prefSaver.addControl(self.ui_ACT_useAllTabs, PrefSaver.UIType.PYSIDECheckAction, False)
+
+        for btn in self.getCatButtons():
+            self.prefSaver.addControl(btn, PrefSaver.UIType.PYSIDECheckButton, True)
+
+    def ui_loadSettings(self):
+        self.prefSaver.loadPrefs()
+
+    def ui_saveSettings(self):
+        self.prefSaver.savePrefs()
+
+    # noinspection PyUnusedLocal
+    def ui_resetSettings(self):
+        self.prefSaver.resetPrefs()
 
     def initSearchersAndControls(self):
         self.searchers = [
@@ -73,7 +97,8 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
             self.setTableProps(sl.table)
 
             sl.button.setCheckable(True)
-            sl.button.setChecked(True)
+            buttonLabel = sl.button.text()
+            sl.button.setObjectName('uiBTN_' + buttonLabel[0].lower() + buttonLabel[1:].replace(' ', ''))
             sl.button.setStyleSheet(CHECKED_BUTTON_STYLE)
             self.ui_LAY_catButtons.addWidget(sl.button)
 
@@ -282,49 +307,6 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
         sd.searchSelected = self.ui_BTN_soSearchSelected.isChecked()
         return sd
 
-    def ui_setupOptionVars(self):
-        self.optionVarLinks.extend([
-            OptionVarLink(OPT_VAR_PREFIX + 'winPosX',          100, self.x,                                   lambda a: self.move(a, self.y())),
-            OptionVarLink(OPT_VAR_PREFIX + 'winPosY',          100, self.y,                                   lambda a: self.move(self.x(), a)),
-            OptionVarLink(OPT_VAR_PREFIX + 'winWidth',         900, self.width,                               lambda a: self.resize(a, self.height())),
-            OptionVarLink(OPT_VAR_PREFIX + 'winHeight',        600, self.height,                              lambda a: self.resize(self.width(), a)),
-            OptionVarLink(OPT_VAR_PREFIX + 'searchString',     '',  lambda : str(self.ui_LED_search.text()),  self.ui_LED_search.setText),
-            OptionVarLink(OPT_VAR_PREFIX + 'soCaseSensitive',  0,   self.ui_BTN_soCaseSensitive.isChecked,    self.ui_BTN_soCaseSensitive.setChecked),
-            OptionVarLink(OPT_VAR_PREFIX + 'soRegex',          0,   self.ui_BTN_soRegex.isChecked,            self.ui_BTN_soRegex.setChecked),
-            OptionVarLink(OPT_VAR_PREFIX + 'soSelectFound',    0,   self.ui_BTN_soSelectFound.isChecked,      self.ui_BTN_soSelectFound.setChecked),
-            OptionVarLink(OPT_VAR_PREFIX + 'soIncludeShapes',  0,   self.ui_BTN_soIncludeShapes.isChecked,    self.ui_BTN_soIncludeShapes.setChecked),
-            OptionVarLink(OPT_VAR_PREFIX + 'soSearchSelected', 0,   self.ui_BTN_soSearchSelected.isChecked,   self.ui_BTN_soSearchSelected.setChecked),
-            OptionVarLink(OPT_VAR_PREFIX + 'useAllTabs',       0,   self.ui_ACT_useAllTabs.isChecked,         self.ui_ACT_useAllTabs.setChecked)
-        ])
-
-        for i, button in enumerate(self.getCatButtons(), start=1):
-            self.optionVarLinks.append(
-                OptionVarLink(OPT_VAR_PREFIX + 'catButton' + str(i), 1, button.isChecked, button.setChecked)
-            )
-
-        self.ui_initSettings()
-        self.ui_loadSettings()
-
-    def ui_initSettings(self):
-        optVars = pm.env.optionVars
-        for ov in self.optionVarLinks:
-            ov.init()
-        if OPT_VAR_CURRENT_TAB not in optVars:
-            optVars[OPT_VAR_CURRENT_TAB] = ''
-
-    def ui_loadSettings(self):
-        optVars = pm.env.optionVars
-        for ov in self.optionVarLinks:
-            ov.applyToControl()
-
-    def ui_saveSettings(self):
-        optVars = pm.env.optionVars
-        for ov in self.optionVarLinks:
-            ov.getFromControl()
-
-    def ui_resetSettings(self):
-        for ov in self.optionVarLinks:
-            ov.reset()
 
     def ui_tryToSaveTabOptVar(self):
         optVars = pm.env.optionVars
