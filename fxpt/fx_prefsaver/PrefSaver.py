@@ -40,10 +40,19 @@ Typical usage:
     To reset control states to defaults (even if you did not supply them - there are global defaults for each control):
         myPrefSaver.resetPrefs()
 
-IMPORTANT: when creating PyMel or Maya Controls always provide your own custom name. In that case
-            control name always be the same and will not change from run to run. For example:
-            myPyMelCheckBox = pymel.core.checkBox('myPyMelCheckBox', label='My PyMel Check Box')
-            myMelCheckBox = maya.cmds.checkBox('myMelCheckBox', label='My Mel Check Box')
+IMPORTANT NOTE #1:  When creating PyMel or Maya Controls always provide your own custom name. In that case
+                    control name always be the same and will not change from run to run. For example:
+                        myPyMelCheckBox = pymel.core.checkBox('myPyMelCheckBox', label='My PyMel Check Box')
+                        myMelCheckBox = maya.cmds.checkBox('myMelCheckBox', label='My Mel Check Box')
+
+                    When you create Qt controls BY CODE, also do not forget to setup control name:
+                        myPyQtCheckBox = PyQt4.QtGui.QCheckBox()
+                        myPyQtCheckBox.setObjectName('myPyQtCheckBox')
+                        myPySideCheckBox = PySide.QtGui.QCheckBox()
+                        myPySideCheckBox.setObjectName('myPySideCheckBox')
+
+IMPORTANT NOTE #2:  Make sure that your control names are unique.
+
 
 Available serializers:
 
@@ -60,65 +69,67 @@ Available control types and their acceptable defaults:
 
     PyQt Types:
 
-        PYQTWindow -> [int, int, int, int]: tuple or list with top and left corner coordinates, width and height
-        PYQTLineEdit -> str
+        PYQTCheckAction -> bool
         PYQTCheckBox -> QtCore.Qt.CheckState
-        PYQTSpinBox -> int or float
-        PYQTDoubleSpinBox -> int or float
-        PYQTTimeEdit -> str in format 'HH:mm:ss.zzz' (24 hours) or QTime object
-        PYQTDateEdit -> str in format 'yyyy.MM.dd' or QDate object
-        PYQTDateTimeEdit -> str in format 'yyyy.MM.dd HH:mm:ss.zzz' (24 hours) or QDateTime object
-        PYQTRadioButton -> bool
         PYQTCheckButton -> bool
         PYQTComboBox -> int: current item index (0-based)
         PYQTComboBoxEditable -> int: current item index (0-based)
-        PYQTTabWidget -> int: current tab index (0-based)
-        PYQTStackedWidget -> int: current widget index (0-based)
-        PYQTToolBox -> int: current tab index (0-based)
-        PYQTSplitter -> [int, int, ...]: tuple or list with section sizes
-        PYQTScrollBar -> int
-        PYQTScrollArea -> [int, int]: tuple or list with horizontal and vertical scroll values
-        PYQTSlider -> int or float
+        PYQTDateEdit -> str in format 'yyyy.MM.dd' or QDate object
+        PYQTDateTimeEdit -> str in format 'yyyy.MM.dd HH:mm:ss.zzz' (24 hours) or QDateTime object
         PYQTDial -> int or float
-        PYQTTextEdit -> str
-        PYQTPlainTextEdit -> str
-        PYQTListWidget -> anything: no default value, ignored
-        PYQTTreeWidget -> anything: no default value, ignored
-        PYQTTableWidget -> anything: no default value, ignored
+        PYQTDoubleSpinBox -> int or float
+        PYQTLineEdit -> str
         PYQTListView -> anything: no default value, ignored
-        PYQTTreeView -> anything: no default value, ignored
+        PYQTListWidget -> anything: no default value, ignored
+        PYQTPlainTextEdit -> str
+        PYQTRadioButton -> bool
+        PYQTScrollArea -> [int, int]: tuple or list with horizontal and vertical scroll values
+        PYQTScrollBar -> int
+        PYQTSlider -> int or float
+        PYQTSpinBox -> int or float
+        PYQTSplitter -> [int, int, ...]: tuple or list with section sizes
+        PYQTStackedWidget -> int: current widget index (0-based)
+        PYQTTabWidget -> int: current tab index (0-based)
         PYQTTableView -> anything: no default value, ignored
+        PYQTTableWidget -> anything: no default value, ignored
+        PYQTTextEdit -> str
+        PYQTTimeEdit -> str in format 'HH:mm:ss.zzz' (24 hours) or QTime object
+        PYQTToolBox -> int: current tab index (0-based)
+        PYQTTreeView -> anything: no default value, ignored
+        PYQTTreeWidget -> anything: no default value, ignored
+        PYQTWindow -> [int, int, int, int]: tuple or list with top and left corner coordinates, width and height
 
     PySide Types:
 
-        PYSIDEWindow -> [int, int, int, int]: tuple or list with top and left corner coordinates, width and height
-        PYSIDELineEdit -> str
+        PYSIDECheckAction -> bool
         PYSIDECheckBox -> QtCore.Qt.CheckState
-        PYSIDESpinBox -> int or float
-        PYSIDEDoubleSpinBox -> int or float
-        PYSIDETimeEdit -> str in format 'HH:mm:ss.zzz' (24 hours) or QTime object
-        PYSIDEDateEdit -> str in format 'yyyy.MM.dd' or QDate object
-        PYSIDEDateTimeEdit -> str in format 'yyyy.MM.dd HH:mm:ss.zzz' (24 hours) or QDateTime object
-        PYSIDERadioButton -> bool
         PYSIDECheckButton -> bool
         PYSIDEComboBox -> int: current item index (0-based)
         PYSIDEComboBoxEditable -> int: current item index (0-based)
-        PYSIDETabWidget -> int: current tab index (0-based)
-        PYSIDEStackedWidget -> int: current widget index (0-based)
-        PYSIDEToolBox -> int: current tab index (0-based)
-        PYSIDESplitter -> [int, int, ...]: tuple or list with section sizes
-        PYSIDEScrollBar -> int
-        PYSIDEScrollArea -> [int, int]: tuple or list with horizontal and vertical scroll values
-        PYSIDESlider -> int or float
+        PYSIDEDateEdit -> str in format 'yyyy.MM.dd' or QDate object
+        PYSIDEDateTimeEdit -> str in format 'yyyy.MM.dd HH:mm:ss.zzz' (24 hours) or QDateTime object
         PYSIDEDial -> int or float
-        PYSIDETextEdit -> str
-        PYSIDEPlainTextEdit -> str
-        PYSIDEListWidget -> anything: no default value, ignored
-        PYSIDETreeWidget -> anything: no default value, ignored
-        PYSIDETableWidget -> anything: no default value, ignored
+        PYSIDEDoubleSpinBox -> int or float
+        PYSIDELineEdit -> str
         PYSIDEListView -> anything: no default value, ignored
-        PYSIDETreeView -> anything: no default value, ignored
+        PYSIDEListWidget -> anything: no default value, ignored
+        PYSIDEPlainTextEdit -> str
+        PYSIDERadioButton -> bool
+        PYSIDEScrollArea -> [int, int]: tuple or list with horizontal and vertical scroll values
+        PYSIDEScrollBar -> int
+        PYSIDESlider -> int or float
+        PYSIDESpinBox -> int or float
+        PYSIDESplitter -> [int, int, ...]: tuple or list with section sizes
+        PYSIDEStackedWidget -> int: current widget index (0-based)
+        PYSIDETabWidget -> int: current tab index (0-based)
         PYSIDETableView -> anything: no default value, ignored
+        PYSIDETableWidget -> anything: no default value, ignored
+        PYSIDETextEdit -> str
+        PYSIDETimeEdit -> str in format 'HH:mm:ss.zzz' (24 hours) or QTime object
+        PYSIDEToolBox -> int: current tab index (0-based)
+        PYSIDETreeView -> anything: no default value, ignored
+        PYSIDETreeWidget -> anything: no default value, ignored
+        PYSIDEWindow -> [int, int, int, int]: tuple or list with top and left corner coordinates, width and height
 
     Maya Types:
 
@@ -155,11 +166,11 @@ Available control types and their acceptable defaults:
         MRadioButtonGrp2 -> int: current item index (1-based)
         MRadioButtonGrp3 -> int: current item index (1-based)
         MRadioButtonGrp4 -> int: current item index (1-based)
-        MSymbolCheckBox -> bool
         MScriptTable -> anything: no default value, ignored
         MScrollField -> str
         MScrollLayout -> [int, int]: tuple or list with horizontal and vertical scroll values
         MShelfTabLayout -> int: current tab index (1-based)
+        MSymbolCheckBox -> bool
         MTabLayout -> int: current tab index (1-based)
         MTextField -> str
         MTextFieldButtonGrp -> str
@@ -201,11 +212,11 @@ Available control types and their acceptable defaults:
         PMRadioButtonGrp2 -> int: current item index (1-based)
         PMRadioButtonGrp3 -> int: current item index (1-based)
         PMRadioButtonGrp4 -> int: current item index (1-based)
-        PMSymbolCheckBox -> bool
         PMScriptTable -> anything: no default value, ignored
         PMScrollField -> str
         PMScrollLayout -> [int, int]: tuple or list with horizontal and vertical scroll values
         PMShelfTabLayout -> int: current tab index (1-based)
+        PMSymbolCheckBox -> bool
         PMTabLayout -> int: current tab index (1-based)
         PMTextField -> str
         PMTextFieldButtonGrp -> str
