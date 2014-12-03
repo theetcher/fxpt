@@ -1,18 +1,9 @@
 import re
-import os.path
-
 from PySide import QtCore
-from PySide import QtGui
-# import maya.cmds as m
 
 from Com import *
 
-from fxpt.fx_utils.watch import *
 
-
-#----------------------------------------------------------------------------------------------------------------------
-# CLASS: NodeInfo
-#----------------------------------------------------------------------------------------------------------------------
 class NodeInfo(object):
 
     def __init__(self):
@@ -21,9 +12,6 @@ class NodeInfo(object):
         self.shortName = None
 
 
-#----------------------------------------------------------------------------------------------------------------------
-# CLASS: SearchDesc
-#----------------------------------------------------------------------------------------------------------------------
 class SearchDesc(object):
 
     def __init__(self):
@@ -35,9 +23,6 @@ class SearchDesc(object):
         self.searchSelected = None
 
 
-#----------------------------------------------------------------------------------------------------------------------
-# CLASS: SearcherBase
-#----------------------------------------------------------------------------------------------------------------------
 class SearcherBase(object):
 
     def __init__(self, name):
@@ -137,9 +122,6 @@ class SearcherBase(object):
         raise NotImplementedError("Call to abstract method.")
 
 
-#----------------------------------------------------------------------------------------------------------------------
-# CLASS: SearcherSimpleBase
-#----------------------------------------------------------------------------------------------------------------------
 class SearcherSimpleBase(SearcherBase):
 
     def __init__(self, name):
@@ -182,9 +164,6 @@ class SearcherSimpleBase(SearcherBase):
         return modelData
 
 
-#----------------------------------------------------------------------------------------------------------------------
-# CLASS: SearcherNodes
-#----------------------------------------------------------------------------------------------------------------------
 class SearcherNodes(SearcherSimpleBase):
 
     def __init__(self, name):
@@ -198,9 +177,6 @@ class SearcherNodes(SearcherSimpleBase):
         return allNodes
 
 
-#----------------------------------------------------------------------------------------------------------------------
-# CLASS: SearcherDagNodes
-#----------------------------------------------------------------------------------------------------------------------
 class SearcherDagNodes(SearcherSimpleBase):
 
     def __init__(self, name):
@@ -215,9 +191,6 @@ class SearcherDagNodes(SearcherSimpleBase):
         return allNodes
 
 
-#----------------------------------------------------------------------------------------------------------------------
-# CLASS: SearcherTransforms
-#----------------------------------------------------------------------------------------------------------------------
 class SearcherTransforms(SearcherSimpleBase):
 
     def __init__(self, name):
@@ -232,9 +205,47 @@ class SearcherTransforms(SearcherSimpleBase):
         return allNodes
 
 
-#----------------------------------------------------------------------------------------------------------------------
-# CLASS: SearcherTexturesBase
-#----------------------------------------------------------------------------------------------------------------------
+class SearcherType(SearcherBase):
+
+    def __init__(self, name):
+        super(SearcherType, self).__init__(name)
+
+    def getColumnNames(self):
+        return [
+            'Node Name',
+            'Node Type',
+            'Path'
+        ]
+
+    def gatherSearchData(self):
+        # return [(fullPathName, searchField), (fullPathName, searchField), ...]
+        if self.searchDesc.searchSelected:
+            nodes = m.ls(sl=True, l=True)
+        else:
+            nodes = m.ls(l=True)
+        return [(x, typeOf(x)) for x in nodes]
+
+    def prepareModelData(self, matchedData):
+        # input [(fullPathName, searchField), ....]
+        # return [(shortName, type, path, nodeInfo), ...]
+        modelData = []
+        for matchedItem in matchedData:
+            fullPathName = matchedItem[0]
+            shortName = shortNameOf(fullPathName)
+            path = pathOf(fullPathName)
+
+            typ = getNodeTypeString(fullPathName)
+
+            ni = NodeInfo()
+            ni.selectionString = [fullPathName]
+            ni.fullPathName = fullPathName
+            ni.shortName = shortName
+
+            modelData.append((shortName, typ, path, ni))
+
+        return modelData
+
+
 class SearcherTexturesBase(SearcherBase):
 
     def __init__(self, name):
@@ -263,9 +274,6 @@ class SearcherTexturesBase(SearcherBase):
         return searchData
 
 
-#----------------------------------------------------------------------------------------------------------------------
-# CLASS: SearcherTextures
-#----------------------------------------------------------------------------------------------------------------------
 class SearcherTextures(SearcherTexturesBase):
 
     def __init__(self, name):
@@ -292,9 +300,6 @@ class SearcherTextures(SearcherTexturesBase):
         return modelData
 
 
-#----------------------------------------------------------------------------------------------------------------------
-# CLASS: SearcherTexturedBy
-#----------------------------------------------------------------------------------------------------------------------
 class SearcherTexturedBy(SearcherTexturesBase):
 
     def __init__(self, name):
@@ -323,8 +328,6 @@ class SearcherTexturedBy(SearcherTexturesBase):
             ni.fullPathName = fullPathName
             ni.shortName = shortName
 
-            watch(selectionStrings, fullPathName + ' selection')
-
             modelData.append((shortName, textureShortName, fileNodeTexturePath, ni))
 
         return modelData
@@ -348,7 +351,3 @@ class SearcherTexturedBy(SearcherTexturesBase):
                 res.extend(self.getShadingGroups(d))
 
         return res
-
-
-
-

@@ -54,11 +54,13 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
                          QtGui.QTableView(), QtGui.QWidget()),
             SearcherLink(Searchers.SearcherDagNodes('DAG Nodes'), QtGui.QPushButton('DAG Nodes'),
                          QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(Searchers.SearcherTransforms('Transforms'), QtGui.QPushButton('Transforms'),
+            SearcherLink(Searchers.SearcherTexturedBy('Textured By'), QtGui.QPushButton('Textured By'),
                          QtGui.QTableView(), QtGui.QWidget()),
             SearcherLink(Searchers.SearcherTextures('Textures'), QtGui.QPushButton('Textures'),
                          QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(Searchers.SearcherTexturedBy('Textured By'), QtGui.QPushButton('Textured By'),
+            SearcherLink(Searchers.SearcherTransforms('Transforms'), QtGui.QPushButton('Transforms'),
+                         QtGui.QTableView(), QtGui.QWidget()),
+            SearcherLink(Searchers.SearcherType('Type'), QtGui.QPushButton('Type'),
                          QtGui.QTableView(), QtGui.QWidget())
         ]
 

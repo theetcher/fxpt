@@ -65,7 +65,8 @@ def pathOf(fullPathName):
 
 
 def typeOf(fullPathName):
-    return m.ls(fullPathName, showType=True)[1]
+    # return m.ls(fullPathName, showType=True)[1]
+    return m.nodeType(fullPathName)
 
 
 def attrExists(node, attr):
@@ -73,10 +74,10 @@ def attrExists(node, attr):
 
 
 def getNodeTypeString(fullPathName):
-    typ = m.nodeType(fullPathName)
+    typ = typeOf(fullPathName)
     if not isShape(fullPathName):
         shapes = m.listRelatives(fullPathName, shapes=True, fullPath=True, noIntermediate=True)
         if shapes:
-            types = set([m.nodeType(x) for x in shapes])
+            types = set([typeOf(x) for x in shapes])
             typ += ', ' + ', '.join(types)
     return typ
