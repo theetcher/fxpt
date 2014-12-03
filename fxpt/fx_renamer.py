@@ -4,6 +4,8 @@ import uuid
 import maya.cmds as m
 import maya.OpenMaya as om
 import pymel.core as pm
+
+from fxpt.fx_prefsaver import PrefSaver, Serializers
 #endregion imports
 
 #region constants
@@ -13,7 +15,7 @@ WIN_NAME = 'fx_renamer_win'
 WIN_HELPNAME = 'fx_renamer_helpwin'
 WIN_TITLE = SCRIPT_NAME + ' ' + SCRIPT_VERSION
 WIN_HELPTITLE = SCRIPT_NAME + ' ' + SCRIPT_VERSION + ' Help'
-OPT_VAR_PREFIX = 'fx_renamer_'
+OPT_VAR_NAME = 'fx_renamer_prefs'
 UI_LABEL_WIDTH = 100
 UI_INPUT_WIDTH = 240
 
@@ -24,7 +26,7 @@ RENAME_ACTION_SUFFIX = 4
 RENAME_ACTION_NUMBER = 5
 
 SHAPE_PROCESSING_ACCORDING_TO_TRANSFORM = 1
-SHAPE_PROCESSING_IGONRE = 2
+SHAPE_PROCESSING_IGNORE = 2
 SHAPE_PROCESSING_AS_ORDINARY_NODE = 3
 #endregion constants
 
@@ -220,9 +222,37 @@ class RenamerUI():
     def __init__(self):
         self.optionVarLinks = []
         self.ui_createUI()
-        self.ui_setupOptionVars()
+
+        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
         self.ui_initSettings()
         self.ui_loadSettings()
+
+    # noinspection PyMethodMayBeStatic
+    def ui_initSettings(self):
+        self.prefSaver.addControl(self.ui_RADBTNGRP_shapeProcessing, PrefSaver.UIType.PMRadioButtonGrp3, 1)
+        self.prefSaver.addControl(self.ui_TXTFLDGRP_simpleRename, PrefSaver.UIType.PMTextFieldGrp, '')
+        self.prefSaver.addControl(self.ui_TXTFLDGRP_find, PrefSaver.UIType.PMTextFieldGrp, '')
+        self.prefSaver.addControl(self.ui_TXTFLDGRP_replace, PrefSaver.UIType.PMTextFieldGrp, '')
+        self.prefSaver.addControl(self.ui_TXTFLDGRP_prefix, PrefSaver.UIType.PMTextFieldGrp, '')
+        self.prefSaver.addControl(self.ui_TXTFLDGRP_suffix, PrefSaver.UIType.PMTextFieldGrp, '')
+        self.prefSaver.addControl(self.ui_TXTFLDGRP_renameNumber, PrefSaver.UIType.PMTextFieldGrp, '')
+        self.prefSaver.addControl(self.ui_INTFLDGRP_startIndex, PrefSaver.UIType.PMIntFieldGrp1, [1])
+        self.prefSaver.addControl(self.ui_LAY_frameOptions, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.ui_LAY_frameSimpleRename, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.ui_LAY_frameFindReplace, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.ui_LAY_framePrefix, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.ui_LAY_frameSuffix, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.ui_LAY_frameRenameNumber, PrefSaver.UIType.PMFrameLayout, False)
+
+    def ui_loadSettings(self):
+        self.prefSaver.loadPrefs()
+
+    def ui_saveSettings(self):
+        self.prefSaver.savePrefs()
+
+    # noinspection PyUnusedLocal
+    def ui_resetSettings(self, *args, **kwargs):
+        self.prefSaver.resetPrefs()
 
     def ui_createUI(self):
         self.winName = WIN_NAME
@@ -259,6 +289,7 @@ class RenamerUI():
         # - - - "Options" frame - - -
 
         self.ui_LAY_frameOptions = pm.frameLayout(
+            'ui_LAY_frameOptions',
             label='Options',
             collapsable=True,
             marginHeight=3,
@@ -271,6 +302,7 @@ class RenamerUI():
         # - - - - - - - - - - - - - - - - - - - -
 
         self.ui_RADBTNGRP_shapeProcessing = pm.radioButtonGrp(
+            'ui_RADBTNGRP_shapeProcessing',
             label='Shape Processing:',
             labelArray3=["Rename shapes according to it's transforms\n(even if it's not selected)",
                          "Don't rename shapes", 'Treat shapes as ordinary nodes'],
@@ -288,6 +320,7 @@ class RenamerUI():
         # - - - "Rename" frame - - -
 
         self.ui_LAY_frameSimpleRename = pm.frameLayout(
+            'ui_LAY_frameSimpleRename',
             label='Rename',
             collapsable=True,
             marginHeight=3,
@@ -300,6 +333,7 @@ class RenamerUI():
         # - - - - - - - - - - - - - - - - - - - -
 
         self.ui_TXTFLDGRP_simpleRename = pm.textFieldGrp(
+            'ui_TXTFLDGRP_simpleRename',
             label='New Name',
             columnWidth=[1, UI_LABEL_WIDTH],
             columnAttach=[1, 'right', 5],
@@ -318,6 +352,7 @@ class RenamerUI():
         # - - - "Find and Replace" frame - - -
 
         self.ui_LAY_frameFindReplace = pm.frameLayout(
+            'ui_LAY_frameFindReplace',
             label='Find and Replace',
             collapsable=True,
             marginHeight=3,
@@ -330,6 +365,7 @@ class RenamerUI():
         # - - - - - - - - - - - - - - - - - - - -
 
         self.ui_TXTFLDGRP_find = pm.textFieldGrp(
+            'ui_TXTFLDGRP_find',
             label='Find',
             columnWidth=[1, UI_LABEL_WIDTH],
             columnAttach=[1, 'right', 5],
@@ -337,6 +373,7 @@ class RenamerUI():
         )
 
         self.ui_TXTFLDGRP_replace = pm.textFieldGrp(
+            'ui_TXTFLDGRP_replace',
             label='Replace With',
             columnWidth=[1, UI_LABEL_WIDTH],
             columnAttach=[1, 'right', 5],
@@ -355,6 +392,7 @@ class RenamerUI():
         # - - - "Add Prefix" frame - - -
 
         self.ui_LAY_framePrefix = pm.frameLayout(
+            'ui_LAY_framePrefix',
             label='Add Prefix',
             collapsable=True,
             marginHeight=3,
@@ -367,6 +405,7 @@ class RenamerUI():
         # - - - - - - - - - - - - - - - - - - - -
 
         self.ui_TXTFLDGRP_prefix = pm.textFieldGrp(
+            'ui_TXTFLDGRP_prefix',
             label='Prefix',
             columnWidth=[1, UI_LABEL_WIDTH],
             columnAttach=[1, 'right', 5],
@@ -385,6 +424,7 @@ class RenamerUI():
         # - - - "Add Suffix" frame - - -
 
         self.ui_LAY_frameSuffix = pm.frameLayout(
+            'ui_LAY_frameSuffix',
             label='Add Suffix',
             collapsable=True,
             marginHeight=3,
@@ -397,6 +437,7 @@ class RenamerUI():
         # - - - - - - - - - - - - - - - - - - - -
 
         self.ui_TXTFLDGRP_suffix = pm.textFieldGrp(
+            'ui_TXTFLDGRP_suffix',
             label='Suffix',
             columnWidth=[1, UI_LABEL_WIDTH],
             columnAttach=[1, 'right', 5],
@@ -415,6 +456,7 @@ class RenamerUI():
         # - - - "Rename and Number" frame - - -
 
         self.ui_LAY_frameRenameNumber = pm.frameLayout(
+            'ui_LAY_frameRenameNumber',
             label='Rename and Number',
             collapsable=True,
             marginHeight=3,
@@ -450,6 +492,7 @@ class RenamerUI():
         pm.separator(style='none', height=2)
 
         self.ui_TXTFLDGRP_renameNumber = pm.textFieldGrp(
+            'ui_TXTFLDGRP_renameNumber',
             label='New Name',
             columnWidth=[1, UI_LABEL_WIDTH],
             columnAttach=[1, 'right', 5],
@@ -457,6 +500,7 @@ class RenamerUI():
         )
 
         self.ui_INTFLDGRP_startIndex = pm.intFieldGrp(
+            'ui_INTFLDGRP_startIndex',
             label='Start Index',
             columnWidth2=[UI_LABEL_WIDTH, 60],
             columnAttach=[1, 'right', 5]
@@ -499,55 +543,6 @@ class RenamerUI():
 
         self.window.show()
         pm.refresh()
-
-    def ui_setupOptionVars(self):
-        self.optionVarLinks.extend([
-            OptionVarLink(OPT_VAR_PREFIX + 'shapeProcessing', 1, self.ui_RADBTNGRP_shapeProcessing.getSelect,
-                          self.ui_RADBTNGRP_shapeProcessing.setSelect),
-            OptionVarLink(OPT_VAR_PREFIX + 'simpleRenameString', '', self.ui_TXTFLDGRP_simpleRename.getText,
-                          self.ui_TXTFLDGRP_simpleRename.setText),
-            OptionVarLink(OPT_VAR_PREFIX + 'findString', '', self.ui_TXTFLDGRP_find.getText,
-                          self.ui_TXTFLDGRP_find.setText),
-            OptionVarLink(OPT_VAR_PREFIX + 'replaceString', '', self.ui_TXTFLDGRP_replace.getText,
-                          self.ui_TXTFLDGRP_replace.setText),
-            OptionVarLink(OPT_VAR_PREFIX + 'prefixString', '', self.ui_TXTFLDGRP_prefix.getText,
-                          self.ui_TXTFLDGRP_prefix.setText),
-            OptionVarLink(OPT_VAR_PREFIX + 'suffixString', '', self.ui_TXTFLDGRP_suffix.getText,
-                          self.ui_TXTFLDGRP_suffix.setText),
-            OptionVarLink(OPT_VAR_PREFIX + 'renameAndNumberString', '', self.ui_TXTFLDGRP_renameNumber.getText,
-                          self.ui_TXTFLDGRP_renameNumber.setText),
-            OptionVarLink(OPT_VAR_PREFIX + 'startIndex', 1, self.ui_INTFLDGRP_startIndex.getValue1,
-                          self.ui_INTFLDGRP_startIndex.setValue1),
-            OptionVarLink(OPT_VAR_PREFIX + 'collapsedOptions', 0, self.ui_LAY_frameOptions.getCollapse,
-                          self.ui_LAY_frameOptions.setCollapse),
-            OptionVarLink(OPT_VAR_PREFIX + 'collapsedSimpleRename', 0, self.ui_LAY_frameSimpleRename.getCollapse,
-                          self.ui_LAY_frameSimpleRename.setCollapse),
-            OptionVarLink(OPT_VAR_PREFIX + 'collapsedFindReplace', 0, self.ui_LAY_frameFindReplace.getCollapse,
-                          self.ui_LAY_frameFindReplace.setCollapse),
-            OptionVarLink(OPT_VAR_PREFIX + 'collapsedPrefix', 0, self.ui_LAY_framePrefix.getCollapse,
-                          self.ui_LAY_framePrefix.setCollapse),
-            OptionVarLink(OPT_VAR_PREFIX + 'collapsedSuffix', 0, self.ui_LAY_frameSuffix.getCollapse,
-                          self.ui_LAY_frameSuffix.setCollapse),
-            OptionVarLink(OPT_VAR_PREFIX + 'collapsedRenameNumber', 0, self.ui_LAY_frameRenameNumber.getCollapse,
-                          self.ui_LAY_frameRenameNumber.setCollapse)
-        ])
-
-    def ui_initSettings(self):
-        for ov in self.optionVarLinks:
-            ov.init()
-
-    def ui_loadSettings(self):
-        for ov in self.optionVarLinks:
-            ov.applyToControl()
-
-    def ui_saveSettings(self):
-        for ov in self.optionVarLinks:
-            ov.getFromControl()
-
-    # noinspection PyUnusedLocal
-    def ui_resetSettings(self, *args):
-        for ov in self.optionVarLinks:
-            ov.reset()
 
     def ui_onRenameClick(self, action):
 
@@ -594,8 +589,6 @@ class RenamerUI():
                 elif not isAllSymbolsValid(rd.suffixStr):
                     self.ui_errorInvalidSymbols('"Suffix" field contains an invalid Maya symbol(s).')
                     return
-
-            self.ui_saveSettings()
 
             for nh in nodeHandles:
                 nh.renameToTempName()

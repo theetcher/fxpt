@@ -68,7 +68,6 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
     def ui_saveSettings(self):
         self.prefSaver.savePrefs()
 
-    # noinspection PyUnusedLocal
     def ui_resetSettings(self):
         self.prefSaver.resetPrefs()
 
@@ -306,7 +305,6 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
         sd.includeShapes = self.ui_BTN_soIncludeShapes.isChecked()
         sd.searchSelected = self.ui_BTN_soSearchSelected.isChecked()
         return sd
-
 
     def ui_tryToSaveTabOptVar(self):
         optVars = pm.env.optionVars
