@@ -1,376 +1,283 @@
-import maya.cmds as cmds
+import maya.cmds as m
+import pymel.core as pm
 import random
-from functools import partial
+
+from fxpt.fx_prefsaver import PrefSaver, Serializers
+
+WIN_NAME = 'fx_transformRandomizerWin'
+WIN_TITLE = 'Transform Randomizer v1.0'
+WIN_HELP_NAME = 'fx_transformRandomizerHelpWin'
+WIN_HELP_TITLE = WIN_TITLE + ' Help'
+OPT_VAR_NAME = 'fx_randomizer_prefs'
 
 
 # noinspection PyMethodMayBeStatic,PyAttributeOutsideInit
 class RandomizerUI(object):
     def __init__(self):
 
-        self.winName = "fx_transformRandomizerWin"
-        self.winTitle = "Transform Randomizer v1.0"
         ui_labelWidth = 140
         ui_inputWidth = 240
 
-        # ################ UI Creation ################
+        if pm.window(WIN_NAME, exists=True):
+            pm.deleteUI(WIN_NAME, window=True)
 
-        if cmds.window(
-            self.winName,
-            q=True,
-            exists=True
-        ):
-            cmds.deleteUI(self.winName)
-
-        self.window = cmds.window(
-            self.winName,
-            title=self.winTitle,
+        with pm.window(
+            WIN_NAME,
+            title=WIN_TITLE,
             maximizeButton=False,
             menuBar=True,
             menuBarVisible=True
-        )
+        ) as self.window:
 
-        cmds.menu(label='Edit', tearOff=False)
-        cmds.menuItem(label='Reset Settings', command=self.ui_resetSettings)
-        cmds.menu(label='Help', tearOff=False)
-        cmds.menuItem(label='Help on ' + self.winTitle, command=partial(self.ui_showHelp, 1))
-        cmds.menuItem(divider=True)
-        cmds.menuItem(label='Script Information', command=partial(self.ui_showHelp, 2))
+            pm.menu(label='Edit', tearOff=False)
+            pm.menuItem(label='Reset Settings', command=self.ui_resetSettings)
+            pm.menu(label='Help', tearOff=False)
+            pm.menuItem(label='Help on ' + WIN_TITLE, command=pm.Callback(self.ui_showHelp, 1))
+            pm.menuItem(divider=True)
+            pm.menuItem(label='Script Information', command=pm.Callback(self.ui_showHelp, 2))
 
-        # - - - - - - - - - - - - - - - - - - - -
+            with pm.formLayout() as self.ui_mainForm:
 
-        self.ui_mainForm = cmds.formLayout()
+                with pm.scrollLayout(childResizable=True) as self.ui_LAY_mainScroll:
 
-        self.ui_LAY_mainScroll = cmds.scrollLayout(
-            childResizable=True
-        )
+                    with pm.columnLayout(adjustableColumn=True) as self.ui_LAY_mainColumn:
 
-        self.ui_LAY_mainColumn = cmds.columnLayout(
-            adjustableColumn=True
-        )
+                        with pm.frameLayout(
+                            label='Control Panel',
+                            collapsable=True,
+                            marginHeight=3,
+                            borderStyle='etchedIn',
+                            borderVisible=True
+                        ) as self.ui_LAY_frameControlPanel:
 
-        self.ui_LAY_frameControlPanel = cmds.frameLayout(
-            label='Control Panel',
-            collapsable=True,
-            marginHeight=3,
-            borderStyle='etchedIn',
-            borderVisible=True
-        )
+                            with pm.rowColumnLayout(
+                                numberOfColumns=12,
+                                rowSpacing=[1, 5],
+                                #            Label       X       Y         Z       XYZ      Mag     Sep      Reset     Bias      Sep       Min       Max
+                                columnWidth=[(1, 60), (2, 20), (3, 20), (4, 20), (5, 76), (6, 60), (7, 20), (8, 20), (9, 120), (10, 20), (11, 60), (12, 60)]
+                            ) as self.ui_LAY_mainRowColumn:
 
-        # - - - - - - - - - - - - - - - - - - - -
+                                #----- Header Row -----
 
-        self.ui_LAY_mainRowColumn = cmds.rowColumnLayout(
-            numberOfColumns=12,
-            rowSpacing=[1, 5],
-            #            Label       X       Y         Z       XYZ      Mag     Sep      Reset     Bias      Sep       Min       Max
-            columnWidth=[(1, 60), (2, 20), (3, 20), (4, 20), (5, 76), (6, 60), (7, 20), (8, 20), (9, 120), (10, 20), (11, 60), (12, 60)]
-        )
+                                pm.separator(style='none')
+                                pm.separator(style='none')
+                                pm.separator(style='none')
+                                pm.separator(style='none')
+                                pm.separator(style='none')
+                                pm.text(label='Magnitude', )
+                                pm.separator(style='none')
+                                pm.separator(style='none')
+                                pm.text(label='Bias', )
+                                pm.separator(style='none')
+                                pm.text(label='Min', )
+                                pm.text(label='Max', )
 
-        # - - - - - Header Row - - - - -
+                                #----- Translate Row -----
 
-        cmds.separator(style='none')
-        cmds.separator(style='none')
-        cmds.separator(style='none')
-        cmds.separator(style='none')
-        cmds.separator(style='none')
-        cmds.text(label='Magnitude', )
-        cmds.separator(style='none')
-        cmds.separator(style='none')
-        cmds.text(label='Bias', )
-        cmds.separator(style='none')
-        cmds.text(label='Min', )
-        cmds.text(label='Max', )
+                                pm.text(label='Translate ', align='right')
+                                pm.button(label='X', command=pm.Callback(self.randomizeTranslate, ['tx']))
+                                pm.button(label='Y', command=pm.Callback(self.randomizeTranslate, ['ty']))
+                                pm.button(label='Z', command=pm.Callback(self.randomizeTranslate, ['tz']))
+                                pm.button(label='XYZ', command=pm.Callback(self.randomizeTranslate, ['tx', 'ty', 'tz']))
+                                self.ui_FLTFLD_translateMagnitude = pm.floatField('ui_FLTFLD_translateMagnitude', changeCommand=self.ui_refresh, value=10)
+                                pm.separator(style='none')
+                                self.ui_BTN_translateBiasReset = pm.button(label='0')
+                                self.ui_INTSLGRP_translateBias = pm.intSliderGrp(
+                                    'ui_INTSLGRP_translateBias',
+                                    columnWidth=[1, 30],
+                                    field=True,
+                                    minValue=-100,
+                                    maxValue=100,
+                                    fieldMinValue=-100,
+                                    fieldMaxValue=100,
+                                    value=0,
+                                    step=1,
+                                    fieldStep=1,
+                                    sliderStep=1,
+                                    changeCommand=self.ui_refresh,
+                                    dragCommand=self.ui_refresh
+                                )
+                                pm.button(self.ui_BTN_translateBiasReset, edit=True, command=pm.Callback(self.ui_resetBias, self.ui_INTSLGRP_translateBias))
+                                pm.text(label='=')
+                                self.ui_FLTFLD_translateMin = pm.floatField(enable=False, value=-5)
+                                self.ui_FLTFLD_translateMax = pm.floatField(enable=False, value=95)
 
-        # - - - - - Translate Row - - - - -
+                                #----- Rotate Row -----
 
-        cmds.text(label='Translate ', align='right')
-        cmds.button(label='X', command=partial(self.randomizeTranslate, ['tx']))
-        cmds.button(label='Y', command=partial(self.randomizeTranslate, ['ty']))
-        cmds.button(label='Z', command=partial(self.randomizeTranslate, ['tz']))
-        cmds.button(label='XYZ', command=partial(self.randomizeTranslate, ['tx', 'ty', 'tz']))
-        self.ui_FLTFLD_translateMagnitude = cmds.floatField(
-            changeCommand=self.ui_refresh,
-            value=10
-        )
-        cmds.separator(style='none')
-        self.ui_BTN_translateBiasReset = cmds.button(label='0')
-        self.ui_INTSLGRP_translateBias = cmds.intSliderGrp(
-            columnWidth=[1, 30],
-            field=True,
-            minValue=-100,
-            maxValue=100,
-            fieldMinValue=-100,
-            fieldMaxValue=100,
-            value=0,
-            step=1,
-            fieldStep=1,
-            sliderStep=1,
-            changeCommand=self.ui_refresh,
-            dragCommand=self.ui_refresh
-        )
-        cmds.button(self.ui_BTN_translateBiasReset, edit=True,
-                    command=partial(self.ui_resetBias, self.ui_INTSLGRP_translateBias))
-        cmds.text(label='=')
-        self.ui_FLTFLD_translateMin = cmds.floatField(enable=False, value=-5)
-        self.ui_FLTFLD_translateMax = cmds.floatField(enable=False, value=95)
+                                pm.text(label='Rotate ', align='right')
+                                pm.button(label='X', command=pm.Callback(self.randomizeRotate, ['rx']))
+                                pm.button(label='Y', command=pm.Callback(self.randomizeRotate, ['ry']))
+                                pm.button(label='Z', command=pm.Callback(self.randomizeRotate, ['rz']))
+                                pm.button(label='XYZ', command=pm.Callback(self.randomizeRotate, ['rx', 'ry', 'rz']))
+                                self.ui_FLTFLD_rotateMagnitude = pm.floatField('ui_FLTFLD_rotateMagnitude', changeCommand=self.ui_refresh, value=90)
+                                pm.separator(style='none')
+                                self.ui_BTN_rotateBiasReset = pm.button(label='0')
+                                self.ui_INTSLGRP_rotateBias = pm.intSliderGrp(
+                                    'ui_INTSLGRP_rotateBias',
+                                    columnWidth=[1, 30],
+                                    field=True,
+                                    minValue=-100,
+                                    maxValue=100,
+                                    fieldMinValue=-100,
+                                    fieldMaxValue=100,
+                                    value=0,
+                                    step=1,
+                                    fieldStep=1,
+                                    sliderStep=1,
+                                    changeCommand=self.ui_refresh,
+                                    dragCommand=self.ui_refresh
+                                )
+                                pm.button(self.ui_BTN_rotateBiasReset, edit=True, command=pm.Callback(self.ui_resetBias, self.ui_INTSLGRP_rotateBias))
+                                pm.text(label='=')
+                                self.ui_FLTFLD_rotateMin = pm.floatField(enable=False, value=-5)
+                                self.ui_FLTFLD_rotateMax = pm.floatField(enable=False, value=95)
 
-        # - - - - - Rotate Row - - - - -
+                                #----- Scale Row -----
 
-        cmds.text(label='Rotate ', align='right')
-        cmds.button(label='X', command=partial(self.randomizeRotate, ['rx']))
-        cmds.button(label='Y', command=partial(self.randomizeRotate, ['ry']))
-        cmds.button(label='Z', command=partial(self.randomizeRotate, ['rz']))
-        cmds.button(label='XYZ', command=partial(self.randomizeRotate, ['rx', 'ry', 'rz']))
-        self.ui_FLTFLD_rotateMagnitude = cmds.floatField(
-            changeCommand=self.ui_refresh,
-            value=90
-        )
-        cmds.separator(style='none')
-        self.ui_BTN_rotateBiasReset = cmds.button(label='0')
-        self.ui_INTSLGRP_rotateBias = cmds.intSliderGrp(
-            columnWidth=[1, 30],
-            field=True,
-            minValue=-100,
-            maxValue=100,
-            fieldMinValue=-100,
-            fieldMaxValue=100,
-            value=0,
-            step=1,
-            fieldStep=1,
-            sliderStep=1,
-            changeCommand=self.ui_refresh,
-            dragCommand=self.ui_refresh
-        )
-        cmds.button(self.ui_BTN_rotateBiasReset, edit=True,
-                    command=partial(self.ui_resetBias, self.ui_INTSLGRP_rotateBias))
-        cmds.text(label='=')
-        self.ui_FLTFLD_rotateMin = cmds.floatField(enable=False, value=-5)
-        self.ui_FLTFLD_rotateMax = cmds.floatField(enable=False, value=95)
+                                pm.text(label='Scale ', align='right')
+                                pm.button(label='X', command=pm.Callback(self.randomizeScale, ['sx']))
+                                pm.button(label='Y', command=pm.Callback(self.randomizeScale, ['sy']))
+                                pm.button(label='Z', command=pm.Callback(self.randomizeScale, ['sz']))
+                                pm.flowLayout()
+                                pm.button(label='XYZ', command=pm.Callback(self.randomizeScale, ['sx', 'sy', 'sz']))
+                                pm.button(label='Uniform', command=pm.Callback(self.randomizeScale, ['uniform']))
+                                pm.setParent('..')
+                                self.ui_FLTFLD_scaleMagnitude = pm.floatField('ui_FLTFLD_scaleMagnitude', changeCommand=self.ui_refresh, value=2)
+                                pm.separator(style='none')
+                                self.ui_BTN_scaleBiasReset = pm.button(label='0')
+                                self.ui_INTSLGRP_scaleBias = pm.intSliderGrp(
+                                    'ui_INTSLGRP_scaleBias',
+                                    columnWidth=[1, 30],
+                                    field=True,
+                                    minValue=-100,
+                                    maxValue=100,
+                                    fieldMinValue=-100,
+                                    fieldMaxValue=100,
+                                    value=0,
+                                    step=1,
+                                    fieldStep=1,
+                                    sliderStep=1,
+                                    changeCommand=self.ui_refresh,
+                                    dragCommand=self.ui_refresh
+                                )
+                                pm.button(self.ui_BTN_scaleBiasReset, edit=True, command=pm.Callback(self.ui_resetBias, self.ui_INTSLGRP_scaleBias))
+                                pm.text(label='=')
+                                self.ui_FLTFLD_scaleMin = pm.floatField(enable=False, value=-5)
+                                self.ui_FLTFLD_scaleMax = pm.floatField(enable=False, value=95)
 
-        # - - - - - Scale Row - - - - -
+                        with pm.frameLayout(
+                            label='Seed Control',
+                            collapsable=True,
+                            marginHeight=3,
+                            borderStyle='etchedIn',
+                            borderVisible=True
+                        ) as self.ui_LAY_frameSeedControl:
 
-        cmds.text(label='Scale ', align='right')
-        cmds.button(label='X', command=partial(self.randomizeScale, ['sx']))
-        cmds.button(label='Y', command=partial(self.randomizeScale, ['sy']))
-        cmds.button(label='Z', command=partial(self.randomizeScale, ['sz']))
-        cmds.flowLayout()
-        cmds.button(label='XYZ', command=partial(self.randomizeScale, ['sx', 'sy', 'sz']))
-        cmds.button(label='Uniform', command=partial(self.randomizeScale, ['uniform']))
-        cmds.setParent('..')
-        self.ui_FLTFLD_scaleMagnitude = cmds.floatField(
-            changeCommand=self.ui_refresh,
-            value=2
-        )
-        cmds.separator(style='none')
-        self.ui_BTN_scaleBiasReset = cmds.button(label='0')
-        self.ui_INTSLGRP_scaleBias = cmds.intSliderGrp(
-            columnWidth=[1, 30],
-            field=True,
-            minValue=-100,
-            maxValue=100,
-            fieldMinValue=-100,
-            fieldMaxValue=100,
-            value=0,
-            step=1,
-            fieldStep=1,
-            sliderStep=1,
-            changeCommand=self.ui_refresh,
-            dragCommand=self.ui_refresh
-        )
-        cmds.button(self.ui_BTN_scaleBiasReset, edit=True,
-                    command=partial(self.ui_resetBias, self.ui_INTSLGRP_scaleBias))
-        cmds.text(label='=')
-        self.ui_FLTFLD_scaleMin = cmds.floatField(enable=False, value=-5)
-        self.ui_FLTFLD_scaleMax = cmds.floatField(enable=False, value=95)
+                            with pm.columnLayout(adjustableColumn=True):
 
-        # - - - - - - - - - - - - - - - - - - - -
+                                with pm.rowLayout(
+                                    numberOfColumns=2,
+                                    columnWidth2=[ui_labelWidth, ui_inputWidth],
+                                    columnAttach=[1, 'right', 5]
+                                ):
 
-        cmds.setParent(self.ui_LAY_mainColumn)
+                                    pm.text(label='Use Seed')
+                                    self.ui_CHK_useSeed = pm.checkBox(
+                                        'ui_CHK_useSeed',
+                                        value=True,
+                                        label='',
+                                        changeCommand=self.ui_refresh
+                                    )
 
-        self.ui_LAY_frameSeedControl = cmds.frameLayout(
-            label='Seed Control',
-            collapsable=True,
-            marginHeight=3,
-            borderStyle='etchedIn',
-            borderVisible=True
-        )
+                                with pm.rowLayout(
+                                    numberOfColumns=2,
+                                    columnWidth2=[ui_labelWidth, ui_inputWidth],
+                                    columnAttach=[1, 'right', 5]
+                                ):
 
-        cmds.columnLayout(
-            adjustableColumn=True
-        )
+                                    pm.text(label='Seed')
 
-        # - - - - - - - - - - - - - - - - - - - -
+                                    self.ui_INTSLGRP_seedValue = pm.intSliderGrp(
+                                        'ui_INTSLGRP_seedValue',
+                                        field=True,
+                                        minValue=1,
+                                        maxValue=10000,
+                                        fieldMinValue=1,
+                                        fieldMaxValue=10000,
+                                        value=1234,
+                                        step=1,
+                                        fieldStep=1,
+                                        sliderStep=1
+                                    )
 
-        cmds.rowLayout(
-            numberOfColumns=2,
-            columnWidth2=[ui_labelWidth, ui_inputWidth],
-            columnAttach=[1, 'right', 5]
-        )
+                pm.setParent(self.ui_mainForm)
 
-        cmds.text(label='Use Seed')
-        self.ui_CHK_useSeed = cmds.checkBox(
-            value=True,
-            label='',
-            changeCommand=self.ui_refresh
-        )
+                self.ui_BTN_close = pm.button(
+                    label='Close',
+                    command=self.ui_close
+                )
 
-        cmds.setParent('..')  # local row -> seed column
+        pm.formLayout(self.ui_mainForm, e=True, attachForm=[self.ui_LAY_mainScroll, 'top', 2])
+        pm.formLayout(self.ui_mainForm, e=True, attachForm=[self.ui_LAY_mainScroll, 'left', 2])
+        pm.formLayout(self.ui_mainForm, e=True, attachForm=[self.ui_LAY_mainScroll, 'right', 2])
+        pm.formLayout(self.ui_mainForm, e=True, attachControl=[self.ui_LAY_mainScroll, 'bottom', 2, self.ui_BTN_close])
 
-        # - - - - - - - - - - - - - - - - - - - -
+        pm.formLayout(self.ui_mainForm, e=True, attachNone=[self.ui_BTN_close, 'top'])
+        pm.formLayout(self.ui_mainForm, e=True, attachForm=[self.ui_BTN_close, 'left', 2])
+        pm.formLayout(self.ui_mainForm, e=True, attachForm=[self.ui_BTN_close, 'right', 2])
+        pm.formLayout(self.ui_mainForm, e=True, attachForm=[self.ui_BTN_close, 'bottom', 2])
 
-        cmds.rowLayout(
-            numberOfColumns=2,
-            columnWidth2=[ui_labelWidth, ui_inputWidth],
-            columnAttach=[1, 'right', 5]
-        )
-
-        cmds.text(label='Seed')
-
-        self.ui_INTSLGRP_seedValue = cmds.intSliderGrp(
-            field=True,
-            minValue=1,
-            maxValue=10000,
-            fieldMinValue=1,
-            fieldMaxValue=10000,
-            value=1234,
-            step=1,
-            fieldStep=1,
-            sliderStep=1
-        )
-
-        # - - - - - - - - - - - - - - - - - - - -
-
-        cmds.setParent(self.ui_mainForm)
-
-        self.ui_BTN_close = cmds.button(
-            label='Close',
-            command=self.ui_close
-        )
-
-        # - - - - - Organize Main Form Layout - - - - -
-
-        cmds.formLayout(self.ui_mainForm, e=True, attachForm=[self.ui_LAY_mainScroll, 'top', 2])
-        cmds.formLayout(self.ui_mainForm, e=True, attachForm=[self.ui_LAY_mainScroll, 'left', 2])
-        cmds.formLayout(self.ui_mainForm, e=True, attachForm=[self.ui_LAY_mainScroll, 'right', 2])
-        cmds.formLayout(self.ui_mainForm, e=True,
-                        attachControl=[self.ui_LAY_mainScroll, 'bottom', 2, self.ui_BTN_close])
-
-        cmds.formLayout(self.ui_mainForm, e=True, attachNone=[self.ui_BTN_close, 'top'])
-        cmds.formLayout(self.ui_mainForm, e=True, attachForm=[self.ui_BTN_close, 'left', 2])
-        cmds.formLayout(self.ui_mainForm, e=True, attachForm=[self.ui_BTN_close, 'right', 2])
-        cmds.formLayout(self.ui_mainForm, e=True, attachForm=[self.ui_BTN_close, 'bottom', 2])
-
-        # ################ UI Creation Finished ##################
-
+        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
         self.ui_initSettings()
         self.ui_loadSettings()
 
-        cmds.showWindow(self.winName)
+        self.window.show()
 
     def ui_initSettings(self):
-        if not cmds.optionVar(exists='fx_transformRandomizer_magTranslate'):
-            cmds.optionVar(floatValue=('fx_transformRandomizer_magTranslate', 1))
-        if not cmds.optionVar(exists='fx_transformRandomizer_magRotate'):
-            cmds.optionVar(floatValue=('fx_transformRandomizer_magRotate', 180))
-        if not cmds.optionVar(exists='fx_transformRandomizer_magScale'):
-            cmds.optionVar(floatValue=('fx_transformRandomizer_magScale', 2))
-
-        if not cmds.optionVar(exists='fx_transformRandomizer_biasTranslate'):
-            cmds.optionVar(intValue=('fx_transformRandomizer_biasTranslate', 0))
-        if not cmds.optionVar(exists='fx_transformRandomizer_biasRotate'):
-            cmds.optionVar(intValue=('fx_transformRandomizer_biasRotate', 0))
-        if not cmds.optionVar(exists='fx_transformRandomizer_biasScale'):
-            cmds.optionVar(intValue=('fx_transformRandomizer_biasScale', 0))
-
-        if not cmds.optionVar(exists='fx_transformRandomizer_useSeed'):
-            cmds.optionVar(intValue=('fx_transformRandomizer_useSeed', 0))
-        if not cmds.optionVar(exists='fx_transformRandomizer_seedValue'):
-            cmds.optionVar(intValue=('fx_transformRandomizer_seedValue', 1234))
+        self.prefSaver.addControl(self.ui_FLTFLD_translateMagnitude, PrefSaver.UIType.PMFloatField, 1)
+        self.prefSaver.addControl(self.ui_FLTFLD_rotateMagnitude, PrefSaver.UIType.PMFloatField, 180)
+        self.prefSaver.addControl(self.ui_FLTFLD_scaleMagnitude, PrefSaver.UIType.PMFloatField, 2)
+        self.prefSaver.addControl(self.ui_INTSLGRP_translateBias, PrefSaver.UIType.PMIntSliderGrp, 0)
+        self.prefSaver.addControl(self.ui_INTSLGRP_rotateBias, PrefSaver.UIType.PMIntSliderGrp, 0)
+        self.prefSaver.addControl(self.ui_INTSLGRP_scaleBias, PrefSaver.UIType.PMIntSliderGrp, 0)
+        self.prefSaver.addControl(self.ui_CHK_useSeed, PrefSaver.UIType.PMCheckBox, False)
+        self.prefSaver.addControl(self.ui_INTSLGRP_seedValue, PrefSaver.UIType.PMIntSliderGrp, 1234)
 
     def ui_loadSettings(self):
-
-        cmds.floatField(self.ui_FLTFLD_translateMagnitude, e=True,
-                        value=cmds.optionVar(q='fx_transformRandomizer_magTranslate'))
-        cmds.floatField(self.ui_FLTFLD_rotateMagnitude, e=True,
-                        value=cmds.optionVar(q='fx_transformRandomizer_magRotate'))
-        cmds.floatField(self.ui_FLTFLD_scaleMagnitude, e=True,
-                        value=cmds.optionVar(q='fx_transformRandomizer_magScale'))
-
-        cmds.intSliderGrp(self.ui_INTSLGRP_translateBias, e=True,
-                          value=cmds.optionVar(q='fx_transformRandomizer_biasTranslate'))
-        cmds.intSliderGrp(self.ui_INTSLGRP_rotateBias, e=True,
-                          value=cmds.optionVar(q='fx_transformRandomizer_biasRotate'))
-        cmds.intSliderGrp(self.ui_INTSLGRP_scaleBias, e=True,
-                          value=cmds.optionVar(q='fx_transformRandomizer_biasScale'))
-
-        cmds.checkBox(self.ui_CHK_useSeed, e=True, value=cmds.optionVar(q='fx_transformRandomizer_useSeed'))
-        cmds.intSliderGrp(self.ui_INTSLGRP_seedValue, e=True,
-                          value=cmds.optionVar(q='fx_transformRandomizer_seedValue'))
-
+        self.prefSaver.loadPrefs()
         self.ui_refresh()
 
     def ui_saveSettings(self):
-
-        cmds.optionVar(floatValue=['fx_transformRandomizer_magTranslate',
-                                   cmds.floatField(self.ui_FLTFLD_translateMagnitude, q=True, value=True)])
-        cmds.optionVar(floatValue=['fx_transformRandomizer_magRotate',
-                                   cmds.floatField(self.ui_FLTFLD_rotateMagnitude, q=True, value=True)])
-        cmds.optionVar(floatValue=['fx_transformRandomizer_magScale',
-                                   cmds.floatField(self.ui_FLTFLD_scaleMagnitude, q=True, value=True)])
-
-        cmds.optionVar(floatValue=['fx_transformRandomizer_biasTranslate',
-                                   cmds.intSliderGrp(self.ui_INTSLGRP_translateBias, q=True, value=True)])
-        cmds.optionVar(floatValue=['fx_transformRandomizer_biasRotate',
-                                   cmds.intSliderGrp(self.ui_INTSLGRP_rotateBias, q=True, value=True)])
-        cmds.optionVar(floatValue=['fx_transformRandomizer_biasScale',
-                                   cmds.intSliderGrp(self.ui_INTSLGRP_scaleBias, q=True, value=True)])
-
-        cmds.optionVar(
-            intValue=['fx_transformRandomizer_useSeed', cmds.checkBox(self.ui_CHK_useSeed, q=True, value=True)])
-        cmds.optionVar(intValue=['fx_transformRandomizer_seedValue',
-                                 cmds.intSliderGrp(self.ui_INTSLGRP_seedValue, q=True, value=True)])
+        self.prefSaver.savePrefs()
 
     # noinspection PyUnusedLocal
     def ui_resetSettings(self, *args):
-        optionVars = (
-            'fx_transformRandomizer_magTranslate',
-            'fx_transformRandomizer_magRotate',
-            'fx_transformRandomizer_magScale',
-            'fx_transformRandomizer_biasTranslate',
-            'fx_transformRandomizer_biasRotate',
-            'fx_transformRandomizer_biasScale',
-            'fx_transformRandomizer_useSeed',
-            'fx_transformRandomizer_seedValue'
-        )
-
-        for var in optionVars:
-            cmds.optionVar(remove=var)
-
-        self.ui_initSettings()
-        self.ui_loadSettings()
+        self.prefSaver.resetPrefs()
+        self.ui_refresh()
 
     # noinspection PyUnusedLocal
     def ui_refresh(self, *arg):
 
-        magnitude = cmds.floatField(self.ui_FLTFLD_translateMagnitude, q=True, value=True)
-        bias = cmds.intSliderGrp(self.ui_INTSLGRP_translateBias, q=True, value=True)
+        magnitude = m.floatField(self.ui_FLTFLD_translateMagnitude, q=True, value=True)
+        bias = m.intSliderGrp(self.ui_INTSLGRP_translateBias, q=True, value=True)
         _min, _max = self.calculateMinMax(magnitude, bias)
-        cmds.floatField(self.ui_FLTFLD_translateMin, e=True, value=_min)
-        cmds.floatField(self.ui_FLTFLD_translateMax, e=True, value=_max)
+        m.floatField(self.ui_FLTFLD_translateMin, e=True, value=_min)
+        m.floatField(self.ui_FLTFLD_translateMax, e=True, value=_max)
 
-        magnitude = cmds.floatField(self.ui_FLTFLD_rotateMagnitude, q=True, value=True)
-        bias = cmds.intSliderGrp(self.ui_INTSLGRP_rotateBias, q=True, value=True)
+        magnitude = m.floatField(self.ui_FLTFLD_rotateMagnitude, q=True, value=True)
+        bias = m.intSliderGrp(self.ui_INTSLGRP_rotateBias, q=True, value=True)
         _min, _max = self.calculateMinMax(magnitude, bias)
-        cmds.floatField(self.ui_FLTFLD_rotateMin, e=True, value=_min)
-        cmds.floatField(self.ui_FLTFLD_rotateMax, e=True, value=_max)
+        m.floatField(self.ui_FLTFLD_rotateMin, e=True, value=_min)
+        m.floatField(self.ui_FLTFLD_rotateMax, e=True, value=_max)
 
-        magnitude = cmds.floatField(self.ui_FLTFLD_scaleMagnitude, q=True, value=True)
-        bias = cmds.intSliderGrp(self.ui_INTSLGRP_scaleBias, q=True, value=True)
+        magnitude = m.floatField(self.ui_FLTFLD_scaleMagnitude, q=True, value=True)
+        bias = m.intSliderGrp(self.ui_INTSLGRP_scaleBias, q=True, value=True)
         _min, _max = self.calculateMinMaxScale(magnitude, bias)
-        cmds.floatField(self.ui_FLTFLD_scaleMin, e=True, value=_min)
-        cmds.floatField(self.ui_FLTFLD_scaleMax, e=True, value=_max)
+        m.floatField(self.ui_FLTFLD_scaleMin, e=True, value=_min)
+        m.floatField(self.ui_FLTFLD_scaleMax, e=True, value=_max)
 
-        useSeed = cmds.checkBox(self.ui_CHK_useSeed, q=True, value=True)
-        cmds.intSliderGrp(self.ui_INTSLGRP_seedValue, e=True, enable=useSeed)
+        useSeed = m.checkBox(self.ui_CHK_useSeed, q=True, value=True)
+        m.intSliderGrp(self.ui_INTSLGRP_seedValue, e=True, enable=useSeed)
 
     def calculateMinMax(self, mag, bias):
 
@@ -412,35 +319,35 @@ class RandomizerUI(object):
         return randomValue
 
     def getSeed(self):
-        if not cmds.checkBox(self.ui_CHK_useSeed, q=True, value=True):
+        if not m.checkBox(self.ui_CHK_useSeed, q=True, value=True):
             return None
         else:
-            return cmds.intSliderGrp(self.ui_INTSLGRP_seedValue, q=True, value=True)
+            return m.intSliderGrp(self.ui_INTSLGRP_seedValue, q=True, value=True)
 
     def getSelectedTransforms(self):
-        return cmds.ls(sl=True, transforms=True)
+        return m.ls(sl=True, transforms=True)
 
     # noinspection PyUnusedLocal
     def ui_resetBias(self, ui_target, *arg):
-        cmds.intSliderGrp(ui_target, edit=True, value=0)
+        m.intSliderGrp(ui_target, edit=True, value=0)
         self.ui_refresh()
 
     # noinspection PyUnusedLocal
     def randomizeTranslate(self, attrs, *arg):
-        mag = cmds.floatField(self.ui_FLTFLD_translateMagnitude, q=True, value=True)
-        bias = cmds.intSliderGrp(self.ui_INTSLGRP_translateBias, q=True, value=True)
+        mag = m.floatField(self.ui_FLTFLD_translateMagnitude, q=True, value=True)
+        bias = m.intSliderGrp(self.ui_INTSLGRP_translateBias, q=True, value=True)
         self.doRandomize(attrs, mag, bias)
 
     # noinspection PyUnusedLocal
     def randomizeRotate(self, attrs, *arg):
-        mag = cmds.floatField(self.ui_FLTFLD_rotateMagnitude, q=True, value=True)
-        bias = cmds.intSliderGrp(self.ui_INTSLGRP_rotateBias, q=True, value=True)
+        mag = m.floatField(self.ui_FLTFLD_rotateMagnitude, q=True, value=True)
+        bias = m.intSliderGrp(self.ui_INTSLGRP_rotateBias, q=True, value=True)
         self.doRandomize(attrs, mag, bias)
 
     # noinspection PyUnusedLocal
     def randomizeScale(self, attrs, *arg):
-        mag = cmds.floatField(self.ui_FLTFLD_scaleMagnitude, q=True, value=True)
-        bias = cmds.intSliderGrp(self.ui_INTSLGRP_scaleBias, q=True, value=True)
+        mag = m.floatField(self.ui_FLTFLD_scaleMagnitude, q=True, value=True)
+        bias = m.intSliderGrp(self.ui_INTSLGRP_scaleBias, q=True, value=True)
         self.doRandomize(attrs, mag, bias)
 
     def doRandomize(self, attrs, mag, bias):
@@ -452,194 +359,156 @@ class RandomizerUI(object):
             for attr in attrs:
 
                 if attr in ['tx', 'ty', 'tz', 'rx', 'ry', 'rz']:
-                    attrValue = cmds.getAttr(obj + '.' + attr)
+                    attrValue = m.getAttr(obj + '.' + attr)
                     _min, _max = self.calculateMinMax(mag, bias)
                     attrValue = random.uniform(_min, _max) + attrValue
-                    cmds.setAttr(obj + '.' + attr, attrValue)
+                    m.setAttr(obj + '.' + attr, attrValue)
 
                 elif attr in ['sx', 'sy', 'sz']:
                     randomValue = self.calculateRandomScale(mag, bias)
-                    attrValue = cmds.getAttr(obj + '.' + attr)
-                    cmds.setAttr(obj + '.' + attr, attrValue * randomValue)
+                    attrValue = m.getAttr(obj + '.' + attr)
+                    m.setAttr(obj + '.' + attr, attrValue * randomValue)
 
                 elif attr in ['uniform']:
                     randomValue = self.calculateRandomScale(mag, bias)
                     for attrIn in ('sx', 'sy', 'sz'):
-                        attrValue = cmds.getAttr(obj + '.' + attrIn)
-                        cmds.setAttr(obj + '.' + attrIn, attrValue * randomValue)
+                        attrValue = m.getAttr(obj + '.' + attrIn)
+                        m.setAttr(obj + '.' + attrIn, attrValue * randomValue)
 
     # noinspection PyUnusedLocal
     def ui_close(self, *args):
         self.ui_saveSettings()
-        if cmds.window(self.winName, q=True, exists=True):
-            cmds.deleteUI(self.winName)
+        if pm.window(WIN_NAME, exists=True):
+            pm.deleteUI(WIN_NAME)
 
     # noinspection PyUnusedLocal
     def ui_showHelp(self, tab, *args):
-        self.winHelpName = "fx_transformRandomizerHelpWin"
-        self.winHelpTitle = self.winTitle + " Help"
+        if pm.window(WIN_HELP_NAME, exists=True):
+            pm.deleteUI(WIN_HELP_NAME)
 
-        # ################ UI Creation ################
-
-        if cmds.window(
-            self.winHelpName,
-            q=True,
-            exists=True
-        ):
-            cmds.deleteUI(self.winHelpName)
-
-        self.window = cmds.window(
-            self.winHelpName,
-            title=self.winHelpTitle,
+        with pm.window(
+            WIN_HELP_NAME,
+            title=WIN_HELP_TITLE,
             maximizeButton=False,
             menuBar=True,
             menuBarVisible=True
-        )
+        ) as self.windowHelp:
 
-        self.ui_LAY_formMainHelp = cmds.formLayout()
+            with pm.formLayout() as self.ui_LAY_formMainHelp:
 
-        self.ui_LAY_tabHelp = cmds.tabLayout(
-            innerMarginWidth=50,
-            innerMarginHeight=50,
-            childResizable=True
-        )
+                with pm.tabLayout(innerMarginWidth=50, innerMarginHeight=50, childResizable=True) as self.ui_LAY_tabHelp:
 
-        # - - - - - - - - - - - - - - - - - - - -
+                    with pm.formLayout() as self.ui_LAY_formHelpMargin:
 
-        self.ui_LAY_formHelpMargin = cmds.formLayout()
+                        with pm.scrollLayout(childResizable=True) as self.ui_LAY_scrollHelp:
 
-        self.ui_LAY_scrollHelp = cmds.scrollLayout(
-            childResizable=True
-        )
+                            pm.formLayout(self.ui_LAY_formHelpMargin, e=True, attachForm=[self.ui_LAY_scrollHelp, 'top', 2])
+                            pm.formLayout(self.ui_LAY_formHelpMargin, e=True, attachForm=[self.ui_LAY_scrollHelp, 'left', 2])
+                            pm.formLayout(self.ui_LAY_formHelpMargin, e=True, attachForm=[self.ui_LAY_scrollHelp, 'right', 2])
+                            pm.formLayout(self.ui_LAY_formHelpMargin, e=True, attachForm=[self.ui_LAY_scrollHelp, 'bottom', 2])
 
-        cmds.formLayout(self.ui_LAY_formHelpMargin, e=True, attachForm=[self.ui_LAY_scrollHelp, 'top', 2])
-        cmds.formLayout(self.ui_LAY_formHelpMargin, e=True, attachForm=[self.ui_LAY_scrollHelp, 'left', 2])
-        cmds.formLayout(self.ui_LAY_formHelpMargin, e=True, attachForm=[self.ui_LAY_scrollHelp, 'right', 2])
-        cmds.formLayout(self.ui_LAY_formHelpMargin, e=True, attachForm=[self.ui_LAY_scrollHelp, 'bottom', 2])
+                            with pm.frameLayout(
+                                label='Help on ' + WIN_TITLE,
+                                collapsable=False,
+                                marginHeight=3,
+                                borderStyle='etchedIn',
+                                borderVisible=True
+                            ):
 
-        cmds.frameLayout(
-            label='Help on ' + self.winTitle,
-            collapsable=False,
-            marginHeight=3,
-            borderStyle='etchedIn',
-            borderVisible=True
-        )
+                                with pm.rowLayout(columnAttach=[1, 'both', 10]):
 
-        cmds.rowLayout(
-            columnAttach=[1, 'both', 10]
-        )
+                                    self.ui_TXT_help = pm.text('Tab1', align='center')
 
-        self.ui_TXT_help = cmds.text('Tab1', align='center')
+                    with pm.formLayout() as self.ui_LAY_formAboutMargin:
 
-        cmds.setParent(self.ui_LAY_tabHelp)
+                        with pm.scrollLayout(childResizable=True) as self.ui_LAY_scrollAbout:
 
-        # - - - - - - - - - - - - - - - - - - - -
+                            pm.formLayout(self.ui_LAY_formAboutMargin, e=True, attachForm=[self.ui_LAY_scrollAbout, 'top', 2])
+                            pm.formLayout(self.ui_LAY_formAboutMargin, e=True, attachForm=[self.ui_LAY_scrollAbout, 'left', 2])
+                            pm.formLayout(self.ui_LAY_formAboutMargin, e=True, attachForm=[self.ui_LAY_scrollAbout, 'right', 2])
+                            pm.formLayout(self.ui_LAY_formAboutMargin, e=True, attachForm=[self.ui_LAY_scrollAbout, 'bottom', 2])
 
-        self.ui_LAY_formAboutMargin = cmds.formLayout()
+                            with pm.frameLayout(
+                                label='About ' + WIN_TITLE,
+                                collapsable=False,
+                                marginHeight=3,
+                                borderStyle='etchedIn',
+                                borderVisible=True
+                            ):
 
-        self.ui_LAY_scrollAbout = cmds.scrollLayout(
-            childResizable=True
-        )
+                                with pm.rowLayout(columnAttach=[1, 'both', 10]):
 
-        cmds.formLayout(self.ui_LAY_formAboutMargin, e=True, attachForm=[self.ui_LAY_scrollAbout, 'top', 2])
-        cmds.formLayout(self.ui_LAY_formAboutMargin, e=True, attachForm=[self.ui_LAY_scrollAbout, 'left', 2])
-        cmds.formLayout(self.ui_LAY_formAboutMargin, e=True, attachForm=[self.ui_LAY_scrollAbout, 'right', 2])
-        cmds.formLayout(self.ui_LAY_formAboutMargin, e=True, attachForm=[self.ui_LAY_scrollAbout, 'bottom', 2])
+                                    self.ui_TXT_about = pm.text('')
 
-        cmds.frameLayout(
-            label='About ' + self.winTitle,
-            collapsable=False,
-            marginHeight=3,
-            borderStyle='etchedIn',
-            borderVisible=True
-        )
+                self.ui_BTN_closeHelp = pm.button(
+                    'Close',
+                    command=lambda x: pm.deleteUI(WIN_HELP_NAME)
+                )
 
-        cmds.rowLayout(
-            columnAttach=[1, 'both', 10]
-        )
+            pm.formLayout(self.ui_LAY_formMainHelp, e=True, attachForm=[self.ui_LAY_tabHelp, 'top', 2])
+            pm.formLayout(self.ui_LAY_formMainHelp, e=True, attachForm=[self.ui_LAY_tabHelp, 'left', 2])
+            pm.formLayout(self.ui_LAY_formMainHelp, e=True, attachForm=[self.ui_LAY_tabHelp, 'right', 2])
+            pm.formLayout(self.ui_LAY_formMainHelp, e=True, attachControl=[self.ui_LAY_tabHelp, 'bottom', 2, self.ui_BTN_closeHelp])
 
-        self.ui_TXT_about = cmds.text('')
+            pm.formLayout(self.ui_LAY_formMainHelp, e=True, attachNone=[self.ui_BTN_closeHelp, 'top'])
+            pm.formLayout(self.ui_LAY_formMainHelp, e=True, attachForm=[self.ui_BTN_closeHelp, 'left', 2])
+            pm.formLayout(self.ui_LAY_formMainHelp, e=True, attachForm=[self.ui_BTN_closeHelp, 'right', 2])
+            pm.formLayout(self.ui_LAY_formMainHelp, e=True, attachForm=[self.ui_BTN_closeHelp, 'bottom', 2])
 
-        cmds.setParent(self.ui_LAY_formMainHelp)
-
-        # - - - - - - - - - - - - - - - - - - - -
-
-        self.ui_BTN_closeHelp = cmds.button(
-            'Close',
-            command=lambda x: cmds.deleteUI(self.winHelpName)
-        )
-
-        # - - - - - Organize Main Form Layout - - - - -
-
-        cmds.formLayout(self.ui_LAY_formMainHelp, e=True, attachForm=[self.ui_LAY_tabHelp, 'top', 2])
-        cmds.formLayout(self.ui_LAY_formMainHelp, e=True, attachForm=[self.ui_LAY_tabHelp, 'left', 2])
-        cmds.formLayout(self.ui_LAY_formMainHelp, e=True, attachForm=[self.ui_LAY_tabHelp, 'right', 2])
-        cmds.formLayout(self.ui_LAY_formMainHelp, e=True,
-                        attachControl=[self.ui_LAY_tabHelp, 'bottom', 2, self.ui_BTN_closeHelp])
-
-        cmds.formLayout(self.ui_LAY_formMainHelp, e=True, attachNone=[self.ui_BTN_closeHelp, 'top'])
-        cmds.formLayout(self.ui_LAY_formMainHelp, e=True, attachForm=[self.ui_BTN_closeHelp, 'left', 2])
-        cmds.formLayout(self.ui_LAY_formMainHelp, e=True, attachForm=[self.ui_BTN_closeHelp, 'right', 2])
-        cmds.formLayout(self.ui_LAY_formMainHelp, e=True, attachForm=[self.ui_BTN_closeHelp, 'bottom', 2])
-
-        # - - - - - - - - - - - - - - - - - - - -
-
-        cmds.tabLayout(
-            self.ui_LAY_tabHelp,
-            edit=True,
-            tabLabel=(
-                (self.ui_LAY_formHelpMargin, 'Help'),
-                (self.ui_LAY_formAboutMargin, 'About')
+            pm.tabLayout(
+                self.ui_LAY_tabHelp,
+                edit=True,
+                tabLabel=(
+                    (self.ui_LAY_formHelpMargin, 'Help'),
+                    (self.ui_LAY_formAboutMargin, 'About')
+                )
             )
-        )
 
-        # - - - - - - - - - - - - - - - - - - - -
+            # - - - - - - - - - - - - - - - - - - - -
 
-        textHelp = """
-This tool randomizes \"Translate\", \"Rotate\" and \"Scale\" attributes of selected objects.
+            textHelp = """
+    This tool randomizes \"Translate\", \"Rotate\" and \"Scale\" attributes of selected objects.
 
-Workflow
-Select objects which transforms you want to randomize. Adjust settings if you want to.
-Press butons \"X\", \"Y\", \"Z\", \"XYZ\", or \"Uniform\" to randomize corresponding attributes.
+    Workflow
+    Select objects which transforms you want to randomize. Adjust settings if you want to.
+    Press butons \"X\", \"Y\", \"Z\", \"XYZ\", or \"Uniform\" to randomize corresponding attributes.
 
-Magnitude
-Maximum random value.
+    Magnitude
+    Maximum random value.
 
-Bias
-Shift randomization to positive or negative value range. The result of this shifting
-is reflected in \"Min\" and \"Max\" fields.
+    Bias
+    Shift randomization to positive or negative value range. The result of this shifting
+    is reflected in \"Min\" and \"Max\" fields.
 
-\"0\" Button
-Resets \"Bias\" to 0
+    \"0\" Button
+    Resets \"Bias\" to 0
 
-Min and Max
-Minimum and maximum possible random values according to current \"Magnitude\" and \"Bias\"
+    Min and Max
+    Minimum and maximum possible random values according to current \"Magnitude\" and \"Bias\"
 
-Seed
-Use Seed value to randomize in fixed random pattern, which is not changing between each randomization.
+    Seed
+    Use Seed value to randomize in fixed random pattern, which is not changing between each randomization.
 
-Reset Settings
-Use \"Edit\" - \"Reset Settings\" to restore defaults
-"""
+    Reset Settings
+    Use \"Edit\" - \"Reset Settings\" to restore defaults
+    """
 
-        textAbout = "\n" + self.winTitle + """
-Programmed by Eugene Davydenko, 2011
+            textAbout = "\n" + WIN_TITLE + """
+    Programmed by Eugene Davydenko, 2011
 
-This script may be freely distributed.
-Modify at your own risk.
+    This script may be freely distributed.
+    Modify at your own risk.
 
-email: etchermail@gmail.com
-"""
+    email: etchermail@gmail.com
+    """
 
-        cmds.text(self.ui_TXT_help, e = True, label = textHelp)
-        cmds.text(self.ui_TXT_about, e = True, label = textAbout)
+            pm.text(self.ui_TXT_help, e=True, label=textHelp)
+            pm.text(self.ui_TXT_about, e=True, label=textAbout)
 
-        cmds.tabLayout(self.ui_LAY_tabHelp, e = True, selectTabIndex = tab)
-        cmds.showWindow()
+            pm.tabLayout(self.ui_LAY_tabHelp, e=True, selectTabIndex=tab)
 
-#######################################################################################################################
-#######################################################################################################################
-#######################################################################################################################
+        self.windowHelp.show()
+
 
 def run():
     RandomizerUI()
