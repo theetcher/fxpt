@@ -177,33 +177,6 @@ class NodeHandle():
         return rd
 
 
-class OptionVarLink():
-    def __init__(self, ovName, defaultValue, getFromControlFunc, setToControlFunc):
-        self.ovName = ovName
-        self.defaultValue = defaultValue
-        self.getFromControlFunc = getFromControlFunc
-        self.setToControlFunc = setToControlFunc
-
-    def init(self):
-        optVars = pm.env.optionVars
-        if self.ovName not in optVars:
-            optVars[self.ovName] = self.defaultValue
-
-    def applyToControl(self):
-        optVars = pm.env.optionVars
-        self.setToControlFunc(optVars[self.ovName])
-
-    def getFromControl(self):
-        optVars = pm.env.optionVars
-        optVars[self.ovName] = self.getFromControlFunc()
-
-    def reset(self):
-        optVars = pm.env.optionVars
-        optVars.pop(self.ovName)
-        self.init()
-        self.applyToControl()
-
-
 class RenameDesc():
     def __init__(self):
         self.action = None
@@ -246,7 +219,6 @@ class RenamerUI():
         self.prefSaver.loadPrefs()
 
     def ui_saveSettings(self):
-        print 'ui_saveSettings()'
         self.prefSaver.savePrefs()
 
     # noinspection PyUnusedLocal
@@ -254,9 +226,6 @@ class RenamerUI():
         self.prefSaver.resetPrefs()
 
     def ui_createUI(self):
-        self.winName = WIN_NAME
-        self.winTitle = WIN_TITLE
-
         if pm.window(WIN_NAME, exists=True):
             pm.deleteUI(WIN_NAME, window=True)
 
