@@ -2,6 +2,8 @@
 PrefSaver simplifies your process of saving UI component's various states (control values, selected items,
 collapse states for Tree controls, active tabs for Tab controls and so on) and serializing them to different
 destinations (binary files, json text files, Maya optionVars).
+It is suitable for standalone applications and for apps run within Maya.
+
 Currently supported UI frameworks are:
     PyQt,
     PySide,
@@ -30,7 +32,7 @@ Typical usage:
             return myVariable
         def variableSetter(arg):
             myVariable = arg
-        self.prefSaver.addVariable('myVariable', variableGetter, variableSetter, defaultVariableValue)
+        myPrefSaver.addVariable('myVariable', variableGetter, variableSetter, defaultVariableValue)
 
 5. Use your PrefSaver:
     To save control states:
