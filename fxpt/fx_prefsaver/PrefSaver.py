@@ -18,7 +18,7 @@ Typical usage:
 
 2. Create PrefSaver instance:
     from fxpt.fx_prefsaver import PrefSaver
-    myPrefSaver = PrefSaver(mySerializer)
+    myPrefSaver = PrefSaver.PrefSaver(mySerializer)
 
 3. Add some controls to PrefSaver providing their types and OPTIONAL default value:
     myPrefSaver.addControl(myPyQtLineEdit, PrefSaver.UIType.PYQTLineEdit)
