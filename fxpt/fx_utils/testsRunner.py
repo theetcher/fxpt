@@ -22,7 +22,7 @@ def run(testDir, rDir=None):
         cov.html_report(directory=rDir)
 
 
-def runMaya(mayaExe, mayaAppDir, testDir, rDir=None):
+def runMaya(mayaExe, appDir, testDir, rDir=None):
     os.chdir(os.path.dirname(mayaExe))
     testDir = testDir.replace('\\', '/')
     if rDir:
@@ -33,7 +33,7 @@ def runMaya(mayaExe, mayaAppDir, testDir, rDir=None):
         'python(\"from fxpt.fx_utils import testsRunner; testsRunner.run(\'{}\', \'{}\')\")'.format(testDir, rDir)
     ]
     env = os.environ.copy()
-    env['MAYA_APP_DIR'] = mayaAppDir
+    env['MAYA_APP_DIR'] = appDir
     process = subprocess.Popen(cmd, env=env)
     process.wait()
 
