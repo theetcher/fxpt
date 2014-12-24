@@ -21,7 +21,7 @@ class TexManagerTestMain(unittest.TestCase):
     @patch(patchName('fx_textureManager.run'))
     def test_mock(self, mock_func):
         mock_func.return_value = True
-        self.assertTrue(mock_func())
+        self.assertTrue(fx_textureManager.run())
 
     @skipInNoUIMode()
     def test_only_in_ui_mode(self):
