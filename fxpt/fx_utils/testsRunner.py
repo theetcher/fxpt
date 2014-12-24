@@ -9,12 +9,12 @@ def run(testDir, rDir=None):
         appendCoverageToSysPath()
         # noinspection PyUnresolvedReferences
         from fxpt.side_utils.coverage import coverage
-        cov = coverage()
+        cov = coverage(config_file=testDir + '\\coverage.cfg')
         cov.start()
 
     testLoader = unittest.TestLoader()
     suite = testLoader.discover(testDir)
-    unittest.TextTestRunner().run(suite)
+    unittest.TextTestRunner(verbosity=2).run(suite)
 
     if rDir:
         # noinspection PyUnboundLocalVariable
@@ -34,7 +34,7 @@ def runMaya(mayaExe, appDir, testDir, rDir=None):
     ]
     env = os.environ.copy()
     env['MAYA_APP_DIR'] = appDir
-    process = subprocess.Popen(cmd, env=env)
+    process = subprocess.Popen(cmd, stderr=subprocess.STDOUT, env=env)
     process.wait()
 
 

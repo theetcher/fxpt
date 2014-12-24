@@ -24,10 +24,6 @@
 #     mainWin.raise_()
 
 
-def someFunc():
-    return None
-
-
 def run():
     pass
 
