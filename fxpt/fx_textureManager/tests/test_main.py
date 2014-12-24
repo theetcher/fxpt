@@ -1,7 +1,7 @@
 import unittest
 import types
-from fxpt.side_utils.mock import patch  # pragma: no cover
-from fxpt.fx_textureManager.tests import comTests
+from fxpt.side_utils.mock import patch
+from fxpt.fx_textureManager.tests.comTests import getUIAvailable, skipInNoUIMode
 
 from fxpt.fx_textureManager import fx_textureManager
 
@@ -23,9 +23,9 @@ class TexManagerTestMain(unittest.TestCase):
         mock_func.return_value = True
         self.assertTrue(mock_func())
 
-    @comTests.skipInNoUIMode()
+    @skipInNoUIMode()
     def test_only_in_ui_mode(self):
-        self.assertTrue(comTests.getUIAvailable())
+        self.assertTrue(getUIAvailable())
 
 
 
