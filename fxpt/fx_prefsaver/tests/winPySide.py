@@ -1,6 +1,3 @@
-# noinspection PyUnresolvedReferences
-# import fxptToSysPath
-
 import sys
 
 from PySide import QtGui
