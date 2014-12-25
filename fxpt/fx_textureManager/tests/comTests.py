@@ -1,16 +1,10 @@
 import unittest
-
-_uiAvailable = False
-
-
-def setUIAvailable():
-    global _uiAvailable
-    _uiAvailable = True
+import maya.cmds as m
 
 
-def getUIAvailable():
-    return _uiAvailable
+def isMayaInBatchMode():
+    return bool(m.about(batch=True))
 
 
-def skipInNoUIMode():
-    return unittest.skipUnless(getUIAvailable(), 'Skipped in no UI mode.')
+def skipInBatchMode():
+    return unittest.skipIf(isMayaInBatchMode(), 'Skipped in batch mode.')

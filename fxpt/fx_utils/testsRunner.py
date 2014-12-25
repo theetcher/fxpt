@@ -22,6 +22,11 @@ def run(testDir, rDir=None):
         cov.html_report(directory=rDir)
 
 
+def getFxptRoot():
+    scriptDir = os.path.dirname(__file__).replace('\\', '/')
+    return '/'.join(scriptDir.split('/')[:-2])
+
+
 def runMaya(mayaExe, appDir, testDir, rDir=None):
     os.chdir(os.path.dirname(mayaExe))
     testDir = testDir.replace('\\', '/')
@@ -30,10 +35,16 @@ def runMaya(mayaExe, appDir, testDir, rDir=None):
     cmd = [
         mayaExe,
         '-command',
-        'python(\"from fxpt.fx_utils import testsRunner; testsRunner.run(\'{}\', \'{}\')\")'.format(testDir, rDir)
+        'python(\"from fxpt.fx_utils import testsRunner; testsRunner.run(\'{0}\', \'{1}\')\")'.format(testDir, rDir)
     ]
+
     env = os.environ.copy()
     env['MAYA_APP_DIR'] = appDir
+    # if i will not set up PYTHONPATH to fxpt root
+    # it will be a problem with running tests in Maya in UI mode with Qt stuff FROM PYCHARM.
+    #TODO: find out which path actually is a problem.
+    env['PYTHONPATH'] = getFxptRoot()
+
     process = subprocess.Popen(cmd, stderr=subprocess.STDOUT, env=env)
     process.wait()
 
