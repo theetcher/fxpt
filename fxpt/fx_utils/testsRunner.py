@@ -14,15 +14,33 @@ appendCoverageToSysPath()
 from fxpt.side_utils import coverage
 
 
-def getCoverageCfg(testDir):
-    coverageCfgName = 'coverage.cfg'
-    specificCfg = '{}/{}'.format(testDir, coverageCfgName)
-    globalCfg = '{}/{}'.format(os.path.dirname(coverage.__file__), coverageCfgName)
+class CoverageCtx():
+    def __init__(self, testDir, rDir):
+        self.testDir = testDir
+        self.rDir = rDir
 
-    if os.path.exists(specificCfg):
-        return specificCfg
-    else:
-        return globalCfg
+    def __enter__(self):
+        if self.rDir:
+            # noinspection PyUnresolvedReferences
+            self.cov = coverage.coverage(config_file=self.getCoverageCfg(self.testDir))
+            self.cov.start()
+
+    # noinspection PyUnusedLocal
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.rDir:
+            self.cov.stop()
+            self.cov.html_report(directory=self.rDir)
+
+    # noinspection PyMethodMayBeStatic
+    def getCoverageCfg(self, testDir):
+        coverageCfgName = 'coverage.cfg'
+        specificCfg = '{}/{}'.format(testDir, coverageCfgName)
+        globalCfg = '{}/{}'.format(os.path.dirname(coverage.__file__), coverageCfgName)
+
+        if os.path.exists(specificCfg):
+            return specificCfg
+        else:
+            return globalCfg
 
 
 def getFxptRoot():
@@ -31,21 +49,10 @@ def getFxptRoot():
 
 
 def run(testDir, rDir=None):
-    if rDir:
-        appendCoverageToSysPath()
-        # cov = coverage(config_file=testDir + '\\coverage.cfg')
-        # noinspection PyUnresolvedReferences
-        cov = coverage.coverage(config_file=getCoverageCfg(testDir))
-        cov.start()
-
-    testLoader = unittest.TestLoader()
-    suite = testLoader.discover(testDir)
-    unittest.TextTestRunner(verbosity=2).run(suite)
-
-    if rDir:
-        # noinspection PyUnboundLocalVariable
-        cov.stop()
-        cov.html_report(directory=rDir)
+    with CoverageCtx(testDir, rDir):
+        testLoader = unittest.TestLoader()
+        suite = testLoader.discover(testDir)
+        unittest.TextTestRunner(verbosity=2).run(suite)
 
 
 def runMaya(mayaExe, appDir, testDir, rDir=None):
