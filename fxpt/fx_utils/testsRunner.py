@@ -55,13 +55,13 @@ def run(testDir, rDir=None):
         unittest.TextTestRunner(verbosity=2).run(suite)
 
 
-def runMaya(mayaExe, appDir, testDir, rDir=None):
-    os.chdir(os.path.dirname(mayaExe))
+def runMaya(mExe, appDir, testDir, rDir=None):
+    os.chdir(os.path.dirname(mExe))
     testDir = testDir.replace('\\', '/')
     if rDir:
         rDir = rDir.replace('\\', '/')
     cmd = [
-        mayaExe,
+        mExe,
         '-command',
         'python(\"from fxpt.fx_utils import testsRunner; testsRunner.run(\'{0}\', \'{1}\')\")'.format(testDir, rDir)
     ]
@@ -79,11 +79,11 @@ def runMaya(mayaExe, appDir, testDir, rDir=None):
 
 def usageAndExit():
     print '--- testsRunner Command Line Help ---'
-    print 'testsRunner [-h|--help] -t|--testsDir testsDir [-r|--resultsDir resultsDir] [-m|--mayaBatchExe mayaBatchExe -a|--mayaAppDir mayaAppDir]'
+    print 'testsRunner [-h|--help] -t|--testsDir testsDir [-r|--resultsDir resultsDir] [-m|--mayaExe mayaExe -a|--mayaAppDir mayaAppDir]'
     print '-h or --help          display this help'
     print '-t or --testsDir      root directory for tests search'
     print '-r or --resultsDir    code coverage results directory'
-    print '-m or --mayaBatchExe  mayabatch.exe path'
+    print '-m or --mayaExe       maya.exe or mayabatch.exe path'
     print '-a or --mayaAppDir    MAYA_APP_DIR path'
     sys.exit()
 
@@ -93,11 +93,11 @@ if __name__ == '__main__':
 
     opts = None
     try:
-        opts, unusedParsedArgs = getopt.getopt(sys.argv[1:], 'ht:r:m:a:', ['help', 'testsDir=', 'resultsDir=', 'mayaBatchExe=', 'mayaAppDir='])
+        opts, unusedParsedArgs = getopt.getopt(sys.argv[1:], 'ht:r:m:a:', ['help', 'testsDir=', 'resultsDir=', 'mayaExe=', 'mayaAppDir='])
     except getopt.GetoptError:
         usageAndExit()
 
-    testsDir = resultsDir = mayaBatchExe = mayaAppDir = None
+    testsDir = resultsDir = mayaExe = mayaAppDir = None
     for opt, arg in opts:
         if opt in ('-h', '--help'):
             usageAndExit()
@@ -105,8 +105,8 @@ if __name__ == '__main__':
             testsDir = arg
         elif opt in ('-r', '--resultsDir'):
             resultsDir = arg
-        elif opt in ('-m', '--mayaBatchExe'):
-            mayaBatchExe = arg
+        elif opt in ('-m', '--mayaExe'):
+            mayaExe = arg
         elif opt in ('-a', '--mayaAppDir'):
             mayaAppDir = arg
 
@@ -121,12 +121,12 @@ if __name__ == '__main__':
         print 'Results dir does not exists: {}'.format(resultsDir)
         usageAndExit()
 
-    if mayaBatchExe is None:
+    if mayaExe is None:
         run(testsDir, resultsDir)
         sys.exit()
 
-    if (mayaBatchExe is not None) and (not os.path.exists(mayaBatchExe)):
-        print 'Cannot find mayabatch.exe: {}'.format(mayaBatchExe)
+    if (mayaExe is not None) and (not os.path.exists(mayaExe)):
+        print 'Cannot find maya.exe or mayabatch.exe: {}'.format(mayaExe)
         usageAndExit()
 
     if mayaAppDir is None:
@@ -137,4 +137,4 @@ if __name__ == '__main__':
         print 'MAYA_APP_DIR does not exists: {}'.format(mayaAppDir)
         usageAndExit()
 
-    runMaya(mayaBatchExe, mayaAppDir, testsDir, resultsDir)
+    runMaya(mayaExe, mayaAppDir, testsDir, resultsDir)
