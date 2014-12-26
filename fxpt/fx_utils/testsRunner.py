@@ -4,12 +4,38 @@ import unittest
 import subprocess
 
 
+def appendCoverageToSysPath():
+    scriptDirSplitted = os.path.dirname(__file__).replace('\\', '/').split('/')
+    coveragePath = '/'.join(scriptDirSplitted[:-1] + ['side_utils'])
+    if not coveragePath in sys.path:
+        sys.path.append(coveragePath)
+
+appendCoverageToSysPath()
+from fxpt.side_utils import coverage
+
+
+def getCoverageCfg(testDir):
+    coverageCfgName = 'coverage.cfg'
+    specificCfg = '{}/{}'.format(testDir, coverageCfgName)
+    globalCfg = '{}/{}'.format(os.path.dirname(coverage.__file__), coverageCfgName)
+
+    if os.path.exists(specificCfg):
+        return specificCfg
+    else:
+        return globalCfg
+
+
+def getFxptRoot():
+    scriptDir = os.path.dirname(__file__).replace('\\', '/')
+    return '/'.join(scriptDir.split('/')[:-2])
+
+
 def run(testDir, rDir=None):
     if rDir:
         appendCoverageToSysPath()
+        # cov = coverage(config_file=testDir + '\\coverage.cfg')
         # noinspection PyUnresolvedReferences
-        from fxpt.side_utils.coverage import coverage
-        cov = coverage(config_file=testDir + '\\coverage.cfg')
+        cov = coverage.coverage(config_file=getCoverageCfg(testDir))
         cov.start()
 
     testLoader = unittest.TestLoader()
@@ -20,11 +46,6 @@ def run(testDir, rDir=None):
         # noinspection PyUnboundLocalVariable
         cov.stop()
         cov.html_report(directory=rDir)
-
-
-def getFxptRoot():
-    scriptDir = os.path.dirname(__file__).replace('\\', '/')
-    return '/'.join(scriptDir.split('/')[:-2])
 
 
 def runMaya(mayaExe, appDir, testDir, rDir=None):
@@ -58,13 +79,6 @@ def usageAndExit():
     print '-m or --mayaBatchExe  mayabatch.exe path'
     print '-a or --mayaAppDir    MAYA_APP_DIR path'
     sys.exit()
-
-
-def appendCoverageToSysPath():
-    scriptDirSplitted = os.path.dirname(__file__).replace('\\', '/').split('/')
-    coveragePath = '/'.join(scriptDirSplitted[:-1] + ['side_utils'])
-    if not coveragePath in sys.path:
-        sys.path.append(coveragePath)
 
 
 if __name__ == '__main__':
