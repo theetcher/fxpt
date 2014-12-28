@@ -1,0 +1,11 @@
+<RCC>
+  <qresource>
+    <file>icons/replace.png</file>
+    <file>icons/filterActive.png</file>
+    <file>icons/filterDisabled.png</file>
+    <file>icons/exit.png</file>
+    <file>icons/retarget.png</file>
+    <file>icons/refresh.png</file>
+    <file>icons/copy.png</file>
+  </qresource>
+</RCC>
