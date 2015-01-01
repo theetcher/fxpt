@@ -1,3 +1,5 @@
+import os
+
 import maya.cmds as m
 from fxpt.fx_utils.utils import pathToSlash
 
@@ -30,3 +32,6 @@ class TexNode(object):
             return '//{}'.format(slashedPath[2:].replace('//', '/'))
         else:
             return slashedPath.replace('//', '/')
+
+    def fileExists(self):
+        return os.path.exists(os.path.expandvars(self.getAttrValue()))
