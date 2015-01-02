@@ -12,3 +12,7 @@ def pathToBackslash(path):
 def getFxptLocation():
     scriptDir = pathToSlash(os.path.dirname(__file__))
     return '/'.join(scriptDir.split('/')[:-2])
+
+
+def getFxUtilsDir():
+    return pathToSlash(os.path.dirname(__file__))

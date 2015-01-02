@@ -1,5 +1,5 @@
 import re
-from PySide import QtCore
+from PySide import QtCore, QtGui
 
 from Com import *
 

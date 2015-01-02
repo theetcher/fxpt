@@ -1,25 +1,16 @@
-import os
-from PySide import QtGui
 import maya.OpenMaya as om
 import maya.cmds as m
+
+from fxpt.fx_utils.qtFontCreator import QtFontCreator
+from fxpt.fx_utils.utils import getFxUtilsDir
 
 OPT_VAR_PREFIX = 'fx_search_'
 OPT_VAR_CURRENT_TAB = OPT_VAR_PREFIX + 'currentTabName'
 
-SCRIPT_DIR = os.path.dirname(__file__)
+qtFontCreator = QtFontCreator(getFxUtilsDir() + '/proggy_tiny_sz.ttf', 12)
+FONT_MONOSPACE_QFONT = qtFontCreator.getQFont()
+FONT_MONOSPACE_LETTER_SIZE = qtFontCreator.getLetterSize('i')
 
-FONT_MONOSPACE_FILENAME = SCRIPT_DIR + '\\proggy_tiny_sz.ttf'
-FONT_MONOSPACE_SIZE = 12
-
-
-def fontFromFile(filename):
-    fontID = QtGui.QFontDatabase.addApplicationFont(filename)
-    fontFamily = QtGui.QFontDatabase.applicationFontFamilies(fontID)[0]
-    return QtGui.QFont(fontFamily, FONT_MONOSPACE_SIZE)
-
-
-FONT_MONOSPACE_QFONT = fontFromFile(FONT_MONOSPACE_FILENAME)
-FONT_MONOSPACE_LETTER_SIZE = QtGui.QFontMetrics(FONT_MONOSPACE_QFONT).width('i')
 
 CHECKED_BUTTON_STYLE = 'QPushButton:checked {color: #000000; background-color: #ffae00}'
 

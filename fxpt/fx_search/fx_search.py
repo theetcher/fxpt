@@ -2,7 +2,7 @@
 
 from fxpt.side_utils import pyperclip
 
-from PySide import QtCore
+from PySide import QtCore, QtGui
 import shiboken
 
 import maya.OpenMayaUI as omui
