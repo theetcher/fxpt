@@ -11,6 +11,9 @@ class TexNode(object):
         self.setNode(node)
         self.setAttr(attr)
 
+    def __str__(self):
+        return 'TexNode: {}'.format(self.getFullAttrName())
+
     def setNode(self, node):
         self.node = node
 

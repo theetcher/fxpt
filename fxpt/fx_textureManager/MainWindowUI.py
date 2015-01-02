@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindowUI.ui'
 #
-# Created: Sat Dec 27 21:41:47 2014
+# Created: Fri Jan 02 16:20:47 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,7 +38,19 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.uiLED_filter)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.uiTBL_textures = QtGui.QTableView(self.centralwidget)
+        self.uiTBL_textures.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.uiTBL_textures.setAlternatingRowColors(True)
+        self.uiTBL_textures.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.uiTBL_textures.setTextElideMode(QtCore.Qt.ElideLeft)
+        self.uiTBL_textures.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
+        self.uiTBL_textures.setShowGrid(False)
+        self.uiTBL_textures.setSortingEnabled(True)
         self.uiTBL_textures.setObjectName("uiTBL_textures")
+        self.uiTBL_textures.horizontalHeader().setSortIndicatorShown(True)
+        self.uiTBL_textures.horizontalHeader().setStretchLastSection(True)
+        self.uiTBL_textures.verticalHeader().setVisible(False)
+        self.uiTBL_textures.verticalHeader().setDefaultSectionSize(15)
+        self.uiTBL_textures.verticalHeader().setMinimumSectionSize(15)
         self.verticalLayout.addWidget(self.uiTBL_textures)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
