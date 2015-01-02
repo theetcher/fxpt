@@ -52,7 +52,7 @@ class UIType(object):
     PYSIDEWindow = _getTypeID(TypesPYSIDE)
     PYSIDELineEdit = _getTypeID(TypesPYSIDE)
     PYSIDECheckBox = _getTypeID(TypesPYSIDE)
-    PYSIDECheckAction = _getTypeID(TypesPYQT)
+    PYSIDECheckAction = _getTypeID(TypesPYSIDE)
     PYSIDESpinBox = _getTypeID(TypesPYSIDE)
     PYSIDEDoubleSpinBox = _getTypeID(TypesPYSIDE)
     PYSIDETimeEdit = _getTypeID(TypesPYSIDE)
