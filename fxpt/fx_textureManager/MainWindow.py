@@ -1,7 +1,12 @@
+import os
+import maya.cmds as m
 from PySide import QtCore, QtGui
 
+from fxpt.side_utils import pyperclip
 from fxpt.fx_utils.qtFontCreator import QtFontCreator
 from fxpt.fx_utils.utils import getFxUtilsDir
+
+from fxpt.fx_textureManager.com import getShadingGroups
 
 from fxpt.fx_textureManager.MainWindowUI import Ui_MainWindow
 from fxpt.fx_textureManager.Harvesters import MayaSceneHarvester
@@ -34,6 +39,9 @@ FILE_EXISTS_STRINGS = {
 
 OPT_VAR_NAME = 'fx_textureManager_prefs'
 
+#TODO: number of selected in status bar
+#TODO!: "show only unique" mode instead of "delete duplicates in clipboard"
+
 
 class TexManagerUI(QtGui.QMainWindow):
 
@@ -50,6 +58,12 @@ class TexManagerUI(QtGui.QMainWindow):
 
         self.createContextMenu()
 
+        self.connect(
+            self.ui.uiTBL_textures.selectionModel(),
+            QtCore.SIGNAL('selectionChanged(QItemSelection, QItemSelection)'),
+            self.onTableSelectionChanged
+        )
+
         self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
         self.ui_initSettings()
         self.ui_loadSettings()
@@ -58,6 +72,8 @@ class TexManagerUI(QtGui.QMainWindow):
         self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (100, 100, 900, 600))
         self.prefSaver.addControl(self.ui.uiTBL_textures, PrefSaver.UIType.PYSIDETableView)
         self.prefSaver.addControl(self.ui.uiLED_filter, PrefSaver.UIType.PYSIDELineEdit, '')
+        self.prefSaver.addControl(self.ui.uiACT_selectAssigned, PrefSaver.UIType.PYSIDECheckAction, False)
+        self.prefSaver.addControl(self.ui.uiACT_removeDuplicatesFromClipboard, PrefSaver.UIType.PYSIDECheckAction, True)
 
     def ui_loadSettings(self):
         self.prefSaver.loadPrefs()
@@ -71,6 +87,14 @@ class TexManagerUI(QtGui.QMainWindow):
     def createContextMenu(self):
         self.ui.uiTBL_textures.addAction(self.ui.uiACT_copyFullPath)
         self.ui.uiTBL_textures.addAction(self.ui.uiACT_copyFilename)
+
+        separator = QtGui.QAction(self)
+        separator.setSeparator(True)
+        self.ui.uiTBL_textures.addAction(separator)
+
+        self.ui.uiTBL_textures.addAction(self.ui.uiACT_selectAll)
+        self.ui.uiTBL_textures.addAction(self.ui.uiACT_selectInvert)
+        self.ui.uiTBL_textures.addAction(self.ui.uiACT_selectNone)
 
         separator = QtGui.QAction(self)
         separator.setSeparator(True)
@@ -131,6 +155,46 @@ class TexManagerUI(QtGui.QMainWindow):
             columnMaxLength = min(max(stringLengths), TABLE_MAX_COLUMN_SIZE[col])
             table.horizontalHeader().resizeSection(col, columnMaxLength * FONT_MONOSPACE_LETTER_SIZE + TABLE_COLUMN_RIGHT_OFFSET)
 
+    def getRemoveDuplicatesOption(self):
+        return self.ui.uiACT_removeDuplicatesFromClipboard.isChecked()
+
+    def getSelectAssignedOption(self):
+        return self.ui.uiACT_selectAssigned.isChecked()
+
+    def getSelectedTexNodes(self):
+        selectedIndexes = self.ui.uiTBL_textures.selectionModel().selectedRows(COL_IDX_ATTR)
+        return sorted([index.data(role=QtCore.Qt.UserRole) for index in selectedIndexes])
+
+    def getSelectedFullPaths(self):
+        selectedIndexes = self.ui.uiTBL_textures.selectionModel().selectedRows(COL_IDX_FILENAME)
+        return sorted([str(index.data()) for index in selectedIndexes])
+
+    def getSelectedFilenames(self):
+        return sorted([os.path.basename(fp) for fp in self.getSelectedFullPaths()])
+
+    # noinspection PyUnusedLocal
+    def onTableSelectionChanged(self, *args):
+        if self.getSelectAssignedOption():
+            self.selectAssigned()
+        else:
+            self.selectTextureNodes()
+
+    def selectTextureNodes(self):
+        nodes = [tn.getNode() for tn in self.getSelectedTexNodes()]
+        if nodes:
+            m.select(nodes, r=True)
+        else:
+            m.select(cl=True)
+
+    def selectAssigned(self):
+        sgToSelect = []
+        for node in [tn.getNode() for tn in self.getSelectedTexNodes()]:
+            sgToSelect.extend(getShadingGroups(node, set()))
+        if sgToSelect:
+            m.select(sgToSelect)
+        else:
+            m.select(cl=True)
+
     def onFilterTextChanged(self):
         header = self.ui.uiTBL_textures.horizontalHeader()
         sortedSection = header.sortIndicatorSection()
@@ -155,10 +219,32 @@ class TexManagerUI(QtGui.QMainWindow):
         self.prefSaver.loadPrefs()
 
     def onCopyFullPathTriggered(self):
-        print 'onCopyFullPathTriggered()'
+        paths = filter(bool, self.getSelectedFullPaths())
+        self.putCopyListToClipboard(paths)
 
     def onCopyFilenameTriggered(self):
-        print 'onCopyFilenameTriggered()'
+        filenames = filter(bool, self.getSelectedFilenames())
+        self.putCopyListToClipboard(filenames)
+
+    def putCopyListToClipboard(self, l):
+        if self.getRemoveDuplicatesOption():
+            l = sorted(set(l))
+        pyperclip.setcb('\n'.join(l))
+
+    def onSelectAllTriggered(self):
+        self.ui.uiTBL_textures.selectAll()
+
+    def onSelectInvertTriggered(self):
+        model = self.ui.uiTBL_textures.model()
+        selectionModel = self.ui.uiTBL_textures.selectionModel()
+
+        topLeftIndex = model.index(0, 0)
+        bottomRightIndex = model.index(model.rowCount() - 1, model.columnCount() - 1)
+        itemSelection = QtGui.QItemSelection(topLeftIndex, bottomRightIndex)
+        selectionModel.select(itemSelection, QtGui.QItemSelectionModel.Toggle)
+
+    def onSelectNoneTriggered(self):
+        self.ui.uiTBL_textures.clearSelection()
 
     def onCopyMoveTriggered(self):
         print 'onCopyMoveTriggered()'

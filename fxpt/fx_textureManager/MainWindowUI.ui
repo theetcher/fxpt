@@ -150,9 +150,19 @@
      <string>Options</string>
     </property>
     <addaction name="uiACT_selectAssigned"/>
+    <addaction name="uiACT_removeDuplicatesFromClipboard"/>
+   </widget>
+   <widget class="QMenu" name="menuSelect">
+    <property name="title">
+     <string>Select</string>
+    </property>
+    <addaction name="uiACT_selectAll"/>
+    <addaction name="uiACT_selectInvert"/>
+    <addaction name="uiACT_selectNone"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuSelect"/>
    <addaction name="menuActions"/>
    <addaction name="menuOptions"/>
   </widget>
@@ -263,6 +273,29 @@
    </property>
    <property name="text">
     <string>Select Assigned</string>
+   </property>
+  </action>
+  <action name="uiACT_removeDuplicatesFromClipboard">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Remove Duplicates From Clipboard</string>
+   </property>
+  </action>
+  <action name="uiACT_selectAll">
+   <property name="text">
+    <string>Select All</string>
+   </property>
+  </action>
+  <action name="uiACT_selectNone">
+   <property name="text">
+    <string>Select None</string>
+   </property>
+  </action>
+  <action name="uiACT_selectInvert">
+   <property name="text">
+    <string>Select Invert</string>
    </property>
   </action>
  </widget>
@@ -414,6 +447,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>uiACT_selectAll</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onSelectAllTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiACT_selectInvert</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onSelectInvertTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiACT_selectNone</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onSelectNoneTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onRefreshTriggered()</slot>
@@ -424,5 +505,8 @@
   <slot>onSearchReplaceTriggered()</slot>
   <slot>onFilterTextChanged()</slot>
   <slot>onFilterButtonToggled()</slot>
+  <slot>onSelectAllTriggered()</slot>
+  <slot>onSelectInvertTriggered()</slot>
+  <slot>onSelectNoneTriggered()</slot>
  </slots>
 </ui>

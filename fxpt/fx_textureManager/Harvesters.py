@@ -10,6 +10,10 @@ class MayaSceneHarvester(object):
         'file': [
             'fileTextureName'
         ],
+        'lambert': [
+            'textureFile',
+            'textureFile1'
+        ],
         'transform': [
             'texture',
             'texture1',

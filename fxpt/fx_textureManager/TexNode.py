@@ -30,7 +30,7 @@ class TexNode(object):
         return '{}.{}'.format(self.node, self.attr)
 
     def getAttrValue(self):
-        slashedPath = pathToSlash(m.getAttr(self.getFullAttrName()))
+        slashedPath = pathToSlash(m.getAttr(self.getFullAttrName()).strip())
         if slashedPath.startswith('//'):
             return '//{}'.format(slashedPath[2:].replace('//', '/'))
         else:

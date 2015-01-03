@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindowUI.ui'
 #
-# Created: Sat Jan 03 17:37:08 2015
+# Created: Sat Jan 03 21:46:25 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -65,6 +65,8 @@ class Ui_MainWindow(object):
         self.menuEdit.setObjectName("menuEdit")
         self.menuOptions = QtGui.QMenu(self.menubar)
         self.menuOptions.setObjectName("menuOptions")
+        self.menuSelect = QtGui.QMenu(self.menubar)
+        self.menuSelect.setObjectName("menuSelect")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -113,6 +115,15 @@ class Ui_MainWindow(object):
         self.uiACT_selectAssigned = QtGui.QAction(MainWindow)
         self.uiACT_selectAssigned.setCheckable(True)
         self.uiACT_selectAssigned.setObjectName("uiACT_selectAssigned")
+        self.uiACT_removeDuplicatesFromClipboard = QtGui.QAction(MainWindow)
+        self.uiACT_removeDuplicatesFromClipboard.setCheckable(True)
+        self.uiACT_removeDuplicatesFromClipboard.setObjectName("uiACT_removeDuplicatesFromClipboard")
+        self.uiACT_selectAll = QtGui.QAction(MainWindow)
+        self.uiACT_selectAll.setObjectName("uiACT_selectAll")
+        self.uiACT_selectNone = QtGui.QAction(MainWindow)
+        self.uiACT_selectNone.setObjectName("uiACT_selectNone")
+        self.uiACT_selectInvert = QtGui.QAction(MainWindow)
+        self.uiACT_selectInvert.setObjectName("uiACT_selectInvert")
         self.menuFile.addAction(self.uiACT_refresh)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.uiACT_exit)
@@ -122,8 +133,13 @@ class Ui_MainWindow(object):
         self.menuEdit.addAction(self.uiACT_copyFullPath)
         self.menuEdit.addAction(self.uiACT_copyFilename)
         self.menuOptions.addAction(self.uiACT_selectAssigned)
+        self.menuOptions.addAction(self.uiACT_removeDuplicatesFromClipboard)
+        self.menuSelect.addAction(self.uiACT_selectAll)
+        self.menuSelect.addAction(self.uiACT_selectInvert)
+        self.menuSelect.addAction(self.uiACT_selectNone)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
+        self.menubar.addAction(self.menuSelect.menuAction())
         self.menubar.addAction(self.menuActions.menuAction())
         self.menubar.addAction(self.menuOptions.menuAction())
         self.toolBar.addAction(self.uiACT_refresh)
@@ -145,6 +161,9 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.uiACT_searchReplace, QtCore.SIGNAL("triggered()"), MainWindow.onSearchReplaceTriggered)
         QtCore.QObject.connect(self.uiLED_filter, QtCore.SIGNAL("textChanged(QString)"), MainWindow.onFilterTextChanged)
         QtCore.QObject.connect(self.uiBTN_filter, QtCore.SIGNAL("toggled(bool)"), MainWindow.onFilterButtonToggled)
+        QtCore.QObject.connect(self.uiACT_selectAll, QtCore.SIGNAL("triggered()"), MainWindow.onSelectAllTriggered)
+        QtCore.QObject.connect(self.uiACT_selectInvert, QtCore.SIGNAL("triggered()"), MainWindow.onSelectInvertTriggered)
+        QtCore.QObject.connect(self.uiACT_selectNone, QtCore.SIGNAL("triggered()"), MainWindow.onSelectNoneTriggered)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -154,6 +173,7 @@ class Ui_MainWindow(object):
         self.menuActions.setTitle(QtGui.QApplication.translate("MainWindow", "Actions", None, QtGui.QApplication.UnicodeUTF8))
         self.menuEdit.setTitle(QtGui.QApplication.translate("MainWindow", "Edit", None, QtGui.QApplication.UnicodeUTF8))
         self.menuOptions.setTitle(QtGui.QApplication.translate("MainWindow", "Options", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuSelect.setTitle(QtGui.QApplication.translate("MainWindow", "Select", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_refresh.setText(QtGui.QApplication.translate("MainWindow", "Refresh", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_refresh.setToolTip(QtGui.QApplication.translate("MainWindow", "Refresh", None, QtGui.QApplication.UnicodeUTF8))
@@ -165,5 +185,9 @@ class Ui_MainWindow(object):
         self.uiACT_copyFullPath.setText(QtGui.QApplication.translate("MainWindow", "Copy Full Path", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_copyFilename.setText(QtGui.QApplication.translate("MainWindow", "Copy Filename", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_selectAssigned.setText(QtGui.QApplication.translate("MainWindow", "Select Assigned", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiACT_removeDuplicatesFromClipboard.setText(QtGui.QApplication.translate("MainWindow", "Remove Duplicates From Clipboard", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiACT_selectAll.setText(QtGui.QApplication.translate("MainWindow", "Select All", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiACT_selectNone.setText(QtGui.QApplication.translate("MainWindow", "Select None", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiACT_selectInvert.setText(QtGui.QApplication.translate("MainWindow", "Select Invert", None, QtGui.QApplication.UnicodeUTF8))
 
 import resources_rc
