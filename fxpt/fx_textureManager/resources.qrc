@@ -1,5 +1,7 @@
 <RCC>
   <qresource>
+    <file>icons/copy2.png</file>
+    <file>icons/copyMove.png</file>
     <file>icons/replace.png</file>
     <file>icons/filterActive.png</file>
     <file>icons/filterDisabled.png</file>

@@ -70,6 +70,9 @@
     </item>
     <item>
      <widget class="QTableView" name="uiTBL_textures">
+      <property name="contextMenuPolicy">
+       <enum>Qt::ActionsContextMenu</enum>
+      </property>
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>
       </property>
@@ -123,7 +126,7 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="uiACT_Refresh"/>
+    <addaction name="uiACT_refresh"/>
     <addaction name="separator"/>
     <addaction name="uiACT_exit"/>
    </widget>
@@ -135,8 +138,23 @@
     <addaction name="uiACT_retarget"/>
     <addaction name="uiACT_searchReplace"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="uiACT_copyFullPath"/>
+    <addaction name="uiACT_copyFilename"/>
+   </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="uiACT_selectAssigned"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
    <addaction name="menuActions"/>
+   <addaction name="menuOptions"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -161,13 +179,16 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="uiACT_Refresh"/>
+   <addaction name="uiACT_refresh"/>
+   <addaction name="separator"/>
+   <addaction name="uiACT_copyFullPath"/>
+   <addaction name="uiACT_copyFilename"/>
    <addaction name="separator"/>
    <addaction name="uiACT_copyMove"/>
    <addaction name="uiACT_retarget"/>
    <addaction name="uiACT_searchReplace"/>
   </widget>
-  <action name="uiACT_Refresh">
+  <action name="uiACT_refresh">
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/refresh.png</normaloff>:/icons/refresh.png</iconset>
@@ -177,6 +198,9 @@
    </property>
    <property name="toolTip">
     <string>Refresh</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
    </property>
   </action>
   <action name="uiACT_exit">
@@ -200,7 +224,7 @@
   <action name="uiACT_copyMove">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/icons/copy.png</normaloff>:/icons/copy.png</iconset>
+     <normaloff>:/icons/copyMove.png</normaloff>:/icons/copyMove.png</iconset>
    </property>
    <property name="text">
     <string>Copy/Move</string>
@@ -215,9 +239,190 @@
     <string>Search and Replace</string>
    </property>
   </action>
+  <action name="uiACT_copyFullPath">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/copy.png</normaloff>:/icons/copy.png</iconset>
+   </property>
+   <property name="text">
+    <string>Copy Full Path</string>
+   </property>
+  </action>
+  <action name="uiACT_copyFilename">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/copy2.png</normaloff>:/icons/copy2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Copy Filename</string>
+   </property>
+  </action>
+  <action name="uiACT_selectAssigned">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Select Assigned</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="resources.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>uiACT_exit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiACT_refresh</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onRefreshTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiACT_copyFullPath</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onCopyFullPathTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiACT_copyFilename</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onCopyFilenameTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiACT_copyMove</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onCopyMoveTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiACT_retarget</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onRetargetTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiACT_searchReplace</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onSearchReplaceTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiLED_filter</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onFilterTextChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>414</x>
+     <y>73</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiBTN_filter</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onFilterButtonToggled()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>18</x>
+     <y>73</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onRefreshTriggered()</slot>
+  <slot>onCopyFilenameTriggered()</slot>
+  <slot>onCopyFullPathTriggered()</slot>
+  <slot>onCopyMoveTriggered()</slot>
+  <slot>onRetargetTriggered()</slot>
+  <slot>onSearchReplaceTriggered()</slot>
+  <slot>onFilterTextChanged()</slot>
+  <slot>onFilterButtonToggled()</slot>
+ </slots>
 </ui>
