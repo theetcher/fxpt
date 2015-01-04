@@ -291,8 +291,8 @@ class PrefSaver(object):
     def savePrefs(self):
         self.serializer.save(self.gatherPrefs())
 
-    def loadPrefs(self):
-        self.applyPrefs(self.serializer.load())
+    def loadPrefs(self, control=None):
+        self.applyPrefs(self.serializer.load(), control=control)
 
     def resetPrefs(self):
         self.applyPrefs({})
@@ -304,8 +304,11 @@ class PrefSaver(object):
             prefDataGlobal[controller.getControlName()] = controller.getPrefData()
         return prefDataGlobal
 
-    def applyPrefs(self, prefDataGlobal):
+    def applyPrefs(self, prefDataGlobal, control=None):
         for controller in self.controllers:
-            controller.data2Ctrl(prefDataGlobal.get(controller.getControlName(), None))
-
+            if control is None:
+                controller.data2Ctrl(prefDataGlobal.get(controller.getControlName(), None))
+            else:
+                if controller.control == control:
+                    controller.data2Ctrl(prefDataGlobal.get(controller.getControlName(), None))
 
