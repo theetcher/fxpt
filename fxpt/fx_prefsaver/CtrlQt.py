@@ -269,10 +269,12 @@ class SelectorBase(object):
     def __init__(self, ctrl):
         self.ctrl = ctrl
         self.qt = self.ctrl.qt
-        self.model = self.ctrl.control.model()
 
     def getSelectionModel(self):
         return self.ctrl.control.selectionModel()
+
+    def getModel(self):
+        return self.ctrl.control.model()
 
 
 class RangeSelector(SelectorBase):
@@ -291,6 +293,10 @@ class RangeSelector(SelectorBase):
         self.ctrl.setAttr(Attr.SelectedRanges, ' '.join(selectedRanges))
 
     def loadRanges(self):
+        model = self.getModel()
+        if model is None:
+            return
+
         selectionModel = self.getSelectionModel()
         if selectionModel is None:
             return
@@ -301,8 +307,8 @@ class RangeSelector(SelectorBase):
         if rangesPrefData:
             for rangeStr in rangesPrefData.split():
                 top, left, bottom, right = [int(x) for x in rangeStr.split(',')]
-                topLeft = self.model.index(top, left)
-                bottomRight = self.model.index(bottom, right)
+                topLeft = model.index(top, left)
+                bottomRight = model.index(bottom, right)
                 itemSelection.merge(self.qt.QtGui.QItemSelection(topLeft, bottomRight), self.qt.QtGui.QItemSelectionModel.SelectCurrent)
 
             selectionModel.select(itemSelection, self.ctrl.qt.QtGui.QItemSelectionModel.Select)
@@ -318,11 +324,15 @@ class TreeIndexSelector(SelectorBase):
         self.expandedItems = []
 
     def processIndexChildren(self, parentIndex, parentPath):
+        model = self.getModel()
+        if model is None:
+            return
+
         selectionModel = self.getSelectionModel()
 
-        for r in xrange(self.model.rowCount(parentIndex)):
-            for c in range(self.model.columnCount(parentIndex)):
-                childIndex = self.model.index(r, c, parentIndex)
+        for r in xrange(model.rowCount(parentIndex)):
+            for c in range(model.columnCount(parentIndex)):
+                childIndex = model.index(r, c, parentIndex)
                 childPath = parentPath + '|{},{}'.format(childIndex.row(), childIndex.column())
 
                 if selectionModel.isSelected(childIndex):
@@ -333,10 +343,14 @@ class TreeIndexSelector(SelectorBase):
                 self.processIndexChildren(childIndex, childPath)
 
     def getIndexByPath(self, indexPath):
+        model = self.getModel()
+        if model is None:
+            return
+
         parentIndex = self.getRootIndex()
         for indexStr in indexPath[1:].split('|'):
             row, column = [int(x) for x in indexStr.split(',')]
-            childIndex = self.model.index(row, column, parentIndex)
+            childIndex = model.index(row, column, parentIndex)
             if not childIndex.isValid():
                 return
             parentIndex = childIndex
