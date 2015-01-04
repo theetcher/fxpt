@@ -149,8 +149,8 @@
     <property name="title">
      <string>Options</string>
     </property>
+    <addaction name="uiACT_collapseRepetitions"/>
     <addaction name="uiACT_selectAssigned"/>
-    <addaction name="uiACT_removeDuplicatesFromClipboard"/>
    </widget>
    <widget class="QMenu" name="menuSelect">
     <property name="title">
@@ -190,6 +190,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="uiACT_refresh"/>
+   <addaction name="separator"/>
+   <addaction name="uiACT_collapseRepetitions"/>
    <addaction name="separator"/>
    <addaction name="uiACT_copyFullPath"/>
    <addaction name="uiACT_copyFilename"/>
@@ -275,12 +277,16 @@
     <string>Select Assigned</string>
    </property>
   </action>
-  <action name="uiACT_removeDuplicatesFromClipboard">
+  <action name="uiACT_collapseRepetitions">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/collapse.png</normaloff>:/icons/collapse.png</iconset>
+   </property>
    <property name="text">
-    <string>Remove Duplicates From Clipboard</string>
+    <string>Collapse Repetitions</string>
    </property>
   </action>
   <action name="uiACT_selectAll">
@@ -299,6 +305,11 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>uiTBL_textures</tabstop>
+  <tabstop>uiLED_filter</tabstop>
+  <tabstop>uiBTN_filter</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>
@@ -495,6 +506,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>uiACT_collapseRepetitions</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onCollapseRepetitionsToggled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onRefreshTriggered()</slot>
@@ -508,5 +535,6 @@
   <slot>onSelectAllTriggered()</slot>
   <slot>onSelectInvertTriggered()</slot>
   <slot>onSelectNoneTriggered()</slot>
+  <slot>onCollapseRepetitionsToggled(bool)</slot>
  </slots>
 </ui>

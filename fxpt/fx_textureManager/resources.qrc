@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>icons/collapse.png</file>
     <file>icons/copy2.png</file>
     <file>icons/copyMove.png</file>
     <file>icons/replace.png</file>

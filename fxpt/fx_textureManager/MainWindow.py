@@ -13,6 +13,8 @@ from fxpt.fx_textureManager.Harvesters import MayaSceneHarvester
 
 from fxpt.fx_prefsaver import PrefSaver, Serializers
 
+# from fxpt.fx_utils.watch import watch
+
 qtFontCreator = QtFontCreator(getFxUtilsDir() + '/proggy_tiny_sz.ttf', 12)
 FONT_MONOSPACE_QFONT = qtFontCreator.getQFont()
 FONT_MONOSPACE_LETTER_SIZE = qtFontCreator.getLetterSize('i')
@@ -36,11 +38,14 @@ FILE_EXISTS_STRINGS = {
     True: (' Yes', QtGui.QColor(140, 220, 75))
 }
 
-
 OPT_VAR_NAME = 'fx_textureManager_prefs'
+MULTIPLE_STRING = '...multiple...'
 
+#TODO!: test on huge data
+#TODO!: feature to copy and then paste existed filename to selected records
+#TODO!: disable any selection when you change selection in table ??? (3 options: select assigned, select node, select none)
+#TODO: when select assigned changed, need to preform selection procedure by new method. currently doing nothing
 #TODO: number of selected in status bar
-#TODO!: "show only unique" mode instead of "delete duplicates in clipboard"
 
 
 class TexManagerUI(QtGui.QMainWindow):
@@ -51,10 +56,21 @@ class TexManagerUI(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
+        self.ui_initSettings()
+
+        self.setUpdatesAllowed(False)
+        self.ui_loadSettings(self.ui.uiACT_collapseRepetitions)
+        self.setUpdatesAllowed(True)
+
+        # self.ui.toolBar.setStyleSheet(TOOLBAR_BUTTON_STYLE)
+
         self.harvester = MayaSceneHarvester()
 
         self.initModels()
         self.fillTable()
+
+        self.ui_loadSettings()
 
         self.createContextMenu()
 
@@ -64,25 +80,28 @@ class TexManagerUI(QtGui.QMainWindow):
             self.onTableSelectionChanged
         )
 
-        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
-        self.ui_initSettings()
-        self.ui_loadSettings()
-
     def ui_initSettings(self):
         self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (100, 100, 900, 600))
         self.prefSaver.addControl(self.ui.uiTBL_textures, PrefSaver.UIType.PYSIDETableView)
         self.prefSaver.addControl(self.ui.uiLED_filter, PrefSaver.UIType.PYSIDELineEdit, '')
         self.prefSaver.addControl(self.ui.uiACT_selectAssigned, PrefSaver.UIType.PYSIDECheckAction, False)
-        self.prefSaver.addControl(self.ui.uiACT_removeDuplicatesFromClipboard, PrefSaver.UIType.PYSIDECheckAction, True)
+        self.prefSaver.addControl(self.ui.uiACT_collapseRepetitions, PrefSaver.UIType.PYSIDECheckAction, False)
 
-    def ui_loadSettings(self):
-        self.prefSaver.loadPrefs()
+    def ui_loadSettings(self, control=None):
+        self.prefSaver.loadPrefs(control=control)
 
     def ui_saveSettings(self):
         self.prefSaver.savePrefs()
 
     def ui_resetSettings(self):
         self.prefSaver.resetPrefs()
+
+    # noinspection PyAttributeOutsideInit
+    def setUpdatesAllowed(self, state):
+        self.updatesAllowed = state
+
+    def getUpdatesAllowed(self):
+        return self.updatesAllowed
 
     def createContextMenu(self):
         self.ui.uiTBL_textures.addAction(self.ui.uiACT_copyFullPath)
@@ -113,31 +132,72 @@ class TexManagerUI(QtGui.QMainWindow):
     def setFilterWildcard(self, wildcard):
         self.filterModel.setFilterRegExp(QtCore.QRegExp(wildcard, QtCore.Qt.CaseInsensitive, QtCore.QRegExp.Wildcard))
 
-    def fillTable(self):
+    #TODO: existsCache to separate method
 
+    def prepareData(self, texNodes):
+        if not texNodes:
+            return []
+
+        res = []
+        existsCache = {}
+        for tn in texNodes:
+            filename = tn.getAttrValue()
+            if filename not in existsCache:
+                existsCache[filename] = tn.fileExists()
+            res.append((existsCache[filename], filename, tn.getFullAttrName(), [tn]))
+        return res
+
+    def prepareDataCollapsed(self, texNodes):
+        if not texNodes:
+            return []
+
+        d = {}
+        for tn in texNodes:
+            filename = tn.getAttrValue()
+            if filename not in d:
+                d[filename] = [tn]
+            else:
+                d[filename].append(tn)
+
+        res = []
+        existsCache = {}
+        for filename, tns in d.iteritems():
+            if filename not in existsCache:
+                existsCache[filename] = tns[0].fileExists()
+
+            fullAttrName = tns[0].getFullAttrName() if len(tns) == 1 else MULTIPLE_STRING
+            res.append((existsCache[filename], filename, fullAttrName, tns))
+
+        return res
+
+    def fillTable(self):
         self.model.clear()
         self.model.setRowCount(0)
         self.model.setColumnCount(len(TABLE_COLUMN_NAMES))
         for i, col in enumerate(TABLE_COLUMN_NAMES):
             self.model.setHeaderData(i, QtCore.Qt.Horizontal, col, QtCore.Qt.DisplayRole)
 
-        texNodes = self.harvester.getTexNodes()
+        if self.getCollapseRepetitionsOption():
+            data = self.prepareDataCollapsed(self.harvester.getTexNodes())
+        else:
+            data = self.prepareData(self.harvester.getTexNodes())
 
-        self.model.insertRows(0, len(texNodes))
+        self.model.insertRows(0, len(data))
 
-        for i, tn in enumerate(texNodes):
+        for i, dataItem in enumerate(data):
+
+            exists, filename, attr, tns = dataItem
 
             modelIndex = self.model.index(i, COL_IDX_EXIST)
-            fileExists = tn.fileExists()
-            self.model.setData(modelIndex, FILE_EXISTS_STRINGS[fileExists][0])
-            self.model.setData(modelIndex, FILE_EXISTS_STRINGS[fileExists][1], QtCore.Qt.ForegroundRole)
+            self.model.setData(modelIndex, FILE_EXISTS_STRINGS[exists][0])
+            self.model.setData(modelIndex, FILE_EXISTS_STRINGS[exists][1], QtCore.Qt.ForegroundRole)
 
             modelIndex = self.model.index(i, COL_IDX_FILENAME)
-            self.model.setData(modelIndex, tn.getAttrValue())
+            self.model.setData(modelIndex, filename)
 
             modelIndex = self.model.index(i, COL_IDX_ATTR)
-            self.model.setData(modelIndex, tn.getFullAttrName())
-            self.model.setData(modelIndex, tn, QtCore.Qt.UserRole)
+            self.model.setData(modelIndex, attr)
+            self.model.setData(modelIndex, tns, QtCore.Qt.UserRole)
 
         self.setTableProps()
 
@@ -155,15 +215,17 @@ class TexManagerUI(QtGui.QMainWindow):
             columnMaxLength = min(max(stringLengths), TABLE_MAX_COLUMN_SIZE[col])
             table.horizontalHeader().resizeSection(col, columnMaxLength * FONT_MONOSPACE_LETTER_SIZE + TABLE_COLUMN_RIGHT_OFFSET)
 
-    def getRemoveDuplicatesOption(self):
-        return self.ui.uiACT_removeDuplicatesFromClipboard.isChecked()
+    def getCollapseRepetitionsOption(self):
+        return self.ui.uiACT_collapseRepetitions.isChecked()
 
     def getSelectAssignedOption(self):
         return self.ui.uiACT_selectAssigned.isChecked()
 
     def getSelectedTexNodes(self):
-        selectedIndexes = self.ui.uiTBL_textures.selectionModel().selectedRows(COL_IDX_ATTR)
-        return sorted([index.data(role=QtCore.Qt.UserRole) for index in selectedIndexes])
+        tns = []
+        for index in self.ui.uiTBL_textures.selectionModel().selectedRows(COL_IDX_ATTR):
+            tns.extend(index.data(role=QtCore.Qt.UserRole))
+        return sorted(tns)
 
     def getSelectedFullPaths(self):
         selectedIndexes = self.ui.uiTBL_textures.selectionModel().selectedRows(COL_IDX_FILENAME)
@@ -195,10 +257,24 @@ class TexManagerUI(QtGui.QMainWindow):
         else:
             m.select(cl=True)
 
-    def onFilterTextChanged(self):
+    def uiRefresh(self):
+        sortingInfo = self.getSortingInfo()
+
+        self.fillTable()
+        self.onFilterTextChanged()
+
+        self.setSorting(sortingInfo)
+
+    def getSortingInfo(self):
         header = self.ui.uiTBL_textures.horizontalHeader()
-        sortedSection = header.sortIndicatorSection()
-        sortingOrder = header.sortIndicatorOrder()
+        return header.sortIndicatorSection(), header.sortIndicatorOrder()
+
+    def setSorting(self, sortingInfo):
+        section, order = sortingInfo
+        self.ui.uiTBL_textures.sortByColumn(section, order)
+
+    def onFilterTextChanged(self):
+        sortingInfo = self.getSortingInfo()
 
         wildcard = self.ui.uiLED_filter.text()
         self.setFilterWildcard(wildcard)
@@ -206,17 +282,14 @@ class TexManagerUI(QtGui.QMainWindow):
         self.ui.uiBTN_filter.setEnabled(state)
         self.ui.uiBTN_filter.setChecked(state)
 
-        self.ui.uiTBL_textures.sortByColumn(sortedSection, sortingOrder)
+        self.setSorting(sortingInfo)
 
     def onFilterButtonToggled(self, state):
         if not state:
             self.ui.uiLED_filter.clear()
 
     def onRefreshTriggered(self):
-        self.prefSaver.savePrefs()
-        self.fillTable()
-        self.onFilterTextChanged()
-        self.prefSaver.loadPrefs()
+        self.uiRefresh()
 
     def onCopyFullPathTriggered(self):
         paths = filter(bool, self.getSelectedFullPaths())
@@ -226,9 +299,8 @@ class TexManagerUI(QtGui.QMainWindow):
         filenames = filter(bool, self.getSelectedFilenames())
         self.putCopyListToClipboard(filenames)
 
+    # noinspection PyMethodMayBeStatic
     def putCopyListToClipboard(self, l):
-        if self.getRemoveDuplicatesOption():
-            l = sorted(set(l))
         pyperclip.setcb('\n'.join(l))
 
     def onSelectAllTriggered(self):
@@ -245,6 +317,12 @@ class TexManagerUI(QtGui.QMainWindow):
 
     def onSelectNoneTriggered(self):
         self.ui.uiTBL_textures.clearSelection()
+
+    # noinspection PyUnusedLocal
+    def onCollapseRepetitionsToggled(self, state):
+        if self.getUpdatesAllowed():
+            self.uiRefresh()
+        # self.ui.uiTBL_textures.clearSelection()
 
     def onCopyMoveTriggered(self):
         print 'onCopyMoveTriggered()'

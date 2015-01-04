@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindowUI.ui'
 #
-# Created: Sat Jan 03 21:46:25 2015
+# Created: Sun Jan 04 15:34:43 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -115,9 +115,12 @@ class Ui_MainWindow(object):
         self.uiACT_selectAssigned = QtGui.QAction(MainWindow)
         self.uiACT_selectAssigned.setCheckable(True)
         self.uiACT_selectAssigned.setObjectName("uiACT_selectAssigned")
-        self.uiACT_removeDuplicatesFromClipboard = QtGui.QAction(MainWindow)
-        self.uiACT_removeDuplicatesFromClipboard.setCheckable(True)
-        self.uiACT_removeDuplicatesFromClipboard.setObjectName("uiACT_removeDuplicatesFromClipboard")
+        self.uiACT_collapseRepetitions = QtGui.QAction(MainWindow)
+        self.uiACT_collapseRepetitions.setCheckable(True)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/icons/collapse.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.uiACT_collapseRepetitions.setIcon(icon8)
+        self.uiACT_collapseRepetitions.setObjectName("uiACT_collapseRepetitions")
         self.uiACT_selectAll = QtGui.QAction(MainWindow)
         self.uiACT_selectAll.setObjectName("uiACT_selectAll")
         self.uiACT_selectNone = QtGui.QAction(MainWindow)
@@ -132,8 +135,8 @@ class Ui_MainWindow(object):
         self.menuActions.addAction(self.uiACT_searchReplace)
         self.menuEdit.addAction(self.uiACT_copyFullPath)
         self.menuEdit.addAction(self.uiACT_copyFilename)
+        self.menuOptions.addAction(self.uiACT_collapseRepetitions)
         self.menuOptions.addAction(self.uiACT_selectAssigned)
-        self.menuOptions.addAction(self.uiACT_removeDuplicatesFromClipboard)
         self.menuSelect.addAction(self.uiACT_selectAll)
         self.menuSelect.addAction(self.uiACT_selectInvert)
         self.menuSelect.addAction(self.uiACT_selectNone)
@@ -143,6 +146,8 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuActions.menuAction())
         self.menubar.addAction(self.menuOptions.menuAction())
         self.toolBar.addAction(self.uiACT_refresh)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.uiACT_collapseRepetitions)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.uiACT_copyFullPath)
         self.toolBar.addAction(self.uiACT_copyFilename)
@@ -164,7 +169,10 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.uiACT_selectAll, QtCore.SIGNAL("triggered()"), MainWindow.onSelectAllTriggered)
         QtCore.QObject.connect(self.uiACT_selectInvert, QtCore.SIGNAL("triggered()"), MainWindow.onSelectInvertTriggered)
         QtCore.QObject.connect(self.uiACT_selectNone, QtCore.SIGNAL("triggered()"), MainWindow.onSelectNoneTriggered)
+        QtCore.QObject.connect(self.uiACT_collapseRepetitions, QtCore.SIGNAL("toggled(bool)"), MainWindow.onCollapseRepetitionsToggled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setTabOrder(self.uiTBL_textures, self.uiLED_filter)
+        MainWindow.setTabOrder(self.uiLED_filter, self.uiBTN_filter)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Texture Manager", None, QtGui.QApplication.UnicodeUTF8))
@@ -185,7 +193,7 @@ class Ui_MainWindow(object):
         self.uiACT_copyFullPath.setText(QtGui.QApplication.translate("MainWindow", "Copy Full Path", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_copyFilename.setText(QtGui.QApplication.translate("MainWindow", "Copy Filename", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_selectAssigned.setText(QtGui.QApplication.translate("MainWindow", "Select Assigned", None, QtGui.QApplication.UnicodeUTF8))
-        self.uiACT_removeDuplicatesFromClipboard.setText(QtGui.QApplication.translate("MainWindow", "Remove Duplicates From Clipboard", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiACT_collapseRepetitions.setText(QtGui.QApplication.translate("MainWindow", "Collapse Repetitions", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_selectAll.setText(QtGui.QApplication.translate("MainWindow", "Select All", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_selectNone.setText(QtGui.QApplication.translate("MainWindow", "Select None", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_selectInvert.setText(QtGui.QApplication.translate("MainWindow", "Select Invert", None, QtGui.QApplication.UnicodeUTF8))
