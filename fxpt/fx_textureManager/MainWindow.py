@@ -10,8 +10,11 @@ from fxpt.fx_textureManager.com import getShadingGroups
 
 from fxpt.fx_textureManager.MainWindowUI import Ui_MainWindow
 from fxpt.fx_textureManager.Harvesters import MayaSceneHarvester
-
+from fxpt.fx_textureManager.Coordinators import CoordinatorMayaUI
 from fxpt.fx_prefsaver import PrefSaver, Serializers
+
+from fxpt.fx_textureManager.SearchReplaceDialog import SearchReplaceDialog
+
 
 # from fxpt.fx_utils.watch import watch
 
@@ -43,7 +46,7 @@ MULTIPLE_STRING = '...multiple...'
 
 #TODO!: test on huge data
 #TODO!: feature to copy and then paste existed filename to selected records
-#TODO: update enable/disable states of controls
+#TODO: edit filename in table. get new filename from edit cell and then apply ProcPaste
 
 
 class TexManagerUI(QtGui.QMainWindow):
@@ -54,6 +57,7 @@ class TexManagerUI(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.coordinator = CoordinatorMayaUI()
         self.clipboard = None
 
         uiAGR_selectionBehaviour = QtGui.QActionGroup(self)
@@ -61,7 +65,10 @@ class TexManagerUI(QtGui.QMainWindow):
         self.ui.uiACT_selectTextureNode.setActionGroup(uiAGR_selectionBehaviour)
         self.ui.uiACT_selectAssigned.setActionGroup(uiAGR_selectionBehaviour)
 
-        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
+        self.searchReplaceDlg = SearchReplaceDialog(self)
+
+        self.createContextMenu()
+
         self.ui_initSettings()
 
         self.setUpdatesAllowed(False)
@@ -77,8 +84,6 @@ class TexManagerUI(QtGui.QMainWindow):
 
         self.ui_loadSettings()
 
-        self.createContextMenu()
-
         self.connect(
             self.ui.uiTBL_textures.selectionModel(),
             QtCore.SIGNAL('selectionChanged(QItemSelection, QItemSelection)'),
@@ -88,7 +93,10 @@ class TexManagerUI(QtGui.QMainWindow):
         self.displayStatusBarInfo()
         self.updateUiStates()
 
+    # noinspection PyAttributeOutsideInit
     def ui_initSettings(self):
+        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
+
         self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (100, 100, 900, 600))
         self.prefSaver.addControl(self.ui.uiTBL_textures, PrefSaver.UIType.PYSIDETableView)
         self.prefSaver.addControl(self.ui.uiLED_filter, PrefSaver.UIType.PYSIDELineEdit, '')
@@ -97,6 +105,10 @@ class TexManagerUI(QtGui.QMainWindow):
         self.prefSaver.addControl(self.ui.uiACT_selectNothing, PrefSaver.UIType.PYSIDECheckAction, True)
         self.prefSaver.addControl(self.ui.uiACT_selectTextureNode, PrefSaver.UIType.PYSIDECheckAction, False)
         self.prefSaver.addControl(self.ui.uiACT_selectAssigned, PrefSaver.UIType.PYSIDECheckAction, False)
+
+        self.prefSaver.addControl(self.searchReplaceDlg, PrefSaver.UIType.PYSIDEWindow, (200, 200, 600, 100))
+        self.prefSaver.addControl(self.searchReplaceDlg.ui.uiLED_search, PrefSaver.UIType.PYSIDELineEdit, '')
+        self.prefSaver.addControl(self.searchReplaceDlg.ui.uiLED_replace, PrefSaver.UIType.PYSIDELineEdit, '')
 
     def ui_loadSettings(self, control=None):
         self.prefSaver.loadPrefs(control=control)
@@ -115,6 +127,13 @@ class TexManagerUI(QtGui.QMainWindow):
         return self.updatesAllowed
 
     def createContextMenu(self):
+        self.ui.uiTBL_textures.addAction(self.ui.uiACT_copy)
+        self.ui.uiTBL_textures.addAction(self.ui.uiACT_paste)
+
+        separator = QtGui.QAction(self)
+        separator.setSeparator(True)
+        self.ui.uiTBL_textures.addAction(separator)
+
         self.ui.uiTBL_textures.addAction(self.ui.uiACT_copyFullPath)
         self.ui.uiTBL_textures.addAction(self.ui.uiACT_copyFilename)
 
@@ -231,12 +250,12 @@ class TexManagerUI(QtGui.QMainWindow):
 
     def getSelectedTexNodes(self):
         tns = []
-        for index in self.ui.uiTBL_textures.selectionModel().selectedRows(COL_IDX_ATTR):
+        for index in self.getSelectedIndexes(COL_IDX_ATTR):
             tns.extend(index.data(role=QtCore.Qt.UserRole))
         return sorted(tns)
 
     def getSelectedFullPaths(self):
-        selectedIndexes = self.ui.uiTBL_textures.selectionModel().selectedRows(COL_IDX_FILENAME)
+        selectedIndexes = self.getSelectedIndexes(COL_IDX_FILENAME)
         return sorted([str(index.data()) for index in selectedIndexes])
 
     def getSelectedFilenames(self):
@@ -258,11 +277,15 @@ class TexManagerUI(QtGui.QMainWindow):
         self.updateUiStates()
         self.displayStatusBarInfo()
 
+    def getSelectedIndexes(self, column):
+        return self.ui.uiTBL_textures.selectionModel().selectedRows(column)
+
     def updateUiStates(self):
-        somethingSelected = bool(self.ui.uiTBL_textures.selectionModel().selectedRows(COL_IDX_FILENAME))
+        somethingSelected = bool(self.getSelectedIndexes(COL_IDX_FILENAME))
+        onlyOneItemSelected = bool(len(self.getSelectedIndexes(COL_IDX_FILENAME)) == 1)
         clipboardIsNotEmpty = self.clipboard is not None
 
-        self.ui.uiACT_copy.setEnabled(somethingSelected)
+        self.ui.uiACT_copy.setEnabled(onlyOneItemSelected)
         self.ui.uiACT_paste.setEnabled(clipboardIsNotEmpty and somethingSelected)
 
         self.ui.uiACT_copyFullPath.setEnabled(somethingSelected)
@@ -273,7 +296,7 @@ class TexManagerUI(QtGui.QMainWindow):
         self.ui.uiACT_searchReplace.setEnabled(somethingSelected)
 
     def displayStatusBarInfo(self):
-        selectedItemsCount = len(self.ui.uiTBL_textures.selectionModel().selectedRows(COL_IDX_FILENAME))
+        selectedItemsCount = len(self.getSelectedIndexes(COL_IDX_FILENAME))
         if selectedItemsCount:
             self.ui.statusbar.showMessage('{} item(s) selected.'.format(selectedItemsCount))
         else:
@@ -302,6 +325,7 @@ class TexManagerUI(QtGui.QMainWindow):
         self.onFilterTextChanged()
 
         self.setSorting(sortingInfo)
+        self.updateUiStates()
 
     def getSortingInfo(self):
         header = self.ui.uiTBL_textures.horizontalHeader()
@@ -366,6 +390,14 @@ class TexManagerUI(QtGui.QMainWindow):
         if state:
             self.onTableSelectionChanged()
 
+    def onCopyTriggered(self):
+        self.clipboard = self.getSelectedFullPaths()[0]
+        self.updateUiStates()
+
+    def onPasteTriggered(self):
+        self.coordinator.processPaste(self.getSelectedTexNodes(), self.clipboard)
+        self.uiRefresh()
+
     def onCopyMoveTriggered(self):
         print 'onCopyMoveTriggered()'
 
@@ -373,7 +405,16 @@ class TexManagerUI(QtGui.QMainWindow):
         print 'onRetargetTriggered()'
 
     def onSearchReplaceTriggered(self):
-        print 'onSearchReplaceTriggered()'
+        #TODO!: need a case sensitive option
+        if self.searchReplaceDlg.exec_() == QtGui.QDialog.Accepted:
+            self.ui_saveSettings()
+            searchStr, replaceStr = self.searchReplaceDlg.getSearchReplaceStrings()
+            self.coordinator.processSearchAndReplace(
+                self.getSelectedTexNodes(),
+                searchStr,
+                replaceStr
+            )
+            self.uiRefresh()
 
     def closeEvent(self, event):
         self.ui_saveSettings()

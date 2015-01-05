@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindowUI.ui'
 #
-# Created: Mon Jan 05 17:48:32 2015
+# Created: Mon Jan 05 20:38:15 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -197,6 +197,8 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.uiACT_collapseRepetitions, QtCore.SIGNAL("toggled(bool)"), MainWindow.onCollapseRepetitionsToggled)
         QtCore.QObject.connect(self.uiACT_selectTextureNode, QtCore.SIGNAL("toggled(bool)"), MainWindow.onChangeSelectionBehaviour)
         QtCore.QObject.connect(self.uiACT_selectAssigned, QtCore.SIGNAL("toggled(bool)"), MainWindow.onChangeSelectionBehaviour)
+        QtCore.QObject.connect(self.uiACT_copy, QtCore.SIGNAL("triggered()"), MainWindow.onCopyTriggered)
+        QtCore.QObject.connect(self.uiACT_paste, QtCore.SIGNAL("triggered()"), MainWindow.onPasteTriggered)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.uiTBL_textures, self.uiLED_filter)
         MainWindow.setTabOrder(self.uiLED_filter, self.uiBTN_filter)

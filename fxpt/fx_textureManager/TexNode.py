@@ -36,5 +36,8 @@ class TexNode(object):
         else:
             return slashedPath.replace('//', '/')
 
+    def setAttrValue(self, value):
+        m.setAttr(self.getFullAttrName(), value, typ='string')
+
     def fileExists(self):
         return os.path.exists(os.path.expandvars(self.getAttrValue()))

@@ -597,6 +597,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>uiACT_copy</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onCopyTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiACT_paste</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onPasteTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onRefreshTriggered()</slot>
@@ -612,5 +644,7 @@
   <slot>onSelectNoneTriggered()</slot>
   <slot>onCollapseRepetitionsToggled(bool)</slot>
   <slot>onChangeSelectionBehaviour(bool)</slot>
+  <slot>onCopyTriggered()</slot>
+  <slot>onPasteTriggered()</slot>
  </slots>
 </ui>
