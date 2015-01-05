@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindowUI.ui'
 #
-# Created: Mon Jan 05 16:19:09 2015
+# Created: Mon Jan 05 17:48:32 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -104,7 +104,7 @@ class Ui_MainWindow(object):
         self.uiACT_searchReplace.setObjectName("uiACT_searchReplace")
         self.uiACT_copyFullPath = QtGui.QAction(MainWindow)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/icons/copy.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon6.addPixmap(QtGui.QPixmap(":/icons/copy1.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiACT_copyFullPath.setIcon(icon6)
         self.uiACT_copyFullPath.setObjectName("uiACT_copyFullPath")
         self.uiACT_copyFilename = QtGui.QAction(MainWindow)
@@ -133,12 +133,25 @@ class Ui_MainWindow(object):
         self.uiACT_selectNothing = QtGui.QAction(MainWindow)
         self.uiACT_selectNothing.setCheckable(True)
         self.uiACT_selectNothing.setObjectName("uiACT_selectNothing")
+        self.uiACT_copy = QtGui.QAction(MainWindow)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/icons/copy.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.uiACT_copy.setIcon(icon9)
+        self.uiACT_copy.setObjectName("uiACT_copy")
+        self.uiACT_paste = QtGui.QAction(MainWindow)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(":/icons/paste.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.uiACT_paste.setIcon(icon10)
+        self.uiACT_paste.setObjectName("uiACT_paste")
         self.menuFile.addAction(self.uiACT_refresh)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.uiACT_exit)
         self.menuActions.addAction(self.uiACT_copyMove)
         self.menuActions.addAction(self.uiACT_retarget)
         self.menuActions.addAction(self.uiACT_searchReplace)
+        self.menuEdit.addAction(self.uiACT_copy)
+        self.menuEdit.addAction(self.uiACT_paste)
+        self.menuEdit.addSeparator()
         self.menuEdit.addAction(self.uiACT_copyFullPath)
         self.menuEdit.addAction(self.uiACT_copyFilename)
         self.menuOptions.addAction(self.uiACT_collapseRepetitions)
@@ -160,6 +173,9 @@ class Ui_MainWindow(object):
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.uiACT_copyFullPath)
         self.toolBar.addAction(self.uiACT_copyFilename)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.uiACT_copy)
+        self.toolBar.addAction(self.uiACT_paste)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.uiACT_copyMove)
         self.toolBar.addAction(self.uiACT_retarget)
@@ -210,5 +226,7 @@ class Ui_MainWindow(object):
         self.uiACT_selectInvert.setText(QtGui.QApplication.translate("MainWindow", "Select Invert", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_selectTextureNode.setText(QtGui.QApplication.translate("MainWindow", "Select Texture Node", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_selectNothing.setText(QtGui.QApplication.translate("MainWindow", "Select Nothing", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiACT_copy.setText(QtGui.QApplication.translate("MainWindow", "Copy", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiACT_paste.setText(QtGui.QApplication.translate("MainWindow", "Paste", None, QtGui.QApplication.UnicodeUTF8))
 
 import resources_rc

@@ -142,6 +142,9 @@
     <property name="title">
      <string>Edit</string>
     </property>
+    <addaction name="uiACT_copy"/>
+    <addaction name="uiACT_paste"/>
+    <addaction name="separator"/>
     <addaction name="uiACT_copyFullPath"/>
     <addaction name="uiACT_copyFilename"/>
    </widget>
@@ -198,6 +201,9 @@
    <addaction name="separator"/>
    <addaction name="uiACT_copyFullPath"/>
    <addaction name="uiACT_copyFilename"/>
+   <addaction name="separator"/>
+   <addaction name="uiACT_copy"/>
+   <addaction name="uiACT_paste"/>
    <addaction name="separator"/>
    <addaction name="uiACT_copyMove"/>
    <addaction name="uiACT_retarget"/>
@@ -257,7 +263,7 @@
   <action name="uiACT_copyFullPath">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/icons/copy.png</normaloff>:/icons/copy.png</iconset>
+     <normaloff>:/icons/copy1.png</normaloff>:/icons/copy1.png</iconset>
    </property>
    <property name="text">
     <string>Copy Full Path</string>
@@ -321,6 +327,24 @@
    </property>
    <property name="text">
     <string>Select Nothing</string>
+   </property>
+  </action>
+  <action name="uiACT_copy">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/copy.png</normaloff>:/icons/copy.png</iconset>
+   </property>
+   <property name="text">
+    <string>Copy</string>
+   </property>
+  </action>
+  <action name="uiACT_paste">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/paste.png</normaloff>:/icons/paste.png</iconset>
+   </property>
+   <property name="text">
+    <string>Paste</string>
    </property>
   </action>
  </widget>

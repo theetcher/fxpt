@@ -43,6 +43,7 @@ MULTIPLE_STRING = '...multiple...'
 
 #TODO!: test on huge data
 #TODO!: feature to copy and then paste existed filename to selected records
+#TODO: update enable/disable states of controls
 
 
 class TexManagerUI(QtGui.QMainWindow):
@@ -52,6 +53,8 @@ class TexManagerUI(QtGui.QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.clipboard = None
 
         uiAGR_selectionBehaviour = QtGui.QActionGroup(self)
         self.ui.uiACT_selectNothing.setActionGroup(uiAGR_selectionBehaviour)
@@ -83,6 +86,7 @@ class TexManagerUI(QtGui.QMainWindow):
         )
 
         self.displayStatusBarInfo()
+        self.updateUiStates()
 
     def ui_initSettings(self):
         self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (100, 100, 900, 600))
@@ -251,7 +255,22 @@ class TexManagerUI(QtGui.QMainWindow):
         elif self.getSelectTextureNodeOption():
             self.selectTextureNodes()
 
+        self.updateUiStates()
         self.displayStatusBarInfo()
+
+    def updateUiStates(self):
+        somethingSelected = bool(self.ui.uiTBL_textures.selectionModel().selectedRows(COL_IDX_FILENAME))
+        clipboardIsNotEmpty = self.clipboard is not None
+
+        self.ui.uiACT_copy.setEnabled(somethingSelected)
+        self.ui.uiACT_paste.setEnabled(clipboardIsNotEmpty and somethingSelected)
+
+        self.ui.uiACT_copyFullPath.setEnabled(somethingSelected)
+        self.ui.uiACT_copyFilename.setEnabled(somethingSelected)
+
+        self.ui.uiACT_copyMove.setEnabled(somethingSelected)
+        self.ui.uiACT_retarget.setEnabled(somethingSelected)
+        self.ui.uiACT_searchReplace.setEnabled(somethingSelected)
 
     def displayStatusBarInfo(self):
         selectedItemsCount = len(self.ui.uiTBL_textures.selectionModel().selectedRows(COL_IDX_FILENAME))
