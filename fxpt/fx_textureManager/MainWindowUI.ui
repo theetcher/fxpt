@@ -150,7 +150,10 @@
      <string>Options</string>
     </property>
     <addaction name="uiACT_collapseRepetitions"/>
+    <addaction name="separator"/>
+    <addaction name="uiACT_selectNothing"/>
     <addaction name="uiACT_selectAssigned"/>
+    <addaction name="uiACT_selectTextureNode"/>
    </widget>
    <widget class="QMenu" name="menuSelect">
     <property name="title">
@@ -302,6 +305,22 @@
   <action name="uiACT_selectInvert">
    <property name="text">
     <string>Select Invert</string>
+   </property>
+  </action>
+  <action name="uiACT_selectTextureNode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Select Texture Node</string>
+   </property>
+  </action>
+  <action name="uiACT_selectNothing">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Select Nothing</string>
    </property>
   </action>
  </widget>
@@ -522,6 +541,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>uiACT_selectTextureNode</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onChangeSelectionBehaviour(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiACT_selectAssigned</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onChangeSelectionBehaviour(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onRefreshTriggered()</slot>
@@ -536,5 +587,6 @@
   <slot>onSelectInvertTriggered()</slot>
   <slot>onSelectNoneTriggered()</slot>
   <slot>onCollapseRepetitionsToggled(bool)</slot>
+  <slot>onChangeSelectionBehaviour(bool)</slot>
  </slots>
 </ui>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindowUI.ui'
 #
-# Created: Sun Jan 04 15:34:43 2015
+# Created: Mon Jan 05 16:19:09 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -127,6 +127,12 @@ class Ui_MainWindow(object):
         self.uiACT_selectNone.setObjectName("uiACT_selectNone")
         self.uiACT_selectInvert = QtGui.QAction(MainWindow)
         self.uiACT_selectInvert.setObjectName("uiACT_selectInvert")
+        self.uiACT_selectTextureNode = QtGui.QAction(MainWindow)
+        self.uiACT_selectTextureNode.setCheckable(True)
+        self.uiACT_selectTextureNode.setObjectName("uiACT_selectTextureNode")
+        self.uiACT_selectNothing = QtGui.QAction(MainWindow)
+        self.uiACT_selectNothing.setCheckable(True)
+        self.uiACT_selectNothing.setObjectName("uiACT_selectNothing")
         self.menuFile.addAction(self.uiACT_refresh)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.uiACT_exit)
@@ -136,7 +142,10 @@ class Ui_MainWindow(object):
         self.menuEdit.addAction(self.uiACT_copyFullPath)
         self.menuEdit.addAction(self.uiACT_copyFilename)
         self.menuOptions.addAction(self.uiACT_collapseRepetitions)
+        self.menuOptions.addSeparator()
+        self.menuOptions.addAction(self.uiACT_selectNothing)
         self.menuOptions.addAction(self.uiACT_selectAssigned)
+        self.menuOptions.addAction(self.uiACT_selectTextureNode)
         self.menuSelect.addAction(self.uiACT_selectAll)
         self.menuSelect.addAction(self.uiACT_selectInvert)
         self.menuSelect.addAction(self.uiACT_selectNone)
@@ -170,6 +179,8 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.uiACT_selectInvert, QtCore.SIGNAL("triggered()"), MainWindow.onSelectInvertTriggered)
         QtCore.QObject.connect(self.uiACT_selectNone, QtCore.SIGNAL("triggered()"), MainWindow.onSelectNoneTriggered)
         QtCore.QObject.connect(self.uiACT_collapseRepetitions, QtCore.SIGNAL("toggled(bool)"), MainWindow.onCollapseRepetitionsToggled)
+        QtCore.QObject.connect(self.uiACT_selectTextureNode, QtCore.SIGNAL("toggled(bool)"), MainWindow.onChangeSelectionBehaviour)
+        QtCore.QObject.connect(self.uiACT_selectAssigned, QtCore.SIGNAL("toggled(bool)"), MainWindow.onChangeSelectionBehaviour)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.uiTBL_textures, self.uiLED_filter)
         MainWindow.setTabOrder(self.uiLED_filter, self.uiBTN_filter)
@@ -197,5 +208,7 @@ class Ui_MainWindow(object):
         self.uiACT_selectAll.setText(QtGui.QApplication.translate("MainWindow", "Select All", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_selectNone.setText(QtGui.QApplication.translate("MainWindow", "Select None", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_selectInvert.setText(QtGui.QApplication.translate("MainWindow", "Select Invert", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiACT_selectTextureNode.setText(QtGui.QApplication.translate("MainWindow", "Select Texture Node", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiACT_selectNothing.setText(QtGui.QApplication.translate("MainWindow", "Select Nothing", None, QtGui.QApplication.UnicodeUTF8))
 
 import resources_rc

@@ -2,7 +2,6 @@ import maya.cmds as m
 
 from fxpt.fx_textureManager import TexNode
 
-#TODO: mentalrayTexture as an example of other texture type.
 
 class MayaSceneHarvester(object):
 
@@ -11,9 +10,8 @@ class MayaSceneHarvester(object):
         'file': [
             'fileTextureName'
         ],
-        'lambert': [
-            'textureFile',
-            'textureFile1'
+        'mentalrayTexture': [
+            'fileTextureName'
         ],
         'transform': [
             'texture',

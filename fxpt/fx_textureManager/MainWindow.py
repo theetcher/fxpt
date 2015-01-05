@@ -43,9 +43,6 @@ MULTIPLE_STRING = '...multiple...'
 
 #TODO!: test on huge data
 #TODO!: feature to copy and then paste existed filename to selected records
-#TODO!: disable any selection when you change selection in table ??? (3 options: select assigned, select node, select none)
-#TODO: when select assigned changed, need to preform selection procedure by new method. currently doing nothing
-#TODO: number of selected in status bar
 
 
 class TexManagerUI(QtGui.QMainWindow):
@@ -55,6 +52,11 @@ class TexManagerUI(QtGui.QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        uiAGR_selectionBehaviour = QtGui.QActionGroup(self)
+        self.ui.uiACT_selectNothing.setActionGroup(uiAGR_selectionBehaviour)
+        self.ui.uiACT_selectTextureNode.setActionGroup(uiAGR_selectionBehaviour)
+        self.ui.uiACT_selectAssigned.setActionGroup(uiAGR_selectionBehaviour)
 
         self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
         self.ui_initSettings()
@@ -80,12 +82,17 @@ class TexManagerUI(QtGui.QMainWindow):
             self.onTableSelectionChanged
         )
 
+        self.displayStatusBarInfo()
+
     def ui_initSettings(self):
         self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (100, 100, 900, 600))
         self.prefSaver.addControl(self.ui.uiTBL_textures, PrefSaver.UIType.PYSIDETableView)
         self.prefSaver.addControl(self.ui.uiLED_filter, PrefSaver.UIType.PYSIDELineEdit, '')
-        self.prefSaver.addControl(self.ui.uiACT_selectAssigned, PrefSaver.UIType.PYSIDECheckAction, False)
         self.prefSaver.addControl(self.ui.uiACT_collapseRepetitions, PrefSaver.UIType.PYSIDECheckAction, False)
+
+        self.prefSaver.addControl(self.ui.uiACT_selectNothing, PrefSaver.UIType.PYSIDECheckAction, True)
+        self.prefSaver.addControl(self.ui.uiACT_selectTextureNode, PrefSaver.UIType.PYSIDECheckAction, False)
+        self.prefSaver.addControl(self.ui.uiACT_selectAssigned, PrefSaver.UIType.PYSIDECheckAction, False)
 
     def ui_loadSettings(self, control=None):
         self.prefSaver.loadPrefs(control=control)
@@ -132,8 +139,7 @@ class TexManagerUI(QtGui.QMainWindow):
     def setFilterWildcard(self, wildcard):
         self.filterModel.setFilterRegExp(QtCore.QRegExp(wildcard, QtCore.Qt.CaseInsensitive, QtCore.QRegExp.Wildcard))
 
-    #TODO: existsCache to separate method
-
+    # noinspection PyMethodMayBeStatic
     def prepareData(self, texNodes):
         if not texNodes:
             return []
@@ -147,6 +153,7 @@ class TexManagerUI(QtGui.QMainWindow):
             res.append((existsCache[filename], filename, tn.getFullAttrName(), [tn]))
         return res
 
+    # noinspection PyMethodMayBeStatic
     def prepareDataCollapsed(self, texNodes):
         if not texNodes:
             return []
@@ -218,9 +225,6 @@ class TexManagerUI(QtGui.QMainWindow):
     def getCollapseRepetitionsOption(self):
         return self.ui.uiACT_collapseRepetitions.isChecked()
 
-    def getSelectAssignedOption(self):
-        return self.ui.uiACT_selectAssigned.isChecked()
-
     def getSelectedTexNodes(self):
         tns = []
         for index in self.ui.uiTBL_textures.selectionModel().selectedRows(COL_IDX_ATTR):
@@ -234,12 +238,27 @@ class TexManagerUI(QtGui.QMainWindow):
     def getSelectedFilenames(self):
         return sorted([os.path.basename(fp) for fp in self.getSelectedFullPaths()])
 
+    def getSelectTextureNodeOption(self):
+        return self.ui.uiACT_selectTextureNode.isChecked()
+
+    def getSelectAssignedOption(self):
+        return self.ui.uiACT_selectAssigned.isChecked()
+
     # noinspection PyUnusedLocal
     def onTableSelectionChanged(self, *args):
         if self.getSelectAssignedOption():
             self.selectAssigned()
-        else:
+        elif self.getSelectTextureNodeOption():
             self.selectTextureNodes()
+
+        self.displayStatusBarInfo()
+
+    def displayStatusBarInfo(self):
+        selectedItemsCount = len(self.ui.uiTBL_textures.selectionModel().selectedRows(COL_IDX_FILENAME))
+        if selectedItemsCount:
+            self.ui.statusbar.showMessage('{} item(s) selected.'.format(selectedItemsCount))
+        else:
+            self.ui.statusbar.clearMessage()
 
     def selectTextureNodes(self):
         nodes = [tn.getNode() for tn in self.getSelectedTexNodes()]
@@ -323,6 +342,10 @@ class TexManagerUI(QtGui.QMainWindow):
         if self.getUpdatesAllowed():
             self.uiRefresh()
         # self.ui.uiTBL_textures.clearSelection()
+
+    def onChangeSelectionBehaviour(self, state):
+        if state:
+            self.onTableSelectionChanged()
 
     def onCopyMoveTriggered(self):
         print 'onCopyMoveTriggered()'
