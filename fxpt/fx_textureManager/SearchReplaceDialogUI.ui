@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>675</width>
-    <height>123</height>
+    <width>651</width>
+    <height>144</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -52,7 +52,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Find what:</string>
+           <string>Find What:</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -65,7 +65,7 @@
         <item row="1" column="0">
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Replace with:</string>
+           <string>Replace With:</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -74,6 +74,13 @@
         </item>
         <item row="1" column="1">
          <widget class="QLineEdit" name="uiLED_replace"/>
+        </item>
+        <item row="0" column="2">
+         <widget class="QCheckBox" name="uiCHK_caseSenstive">
+          <property name="text">
+           <string>Case Sensitive</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -139,5 +146,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>Dialog</sender>
+   <signal>accepted()</signal>
+   <receiver>Dialog</receiver>
+   <slot>onDialogAccepted()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>337</x>
+     <y>61</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>337</x>
+     <y>61</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>onDialogAccepted()</slot>
+ </slots>
 </ui>

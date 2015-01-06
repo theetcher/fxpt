@@ -7,11 +7,11 @@ class CoordinatorMayaUI(object):
         pass
 
     # noinspection PyMethodMayBeStatic
-    def processPaste(self, tns, newFilename):
-        procPaste = Processors.ProcessorPaste(tns, newFilename)
+    def processPaste(self, *args):
+        procPaste = Processors.ProcessorPaste(*args)
         procPaste.execute()
 
     # noinspection PyMethodMayBeStatic
-    def processSearchAndReplace(self, tns, oldStr, newStr):
-        procSearchReplace = Processors.ProcessorSearchReplace(tns, oldStr, newStr)
+    def processSearchAndReplace(self, *args):
+        procSearchReplace = Processors.ProcessorSearchReplace(*args)
         procSearchReplace.execute()

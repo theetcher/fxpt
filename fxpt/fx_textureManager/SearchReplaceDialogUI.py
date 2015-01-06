@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'SearchReplaceDialogUI.ui'
 #
-# Created: Mon Jan 05 20:38:15 2015
+# Created: Tue Jan 06 16:55:37 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(640, 200)
+        Dialog.resize(651, 144)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -45,6 +45,9 @@ class Ui_Dialog(object):
         self.uiLED_replace = QtGui.QLineEdit(self.groupBox)
         self.uiLED_replace.setObjectName("uiLED_replace")
         self.gridLayout.addWidget(self.uiLED_replace, 1, 1, 1, 1)
+        self.uiCHK_caseSenstive = QtGui.QCheckBox(self.groupBox)
+        self.uiCHK_caseSenstive.setObjectName("uiCHK_caseSenstive")
+        self.gridLayout.addWidget(self.uiCHK_caseSenstive, 0, 2, 1, 1)
         self.horizontalLayout.addLayout(self.gridLayout)
         self.verticalLayout.addWidget(self.groupBox)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -58,11 +61,13 @@ class Ui_Dialog(object):
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
+        QtCore.QObject.connect(Dialog, QtCore.SIGNAL("accepted()"), Dialog.onDialogAccepted)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Search and Replace", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("Dialog", "Parameters", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("Dialog", "Find what:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("Dialog", "Replace with:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("Dialog", "Find What:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("Dialog", "Replace With:", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiCHK_caseSenstive.setText(QtGui.QApplication.translate("Dialog", "Case Sensitive", None, QtGui.QApplication.UnicodeUTF8))
 

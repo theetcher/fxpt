@@ -45,7 +45,6 @@ OPT_VAR_NAME = 'fx_textureManager_prefs'
 MULTIPLE_STRING = '...multiple...'
 
 #TODO!: test on huge data
-#TODO!: feature to copy and then paste existed filename to selected records
 #TODO: edit filename in table. get new filename from edit cell and then apply ProcPaste
 
 
@@ -105,10 +104,6 @@ class TexManagerUI(QtGui.QMainWindow):
         self.prefSaver.addControl(self.ui.uiACT_selectNothing, PrefSaver.UIType.PYSIDECheckAction, True)
         self.prefSaver.addControl(self.ui.uiACT_selectTextureNode, PrefSaver.UIType.PYSIDECheckAction, False)
         self.prefSaver.addControl(self.ui.uiACT_selectAssigned, PrefSaver.UIType.PYSIDECheckAction, False)
-
-        self.prefSaver.addControl(self.searchReplaceDlg, PrefSaver.UIType.PYSIDEWindow, (200, 200, 600, 100))
-        self.prefSaver.addControl(self.searchReplaceDlg.ui.uiLED_search, PrefSaver.UIType.PYSIDELineEdit, '')
-        self.prefSaver.addControl(self.searchReplaceDlg.ui.uiLED_replace, PrefSaver.UIType.PYSIDELineEdit, '')
 
     def ui_loadSettings(self, control=None):
         self.prefSaver.loadPrefs(control=control)
@@ -405,14 +400,14 @@ class TexManagerUI(QtGui.QMainWindow):
         print 'onRetargetTriggered()'
 
     def onSearchReplaceTriggered(self):
-        #TODO!: need a case sensitive option
         if self.searchReplaceDlg.exec_() == QtGui.QDialog.Accepted:
             self.ui_saveSettings()
-            searchStr, replaceStr = self.searchReplaceDlg.getSearchReplaceStrings()
+            searchStr, replaceStr, caseSensitive = self.searchReplaceDlg.getDialogData()
             self.coordinator.processSearchAndReplace(
                 self.getSelectedTexNodes(),
                 searchStr,
-                replaceStr
+                replaceStr,
+                caseSensitive
             )
             self.uiRefresh()
 
