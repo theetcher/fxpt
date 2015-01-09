@@ -24,7 +24,7 @@ class SearchReplaceDialog(QtGui.QDialog):
         self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (200, 200, 600, 100))
         self.prefSaver.addControl(self.ui.uiLED_search, PrefSaver.UIType.PYSIDELineEdit, '')
         self.prefSaver.addControl(self.ui.uiLED_replace, PrefSaver.UIType.PYSIDELineEdit, '')
-        self.prefSaver.addControl(self.ui.uiCHK_caseSenstive, PrefSaver.UIType.PYSIDECheckBox, False)
+        self.prefSaver.addControl(self.ui.uiCHK_caseSensitive, PrefSaver.UIType.PYSIDECheckBox, False)
 
     def ui_loadSettings(self):
         self.prefSaver.loadPrefs()
@@ -33,7 +33,7 @@ class SearchReplaceDialog(QtGui.QDialog):
         self.prefSaver.savePrefs()
 
     def getDialogData(self):
-        return str(self.ui.uiLED_search.text()), str(self.ui.uiLED_replace.text()), self.ui.uiCHK_caseSenstive.isChecked()
+        return str(self.ui.uiLED_search.text()), str(self.ui.uiLED_replace.text()), self.ui.uiCHK_caseSensitive.isChecked()
 
     def onDialogAccepted(self):
         self.ui_saveSettings()

@@ -14,6 +14,7 @@ from fxpt.fx_textureManager.Coordinators import CoordinatorMayaUI
 from fxpt.fx_prefsaver import PrefSaver, Serializers
 
 from fxpt.fx_textureManager.SearchReplaceDialog import SearchReplaceDialog
+from fxpt.fx_textureManager.RetargetDialog import RetargetDialog
 
 
 # from fxpt.fx_utils.watch import watch
@@ -45,6 +46,7 @@ OPT_VAR_NAME = 'fx_textureManager_prefs'
 MULTIPLE_STRING = '...multiple...'
 
 #TODO!: test on huge data
+#TODO: change icon of search and replace
 #TODO: edit filename in table. get new filename from edit cell and then apply ProcPaste
 
 
@@ -65,6 +67,7 @@ class TexManagerUI(QtGui.QMainWindow):
         self.ui.uiACT_selectAssigned.setActionGroup(uiAGR_selectionBehaviour)
 
         self.searchReplaceDlg = SearchReplaceDialog(self)
+        self.retargetDlg = RetargetDialog(self)
 
         self.createContextMenu()
 
@@ -397,7 +400,7 @@ class TexManagerUI(QtGui.QMainWindow):
         print 'onCopyMoveTriggered()'
 
     def onRetargetTriggered(self):
-        print 'onRetargetTriggered()'
+        self.retargetDlg.exec_()
 
     def onSearchReplaceTriggered(self):
         if self.searchReplaceDlg.exec_() == QtGui.QDialog.Accepted:

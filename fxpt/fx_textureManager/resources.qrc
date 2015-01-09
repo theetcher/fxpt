@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>icons/folder.png</file>
     <file>icons/copy1.png</file>
     <file>icons/paste.png</file>
     <file>icons/collapse.png</file>

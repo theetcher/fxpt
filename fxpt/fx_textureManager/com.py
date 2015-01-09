@@ -1,5 +1,7 @@
 import maya.cmds as m
 
+from fxpt.fx_utils.utils import pathToSlash
+
 # style not finished
 TOOLBAR_BUTTON_STYLE = """
 QToolButton:checked{
@@ -33,3 +35,6 @@ def getShadingGroups(node, visited):
                 sgs.update(getShadingGroups(destinationNode, visited))
     return sgs
 
+
+def cleanupPath(path):
+    return pathToSlash(path.strip())

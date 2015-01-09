@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'SearchReplaceDialogUI.ui'
 #
-# Created: Tue Jan 06 16:55:37 2015
+# Created: Fri Jan 09 22:46:34 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,9 +45,9 @@ class Ui_Dialog(object):
         self.uiLED_replace = QtGui.QLineEdit(self.groupBox)
         self.uiLED_replace.setObjectName("uiLED_replace")
         self.gridLayout.addWidget(self.uiLED_replace, 1, 1, 1, 1)
-        self.uiCHK_caseSenstive = QtGui.QCheckBox(self.groupBox)
-        self.uiCHK_caseSenstive.setObjectName("uiCHK_caseSenstive")
-        self.gridLayout.addWidget(self.uiCHK_caseSenstive, 0, 2, 1, 1)
+        self.uiCHK_caseSensitive = QtGui.QCheckBox(self.groupBox)
+        self.uiCHK_caseSensitive.setObjectName("uiCHK_caseSensitive")
+        self.gridLayout.addWidget(self.uiCHK_caseSensitive, 0, 2, 1, 1)
         self.horizontalLayout.addLayout(self.gridLayout)
         self.verticalLayout.addWidget(self.groupBox)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -69,5 +69,5 @@ class Ui_Dialog(object):
         self.groupBox.setTitle(QtGui.QApplication.translate("Dialog", "Parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Dialog", "Find What:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Dialog", "Replace With:", None, QtGui.QApplication.UnicodeUTF8))
-        self.uiCHK_caseSenstive.setText(QtGui.QApplication.translate("Dialog", "Case Sensitive", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiCHK_caseSensitive.setText(QtGui.QApplication.translate("Dialog", "Case Sensitive", None, QtGui.QApplication.UnicodeUTF8))
 

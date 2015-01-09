@@ -76,7 +76,7 @@
          <widget class="QLineEdit" name="uiLED_replace"/>
         </item>
         <item row="0" column="2">
-         <widget class="QCheckBox" name="uiCHK_caseSenstive">
+         <widget class="QCheckBox" name="uiCHK_caseSensitive">
           <property name="text">
            <string>Case Sensitive</string>
           </property>
