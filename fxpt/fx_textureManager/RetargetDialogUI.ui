@@ -60,7 +60,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLineEdit" name="uiLED_retargetRoot"/>
+         <widget class="LineEditPath" name="uiLED_retargetRoot"/>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="label_2">
@@ -166,6 +166,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LineEditPath</class>
+   <extends>QLineEdit</extends>
+   <header>LineEditPath.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>uiLED_retargetRoot</tabstop>
   <tabstop>uiBTN_browse</tabstop>
@@ -177,38 +184,6 @@
   <include location="resources.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>uiLED_retargetRoot</sender>
-   <signal>editingFinished()</signal>
-   <receiver>Dialog</receiver>
-   <slot>onRetargetRootEditingFinished()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>347</x>
-     <y>38</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>325</x>
-     <y>72</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>uiBTN_ok</sender>
-   <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>525</x>
-     <y>127</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>325</x>
-     <y>72</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>uiBTN_cancel</sender>
    <signal>clicked()</signal>
@@ -250,6 +225,22 @@
     <hint type="sourcelabel">
      <x>325</x>
      <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>325</x>
+     <y>72</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiLED_retargetRoot</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>onRetargetRootEditingFinished()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>347</x>
+     <y>38</y>
     </hint>
     <hint type="destinationlabel">
      <x>325</x>

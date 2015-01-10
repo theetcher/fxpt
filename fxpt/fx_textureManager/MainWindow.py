@@ -404,7 +404,6 @@ class TexManagerUI(QtGui.QMainWindow):
 
     def onSearchReplaceTriggered(self):
         if self.searchReplaceDlg.exec_() == QtGui.QDialog.Accepted:
-            self.ui_saveSettings()
             searchStr, replaceStr, caseSensitive = self.searchReplaceDlg.getDialogData()
             self.coordinator.processSearchAndReplace(
                 self.getSelectedTexNodes(),

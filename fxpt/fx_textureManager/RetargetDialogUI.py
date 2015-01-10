@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RetargetDialogUI.ui'
 #
-# Created: Fri Jan 09 22:46:34 2015
+# Created: Sat Jan 10 19:59:15 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,7 +35,7 @@ class Ui_Dialog(object):
         self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
-        self.uiLED_retargetRoot = QtGui.QLineEdit(self.groupBox)
+        self.uiLED_retargetRoot = LineEditPath(self.groupBox)
         self.uiLED_retargetRoot.setObjectName("uiLED_retargetRoot")
         self.gridLayout.addWidget(self.uiLED_retargetRoot, 0, 1, 1, 1)
         self.label_2 = QtGui.QLabel(self.groupBox)
@@ -76,11 +76,10 @@ class Ui_Dialog(object):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.uiLED_retargetRoot, QtCore.SIGNAL("editingFinished()"), Dialog.onRetargetRootEditingFinished)
-        QtCore.QObject.connect(self.uiBTN_ok, QtCore.SIGNAL("clicked()"), Dialog.accept)
         QtCore.QObject.connect(self.uiBTN_cancel, QtCore.SIGNAL("clicked()"), Dialog.reject)
         QtCore.QObject.connect(self.uiBTN_browse, QtCore.SIGNAL("clicked()"), Dialog.onBrowseClicked)
         QtCore.QObject.connect(Dialog, QtCore.SIGNAL("finished(int)"), Dialog.onDialogFinished)
+        QtCore.QObject.connect(self.uiLED_retargetRoot, QtCore.SIGNAL("editingFinished()"), Dialog.onRetargetRootEditingFinished)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.uiLED_retargetRoot, self.uiBTN_browse)
         Dialog.setTabOrder(self.uiBTN_browse, self.uiBTN_cancel)
@@ -97,4 +96,5 @@ class Ui_Dialog(object):
         self.uiBTN_ok.setText(QtGui.QApplication.translate("Dialog", "OK", None, QtGui.QApplication.UnicodeUTF8))
         self.uiBTN_cancel.setText(QtGui.QApplication.translate("Dialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 
+from LineEditPath import LineEditPath
 import resources_rc

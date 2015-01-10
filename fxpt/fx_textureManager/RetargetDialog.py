@@ -49,18 +49,18 @@ class RetargetDialog(QtGui.QDialog):
         return self.lastBrowsedDir
 
     def getRetargetRoot(self):
-        return str(self.ui.uiLED_retargetRoot.text())
+        return self.ui.uiLED_retargetRoot.getPath()
 
     def setRetargetRoot(self, path):
-        self.ui.uiLED_retargetRoot.setText(path)
+        self.ui.uiLED_retargetRoot.setPath(path)
 
     def validateUi(self):
-        retargetRootExists = os.path.exists(self.getRetargetRoot())
+        retargetRootExists = self.ui.uiLED_retargetRoot.pathExists()
         self.ui.uiBTN_ok.setEnabled(retargetRootExists)
-        if not retargetRootExists:
-            self.setStatusText('Retarget root does not exists.')
-        else:
+        if retargetRootExists:
             self.setStatusText('')
+        else:
+            self.setStatusText('Retarget root does not exists.')
 
     def setStatusText(self, text):
         self.ui.uiLBL_status.setText(text)
@@ -72,13 +72,12 @@ class RetargetDialog(QtGui.QDialog):
             'Retarget Root',
             self.getLastBrowsedDir()
         )
-        cleanPath = cleanupPath(dialogResult)
-        self.setLastBrowsedDir(cleanPath)
-        self.setRetargetRoot(cleanPath)
+        self.setRetargetRoot(dialogResult)
+        self.ui.uiLED_retargetRoot.onEditingFinished()
+        self.setLastBrowsedDir(self.getRetargetRoot())
         self.validateUi()
 
     def onRetargetRootEditingFinished(self):
-        self.setRetargetRoot(cleanupPath(self.getRetargetRoot()))
         self.validateUi()
 
     # noinspection PyUnusedLocal
