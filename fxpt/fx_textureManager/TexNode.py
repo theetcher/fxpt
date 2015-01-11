@@ -1,7 +1,7 @@
 import os
 
 import maya.cmds as m
-from fxpt.fx_utils.utils import pathToSlash
+from fxpt.fx_textureManager.com import cleanupPath
 
 
 # noinspection PyAttributeOutsideInit
@@ -30,7 +30,7 @@ class TexNode(object):
         return '{}.{}'.format(self.node, self.attr)
 
     def getAttrValue(self):
-        slashedPath = pathToSlash(m.getAttr(self.getFullAttrName()).strip())
+        slashedPath = cleanupPath(m.getAttr(self.getFullAttrName()))
         if slashedPath.startswith('//'):
             return '//{}'.format(slashedPath[2:].replace('//', '/'))
         else:
@@ -40,4 +40,8 @@ class TexNode(object):
         m.setAttr(self.getFullAttrName(), value, typ='string')
 
     def fileExists(self):
-        return os.path.exists(os.path.expandvars(self.getAttrValue()))
+        fullPath = os.path.expandvars(self.getAttrValue())
+        if os.path.basename(fullPath):
+            return os.path.exists(fullPath)
+        else:
+            return False

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'SearchReplaceDialogUI.ui'
 #
-# Created: Fri Jan 09 22:46:34 2015
+# Created: Sun Jan 11 19:11:47 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!

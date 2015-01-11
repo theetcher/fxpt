@@ -15,3 +15,8 @@ class CoordinatorMayaUI(object):
     def processSearchAndReplace(self, *args):
         procSearchReplace = Processors.ProcessorSearchReplace(*args)
         procSearchReplace.execute()
+
+    # noinspection PyMethodMayBeStatic
+    def processRetarget(self, *args):
+        procRetarget = Processors.ProcessorRetarget(*args)
+        procRetarget.execute()

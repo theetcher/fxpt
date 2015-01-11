@@ -400,7 +400,14 @@ class TexManagerUI(QtGui.QMainWindow):
         print 'onCopyMoveTriggered()'
 
     def onRetargetTriggered(self):
-        self.retargetDlg.exec_()
+        if self.retargetDlg.exec_() == QtGui.QDialog.Accepted:
+            retargetRoot, forceRetarget = self.retargetDlg.getDialogResult()
+            self.coordinator.processRetarget(
+                self.getSelectedTexNodes(),
+                retargetRoot,
+                forceRetarget
+            )
+            self.uiRefresh()
 
     def onSearchReplaceTriggered(self):
         if self.searchReplaceDlg.exec_() == QtGui.QDialog.Accepted:

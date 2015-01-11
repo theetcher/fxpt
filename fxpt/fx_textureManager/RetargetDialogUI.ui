@@ -248,11 +248,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>uiBTN_ok</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>onOkClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>525</x>
+     <y>127</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>325</x>
+     <y>72</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onDialogAccepted()</slot>
   <slot>onRetargetRootEditingFinished()</slot>
   <slot>onBrowseClicked()</slot>
   <slot>onDialogFinished(int)</slot>
+  <slot>onOkClicked()</slot>
  </slots>
 </ui>

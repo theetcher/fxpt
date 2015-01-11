@@ -1,5 +1,5 @@
 import os
-from PySide import QtGui
+from PySide import QtCore, QtGui
 
 from fxpt.fx_prefsaver import PrefSaver, Serializers
 
@@ -54,16 +54,22 @@ class RetargetDialog(QtGui.QDialog):
     def setRetargetRoot(self, path):
         self.ui.uiLED_retargetRoot.setPath(path)
 
+    def getForceRetarget(self):
+        return self.ui.uiCHK_forceRetarget.checkState() == QtCore.Qt.Checked
+
     def validateUi(self):
         retargetRootExists = self.ui.uiLED_retargetRoot.pathExists()
         self.ui.uiBTN_ok.setEnabled(retargetRootExists)
         if retargetRootExists:
             self.setStatusText('')
         else:
-            self.setStatusText('Retarget root does not exists.')
+            self.setStatusText('Retarget root directory does not exists.')
 
     def setStatusText(self, text):
         self.ui.uiLBL_status.setText(text)
+
+    def getDialogResult(self):
+        return self.getRetargetRoot(), self.getForceRetarget()
 
     def onBrowseClicked(self):
         # noinspection PyCallByClass
@@ -79,6 +85,11 @@ class RetargetDialog(QtGui.QDialog):
 
     def onRetargetRootEditingFinished(self):
         self.validateUi()
+
+    def onOkClicked(self):
+        self.validateUi()
+        if self.ui.uiBTN_ok.isEnabled():
+            self.accept()
 
     # noinspection PyUnusedLocal
     def onDialogFinished(self, status):

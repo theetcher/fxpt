@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RetargetDialogUI.ui'
 #
-# Created: Sat Jan 10 19:59:15 2015
+# Created: Sun Jan 11 19:11:48 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -80,6 +80,7 @@ class Ui_Dialog(object):
         QtCore.QObject.connect(self.uiBTN_browse, QtCore.SIGNAL("clicked()"), Dialog.onBrowseClicked)
         QtCore.QObject.connect(Dialog, QtCore.SIGNAL("finished(int)"), Dialog.onDialogFinished)
         QtCore.QObject.connect(self.uiLED_retargetRoot, QtCore.SIGNAL("editingFinished()"), Dialog.onRetargetRootEditingFinished)
+        QtCore.QObject.connect(self.uiBTN_ok, QtCore.SIGNAL("clicked()"), Dialog.onOkClicked)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.uiLED_retargetRoot, self.uiBTN_browse)
         Dialog.setTabOrder(self.uiBTN_browse, self.uiBTN_cancel)
