@@ -258,7 +258,7 @@ class PrefSaver(object):
     def addControl(self, control, uiType, defaultValue=None):
 
         if not UIType.isTypeOf(uiType, UIType.TypesAll):
-            message('Cannot add unknown control type ({}) for {}. Skipped'.format(uiType, str(control)))
+            message('Cannot add unknown control type ({0}) for {1}. Skipped'.format(uiType, str(control)))
             return
 
         if UIType.isTypeOf(uiType, UIType.TypesPYQT | UIType.TypesPYSIDE):
@@ -266,21 +266,21 @@ class PrefSaver(object):
             if controller:
                 self.controllers.append(controller)
             else:
-                message('Failed to add controller (type={}) for {}'.format(uiType, str(control)))
+                message('Failed to add controller (type={0}) for {1}'.format(uiType, str(control)))
             return
 
         if UIType.isTypeOf(uiType, UIType.TypesM):
             if CtrlMaya:
                 self.controllers.append(CtrlMaya.getController(uiType, control, defaultValue))
             else:
-                message('Failed to add controller (type={}) for {}'.format(uiType, str(control)))
+                message('Failed to add controller (type={0}) for {1}'.format(uiType, str(control)))
             return
 
         if UIType.isTypeOf(uiType, UIType.TypesPM):
             if CtrlPyMel:
                 self.controllers.append(CtrlPyMel.getController(uiType, control, defaultValue))
             else:
-                message('Failed to add controller (type={}) for {}'.format(uiType, str(control)))
+                message('Failed to add controller (type={0}) for {1}'.format(uiType, str(control)))
             return
 
         assert False, 'Failed to add a controller.'

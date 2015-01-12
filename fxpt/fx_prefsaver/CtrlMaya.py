@@ -61,4 +61,4 @@ def getController(uiType, control, defaultValue):
         pmClass = constructors[uiType][IDX_PM_CLASS]
         return pmGetController(pmUiType, pmClass(control), defaultValue)
     else:
-        message('Cannot create controller: Unknown controller type: {}.'.format(str(uiType)))
+        message('Cannot create controller: Unknown controller type: {0}.'.format(str(uiType)))

@@ -225,4 +225,4 @@ def getController(uiType, control, defaultValue):
     if uiType in constructors:
         return constructors[uiType](control, defaultValue)
     else:
-        message('Cannot create controller: Unknown controller type: {}.'.format(str(uiType)))
+        message('Cannot create controller: Unknown controller type: {0}.'.format(str(uiType)))

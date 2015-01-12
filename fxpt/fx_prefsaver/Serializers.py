@@ -42,10 +42,10 @@ class SerializerFileBase(SerializerBase):
             finally:
                 f.close()
         except IOError as e:
-            message('Error writing file. Filename: {}.\nAdditional exception info:\n{}'.format(self.filename, str(e)))
+            message('Error writing file. Filename: {0}.\nAdditional exception info:\n{1}'.format(self.filename, str(e)))
             raise
         except Exception as e:
-            message('Error occurred during serialization. Filename: {}.\nAdditional exception info:\n{}'.format(self.filename, str(e)))
+            message('Error occurred during serialization. Filename: {0}.\nAdditional exception info:\n{1}'.format(self.filename, str(e)))
             raise
 
     def saveProcedure(self, obj, f):
@@ -62,10 +62,10 @@ class SerializerFileBase(SerializerBase):
             finally:
                 f.close()
         except IOError as e:
-            message('Error reading file. Filename: {}.\nAdditional exception info:\n{}'.format(self.filename, str(e)))
+            message('Error reading file. Filename: {0}.\nAdditional exception info:\n{1}'.format(self.filename, str(e)))
             raise
         except Exception as e:
-            message('Error occurred during deserialization. Filename: {}.\nAdditional exception info:\n{}'.format(self.filename, str(e)))
+            message('Error occurred during deserialization. Filename: {0}.\nAdditional exception info:\n{1}'.format(self.filename, str(e)))
             raise
 
         return obj
@@ -111,7 +111,7 @@ class SerializerOptVar(SerializerBase):
         try:
             m.optionVar(stringValue=(self.optVarName, json.dumps(obj, sort_keys=True, indent=4, separators=(',', ': '))))
         except Exception as e:
-            message('Error occurred while saving option variable {}.\nAdditional exception info:\n{}'.format(self.optVarName, str(e)))
+            message('Error occurred while saving option variable {0}.\nAdditional exception info:\n{1}'.format(self.optVarName, str(e)))
             raise
 
     def load(self):
@@ -120,6 +120,6 @@ class SerializerOptVar(SerializerBase):
         try:
             obj = json.loads(m.optionVar(q=self.optVarName))
         except Exception as e:
-            message('Error occurred while loading option variable {}.\nAdditional exception info:\n{}'.format(self.optVarName, str(e)))
+            message('Error occurred while loading option variable {0}.\nAdditional exception info:\n{1}'.format(self.optVarName, str(e)))
             raise
         return obj

@@ -130,7 +130,7 @@ class QtCtrlDateEdit(QtCtrlDateTimeBase):
 
 class QtCtrlDateTimeEdit(QtCtrlDateTimeBase):
 
-    dateTimeFormat = '{} {}'.format(QtCtrlDateEdit.dateTimeFormat, QtCtrlTimeEdit.dateTimeFormat)
+    dateTimeFormat = '{0} {1}'.format(QtCtrlDateEdit.dateTimeFormat, QtCtrlTimeEdit.dateTimeFormat)
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlDateTimeEdit, self).__init__(*args, **kwargs)
@@ -333,7 +333,7 @@ class TreeIndexSelector(SelectorBase):
         for r in xrange(model.rowCount(parentIndex)):
             for c in range(model.columnCount(parentIndex)):
                 childIndex = model.index(r, c, parentIndex)
-                childPath = parentPath + '|{},{}'.format(childIndex.row(), childIndex.column())
+                childPath = parentPath + '|{0},{1}'.format(childIndex.row(), childIndex.column())
 
                 if selectionModel.isSelected(childIndex):
                     self.selectedItems.append(childPath)
