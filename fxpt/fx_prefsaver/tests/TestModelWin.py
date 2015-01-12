@@ -86,7 +86,7 @@ class TestModelWin(QtGui.QMainWindow):
         # for r in range(model.rowCount(parentIndex)):
         #     for c in range(model.columnCount(parentIndex)):
         #         index = model.index(r, c, parentIndex)
-        #         self.log('{} ({},{}) {}'.format(s, index.row(), index.column(), index.data(QtCore.Qt.DisplayRole)))
+        #         self.log('{0} ({1},{2}) {3}'.format(s, index.row(), index.column(), index.data(QtCore.Qt.DisplayRole)))
         #     for c in range(model.columnCount(parentIndex)):
         #         index = model.index(r, c, parentIndex)
         #         self.dumpModel(model, index, s + '     ')
@@ -94,8 +94,8 @@ class TestModelWin(QtGui.QMainWindow):
         for r in range(model.rowCount(parentIndex)):
             for c in range(model.columnCount(parentIndex)):
                 childIndex = model.index(r, c, parentIndex)
-                childPath = parentPath + '|{},{}'.format(childIndex.row(), childIndex.column())
-                self.log('{} ({},{}) {} {}'.format(s, childIndex.row(), childIndex.column(), childPath, childIndex.data(QtCore.Qt.DisplayRole)))
+                childPath = parentPath + '|{0},{1}'.format(childIndex.row(), childIndex.column())
+                self.log('{0} ({1},{2}) {3} {4}'.format(s, childIndex.row(), childIndex.column(), childPath, childIndex.data(QtCore.Qt.DisplayRole)))
                 self.dumpModel(model, childIndex, childPath, s + '     ')
 
     def log(self, text):

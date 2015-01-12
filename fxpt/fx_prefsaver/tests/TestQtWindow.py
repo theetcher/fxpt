@@ -45,7 +45,7 @@ class TestQtWindow(object):
         self.registerSlots()
         self.ui.setupUi(self.win)
 
-        self.win.setWindowTitle('{}; {}'.format(str(self.win), str(self.dlg)))
+        self.win.setWindowTitle('{0}; {1}'.format(str(self.win), str(self.dlg)))
 
         self.fillListTreeColumnView()
         self.fillTableView()
