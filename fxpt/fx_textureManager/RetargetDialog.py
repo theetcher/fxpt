@@ -1,15 +1,10 @@
-import os
 from PySide import QtCore, QtGui
 
 from fxpt.fx_prefsaver import PrefSaver, Serializers
-
 from fxpt.fx_textureManager.RetargetDialogUI import Ui_Dialog
-from fxpt.fx_textureManager.com import cleanupPath
 
 
 OPT_VAR_NAME_RETARGET_DLG = 'fx_textureManager_retargetDlg_prefs'
-
-#TODO: make LineEditPath and put all cleanup and .exists in it
 
 
 class RetargetDialog(QtGui.QDialog):
