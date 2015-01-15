@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>834</width>
+    <width>813</width>
     <height>350</height>
    </rect>
   </property>
@@ -41,7 +41,7 @@
          <number>4</number>
         </property>
         <item row="1" column="1">
-         <widget class="QCheckBox" name="checkBox_6">
+         <widget class="QCheckBox" name="uiCHK_deleteSources">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -74,7 +74,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="LineEditPath" name="uiLED_retargetRoot_4"/>
+         <widget class="LineEditPath" name="uiLED_targetRoot"/>
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_10">
@@ -89,7 +89,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox">
+       <widget class="QGroupBox" name="uiGRP_folderStructure">
         <property name="title">
          <string>Copy folder structure</string>
         </property>
@@ -98,7 +98,7 @@
         </property>
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="1">
-          <widget class="LineEditPath" name="uiLED_retargetRoot_8"/>
+          <widget class="LineEditPath" name="uiLED_sourceRoot"/>
          </item>
          <item row="0" column="2">
           <widget class="QToolButton" name="uiBTN_browse_5">
@@ -134,7 +134,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox_4">
+       <widget class="QGroupBox" name="uiGRP_addTextures">
         <property name="title">
          <string>Copy additional textures</string>
         </property>
@@ -153,7 +153,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="LineEditPath" name="uiLED_retargetRoot_12">
+          <widget class="QLineEdit" name="uiLED_texSuffixes">
            <property name="text">
             <string>_nm, _spec, _hdetm, _em</string>
            </property>
@@ -172,7 +172,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <widget class="QCheckBox" name="checkBox_5">
+       <widget class="QCheckBox" name="uiCHK_retarget">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -185,7 +185,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="uiCHK_forceRetarget_2">
+       <widget class="QCheckBox" name="uiCHK_forceRetarget">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -270,7 +270,6 @@
   </layout>
   <zorder>groupBox_2</zorder>
   <zorder>groupBox_3</zorder>
-  <zorder></zorder>
   <zorder>verticalSpacer</zorder>
  </widget>
  <layoutdefault spacing="6" margin="6"/>

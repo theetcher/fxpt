@@ -15,6 +15,7 @@ from fxpt.fx_prefsaver import PrefSaver, Serializers
 
 from fxpt.fx_textureManager.SearchReplaceDialog import SearchReplaceDialog
 from fxpt.fx_textureManager.RetargetDialog import RetargetDialog
+from fxpt.fx_textureManager.CopyMoveDialog import CopyMoveDialog
 
 
 # from fxpt.fx_utils.watch import watch
@@ -68,6 +69,7 @@ class TexManagerUI(QtGui.QMainWindow):
 
         self.searchReplaceDlg = SearchReplaceDialog(self)
         self.retargetDlg = RetargetDialog(self)
+        self.copyMoveDlg = CopyMoveDialog(self)
 
         self.createContextMenu()
 
@@ -397,7 +399,13 @@ class TexManagerUI(QtGui.QMainWindow):
         self.uiRefresh()
 
     def onCopyMoveTriggered(self):
-        print 'onCopyMoveTriggered()'
+        if self.copyMoveDlg.exec_() == QtGui.QDialog.Accepted:
+            dialogResult = self.copyMoveDlg.getDialogResult()
+            self.coordinator.processCopyMove(
+                self.getSelectedTexNodes(),
+                dialogResult
+            )
+            self.uiRefresh()
 
     def onRetargetTriggered(self):
         if self.retargetDlg.exec_() == QtGui.QDialog.Accepted:

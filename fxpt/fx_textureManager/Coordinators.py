@@ -20,3 +20,8 @@ class CoordinatorMayaUI(object):
     def processRetarget(self, *args):
         procRetarget = Processors.ProcessorRetarget(*args)
         procRetarget.execute()
+
+    def processCopyMove(self, tns, dlgResult):
+        # noinspection PyProtectedMember
+        for key, value in dlgResult._asdict().iteritems():
+            print '{0}={1},'.format(key, value)
