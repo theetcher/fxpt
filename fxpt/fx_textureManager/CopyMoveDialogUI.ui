@@ -54,7 +54,7 @@
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QToolButton" name="uiBTN_browse_4">
+         <widget class="QToolButton" name="uiBTN_browseTarget">
           <property name="text">
            <string>...</string>
           </property>
@@ -101,7 +101,7 @@
           <widget class="LineEditPath" name="uiLED_sourceRoot"/>
          </item>
          <item row="0" column="2">
-          <widget class="QToolButton" name="uiBTN_browse_5">
+          <widget class="QToolButton" name="uiBTN_browseSource">
            <property name="text">
             <string>...</string>
            </property>
@@ -336,12 +336,110 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>uiBTN_browseTarget</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>onBrowseTargetClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>780</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>406</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiBTN_browseSource</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>onBrowseSourceClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>771</x>
+     <y>122</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>406</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiLED_sourceRoot</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>onValidateUiNeeded()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>440</x>
+     <y>122</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>406</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiLED_targetRoot</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>onValidateUiNeeded()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>414</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>406</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiGRP_folderStructure</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>onValidateUiNeeded()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>406</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>406</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiCHK_retarget</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>onRetargetClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>51</x>
+     <y>252</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>406</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>onDialogAccepted()</slot>
   <slot>onRetargetRootEditingFinished()</slot>
-  <slot>onBrowseClicked()</slot>
   <slot>onDialogFinished(int)</slot>
   <slot>onOkClicked()</slot>
+  <slot>onBrowseTargetClicked()</slot>
+  <slot>onBrowseSourceClicked()</slot>
+  <slot>onValidateUiNeeded()</slot>
+  <slot>onRetargetClicked()</slot>
  </slots>
 </ui>

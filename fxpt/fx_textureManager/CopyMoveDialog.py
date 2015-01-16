@@ -28,10 +28,17 @@ class CopyMoveDialog(QtGui.QDialog):
         self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME_COPY_MOVE_DLG))
 
         self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (200, 200, 800, 350))
-        # self.prefSaver.addControl(self.ui.uiLED_retargetRoot, PrefSaver.UIType.PYSIDELineEdit, '')
-        # self.prefSaver.addControl(self.ui.uiCHK_forceRetarget, PrefSaver.UIType.PYSIDECheckBox, False)
+        self.prefSaver.addControl(self.ui.uiLED_targetRoot, PrefSaver.UIType.PYSIDELineEdit, '')
+        self.prefSaver.addControl(self.ui.uiCHK_deleteSources, PrefSaver.UIType.PYSIDECheckBox, False)
+        self.prefSaver.addControl(self.ui.uiGRP_folderStructure, PrefSaver.UIType.PYSIDEGroupBox, False)
+        self.prefSaver.addControl(self.ui.uiLED_sourceRoot, PrefSaver.UIType.PYSIDELineEdit, '')
+        self.prefSaver.addControl(self.ui.uiGRP_addTextures, PrefSaver.UIType.PYSIDEGroupBox, False)
+        self.prefSaver.addControl(self.ui.uiLED_texSuffixes, PrefSaver.UIType.PYSIDELineEdit, '_nm, _spec, _hdetm, _em')
+        self.prefSaver.addControl(self.ui.uiCHK_retarget, PrefSaver.UIType.PYSIDECheckBox, False)
+        self.prefSaver.addControl(self.ui.uiCHK_forceRetarget, PrefSaver.UIType.PYSIDECheckBox, False)
 
-        # self.prefSaver.addVariable('retargetDlg_lastBrowsedDirTarget', self.getLastBrowsedDir, self.setLastBrowsedDir, '')
+        self.prefSaver.addVariable('retargetDlg_lastBrowsedDirTarget', self.getLastBrowsedDirTarget, self.setLastBrowsedDirTarget, '')
+        self.prefSaver.addVariable('retargetDlg_lastBrowsedDirSource', self.getLastBrowsedDirSource, self.setLastBrowsedDirSource, '')
 
     def ui_loadSettings(self):
         self.prefSaver.loadPrefs()
@@ -39,26 +46,35 @@ class CopyMoveDialog(QtGui.QDialog):
     def ui_saveSettings(self):
         self.prefSaver.savePrefs()
 
-    # def setLastBrowsedDir(self, path):
-    #     self.lastBrowsedDir = path
-    #
-    # def getLastBrowsedDir(self):
-    #     return self.lastBrowsedDir
+    def setLastBrowsedDirTarget(self, path):
+        self.lastBrowsedDirTarget = path
+
+    def getLastBrowsedDirTarget(self):
+        return self.lastBrowsedDirTarget
+
+    def setLastBrowsedDirSource(self, path):
+        self.lastBrowsedDirSource = path
+
+    def getLastBrowsedDirSource(self):
+        return self.lastBrowsedDirSource
 
     def getTargetRoot(self):
         return self.ui.uiLED_targetRoot.getPath()
 
-    # def setTargetRoot(self, path):
-    #     self.ui.uiLED_retargetRoot.setPath(path)
+    def setTargetRoot(self, path):
+        self.ui.uiLED_targetRoot.setPath(path)
+
+    def getSourceRoot(self):
+        return self.ui.uiLED_sourceRoot.getPath()
+
+    def setSourceRoot(self, path):
+        self.ui.uiLED_sourceRoot.setPath(path)
 
     def getDelSrc(self):
         return self.ui.uiCHK_deleteSources.checkState() == QtCore.Qt.Checked
 
     def getCopyFolderStruct(self):
         return self.ui.uiGRP_folderStructure.isChecked()
-
-    def getSourceRoot(self):
-        return self.ui.uiLED_sourceRoot.getPath()
 
     def getCopyAdd(self):
         return self.ui.uiGRP_addTextures.isChecked()
@@ -72,17 +88,24 @@ class CopyMoveDialog(QtGui.QDialog):
     def getForceRetarget(self):
         return self.ui.uiCHK_forceRetarget.checkState() == QtCore.Qt.Checked
 
-    # def getForceRetarget(self):
-    #     return self.ui.uiCHK_forceRetarget.checkState() == QtCore.Qt.Checked
-
     def validateUi(self):
-        return True
-        # retargetRootExists = self.ui.uiLED_retargetRoot.pathExists()
-        # self.ui.uiBTN_ok.setEnabled(retargetRootExists)
-        # if retargetRootExists:
-        #     self.setStatusText('')
-        # else:
-        #     self.setStatusText('Retarget root directory does not exists.')
+        targetRootExists = self.ui.uiLED_targetRoot.pathExists()
+        self.ui.uiBTN_ok.setEnabled(targetRootExists)
+        if targetRootExists:
+            self.setStatusText('')
+        else:
+            self.setStatusText('Target root directory does not exists.')
+            return
+
+        if self.getCopyFolderStruct():
+            sourceRootExists = self.ui.uiLED_sourceRoot.pathExists()
+            self.ui.uiBTN_ok.setEnabled(sourceRootExists)
+            if sourceRootExists:
+                self.setStatusText('')
+            else:
+                self.setStatusText('Original source root directory does not exists.')
+                return
+
 
     def setStatusText(self, text):
         self.ui.uiLBL_status.setText(text)
@@ -100,19 +123,36 @@ class CopyMoveDialog(QtGui.QDialog):
         )
         return res
 
-    def onBrowseClicked(self):
+    def onBrowseTargetClicked(self):
         # noinspection PyCallByClass
         dialogResult = QtGui.QFileDialog.getExistingDirectory(
             self,
-            'Retarget Root',
-            self.getLastBrowsedDir()
+            'Select Target Directory',
+            self.getLastBrowsedDirTarget()
         )
-        self.setRetargetRoot(dialogResult)
-        self.ui.uiLED_retargetRoot.onEditingFinished()
-        self.setLastBrowsedDir(self.getRetargetRoot())
-        self.validateUi()
+        if dialogResult:
+            self.setTargetRoot(dialogResult)
+            self.ui.uiLED_targetRoot.onEditingFinished()
+            self.setLastBrowsedDirTarget(self.getTargetRoot())
+            self.validateUi()
 
-    def onRetargetRootEditingFinished(self):
+    def onBrowseSourceClicked(self):
+        # noinspection PyCallByClass
+        dialogResult = QtGui.QFileDialog.getExistingDirectory(
+            self,
+            'Select Original Root Directory',
+            self.getLastBrowsedDirSource()
+        )
+        if dialogResult:
+            self.setSourceRoot(dialogResult)
+            self.ui.uiLED_sourceRoot.onEditingFinished()
+            self.setLastBrowsedDirSource(self.getSourceRoot())
+            self.validateUi()
+
+    def onRetargetClicked(self):
+        self.ui.uiCHK_forceRetarget.setEnabled(self.ui.uiCHK_retarget.checkState() == QtCore.Qt.Checked)
+
+    def onValidateUiNeeded(self):
         self.validateUi()
 
     def onOkClicked(self):

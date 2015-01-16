@@ -73,10 +73,11 @@ class RetargetDialog(QtGui.QDialog):
             'Retarget Root',
             self.getLastBrowsedDir()
         )
-        self.setRetargetRoot(dialogResult)
-        self.ui.uiLED_retargetRoot.onEditingFinished()
-        self.setLastBrowsedDir(self.getRetargetRoot())
-        self.validateUi()
+        if dialogResult:
+            self.setRetargetRoot(dialogResult)
+            self.ui.uiLED_retargetRoot.onEditingFinished()
+            self.setLastBrowsedDir(self.getRetargetRoot())
+            self.validateUi()
 
     def onRetargetRootEditingFinished(self):
         self.validateUi()
