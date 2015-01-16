@@ -157,6 +157,7 @@ class TestQtWindow(object):
             (self.dlg, PrefSaver.UIType.PYQTWindow, (300, 300, 200, 200)),
             (self.ui.uiCHK_test1, PrefSaver.UIType.PYQTCheckBox, QtCore.Qt.Unchecked),
             (self.ui.uiCHK_testTri1, PrefSaver.UIType.PYQTCheckBox, QtCore.Qt.Unchecked),
+            (self.ui.uiGRPBOX_test1, PrefSaver.UIType.PYQTGroupBox, False),
             (self.ui.uiRAD_test1, PrefSaver.UIType.PYQTRadioButton, True),
             (self.ui.uiRAD_test2, PrefSaver.UIType.PYQTRadioButton, False),
             (self.ui.uiLED_test1, PrefSaver.UIType.PYQTLineEdit, 'defaultValue'),
@@ -192,6 +193,7 @@ class TestQtWindow(object):
             (self.dlg, PrefSaver.UIType.PYSIDEWindow, (300, 300, 200, 200)),
             (self.ui.uiCHK_test1, PrefSaver.UIType.PYSIDECheckBox, QtCore.Qt.Unchecked),
             (self.ui.uiCHK_testTri1, PrefSaver.UIType.PYSIDECheckBox, QtCore.Qt.Unchecked),
+            (self.ui.uiGRPBOX_test1, PrefSaver.UIType.PYSIDEGroupBox, False),
             (self.ui.uiRAD_test1, PrefSaver.UIType.PYSIDERadioButton, True),
             (self.ui.uiRAD_test2, PrefSaver.UIType.PYSIDERadioButton, False),
             (self.ui.uiLED_test1, PrefSaver.UIType.PYSIDELineEdit, 'defaultValue'),
@@ -238,7 +240,7 @@ class TestQtWindow(object):
     def setupVariable(self):
 
         def variable1Getter():
-            return self.ui.uiLED_testVariable1.text()
+            return str(self.ui.uiLED_testVariable1.text())
 
         def variable1Setter(arg):
             self.ui.uiLED_testVariable1.setText(arg)
