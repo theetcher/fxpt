@@ -37,4 +37,4 @@ def getShadingGroups(node, visited):
 
 
 def cleanupPath(path):
-    return pathToSlash(path.strip())
+    return pathToSlash(path.strip()).rstrip('/')

@@ -1,7 +1,3 @@
-# class ProcTypes(object):
-#
-#     ProcPaste = 1
-
 import os
 import re
 
@@ -95,4 +91,96 @@ class ProcessorRetarget(ProcessorBase):
                 else:
                     texDb[lowCaseFilename] = fullPath
         return texDb
+
+
+class ProcessorCopyMove(ProcessorBase):
+
+    def __init__(self, filenames, targetRoot, delSrc, copyFolderStruct, sourceRoot, copyAdd, addSuffixes):
+        super(ProcessorCopyMove, self).__init__()
+
+        self.filenames = filenames
+        self.targetRoot = targetRoot
+        self.delSrc = delSrc
+        self.copyFolderStruct = copyFolderStruct
+        self.sourceRoot = sourceRoot
+        self.copyAdd = copyAdd
+        self.addSuffixes = addSuffixes
+
+        self.printArgs()
+
+    def printArgs(self):
+        print '--- ProcessorCopyMove args ---'
+        for f in self.filenames:
+            print 'filename={0},'.format(f)
+        print 'targetRoot={0}'.format(self.targetRoot)
+        print 'delSrc={0}'.format(self.delSrc)
+        print 'copyFolderStruct={0}'.format(self.copyFolderStruct)
+        print 'sourceRoot={0}'.format(self.sourceRoot)
+        print 'copyAdd={0}'.format(self.copyAdd)
+        print 'addSuffixes={0}'.format(self.addSuffixes)
+
+    def execute(self):
+        filesToProcess = self.getFilesToProcess()
+
+        print '--- ProcessorCopyMove.filesToProcess ---'
+        for f in filesToProcess:
+            print 'fileToProcess={0}'.format(f)
+
+        if self.copyFolderStruct:
+            copyInfo = self.getCopyInfoFolderStructure(filesToProcess)
+        else:
+            copyInfo = self.getCopyInfoSimple(filesToProcess)
+
+        print '--- ProcessorCopyMove.copyInfo ---'
+        for s, t in copyInfo:
+            print '"{0}"->"{1}"'.format(s, t)
+
+    def getCopyInfoSimple(self, files):
+        return [(f, '{0}/{1}'.format(self.targetRoot, os.path.basename(f))) for f in files]
+
+    def getCopyInfoFolderStructure(self, files):
+        res = []
+        for f in files:
+            srcLower = self.sourceRoot.lower() + '/'
+            if f.lower().startswith(srcLower):
+                res.append((f, '{0}/{1}'.format(self.targetRoot, f[len(srcLower):])))
+            else:
+                for r in ('//', ':', '$'):
+                    f = f.replace(r, '')
+                res.append((f, '{0}/{1}'.format(self.targetRoot, f)))
+        return res
+
+    def getFilesToProcess(self):
+        filesDict = {}
+
+        for f in self.filenames:
+            f = os.path.expandvars(f)
+            fLower = f.lower()
+            if fLower not in filesDict:
+                if os.path.exists(f):
+                    filesDict[fLower] = f
+
+                    fNoExt, ext = os.path.splitext(f)
+                    for suf in self.addSuffixes:
+                        addFilename = '{0}{1}{2}'.format(fNoExt, suf, ext)
+                        addFilenameLower = addFilename.lower()
+                        if addFilenameLower not in filesDict:
+                            if os.path.exists(addFilename):
+                                filesDict[addFilenameLower] = addFilename
+
+        return sorted(filesDict.values())
+
+
+class ProcessorCopyMoveUI(ProcessorCopyMove):
+
+    def __init__(self, tns, targetRoot, delSrc, copyFolderStruct, sourceRoot, copyAdd, addSuffixes):
+        super(ProcessorCopyMoveUI, self).__init__(
+            [tn.getAttrValue() for tn in tns],
+            targetRoot,
+            delSrc,
+            copyFolderStruct,
+            sourceRoot,
+            copyAdd,
+            addSuffixes
+        )
 

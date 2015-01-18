@@ -21,6 +21,7 @@ class CopyMoveDialog(QtGui.QDialog):
         self.ui_initSettings()
         self.ui_loadSettings()
 
+        self.onRetargetClicked()
         self.validateUi()
 
     # noinspection PyAttributeOutsideInit
@@ -82,6 +83,9 @@ class CopyMoveDialog(QtGui.QDialog):
     def getAddSuffixes(self):
         return str(self.ui.uiLED_texSuffixes.text())
 
+    def getSuffixesList(self):
+        return [x.strip() for x in self.getAddSuffixes().split(',')]
+
     def getRetarget(self):
         return self.ui.uiCHK_retarget.checkState() == QtCore.Qt.Checked
 
@@ -106,7 +110,6 @@ class CopyMoveDialog(QtGui.QDialog):
                 self.setStatusText('Original source root directory does not exists.')
                 return
 
-
     def setStatusText(self, text):
         self.ui.uiLBL_status.setText(text)
 
@@ -117,7 +120,7 @@ class CopyMoveDialog(QtGui.QDialog):
             copyFolderStruct=self.getCopyFolderStruct(),
             sourceRoot=self.getSourceRoot(),
             copyAdd=self.getCopyAdd(),
-            addSuffixes=self.getAddSuffixes(),
+            addSuffixes=self.getSuffixesList(),
             retarget=self.getRetarget(),
             forceRetarget=self.getForceRetarget()
         )

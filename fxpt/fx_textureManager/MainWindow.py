@@ -47,6 +47,7 @@ OPT_VAR_NAME = 'fx_textureManager_prefs'
 MULTIPLE_STRING = '...multiple...'
 
 #TODO!: test on huge data
+#TODO!: disable editing PathLineEdit, only throug browse dialog
 #TODO: change icon of search and replace
 #TODO: edit filename in table. get new filename from edit cell and then apply ProcPaste
 
