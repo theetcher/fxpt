@@ -79,8 +79,7 @@ class ProcessorRetarget(ProcessorBase):
             else:
                 if self.forceRetarget:
                     tn.setAttrValue('{}/{}'.format(self.retargetRoot, texName))
-                    self.log('ProcessorRetarget: "{}" was not found in target directory -> Retargeting to root dir.'.format(texName))
-        self.printLog()
+                    self.log('ProcessorRetarget: "{0}" was not found in target directory -> Retargeting to root dir.'.format(texName))
 
     def getTexDb(self):
         texDb = {}
@@ -110,34 +109,26 @@ class ProcessorCopyMove(ProcessorBase):
 
         self.processedInfo = {}
 
-        self.printArgs()
-
-    def printArgs(self):
-        print '--- ProcessorCopyMove args ---'
-        for f in self.filenames:
-            print 'filename={0},'.format(f)
-        print 'targetRoot={0}'.format(self.targetRoot)
-        print 'delSrc={0}'.format(self.delSrc)
-        print 'copyFolderStruct={0}'.format(self.copyFolderStruct)
-        print 'sourceRoot={0}'.format(self.sourceRoot)
-        print 'copyAdd={0}'.format(self.copyAdd)
-        print 'addSuffixes={0}'.format(self.addSuffixes)
+    #     self.printArgs()
+    #
+    # def printArgs(self):
+    #     print '--- ProcessorCopyMove args ---'
+    #     for f in self.filenames:
+    #         print 'filename={0},'.format(f)
+    #     print 'targetRoot={0}'.format(self.targetRoot)
+    #     print 'delSrc={0}'.format(self.delSrc)
+    #     print 'copyFolderStruct={0}'.format(self.copyFolderStruct)
+    #     print 'sourceRoot={0}'.format(self.sourceRoot)
+    #     print 'copyAdd={0}'.format(self.copyAdd)
+    #     print 'addSuffixes={0}'.format(self.addSuffixes)
 
     def execute(self):
         filesToProcess = self.getFilesToProcess()
-
-        print '--- ProcessorCopyMove.filesToProcess ---'
-        for f in filesToProcess:
-            print 'fileToProcess={0}'.format(f)
 
         if self.copyFolderStruct:
             copyInfo = self.getCopyInfoFolderStructure(filesToProcess)
         else:
             copyInfo = self.getCopyInfoSimple(filesToProcess)
-
-        print '--- ProcessorCopyMove.copyInfo ---'
-        for s, t in copyInfo:
-            print '"{0}"->"{1}"'.format(s, t)
 
         checkedDirs = set()
         createdDirs = set()
@@ -161,6 +152,15 @@ class ProcessorCopyMove(ProcessorBase):
                     self.processedInfo[s.lower()] = t
                 except IOError as e:
                     self.log(str(e))
+
+        if self.delSrc:
+            for f in self.processedInfo:
+                if os.path.exists(f):
+                    try:
+                        makeWritable(f)
+                        os.remove(f)
+                    except OSError as e:
+                        self.log(str(e))
 
     def getCopyInfoSimple(self, files):
         return [(f, '{0}/{1}'.format(self.targetRoot, os.path.basename(f))) for f in files]
@@ -211,13 +211,14 @@ class ProcessorCopyMoveUI(ProcessorCopyMove):
             copyAdd,
             addSuffixes
         )
+        self.tns = tns
         self.retarget = retarget
         
     def execute(self):
         super(ProcessorCopyMoveUI, self).execute()
 
         if self.retarget:
-            print 'Processing Retarget'
-
-        self.printLog()
-
+            for tn in self.tns:
+                oldValue = os.path.expandvars(tn.getAttrValue()).lower()
+                if oldValue in self.processedInfo:
+                    tn.setAttrValue(self.processedInfo[oldValue])
