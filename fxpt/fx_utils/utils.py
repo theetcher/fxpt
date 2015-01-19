@@ -1,4 +1,5 @@
 import os
+import stat
 
 
 def pathToSlash(path):
@@ -16,3 +17,7 @@ def getFxptLocation():
 
 def getFxUtilsDir():
     return pathToSlash(os.path.dirname(__file__))
+
+
+def makeWritable(path):
+    os.chmod(path, stat.S_IWRITE)

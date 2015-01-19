@@ -1,5 +1,3 @@
-import maya.cmds as m
-
 from fxpt.fx_utils.utils import pathToSlash
 
 # style not finished
@@ -21,19 +19,6 @@ QToolButton:checked{
     padding:3px
 }
 """
-
-
-def getShadingGroups(node, visited):
-    sgs = set()
-    visited.add(node)
-    outConnections = m.listConnections(node, s=False, d=True)
-    if outConnections:
-        for destinationNode in outConnections:
-            if m.objectType(destinationNode, isType='shadingEngine'):
-                sgs.add(destinationNode)
-            else:
-                sgs.update(getShadingGroups(destinationNode, visited))
-    return sgs
 
 
 def cleanupPath(path):

@@ -6,7 +6,7 @@ from fxpt.side_utils import pyperclip
 from fxpt.fx_utils.qtFontCreator import QtFontCreator
 from fxpt.fx_utils.utils import getFxUtilsDir
 
-from fxpt.fx_textureManager.com import getShadingGroups
+from fxpt.fx_textureManager.comMaya import getShadingGroups
 
 from fxpt.fx_textureManager.MainWindowUI import Ui_MainWindow
 from fxpt.fx_textureManager.Harvesters import MayaSceneHarvester

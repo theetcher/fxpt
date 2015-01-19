@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'CopyMoveDialogUI.ui'
 #
-# Created: Fri Jan 16 21:37:38 2015
+# Created: Mon Jan 19 14:46:35 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,13 +12,13 @@ from PySide import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(813, 350)
+        Dialog.resize(857, 320)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
         Dialog.setSizePolicy(sizePolicy)
-        Dialog.setMaximumSize(QtCore.QSize(16777215, 350))
+        Dialog.setMaximumSize(QtCore.QSize(16777215, 320))
         self.verticalLayout_2 = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.groupBox_2 = QtGui.QGroupBox(Dialog)
@@ -32,7 +32,7 @@ class Ui_Dialog(object):
         self.uiCHK_deleteSources = QtGui.QCheckBox(self.groupBox_2)
         self.uiCHK_deleteSources.setMinimumSize(QtCore.QSize(0, 20))
         self.uiCHK_deleteSources.setObjectName("uiCHK_deleteSources")
-        self.gridLayout_3.addWidget(self.uiCHK_deleteSources, 1, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.uiCHK_deleteSources, 2, 1, 1, 1)
         self.uiBTN_browseTarget = QtGui.QToolButton(self.groupBox_2)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/folder.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -47,7 +47,13 @@ class Ui_Dialog(object):
         self.label_10.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_10.setObjectName("label_10")
         self.gridLayout_3.addWidget(self.label_10, 0, 0, 1, 1)
+        self.uiCHK_retarget = QtGui.QCheckBox(self.groupBox_2)
+        self.uiCHK_retarget.setMinimumSize(QtCore.QSize(0, 20))
+        self.uiCHK_retarget.setObjectName("uiCHK_retarget")
+        self.gridLayout_3.addWidget(self.uiCHK_retarget, 1, 1, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout_3)
+        spacerItem = QtGui.QSpacerItem(20, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        self.verticalLayout.addItem(spacerItem)
         self.uiGRP_folderStructure = QtGui.QGroupBox(self.groupBox_2)
         self.uiGRP_folderStructure.setCheckable(True)
         self.uiGRP_folderStructure.setObjectName("uiGRP_folderStructure")
@@ -80,21 +86,6 @@ class Ui_Dialog(object):
         self.gridLayout_2.addWidget(self.uiLED_texSuffixes, 0, 1, 1, 1)
         self.verticalLayout.addWidget(self.uiGRP_addTextures)
         self.verticalLayout_2.addWidget(self.groupBox_2)
-        self.groupBox_3 = QtGui.QGroupBox(Dialog)
-        self.groupBox_3.setObjectName("groupBox_3")
-        self.horizontalLayout_4 = QtGui.QHBoxLayout(self.groupBox_3)
-        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.uiCHK_retarget = QtGui.QCheckBox(self.groupBox_3)
-        self.uiCHK_retarget.setMinimumSize(QtCore.QSize(0, 20))
-        self.uiCHK_retarget.setObjectName("uiCHK_retarget")
-        self.horizontalLayout_4.addWidget(self.uiCHK_retarget)
-        self.uiCHK_forceRetarget = QtGui.QCheckBox(self.groupBox_3)
-        self.uiCHK_forceRetarget.setMinimumSize(QtCore.QSize(0, 20))
-        self.uiCHK_forceRetarget.setObjectName("uiCHK_forceRetarget")
-        self.horizontalLayout_4.addWidget(self.uiCHK_forceRetarget)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem)
-        self.verticalLayout_2.addWidget(self.groupBox_3)
         spacerItem1 = QtGui.QSpacerItem(20, 30, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem1)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
@@ -123,7 +114,6 @@ class Ui_Dialog(object):
         QtCore.QObject.connect(self.uiLED_sourceRoot, QtCore.SIGNAL("editingFinished()"), Dialog.onValidateUiNeeded)
         QtCore.QObject.connect(self.uiLED_targetRoot, QtCore.SIGNAL("editingFinished()"), Dialog.onValidateUiNeeded)
         QtCore.QObject.connect(self.uiGRP_folderStructure, QtCore.SIGNAL("clicked()"), Dialog.onValidateUiNeeded)
-        QtCore.QObject.connect(self.uiCHK_retarget, QtCore.SIGNAL("clicked()"), Dialog.onRetargetClicked)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.uiBTN_cancel, self.uiBTN_ok)
 
@@ -134,6 +124,7 @@ class Ui_Dialog(object):
         self.uiBTN_browseTarget.setText(QtGui.QApplication.translate("Dialog", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.uiBTN_browseTarget.setShortcut(QtGui.QApplication.translate("Dialog", "Ctrl+S, Ctrl+R", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("Dialog", "Copy to:", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiCHK_retarget.setText(QtGui.QApplication.translate("Dialog", "Retarget", None, QtGui.QApplication.UnicodeUTF8))
         self.uiGRP_folderStructure.setTitle(QtGui.QApplication.translate("Dialog", "Copy folder structure", None, QtGui.QApplication.UnicodeUTF8))
         self.uiBTN_browseSource.setText(QtGui.QApplication.translate("Dialog", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.uiBTN_browseSource.setShortcut(QtGui.QApplication.translate("Dialog", "Ctrl+S, Ctrl+R", None, QtGui.QApplication.UnicodeUTF8))
@@ -141,9 +132,6 @@ class Ui_Dialog(object):
         self.uiGRP_addTextures.setTitle(QtGui.QApplication.translate("Dialog", "Copy additional textures", None, QtGui.QApplication.UnicodeUTF8))
         self.label_22.setText(QtGui.QApplication.translate("Dialog", "Texture suffixes:", None, QtGui.QApplication.UnicodeUTF8))
         self.uiLED_texSuffixes.setText(QtGui.QApplication.translate("Dialog", "_nm, _spec, _hdetm, _em", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox_3.setTitle(QtGui.QApplication.translate("Dialog", "Post Processing", None, QtGui.QApplication.UnicodeUTF8))
-        self.uiCHK_retarget.setText(QtGui.QApplication.translate("Dialog", "Retarget", None, QtGui.QApplication.UnicodeUTF8))
-        self.uiCHK_forceRetarget.setText(QtGui.QApplication.translate("Dialog", "Force Retarget", None, QtGui.QApplication.UnicodeUTF8))
         self.uiBTN_ok.setText(QtGui.QApplication.translate("Dialog", "OK", None, QtGui.QApplication.UnicodeUTF8))
         self.uiBTN_cancel.setText(QtGui.QApplication.translate("Dialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 

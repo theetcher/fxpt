@@ -28,24 +28,16 @@ class CoordinatorMayaUI(object):
         for key, value in dlgResult._asdict().iteritems():
             print '{0}={1},'.format(key, value)
 
-        processors = []
-
         procCopyMove = Processors.ProcessorCopyMoveUI(
             tns,
             dlgResult.targetRoot,
+            dlgResult.retarget,
             dlgResult.delSrc,
             dlgResult.copyFolderStruct,
             dlgResult.sourceRoot,
             dlgResult.copyAdd,
             dlgResult.addSuffixes,
         )
-        processors.append(procCopyMove)
-
-        if dlgResult.retarget:
-            procRetarget = Processors.ProcessorRetarget(tns, dlgResult.targetRoot, dlgResult.forceRetarget)
-            processors.append(procRetarget)
-
-        for proc in processors:
-            proc.execute()
+        procCopyMove.execute()
 
 

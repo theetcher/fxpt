@@ -1,6 +1,8 @@
 import os
 import re
+import shutil
 
+from fxpt.fx_utils.utils import makeWritable
 from fxpt.fx_textureManager.com import cleanupPath
 #from fxpt.fx_utils.watch import watch
 
@@ -106,6 +108,8 @@ class ProcessorCopyMove(ProcessorBase):
         self.copyAdd = copyAdd
         self.addSuffixes = addSuffixes
 
+        self.processedInfo = {}
+
         self.printArgs()
 
     def printArgs(self):
@@ -135,6 +139,29 @@ class ProcessorCopyMove(ProcessorBase):
         for s, t in copyInfo:
             print '"{0}"->"{1}"'.format(s, t)
 
+        checkedDirs = set()
+        createdDirs = set()
+        for s, t in copyInfo:
+            targetDir = os.path.dirname(t)
+            if targetDir not in checkedDirs:
+                checkedDirs.add(targetDir)
+                if not os.path.exists(targetDir):
+                    try:
+                        os.makedirs(targetDir)
+                        createdDirs.add(targetDir)
+                    except os.error as e:
+                        self.log(str(e))
+                else:
+                    createdDirs.add(targetDir)
+
+            if targetDir in createdDirs:
+                try:
+                    makeWritable(t)
+                    shutil.copy(s, t)
+                    self.processedInfo[s.lower()] = t
+                except IOError as e:
+                    self.log(str(e))
+
     def getCopyInfoSimple(self, files):
         return [(f, '{0}/{1}'.format(self.targetRoot, os.path.basename(f))) for f in files]
 
@@ -145,9 +172,10 @@ class ProcessorCopyMove(ProcessorBase):
             if f.lower().startswith(srcLower):
                 res.append((f, '{0}/{1}'.format(self.targetRoot, f[len(srcLower):])))
             else:
+                trgF = f
                 for r in ('//', ':', '$'):
-                    f = f.replace(r, '')
-                res.append((f, '{0}/{1}'.format(self.targetRoot, f)))
+                    trgF = trgF.replace(r, '')
+                res.append((f, '{0}/{1}'.format(self.targetRoot, trgF)))
         return res
 
     def getFilesToProcess(self):
@@ -173,7 +201,7 @@ class ProcessorCopyMove(ProcessorBase):
 
 class ProcessorCopyMoveUI(ProcessorCopyMove):
 
-    def __init__(self, tns, targetRoot, delSrc, copyFolderStruct, sourceRoot, copyAdd, addSuffixes):
+    def __init__(self, tns, targetRoot, retarget, delSrc, copyFolderStruct, sourceRoot, copyAdd, addSuffixes):
         super(ProcessorCopyMoveUI, self).__init__(
             [tn.getAttrValue() for tn in tns],
             targetRoot,
@@ -183,4 +211,13 @@ class ProcessorCopyMoveUI(ProcessorCopyMove):
             copyAdd,
             addSuffixes
         )
+        self.retarget = retarget
+        
+    def execute(self):
+        super(ProcessorCopyMoveUI, self).execute()
+
+        if self.retarget:
+            print 'Processing Retarget'
+
+        self.printLog()
 

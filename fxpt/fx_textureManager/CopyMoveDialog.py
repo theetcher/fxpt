@@ -21,7 +21,6 @@ class CopyMoveDialog(QtGui.QDialog):
         self.ui_initSettings()
         self.ui_loadSettings()
 
-        self.onRetargetClicked()
         self.validateUi()
 
     # noinspection PyAttributeOutsideInit
@@ -36,7 +35,6 @@ class CopyMoveDialog(QtGui.QDialog):
         self.prefSaver.addControl(self.ui.uiGRP_addTextures, PrefSaver.UIType.PYSIDEGroupBox, False)
         self.prefSaver.addControl(self.ui.uiLED_texSuffixes, PrefSaver.UIType.PYSIDELineEdit, '_nm, _spec, _hdetm, _em')
         self.prefSaver.addControl(self.ui.uiCHK_retarget, PrefSaver.UIType.PYSIDECheckBox, False)
-        self.prefSaver.addControl(self.ui.uiCHK_forceRetarget, PrefSaver.UIType.PYSIDECheckBox, False)
 
         self.prefSaver.addVariable('retargetDlg_lastBrowsedDirTarget', self.getLastBrowsedDirTarget, self.setLastBrowsedDirTarget, '')
         self.prefSaver.addVariable('retargetDlg_lastBrowsedDirSource', self.getLastBrowsedDirSource, self.setLastBrowsedDirSource, '')
@@ -89,9 +87,6 @@ class CopyMoveDialog(QtGui.QDialog):
     def getRetarget(self):
         return self.ui.uiCHK_retarget.checkState() == QtCore.Qt.Checked
 
-    def getForceRetarget(self):
-        return self.ui.uiCHK_forceRetarget.checkState() == QtCore.Qt.Checked
-
     def validateUi(self):
         targetRootExists = self.ui.uiLED_targetRoot.pathExists()
         self.ui.uiBTN_ok.setEnabled(targetRootExists)
@@ -116,13 +111,12 @@ class CopyMoveDialog(QtGui.QDialog):
     def getDialogResult(self):
         res = CopyMoveInfo(
             targetRoot=self.getTargetRoot(),
+            retarget=self.getRetarget(),
             delSrc=self.getDelSrc(),
             copyFolderStruct=self.getCopyFolderStruct(),
             sourceRoot=self.getSourceRoot(),
             copyAdd=self.getCopyAdd(),
-            addSuffixes=self.getSuffixesList(),
-            retarget=self.getRetarget(),
-            forceRetarget=self.getForceRetarget()
+            addSuffixes=self.getSuffixesList()
         )
         return res
 
@@ -151,9 +145,6 @@ class CopyMoveDialog(QtGui.QDialog):
             self.ui.uiLED_sourceRoot.onEditingFinished()
             self.setLastBrowsedDirSource(self.getSourceRoot())
             self.validateUi()
-
-    def onRetargetClicked(self):
-        self.ui.uiCHK_forceRetarget.setEnabled(self.ui.uiCHK_retarget.checkState() == QtCore.Qt.Checked)
 
     def onValidateUiNeeded(self):
         self.validateUi()

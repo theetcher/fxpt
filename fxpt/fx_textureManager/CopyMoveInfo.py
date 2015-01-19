@@ -4,12 +4,11 @@ CopyMoveInfo = namedtuple(
     'CopyMoveInfo',
     (
         'targetRoot',
+        'retarget',
         'delSrc',
         'copyFolderStruct',
         'sourceRoot',
         'copyAdd',
-        'addSuffixes',
-        'retarget',
-        'forceRetarget'
+        'addSuffixes'
     )
 )
