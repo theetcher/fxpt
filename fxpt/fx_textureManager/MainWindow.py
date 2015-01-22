@@ -408,11 +408,7 @@ class TexManagerUI(QtGui.QMainWindow):
                 self.getSelectedTexNodes(),
                 dialogResult
             )
-            if procLog:
-                self.logDlg.showLog(procLog)
-                # self.logDlg.setText(procLog)
-                # self.logDlg.exec_()
-
+            self.logDlg.showLog(procLog)
             self.uiRefresh()
 
     def onRetargetTriggered(self):
@@ -425,19 +421,19 @@ class TexManagerUI(QtGui.QMainWindow):
                 useSourceRoot,
                 sourceRoot
             )
-            if procLog:
-                self.logDlg.showLog(procLog)
+            self.logDlg.showLog(procLog)
             self.uiRefresh()
 
     def onSearchReplaceTriggered(self):
         if self.searchReplaceDlg.exec_() == QtGui.QDialog.Accepted:
             searchStr, replaceStr, caseSensitive = self.searchReplaceDlg.getDialogData()
-            self.coordinator.processSearchAndReplace(
+            procLog = self.coordinator.processSearchAndReplace(
                 self.getSelectedTexNodes(),
                 searchStr,
                 replaceStr,
                 caseSensitive
             )
+            self.logDlg.showLog(procLog)
             self.uiRefresh()
 
     def closeEvent(self, event):

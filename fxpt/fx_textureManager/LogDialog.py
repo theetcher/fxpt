@@ -29,10 +29,11 @@ class LogDialog(QtGui.QDialog):
         self.prefSaver.savePrefs()
 
     def showLog(self, strings):
-        self.ui.uiTXT_log.clear()
-        for s in strings:
-            self.ui.uiTXT_log.appendPlainText(s)
-        self.exec_()
+        if strings:
+            self.ui.uiTXT_log.clear()
+            for s in strings:
+                self.ui.uiTXT_log.appendPlainText(s)
+            self.exec_()
 
     def onDialogFinished(self):
         self.ui_saveSettings()
