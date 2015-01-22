@@ -15,6 +15,7 @@ class RetargetDialog(QtGui.QDialog):
         self.ui.setupUi(self)
 
         self.lastBrowsedDir = ''
+        self.lastBrowsedDirSrc = ''
 
         self.ui_initSettings()
         self.ui_loadSettings()
@@ -28,8 +29,11 @@ class RetargetDialog(QtGui.QDialog):
         self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (200, 200, 600, 100))
         self.prefSaver.addControl(self.ui.uiLED_retargetRoot, PrefSaver.UIType.PYSIDELineEdit, '')
         self.prefSaver.addControl(self.ui.uiCHK_forceRetarget, PrefSaver.UIType.PYSIDECheckBox, False)
+        self.prefSaver.addControl(self.ui.uiGRP_useSourceRoot, PrefSaver.UIType.PYSIDEGroupBox, False)
+        self.prefSaver.addControl(self.ui.uiLED_sourceRoot, PrefSaver.UIType.PYSIDELineEdit, '')
 
         self.prefSaver.addVariable('retargetDlg_lastBrowsedDir', self.getLastBrowsedDir, self.setLastBrowsedDir, '')
+        self.prefSaver.addVariable('retargetDlg_lastBrowsedSrcDir', self.getLastBrowsedSrcDir, self.setLastBrowsedSrcDir, '')
 
     def ui_loadSettings(self):
         self.prefSaver.loadPrefs()
@@ -43,14 +47,29 @@ class RetargetDialog(QtGui.QDialog):
     def getLastBrowsedDir(self):
         return self.lastBrowsedDir
 
+    def setLastBrowsedSrcDir(self, path):
+        self.lastBrowsedDirSrc = path
+
+    def getLastBrowsedSrcDir(self):
+        return self.lastBrowsedDirSrc
+
     def getRetargetRoot(self):
         return self.ui.uiLED_retargetRoot.getPath()
 
     def setRetargetRoot(self, path):
         self.ui.uiLED_retargetRoot.setPath(path)
 
+    def getSourceRoot(self):
+        return self.ui.uiLED_sourceRoot.getPath()
+
+    def setSourceRoot(self, path):
+        self.ui.uiLED_sourceRoot.setPath(path)
+
     def getForceRetarget(self):
         return self.ui.uiCHK_forceRetarget.checkState() == QtCore.Qt.Checked
+
+    def getUseSourceRoot(self):
+        return self.ui.uiGRP_useSourceRoot.isChecked()
 
     def validateUi(self):
         retargetRootExists = self.ui.uiLED_retargetRoot.pathExists()
@@ -64,7 +83,7 @@ class RetargetDialog(QtGui.QDialog):
         self.ui.uiLBL_status.setText(text)
 
     def getDialogResult(self):
-        return self.getRetargetRoot(), self.getForceRetarget()
+        return self.getRetargetRoot(), self.getForceRetarget(), self.getUseSourceRoot(), self.getSourceRoot()
 
     def onBrowseClicked(self):
         # noinspection PyCallByClass
@@ -79,7 +98,20 @@ class RetargetDialog(QtGui.QDialog):
             self.setLastBrowsedDir(self.getRetargetRoot())
             self.validateUi()
 
-    def onRetargetRootEditingFinished(self):
+    def onBrowseSourceClicked(self):
+        # noinspection PyCallByClass
+        dialogResult = QtGui.QFileDialog.getExistingDirectory(
+            self,
+            'Source Root',
+            self.getLastBrowsedSrcDir()
+        )
+        if dialogResult:
+            self.setSourceRoot(dialogResult)
+            self.ui.uiLED_sourceRoot.onEditingFinished()
+            self.setLastBrowsedSrcDir(self.getSourceRoot())
+            self.validateUi()
+
+    def onValidateUiNeeded(self):
         self.validateUi()
 
     def onOkClicked(self):

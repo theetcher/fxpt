@@ -47,7 +47,7 @@ OPT_VAR_NAME = 'fx_textureManager_prefs'
 MULTIPLE_STRING = '...multiple...'
 
 #TODO!: test on huge data
-#TODO!: disable editing PathLineEdit, only throug browse dialog
+#TODO: log window
 #TODO: change icon of search and replace
 #TODO: edit filename in table. get new filename from edit cell and then apply ProcPaste
 
@@ -410,11 +410,13 @@ class TexManagerUI(QtGui.QMainWindow):
 
     def onRetargetTriggered(self):
         if self.retargetDlg.exec_() == QtGui.QDialog.Accepted:
-            retargetRoot, forceRetarget = self.retargetDlg.getDialogResult()
+            retargetRoot, forceRetarget, useSourceRoot, sourceRoot = self.retargetDlg.getDialogResult()
             self.coordinator.processRetarget(
                 self.getSelectedTexNodes(),
                 retargetRoot,
-                forceRetarget
+                forceRetarget,
+                useSourceRoot,
+                sourceRoot
             )
             self.uiRefresh()
 

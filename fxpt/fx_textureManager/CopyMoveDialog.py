@@ -96,15 +96,6 @@ class CopyMoveDialog(QtGui.QDialog):
             self.setStatusText('Target root directory does not exists.')
             return
 
-        if self.getCopyFolderStruct():
-            sourceRootExists = self.ui.uiLED_sourceRoot.pathExists()
-            self.ui.uiBTN_ok.setEnabled(sourceRootExists)
-            if sourceRootExists:
-                self.setStatusText('')
-            else:
-                self.setStatusText('Original source root directory does not exists.')
-                return
-
     def setStatusText(self, text):
         self.ui.uiLBL_status.setText(text)
 

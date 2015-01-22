@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>651</width>
-    <height>146</height>
+    <width>614</width>
+    <height>250</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>200</height>
+    <height>250</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>Retarget</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="margin">
     <number>6</number>
    </property>
@@ -34,12 +34,9 @@
      <property name="title">
       <string>Parameters</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="topMargin">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="margin">
        <number>6</number>
-      </property>
-      <property name="bottomMargin">
-       <number>9</number>
       </property>
       <item>
        <layout class="QGridLayout" name="gridLayout">
@@ -106,6 +103,67 @@
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>10</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="uiGRP_useSourceRoot">
+        <property name="title">
+         <string>Use source root</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="1">
+          <widget class="LineEditPath" name="uiLED_sourceRoot"/>
+         </item>
+         <item row="0" column="2">
+          <widget class="QToolButton" name="uiBTN_browseSource">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="resources.qrc">
+             <normaloff>:/icons/folder.png</normaloff>:/icons/folder.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>18</width>
+             <height>18</height>
+            </size>
+           </property>
+           <property name="shortcut">
+            <string>Ctrl+S, Ctrl+R</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_16">
+           <property name="text">
+            <string>Source root folder:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -236,7 +294,7 @@
    <sender>uiLED_retargetRoot</sender>
    <signal>editingFinished()</signal>
    <receiver>Dialog</receiver>
-   <slot>onRetargetRootEditingFinished()</slot>
+   <slot>onValidateUiNeeded()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>347</x>
@@ -264,12 +322,29 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>uiBTN_browseSource</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>onBrowseSourceClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>578</x>
+     <y>135</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>306</x>
+     <y>124</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onDialogAccepted()</slot>
-  <slot>onRetargetRootEditingFinished()</slot>
   <slot>onBrowseClicked()</slot>
   <slot>onDialogFinished(int)</slot>
   <slot>onOkClicked()</slot>
+  <slot>onValidateUiNeeded()</slot>
+  <slot>onBrowseSourceClicked()</slot>
  </slots>
 </ui>
