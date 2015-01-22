@@ -5,18 +5,12 @@ from fxpt.fx_textureManager import TexNode
 
 class MayaSceneHarvester(object):
 
-    #TODO: delete transform from this list at the end and cleanup tests
     texAttributes = {
         'file': [
             'fileTextureName'
         ],
         'mentalrayTexture': [
             'fileTextureName'
-        ],
-        'transform': [
-            'texture',
-            'texture1',
-            'texture2'
         ]
     }
 

@@ -15,19 +15,16 @@ class CoordinatorMayaUI(object):
     def processSearchAndReplace(self, *args):
         procSearchReplace = Processors.ProcessorSearchReplace(*args)
         procSearchReplace.execute()
+        return procSearchReplace.getLog()
 
     # noinspection PyMethodMayBeStatic
     def processRetarget(self, *args):
         procRetarget = Processors.ProcessorRetarget(*args)
         procRetarget.execute()
+        return procRetarget.getLog()
 
     # noinspection PyMethodMayBeStatic
     def processCopyMove(self, tns, dlgResult):
-        print '--- processCopyMove args ---'
-        # noinspection PyProtectedMember
-        for key, value in dlgResult._asdict().iteritems():
-            print '{0}={1},'.format(key, value)
-
         procCopyMove = Processors.ProcessorCopyMoveUI(
             tns,
             dlgResult.targetRoot,
@@ -39,5 +36,6 @@ class CoordinatorMayaUI(object):
             dlgResult.addSuffixes,
         )
         procCopyMove.execute()
+        return procCopyMove.getLog()
 
 

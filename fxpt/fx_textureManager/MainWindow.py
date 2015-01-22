@@ -16,6 +16,7 @@ from fxpt.fx_prefsaver import PrefSaver, Serializers
 from fxpt.fx_textureManager.SearchReplaceDialog import SearchReplaceDialog
 from fxpt.fx_textureManager.RetargetDialog import RetargetDialog
 from fxpt.fx_textureManager.CopyMoveDialog import CopyMoveDialog
+from fxpt.fx_textureManager.LogDialog import LogDialog
 
 
 # from fxpt.fx_utils.watch import watch
@@ -47,8 +48,8 @@ OPT_VAR_NAME = 'fx_textureManager_prefs'
 MULTIPLE_STRING = '...multiple...'
 
 #TODO!: test on huge data
-#TODO: log window
 #TODO: change icon of search and replace
+#TODO: app icon
 #TODO: edit filename in table. get new filename from edit cell and then apply ProcPaste
 
 
@@ -71,6 +72,7 @@ class TexManagerUI(QtGui.QMainWindow):
         self.searchReplaceDlg = SearchReplaceDialog(self)
         self.retargetDlg = RetargetDialog(self)
         self.copyMoveDlg = CopyMoveDialog(self)
+        self.logDlg = LogDialog(self)
 
         self.createContextMenu()
 
@@ -402,22 +404,29 @@ class TexManagerUI(QtGui.QMainWindow):
     def onCopyMoveTriggered(self):
         if self.copyMoveDlg.exec_() == QtGui.QDialog.Accepted:
             dialogResult = self.copyMoveDlg.getDialogResult()
-            self.coordinator.processCopyMove(
+            procLog = self.coordinator.processCopyMove(
                 self.getSelectedTexNodes(),
                 dialogResult
             )
+            if procLog:
+                self.logDlg.showLog(procLog)
+                # self.logDlg.setText(procLog)
+                # self.logDlg.exec_()
+
             self.uiRefresh()
 
     def onRetargetTriggered(self):
         if self.retargetDlg.exec_() == QtGui.QDialog.Accepted:
             retargetRoot, forceRetarget, useSourceRoot, sourceRoot = self.retargetDlg.getDialogResult()
-            self.coordinator.processRetarget(
+            procLog = self.coordinator.processRetarget(
                 self.getSelectedTexNodes(),
                 retargetRoot,
                 forceRetarget,
                 useSourceRoot,
                 sourceRoot
             )
+            if procLog:
+                self.logDlg.showLog(procLog)
             self.uiRefresh()
 
     def onSearchReplaceTriggered(self):
