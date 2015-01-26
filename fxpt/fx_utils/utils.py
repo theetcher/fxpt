@@ -20,4 +20,5 @@ def getFxUtilsDir():
 
 
 def makeWritable(path):
-    os.chmod(path, stat.S_IWRITE)
+    if os.path.exists(path):
+        os.chmod(path, stat.S_IWRITE)

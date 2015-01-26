@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindowUI.ui'
 #
-# Created: Sun Jan 11 19:11:47 2015
+# Created: Mon Jan 26 17:22:07 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,7 +39,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.uiTBL_textures = QtGui.QTableView(self.centralwidget)
         self.uiTBL_textures.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        self.uiTBL_textures.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.uiTBL_textures.setEditTriggers(QtGui.QAbstractItemView.DoubleClicked)
         self.uiTBL_textures.setAlternatingRowColors(True)
         self.uiTBL_textures.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.uiTBL_textures.setTextElideMode(QtCore.Qt.ElideLeft)

@@ -3,26 +3,23 @@ import maya.cmds as m
 from PySide import QtCore, QtGui
 
 from fxpt.side_utils import pyperclip
-from fxpt.fx_utils.qtFontCreator import QtFontCreator
-from fxpt.fx_utils.utils import getFxUtilsDir
 
 from fxpt.fx_textureManager.comMaya import getShadingGroups
 
 from fxpt.fx_textureManager.MainWindowUI import Ui_MainWindow
 from fxpt.fx_textureManager.Harvesters import MayaSceneHarvester
 from fxpt.fx_textureManager.Coordinators import CoordinatorMayaUI
+from fxpt.fx_textureManager.Delegates import TexNodeDelegate
 from fxpt.fx_prefsaver import PrefSaver, Serializers
 
 from fxpt.fx_textureManager.SearchReplaceDialog import SearchReplaceDialog
 from fxpt.fx_textureManager.RetargetDialog import RetargetDialog
 from fxpt.fx_textureManager.CopyMoveDialog import CopyMoveDialog
+from fxpt.fx_textureManager.LogDialog import LogDialog
 
+from com import FONT_MONOSPACE_QFONT, FONT_MONOSPACE_LETTER_SIZE
 
 # from fxpt.fx_utils.watch import watch
-
-qtFontCreator = QtFontCreator(getFxUtilsDir() + '/proggy_tiny_sz.ttf', 12)
-FONT_MONOSPACE_QFONT = qtFontCreator.getQFont()
-FONT_MONOSPACE_LETTER_SIZE = qtFontCreator.getLetterSize('i')
 
 COL_IDX_EXIST = 0
 COL_IDX_FILENAME = 1
@@ -46,10 +43,13 @@ FILE_EXISTS_STRINGS = {
 OPT_VAR_NAME = 'fx_textureManager_prefs'
 MULTIPLE_STRING = '...multiple...'
 
+#TODO!: need to remember table scrolling when doing actions. critical for editing in table cause after editing finished PasteProcessor will be ran and table will be rebuild
+#TODO!: in table editing: PasteProcessor vs model editing
 #TODO!: test on huge data
-#TODO!: disable editing PathLineEdit, only throug browse dialog
 #TODO: change icon of search and replace
+#TODO: app icon
 #TODO: edit filename in table. get new filename from edit cell and then apply ProcPaste
+
 
 
 class TexManagerUI(QtGui.QMainWindow):
@@ -71,6 +71,7 @@ class TexManagerUI(QtGui.QMainWindow):
         self.searchReplaceDlg = SearchReplaceDialog(self)
         self.retargetDlg = RetargetDialog(self)
         self.copyMoveDlg = CopyMoveDialog(self)
+        self.logDlg = LogDialog(self)
 
         self.createContextMenu()
 
@@ -79,8 +80,6 @@ class TexManagerUI(QtGui.QMainWindow):
         self.setUpdatesAllowed(False)
         self.ui_loadSettings(self.ui.uiACT_collapseRepetitions)
         self.setUpdatesAllowed(True)
-
-        # self.ui.toolBar.setStyleSheet(TOOLBAR_BUTTON_STYLE)
 
         self.harvester = MayaSceneHarvester()
 
@@ -231,6 +230,11 @@ class TexManagerUI(QtGui.QMainWindow):
             self.model.setData(modelIndex, tns, QtCore.Qt.UserRole)
 
         self.setTableProps()
+        self.setTableDelegates()
+
+    def setTableDelegates(self):
+        roDelegate = TexNodeDelegate()
+        self.ui.uiTBL_textures.setItemDelegate(roDelegate)
 
     def setTableProps(self):
         table = self.ui.uiTBL_textures
@@ -402,31 +406,36 @@ class TexManagerUI(QtGui.QMainWindow):
     def onCopyMoveTriggered(self):
         if self.copyMoveDlg.exec_() == QtGui.QDialog.Accepted:
             dialogResult = self.copyMoveDlg.getDialogResult()
-            self.coordinator.processCopyMove(
+            procLog = self.coordinator.processCopyMove(
                 self.getSelectedTexNodes(),
                 dialogResult
             )
+            self.logDlg.showLog(procLog)
             self.uiRefresh()
 
     def onRetargetTriggered(self):
         if self.retargetDlg.exec_() == QtGui.QDialog.Accepted:
-            retargetRoot, forceRetarget = self.retargetDlg.getDialogResult()
-            self.coordinator.processRetarget(
+            retargetRoot, forceRetarget, useSourceRoot, sourceRoot = self.retargetDlg.getDialogResult()
+            procLog = self.coordinator.processRetarget(
                 self.getSelectedTexNodes(),
                 retargetRoot,
-                forceRetarget
+                forceRetarget,
+                useSourceRoot,
+                sourceRoot
             )
+            self.logDlg.showLog(procLog)
             self.uiRefresh()
 
     def onSearchReplaceTriggered(self):
         if self.searchReplaceDlg.exec_() == QtGui.QDialog.Accepted:
             searchStr, replaceStr, caseSensitive = self.searchReplaceDlg.getDialogData()
-            self.coordinator.processSearchAndReplace(
+            procLog = self.coordinator.processSearchAndReplace(
                 self.getSelectedTexNodes(),
                 searchStr,
                 replaceStr,
                 caseSensitive
             )
+            self.logDlg.showLog(procLog)
             self.uiRefresh()
 
     def closeEvent(self, event):

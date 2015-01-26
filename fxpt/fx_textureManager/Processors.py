@@ -10,13 +10,16 @@ from fxpt.fx_textureManager.com import cleanupPath
 class ProcessorBase(object):
 
     def __init__(self):
-        self.logString = []
+        self.logStrings = []
 
     def log(self, text):
-        self.logString.append(text)
+        self.logStrings.append(text)
+
+    def getLog(self):
+        return self.logStrings
 
     def printLog(self):
-        for s in self.logString:
+        for s in self.logStrings:
             print s
 
     def execute(self):
@@ -63,23 +66,38 @@ class ProcessorSearchReplace(ProcessorBase):
 
 class ProcessorRetarget(ProcessorBase):
 
-    def __init__(self, tns, retargetRoot, forceRetarget):
+    def __init__(self, tns, retargetRoot, forceRetarget, useSourceRoot, sourceRoot):
         super(ProcessorRetarget, self).__init__()
         self.tns = tns
         self.retargetRoot = retargetRoot
         self.forceRetarget = forceRetarget
+        self.useSourceRoot = useSourceRoot
+        self.sourceRoot = sourceRoot
 
     def execute(self):
         texDb = self.getTexDb()
         for tn in self.tns:
-            texName = os.path.basename(tn.getAttrValue())
+
+            tnAttrValue = tn.getAttrValue()
+
+            # first try to find texture using source root
+            if self.useSourceRoot:
+                srcRootLower = self.sourceRoot.lower() + '/'
+                if tnAttrValue.lower().startswith(srcRootLower):
+                    probableNewValue = '{0}/{1}'.format(self.retargetRoot, tnAttrValue[len(srcRootLower):])
+                    if os.path.exists(probableNewValue):
+                        tn.setAttrValue(probableNewValue)
+                        continue
+
+            # if not found using source root, proceed with standard procedure
+            texName = os.path.basename(tnAttrValue)
             texNameLower = texName.lower()
             if texNameLower in texDb:
                 tn.setAttrValue(texDb[texNameLower])
             else:
                 if self.forceRetarget:
                     tn.setAttrValue('{}/{}'.format(self.retargetRoot, texName))
-                    self.log('ProcessorRetarget: "{0}" was not found in target directory -> Retargeting to root dir.'.format(texName))
+                    self.log('"{0}" was not found in target directory. Retargeting to root dir.'.format(texName))
 
     def getTexDb(self):
         texDb = {}
@@ -88,7 +106,7 @@ class ProcessorRetarget(ProcessorBase):
                 fullPath = cleanupPath(os.path.join(root, f))
                 lowCaseFilename = f.lower()
                 if lowCaseFilename in texDb:
-                    self.log('ProcessorRetarget: duplicate texture in retarget directory: ' + fullPath + ' -> Skipped.')
+                    self.log('Duplicate texture in retarget directory: {0}. Will be skipped during standard retargeting.'.format(fullPath))
                 else:
                     texDb[lowCaseFilename] = fullPath
         return texDb
@@ -109,19 +127,6 @@ class ProcessorCopyMove(ProcessorBase):
 
         self.processedInfo = {}
 
-    #     self.printArgs()
-    #
-    # def printArgs(self):
-    #     print '--- ProcessorCopyMove args ---'
-    #     for f in self.filenames:
-    #         print 'filename={0},'.format(f)
-    #     print 'targetRoot={0}'.format(self.targetRoot)
-    #     print 'delSrc={0}'.format(self.delSrc)
-    #     print 'copyFolderStruct={0}'.format(self.copyFolderStruct)
-    #     print 'sourceRoot={0}'.format(self.sourceRoot)
-    #     print 'copyAdd={0}'.format(self.copyAdd)
-    #     print 'addSuffixes={0}'.format(self.addSuffixes)
-
     def execute(self):
         filesToProcess = self.getFilesToProcess()
 
@@ -141,6 +146,8 @@ class ProcessorCopyMove(ProcessorBase):
                         os.makedirs(targetDir)
                         createdDirs.add(targetDir)
                     except os.error as e:
+                        self.log('')
+                        self.log('Cannot create dir: {0}'.format(targetDir))
                         self.log(str(e))
                 else:
                     createdDirs.add(targetDir)
@@ -151,15 +158,19 @@ class ProcessorCopyMove(ProcessorBase):
                     shutil.copy(s, t)
                     self.processedInfo[s.lower()] = t
                 except IOError as e:
+                    self.log('')
+                    self.log('Cannot copy file: {0} -> {1}'.format(s, t))
                     self.log(str(e))
 
         if self.delSrc:
             for f in self.processedInfo:
                 if os.path.exists(f):
                     try:
-                        makeWritable(f)
+                        # makeWritable(f)
                         os.remove(f)
                     except OSError as e:
+                        self.log('')
+                        self.log('Cannot delete file: {0}'.format(f))
                         self.log(str(e))
 
     def getCopyInfoSimple(self, files):
