@@ -53,9 +53,9 @@ class ProcessorSearchReplace(ProcessorBase):
             return
 
         if self.caseSensitive:
-            pattern = re.compile(re.escape(self.oldStr), re.IGNORECASE)
-        else:
             pattern = re.compile(re.escape(self.oldStr))
+        else:
+            pattern = re.compile(re.escape(self.oldStr), re.IGNORECASE)
 
         for tn in self.tns:
             oldValue = tn.getAttrValue()

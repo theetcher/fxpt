@@ -4,7 +4,7 @@ from PySide import QtCore, QtGui
 
 from fxpt.side_utils import pyperclip
 
-from fxpt.fx_textureManager.comMaya import getShadingGroups
+from fxpt.fx_textureManager import com
 
 from fxpt.fx_textureManager.MainWindowUI import Ui_MainWindow
 from fxpt.fx_textureManager.Harvesters import MayaSceneHarvester
@@ -17,39 +17,13 @@ from fxpt.fx_textureManager.RetargetDialog import RetargetDialog
 from fxpt.fx_textureManager.CopyMoveDialog import CopyMoveDialog
 from fxpt.fx_textureManager.LogDialog import LogDialog
 
-from com import FONT_MONOSPACE_QFONT, FONT_MONOSPACE_LETTER_SIZE
-
-# from fxpt.fx_utils.watch import watch
-
-COL_IDX_EXIST = 0
-COL_IDX_FILENAME = 1
-COL_IDX_ATTR = 2
-
-TABLE_COLUMN_NAMES = ('Exists', 'Filename', 'Attribute')
-
-TABLE_MAX_COLUMN_SIZE = [0] * 3
-TABLE_MAX_COLUMN_SIZE[COL_IDX_EXIST] = 5
-TABLE_MAX_COLUMN_SIZE[COL_IDX_FILENAME] = 100
-TABLE_MAX_COLUMN_SIZE[COL_IDX_ATTR] = 50
-
-TABLE_COLUMN_RIGHT_OFFSET = 20
-TABLE_HEADER_TITLE_OFFSET = 2
-
-FILE_EXISTS_STRINGS = {
-    False: (' No', QtGui.QColor(225, 75, 75)),
-    True: (' Yes', QtGui.QColor(140, 220, 75))
-}
-
-OPT_VAR_NAME = 'fx_textureManager_prefs'
-MULTIPLE_STRING = '...multiple...'
-
 #TODO!: need to remember table scrolling when doing actions. critical for editing in table cause after editing finished PasteProcessor will be ran and table will be rebuild
 #TODO!: in table editing: PasteProcessor vs model editing
 #TODO!: test on huge data
+#TODO!: test processor usage without maya and pyside
 #TODO: change icon of search and replace
 #TODO: app icon
 #TODO: edit filename in table. get new filename from edit cell and then apply ProcPaste
-
 
 
 class TexManagerUI(QtGui.QMainWindow):
@@ -99,7 +73,7 @@ class TexManagerUI(QtGui.QMainWindow):
 
     # noinspection PyAttributeOutsideInit
     def ui_initSettings(self):
-        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
+        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(com.OPT_VAR_NAME))
 
         self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (100, 100, 900, 600))
         self.prefSaver.addControl(self.ui.uiTBL_textures, PrefSaver.UIType.PYSIDETableView)
@@ -195,7 +169,7 @@ class TexManagerUI(QtGui.QMainWindow):
             if filename not in existsCache:
                 existsCache[filename] = tns[0].fileExists()
 
-            fullAttrName = tns[0].getFullAttrName() if len(tns) == 1 else MULTIPLE_STRING
+            fullAttrName = tns[0].getFullAttrName() if len(tns) == 1 else com.MULTIPLE_STRING
             res.append((existsCache[filename], filename, fullAttrName, tns))
 
         return res
@@ -203,8 +177,8 @@ class TexManagerUI(QtGui.QMainWindow):
     def fillTable(self):
         self.model.clear()
         self.model.setRowCount(0)
-        self.model.setColumnCount(len(TABLE_COLUMN_NAMES))
-        for i, col in enumerate(TABLE_COLUMN_NAMES):
+        self.model.setColumnCount(len(com.TABLE_COLUMN_NAMES))
+        for i, col in enumerate(com.TABLE_COLUMN_NAMES):
             self.model.setHeaderData(i, QtCore.Qt.Horizontal, col, QtCore.Qt.DisplayRole)
 
         if self.getCollapseRepetitionsOption():
@@ -218,14 +192,16 @@ class TexManagerUI(QtGui.QMainWindow):
 
             exists, filename, attr, tns = dataItem
 
-            modelIndex = self.model.index(i, COL_IDX_EXIST)
-            self.model.setData(modelIndex, FILE_EXISTS_STRINGS[exists][0])
-            self.model.setData(modelIndex, FILE_EXISTS_STRINGS[exists][1], QtCore.Qt.ForegroundRole)
+            modelIndex = self.model.index(i, com.COL_IDX_EXIST)
+            self.model.setData(modelIndex, com.FILE_EXISTS_STRINGS[exists][0])
+            self.model.setData(modelIndex, com.FILE_EXISTS_STRINGS[exists][1], QtCore.Qt.ForegroundRole)
+            self.model.setData(modelIndex, tns, QtCore.Qt.UserRole)
 
-            modelIndex = self.model.index(i, COL_IDX_FILENAME)
+            modelIndex = self.model.index(i, com.COL_IDX_FILENAME)
             self.model.setData(modelIndex, filename)
+            self.model.setData(modelIndex, tns, QtCore.Qt.UserRole)
 
-            modelIndex = self.model.index(i, COL_IDX_ATTR)
+            modelIndex = self.model.index(i, com.COL_IDX_ATTR)
             self.model.setData(modelIndex, attr)
             self.model.setData(modelIndex, tns, QtCore.Qt.UserRole)
 
@@ -233,12 +209,13 @@ class TexManagerUI(QtGui.QMainWindow):
         self.setTableDelegates()
 
     def setTableDelegates(self):
-        roDelegate = TexNodeDelegate()
+        roDelegate = TexNodeDelegate(self)
+        roDelegate.cellChanged.connect(self.onCellChanged)
         self.ui.uiTBL_textures.setItemDelegate(roDelegate)
 
     def setTableProps(self):
         table = self.ui.uiTBL_textures
-        table.setFont(FONT_MONOSPACE_QFONT)
+        table.setFont(com.FONT_MONOSPACE_QFONT)
         table.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignLeft)
 
         # custom "resize to fit" section, cause standard table.resizeColumnsToContents() may be very slow on huge data
@@ -246,21 +223,21 @@ class TexManagerUI(QtGui.QMainWindow):
         columnCount = model.columnCount()
         for col in range(columnCount):
             stringLengths = [len(model.index(row, col).data(QtCore.Qt.DisplayRole)) for row in range(model.rowCount())]
-            stringLengths.append(len(str(model.headerData(col, QtCore.Qt.Horizontal, QtCore.Qt.DisplayRole))) + TABLE_HEADER_TITLE_OFFSET)
-            columnMaxLength = min(max(stringLengths), TABLE_MAX_COLUMN_SIZE[col])
-            table.horizontalHeader().resizeSection(col, columnMaxLength * FONT_MONOSPACE_LETTER_SIZE + TABLE_COLUMN_RIGHT_OFFSET)
+            stringLengths.append(len(str(model.headerData(col, QtCore.Qt.Horizontal, QtCore.Qt.DisplayRole))) + com.TABLE_HEADER_TITLE_OFFSET)
+            columnMaxLength = min(max(stringLengths), com.TABLE_MAX_COLUMN_SIZE[col])
+            table.horizontalHeader().resizeSection(col, columnMaxLength * com.FONT_MONOSPACE_LETTER_SIZE + com.TABLE_COLUMN_RIGHT_OFFSET)
 
     def getCollapseRepetitionsOption(self):
         return self.ui.uiACT_collapseRepetitions.isChecked()
 
     def getSelectedTexNodes(self):
         tns = []
-        for index in self.getSelectedIndexes(COL_IDX_ATTR):
+        for index in self.getSelectedIndexes(com.COL_IDX_ATTR):
             tns.extend(index.data(role=QtCore.Qt.UserRole))
         return sorted(tns)
 
     def getSelectedFullPaths(self):
-        selectedIndexes = self.getSelectedIndexes(COL_IDX_FILENAME)
+        selectedIndexes = self.getSelectedIndexes(com.COL_IDX_FILENAME)
         return sorted([str(index.data()) for index in selectedIndexes])
 
     def getSelectedFilenames(self):
@@ -286,8 +263,8 @@ class TexManagerUI(QtGui.QMainWindow):
         return self.ui.uiTBL_textures.selectionModel().selectedRows(column)
 
     def updateUiStates(self):
-        somethingSelected = bool(self.getSelectedIndexes(COL_IDX_FILENAME))
-        onlyOneItemSelected = bool(len(self.getSelectedIndexes(COL_IDX_FILENAME)) == 1)
+        somethingSelected = bool(self.getSelectedIndexes(com.COL_IDX_FILENAME))
+        onlyOneItemSelected = bool(len(self.getSelectedIndexes(com.COL_IDX_FILENAME)) == 1)
         clipboardIsNotEmpty = self.clipboard is not None
 
         self.ui.uiACT_copy.setEnabled(onlyOneItemSelected)
@@ -301,7 +278,7 @@ class TexManagerUI(QtGui.QMainWindow):
         self.ui.uiACT_searchReplace.setEnabled(somethingSelected)
 
     def displayStatusBarInfo(self):
-        selectedItemsCount = len(self.getSelectedIndexes(COL_IDX_FILENAME))
+        selectedItemsCount = len(self.getSelectedIndexes(com.COL_IDX_FILENAME))
         if selectedItemsCount:
             self.ui.statusbar.showMessage('{} item(s) selected.'.format(selectedItemsCount))
         else:
@@ -317,7 +294,7 @@ class TexManagerUI(QtGui.QMainWindow):
     def selectAssigned(self):
         sgToSelect = []
         for node in [tn.getNode() for tn in self.getSelectedTexNodes()]:
-            sgToSelect.extend(getShadingGroups(node, set()))
+            sgToSelect.extend(com.getShadingGroups(node, set()))
         if sgToSelect:
             m.select(sgToSelect)
         else:
@@ -384,6 +361,11 @@ class TexManagerUI(QtGui.QMainWindow):
 
     def onSelectNoneTriggered(self):
         self.ui.uiTBL_textures.clearSelection()
+
+    @QtCore.Slot()
+    def onCellChanged(self):
+        print 'onCellChanged()'
+        # self.uiRefresh()
 
     # noinspection PyUnusedLocal
     def onCollapseRepetitionsToggled(self, state):
