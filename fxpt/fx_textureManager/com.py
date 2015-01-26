@@ -20,6 +20,12 @@ QToolButton:checked{
 }
 """
 
+from fxpt.fx_utils.qtFontCreator import QtFontCreator
+from fxpt.fx_utils.utils import getFxUtilsDir
+qtFontCreator = QtFontCreator(getFxUtilsDir() + '/proggy_tiny_sz.ttf', 12)
+FONT_MONOSPACE_QFONT = qtFontCreator.getQFont()
+FONT_MONOSPACE_LETTER_SIZE = qtFontCreator.getLetterSize('i')
+
 
 def cleanupPath(path):
     return pathToSlash(path.strip()).rstrip('/')
