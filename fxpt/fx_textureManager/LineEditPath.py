@@ -4,7 +4,6 @@ from PySide import QtCore, QtGui
 
 from fxpt.fx_textureManager.com import cleanupPath
 
-#TODO: better cleanup onEditingFinished??? for example i can type %%% at the end...
 
 class LineEditPath(QtGui.QLineEdit):
 

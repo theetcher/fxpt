@@ -18,6 +18,7 @@ from fxpt.fx_textureManager.CopyMoveDialog import CopyMoveDialog
 from fxpt.fx_textureManager.LogDialog import LogDialog
 
 #TODO!: test on huge data
+#TODO!: "Load from selection" analyze mode? in this case, what with "select assigned" option?
 #TODO: change icon of search and replace
 #TODO: app icon
 
