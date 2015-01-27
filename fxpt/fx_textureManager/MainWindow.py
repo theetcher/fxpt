@@ -17,13 +17,10 @@ from fxpt.fx_textureManager.RetargetDialog import RetargetDialog
 from fxpt.fx_textureManager.CopyMoveDialog import CopyMoveDialog
 from fxpt.fx_textureManager.LogDialog import LogDialog
 
-#TODO!: need to remember table scrolling when doing actions. critical for editing in table cause after editing finished PasteProcessor will be ran and table will be rebuild
-#TODO!: in table editing: PasteProcessor vs model editing
 #TODO!: test on huge data
 #TODO!: test processor usage without maya and pyside
 #TODO: change icon of search and replace
 #TODO: app icon
-#TODO: edit filename in table. get new filename from edit cell and then apply ProcPaste
 
 
 class TexManagerUI(QtGui.QMainWindow):
@@ -57,6 +54,7 @@ class TexManagerUI(QtGui.QMainWindow):
 
         self.harvester = MayaSceneHarvester()
 
+        self.setTableDelegates()
         self.initModels()
         self.fillTable()
 
@@ -125,6 +123,9 @@ class TexManagerUI(QtGui.QMainWindow):
 
         self.ui.uiTBL_textures.addAction(self.ui.uiACT_refresh)
 
+    def setFilterWildcard(self, wildcard):
+        self.filterModel.setFilterRegExp(QtCore.QRegExp(wildcard, QtCore.Qt.CaseInsensitive, QtCore.QRegExp.Wildcard))
+
     # noinspection PyAttributeOutsideInit
     def initModels(self):
         self.model = QtGui.QStandardItemModel()
@@ -133,8 +134,9 @@ class TexManagerUI(QtGui.QMainWindow):
         self.ui.uiTBL_textures.setModel(self.filterModel)
         self.filterModel.setFilterKeyColumn(1)
 
-    def setFilterWildcard(self, wildcard):
-        self.filterModel.setFilterRegExp(QtCore.QRegExp(wildcard, QtCore.Qt.CaseInsensitive, QtCore.QRegExp.Wildcard))
+        self.model.setColumnCount(len(com.TABLE_COLUMN_NAMES))
+        for i, col in enumerate(com.TABLE_COLUMN_NAMES):
+            self.model.setHeaderData(i, QtCore.Qt.Horizontal, col, QtCore.Qt.DisplayRole)
 
     # noinspection PyMethodMayBeStatic
     def prepareData(self, texNodes):
@@ -175,18 +177,13 @@ class TexManagerUI(QtGui.QMainWindow):
         return res
 
     def fillTable(self):
-        self.model.clear()
-        self.model.setRowCount(0)
-        self.model.setColumnCount(len(com.TABLE_COLUMN_NAMES))
-        for i, col in enumerate(com.TABLE_COLUMN_NAMES):
-            self.model.setHeaderData(i, QtCore.Qt.Horizontal, col, QtCore.Qt.DisplayRole)
 
         if self.getCollapseRepetitionsOption():
             data = self.prepareDataCollapsed(self.harvester.getTexNodes())
         else:
             data = self.prepareData(self.harvester.getTexNodes())
 
-        self.model.insertRows(0, len(data))
+        self.model.setRowCount(len(data))
 
         for i, dataItem in enumerate(data):
 
@@ -206,7 +203,6 @@ class TexManagerUI(QtGui.QMainWindow):
             self.model.setData(modelIndex, tns, QtCore.Qt.UserRole)
 
         self.setTableProps()
-        self.setTableDelegates()
 
     def setTableDelegates(self):
         roDelegate = TexNodeDelegate(self)
@@ -312,7 +308,15 @@ class TexManagerUI(QtGui.QMainWindow):
         self.onFilterTextChanged()
 
         self.setSorting(sortingInfo)
+
+        selectedIndexes = self.getSelectedIndexes(0)
+        if selectedIndexes:
+            self.ui.uiTBL_textures.scrollTo(selectedIndexes[0], QtGui.QAbstractItemView.EnsureVisible)
+
         self.updateUiStates()
+
+    def clearSelection(self):
+        self.ui.uiTBL_textures.selectionModel().clear()
 
     def getSortingInfo(self):
         header = self.ui.uiTBL_textures.horizontalHeader()
@@ -338,6 +342,7 @@ class TexManagerUI(QtGui.QMainWindow):
             self.ui.uiLED_filter.clear()
 
     def onRefreshTriggered(self):
+        self.clearSelection()
         self.uiRefresh()
 
     def onCopyFullPathTriggered(self):
@@ -370,6 +375,7 @@ class TexManagerUI(QtGui.QMainWindow):
     # noinspection PyUnusedLocal
     def onCollapseRepetitionsToggled(self, state):
         if self.getUpdatesAllowed():
+            self.clearSelection()
             self.uiRefresh()
         # self.ui.uiTBL_textures.clearSelection()
 
