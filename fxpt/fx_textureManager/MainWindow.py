@@ -18,7 +18,6 @@ from fxpt.fx_textureManager.CopyMoveDialog import CopyMoveDialog
 from fxpt.fx_textureManager.LogDialog import LogDialog
 
 #TODO!: test on huge data
-#TODO!: test processor usage without maya and pyside
 #TODO: change icon of search and replace
 #TODO: app icon
 
@@ -130,6 +129,7 @@ class TexManagerUI(QtGui.QMainWindow):
     def initModels(self):
         self.model = QtGui.QStandardItemModel()
         self.filterModel = QtGui.QSortFilterProxyModel()
+        self.filterModel.setSortCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.filterModel.setSourceModel(self.model)
         self.ui.uiTBL_textures.setModel(self.filterModel)
         self.filterModel.setFilterKeyColumn(1)
