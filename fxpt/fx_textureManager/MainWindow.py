@@ -210,8 +210,13 @@ class TexManagerUI(QtGui.QMainWindow):
 
     def setTableDelegates(self):
         roDelegate = TexNodeDelegate(self)
-        roDelegate.cellChanged.connect(self.onCellChanged)
+        # noinspection PyUnresolvedReferences
+        roDelegate.closeEditor.connect(self.onDelegateCloseEditor)
         self.ui.uiTBL_textures.setItemDelegate(roDelegate)
+
+    @QtCore.Slot()
+    def onDelegateCloseEditor(self):
+        self.uiRefresh()
 
     def setTableProps(self):
         table = self.ui.uiTBL_textures
@@ -361,11 +366,6 @@ class TexManagerUI(QtGui.QMainWindow):
 
     def onSelectNoneTriggered(self):
         self.ui.uiTBL_textures.clearSelection()
-
-    @QtCore.Slot()
-    def onCellChanged(self):
-        print 'onCellChanged()'
-        # self.uiRefresh()
 
     # noinspection PyUnusedLocal
     def onCollapseRepetitionsToggled(self, state):

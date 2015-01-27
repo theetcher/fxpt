@@ -6,8 +6,6 @@ from com import FONT_MONOSPACE_QFONT
 
 class TexNodeDelegate(QtGui.QItemDelegate):
 
-    cellChanged = QtCore.Signal()
-
     def __init__(self, mainWin, *args, **kwargs):
         self.mainWin = mainWin
         super(TexNodeDelegate, self).__init__(*args, **kwargs)
@@ -28,6 +26,4 @@ class TexNodeDelegate(QtGui.QItemDelegate):
         path = editor.getPath()
         tns = model.data(index, QtCore.Qt.UserRole)
         self.mainWin.coordinator.processPaste(tns, path)
-        self.cellChanged.emit()
-        # self.mainWin.uiRefresh()
 
