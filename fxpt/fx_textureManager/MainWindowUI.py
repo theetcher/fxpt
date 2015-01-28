@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindowUI.ui'
 #
-# Created: Mon Jan 26 17:22:07 2015
+# Created: Wed Jan 28 21:21:34 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -143,6 +143,12 @@ class Ui_MainWindow(object):
         icon10.addPixmap(QtGui.QPixmap(":/icons/paste.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiACT_paste.setIcon(icon10)
         self.uiACT_paste.setObjectName("uiACT_paste")
+        self.uiACT_analyzeSelection = QtGui.QAction(MainWindow)
+        self.uiACT_analyzeSelection.setCheckable(True)
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap(":/icons/lockToSelection.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.uiACT_analyzeSelection.setIcon(icon11)
+        self.uiACT_analyzeSelection.setObjectName("uiACT_analyzeSelection")
         self.menuFile.addAction(self.uiACT_refresh)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.uiACT_exit)
@@ -155,6 +161,7 @@ class Ui_MainWindow(object):
         self.menuEdit.addAction(self.uiACT_copyFullPath)
         self.menuEdit.addAction(self.uiACT_copyFilename)
         self.menuOptions.addAction(self.uiACT_collapseRepetitions)
+        self.menuOptions.addAction(self.uiACT_analyzeSelection)
         self.menuOptions.addSeparator()
         self.menuOptions.addAction(self.uiACT_selectNothing)
         self.menuOptions.addAction(self.uiACT_selectAssigned)
@@ -169,6 +176,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuOptions.menuAction())
         self.toolBar.addAction(self.uiACT_refresh)
         self.toolBar.addSeparator()
+        self.toolBar.addAction(self.uiACT_analyzeSelection)
         self.toolBar.addAction(self.uiACT_collapseRepetitions)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.uiACT_copyFullPath)
@@ -199,6 +207,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.uiACT_selectAssigned, QtCore.SIGNAL("toggled(bool)"), MainWindow.onChangeSelectionBehaviour)
         QtCore.QObject.connect(self.uiACT_copy, QtCore.SIGNAL("triggered()"), MainWindow.onCopyTriggered)
         QtCore.QObject.connect(self.uiACT_paste, QtCore.SIGNAL("triggered()"), MainWindow.onPasteTriggered)
+        QtCore.QObject.connect(self.uiACT_analyzeSelection, QtCore.SIGNAL("toggled(bool)"), MainWindow.onAnalyzeSelectionToggled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.uiTBL_textures, self.uiLED_filter)
         MainWindow.setTabOrder(self.uiLED_filter, self.uiBTN_filter)
@@ -230,5 +239,6 @@ class Ui_MainWindow(object):
         self.uiACT_selectNothing.setText(QtGui.QApplication.translate("MainWindow", "Select Nothing", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_copy.setText(QtGui.QApplication.translate("MainWindow", "Copy", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_paste.setText(QtGui.QApplication.translate("MainWindow", "Paste", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiACT_analyzeSelection.setText(QtGui.QApplication.translate("MainWindow", "Analyze Selection", None, QtGui.QApplication.UnicodeUTF8))
 
 import resources_rc

@@ -7,7 +7,7 @@ from fxpt.side_utils import pyperclip
 from fxpt.fx_textureManager import com
 
 from fxpt.fx_textureManager.MainWindowUI import Ui_MainWindow
-from fxpt.fx_textureManager.Harvesters import MayaSceneHarvester
+from fxpt.fx_textureManager.Harvesters import MayaSceneHarvester, MayaSelectionHarvester
 from fxpt.fx_textureManager.Coordinators import CoordinatorMayaUI
 from fxpt.fx_textureManager.Delegates import TexNodeDelegate
 from fxpt.fx_prefsaver import PrefSaver, Serializers
@@ -18,6 +18,7 @@ from fxpt.fx_textureManager.CopyMoveDialog import CopyMoveDialog
 from fxpt.fx_textureManager.LogDialog import LogDialog
 
 #TODO!: test on huge data
+#TODO!: What if scene does not match database (new scene, deleted nodes)? TexNode set/get attr checks?
 #TODO!: "Load from selection" analyze mode? in this case, what with "select assigned" option?
 #TODO: change icon of search and replace
 #TODO: app icon
@@ -379,6 +380,14 @@ class TexManagerUI(QtGui.QMainWindow):
             self.clearSelection()
             self.uiRefresh()
         # self.ui.uiTBL_textures.clearSelection()
+
+    def onAnalyzeSelectionToggled(self, state):
+        if state:
+            self.harvester = MayaSelectionHarvester()
+        else:
+            self.harvester = MayaSceneHarvester()
+        self.clearSelection()
+        self.uiRefresh()
 
     def onChangeSelectionBehaviour(self, state):
         if state:

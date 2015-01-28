@@ -153,6 +153,7 @@
      <string>Options</string>
     </property>
     <addaction name="uiACT_collapseRepetitions"/>
+    <addaction name="uiACT_analyzeSelection"/>
     <addaction name="separator"/>
     <addaction name="uiACT_selectNothing"/>
     <addaction name="uiACT_selectAssigned"/>
@@ -197,6 +198,7 @@
    </attribute>
    <addaction name="uiACT_refresh"/>
    <addaction name="separator"/>
+   <addaction name="uiACT_analyzeSelection"/>
    <addaction name="uiACT_collapseRepetitions"/>
    <addaction name="separator"/>
    <addaction name="uiACT_copyFullPath"/>
@@ -345,6 +347,18 @@
    </property>
    <property name="text">
     <string>Paste</string>
+   </property>
+  </action>
+  <action name="uiACT_analyzeSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/lockToSelection.png</normaloff>:/icons/lockToSelection.png</iconset>
+   </property>
+   <property name="text">
+    <string>Analyze Selection</string>
    </property>
   </action>
  </widget>
@@ -629,6 +643,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>uiACT_analyzeSelection</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onAnalyzeSelectionToggled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onRefreshTriggered()</slot>
@@ -646,5 +676,6 @@
   <slot>onChangeSelectionBehaviour(bool)</slot>
   <slot>onCopyTriggered()</slot>
   <slot>onPasteTriggered()</slot>
+  <slot>onAnalyzeSelectionToggled(bool)</slot>
  </slots>
 </ui>
