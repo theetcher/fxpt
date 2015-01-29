@@ -4,7 +4,6 @@ import shutil
 
 from fxpt.fx_utils.utils import makeWritable
 from fxpt.fx_textureManager.com import cleanupPath
-#from fxpt.fx_utils.watch import watch
 
 
 class ProcessorBase(object):

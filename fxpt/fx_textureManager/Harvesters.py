@@ -2,8 +2,6 @@ import maya.cmds as m
 
 from fxpt.fx_textureManager import TexNode
 
-from fxpt.fx_utils.watch import watch
-
 
 TEX_ATTRIBUTES = {
     'file': [
@@ -36,8 +34,38 @@ class MayaSceneHarvester(HarvesterBase):
 
 class MayaSelectionHarvester(HarvesterBase):
 
+    def __init__(self):
+        self.tns = []
+        self.visited = set()
+        # noinspection PySetFunctionToLiteral
+        self.skipInRecursion = set((
+            'transform',
+            'groupId'
+        ))
+
     def getTexNodes(self):
-        watch(self.getAssignedSGs())
+        if self.tns:
+            return self.tns
+        for sg in self.getAssignedSGs():
+            self.tns.extend(self.findTextureNodes(sg))
+        return self.tns
+
+    def findTextureNodes(self, node):
+        self.visited.add(node)
+        res = []
+
+        nodeType = m.nodeType(node)
+        if nodeType in TEX_ATTRIBUTES:
+            for attr in TEX_ATTRIBUTES[nodeType]:
+                if m.objExists('{}.{}'.format(node, attr)):
+                    res.append(TexNode.TexNode(node, attr))
+
+        inConnections = list(set(m.listConnections(node, d=False, s=True) or []))
+        for srcNode in inConnections:
+            if (m.nodeType(srcNode) not in self.skipInRecursion) and (srcNode not in self.visited):
+                res.extend(self.findTextureNodes(srcNode))
+
+        return res
 
     def getAssignedSGs(self):
         selectedNodes = self.getSelectedNodes()

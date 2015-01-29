@@ -19,7 +19,6 @@ from fxpt.fx_textureManager.LogDialog import LogDialog
 
 #TODO!: test on huge data
 #TODO!: What if scene does not match database (new scene, deleted nodes)? TexNode set/get attr checks?
-#TODO!: "Load from selection" analyze mode? in this case, what with "select assigned" option?
 #TODO: change icon of search and replace
 #TODO: app icon
 
@@ -386,8 +385,8 @@ class TexManagerUI(QtGui.QMainWindow):
             self.harvester = MayaSelectionHarvester()
         else:
             self.harvester = MayaSceneHarvester()
-        self.clearSelection()
         self.uiRefresh()
+        self.clearSelection()
 
     def onChangeSelectionBehaviour(self, state):
         if state:

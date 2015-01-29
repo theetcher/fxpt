@@ -73,8 +73,9 @@ def getShadingGroups(node, visited):
     outConnections = m.listConnections(node, s=False, d=True)
     if outConnections:
         for destinationNode in outConnections:
-            if m.objectType(destinationNode, isType='shadingEngine'):
-                sgs.add(destinationNode)
-            else:
-                sgs.update(getShadingGroups(destinationNode, visited))
+            if destinationNode not in visited:
+                if m.objectType(destinationNode, isType='shadingEngine'):
+                    sgs.add(destinationNode)
+                else:
+                    sgs.update(getShadingGroups(destinationNode, visited))
     return sgs
