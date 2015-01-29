@@ -21,6 +21,7 @@ from fxpt.fx_textureManager.LogDialog import LogDialog
 #TODO!: What if scene does not match database (new scene, deleted nodes)? TexNode set/get attr checks?
 #TODO: change icon of search and replace
 #TODO: app icon
+#TODO: delete unused nodes to Actions menu
 
 
 class TexManagerUI(QtGui.QMainWindow):
@@ -150,7 +151,7 @@ class TexManagerUI(QtGui.QMainWindow):
             filename = tn.getAttrValue()
             if filename not in existsCache:
                 existsCache[filename] = tn.fileExists()
-            res.append((existsCache[filename], filename, tn.getFullAttrName(), [tn]))
+            res.append((existsCache[filename], tn.isAssigned(), filename, tn.getFullAttrName(), [tn]))
         return res
 
     # noinspection PyMethodMayBeStatic
@@ -173,7 +174,8 @@ class TexManagerUI(QtGui.QMainWindow):
                 existsCache[filename] = tns[0].fileExists()
 
             fullAttrName = tns[0].getFullAttrName() if len(tns) == 1 else com.MULTIPLE_STRING
-            res.append((existsCache[filename], filename, fullAttrName, tns))
+            assigned = True if any([tn.isAssigned() for tn in tns]) else False
+            res.append((existsCache[filename], assigned, filename, fullAttrName, tns))
 
         return res
 
@@ -188,7 +190,7 @@ class TexManagerUI(QtGui.QMainWindow):
 
         for i, dataItem in enumerate(data):
 
-            exists, filename, attr, tns = dataItem
+            exists, assigned, filename, attr, tns = dataItem
 
             modelIndex = self.model.index(i, com.COL_IDX_EXIST)
             self.model.setData(modelIndex, com.FILE_EXISTS_STRINGS[exists][0])
@@ -197,10 +199,12 @@ class TexManagerUI(QtGui.QMainWindow):
 
             modelIndex = self.model.index(i, com.COL_IDX_FILENAME)
             self.model.setData(modelIndex, filename)
+            self.model.setData(modelIndex, com.ASSIGNED_COLORS[assigned], QtCore.Qt.ForegroundRole)
             self.model.setData(modelIndex, tns, QtCore.Qt.UserRole)
 
             modelIndex = self.model.index(i, com.COL_IDX_ATTR)
             self.model.setData(modelIndex, attr)
+            self.model.setData(modelIndex, com.ASSIGNED_COLORS[assigned], QtCore.Qt.ForegroundRole)
             self.model.setData(modelIndex, tns, QtCore.Qt.UserRole)
 
         self.setTableProps()
@@ -294,11 +298,11 @@ class TexManagerUI(QtGui.QMainWindow):
             m.select(cl=True)
 
     def selectAssigned(self):
-        sgToSelect = []
-        for node in [tn.getNode() for tn in self.getSelectedTexNodes()]:
-            sgToSelect.extend(com.getShadingGroups(node, set()))
+        sgToSelect = set()
+        for tn in self.getSelectedTexNodes():
+            sgToSelect.update(tn.getSgs())
         if sgToSelect:
-            m.select(sgToSelect)
+            m.select(list(sgToSelect))
         else:
             m.select(cl=True)
 

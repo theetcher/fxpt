@@ -43,6 +43,11 @@ if QtGui:
         True: (' Yes', QtGui.QColor(140, 220, 75))
     }
 
+    ASSIGNED_COLORS = {
+        False: QtGui.QPalette().color(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText),
+        True: QtGui.QPalette().color(QtGui.QPalette.Active, QtGui.QPalette.WindowText)
+    }
+
 
 COL_IDX_EXIST = 0
 COL_IDX_FILENAME = 1
@@ -65,17 +70,3 @@ MULTIPLE_STRING = '...multiple...'
 
 def cleanupPath(path):
     return pathToSlash(path.strip()).rstrip('/')
-
-
-def getShadingGroups(node, visited):
-    sgs = set()
-    visited.add(node)
-    outConnections = m.listConnections(node, s=False, d=True)
-    if outConnections:
-        for destinationNode in outConnections:
-            if destinationNode not in visited:
-                if m.objectType(destinationNode, isType='shadingEngine'):
-                    sgs.add(destinationNode)
-                else:
-                    sgs.update(getShadingGroups(destinationNode, visited))
-    return sgs

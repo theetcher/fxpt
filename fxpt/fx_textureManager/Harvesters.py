@@ -2,7 +2,7 @@ import maya.cmds as m
 
 from fxpt.fx_textureManager import TexNode
 
-
+#TODO: what if this node type does not exists?
 TEX_ATTRIBUTES = {
     'file': [
         'fileTextureName'
@@ -71,7 +71,7 @@ class MayaSelectionHarvester(HarvesterBase):
         selectedNodes = self.getSelectedNodes()
         assignedSgs = set()
         for sg in m.ls(typ='shadingEngine'):
-            for member in m.sets(sg, q=True):
+            for member in (m.sets(sg, q=True) or []):
                 if member.split('.')[0] in selectedNodes:
                     assignedSgs.add(sg)
                     break

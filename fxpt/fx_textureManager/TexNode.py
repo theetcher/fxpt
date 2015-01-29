@@ -4,12 +4,30 @@ import maya.cmds as m
 from fxpt.fx_textureManager.com import cleanupPath
 
 
-# noinspection PyAttributeOutsideInit
+def getShadingGroups(node, visited):
+    sgs = set()
+    visited.add(node)
+    outConnections = m.listConnections(node, s=False, d=True)
+    if outConnections:
+        for destinationNode in outConnections:
+            if destinationNode not in visited:
+                if m.objectType(destinationNode, isType='shadingEngine'):
+                    sgs.add(destinationNode)
+                else:
+                    sgs.update(getShadingGroups(destinationNode, visited))
+    return sgs
+
+
 class TexNode(object):
 
     def __init__(self, node, attr):
+        self.node = None
+        self.attr = None
+        self.sgs = None
+
         self.setNode(node)
         self.setAttr(attr)
+        self.setSgs()
 
     def __str__(self):
         return 'TexNode: {}'.format(self.getFullAttrName())
@@ -25,6 +43,18 @@ class TexNode(object):
 
     def getAttr(self):
         return self.attr
+
+    def setSgs(self):
+        self.sgs = getShadingGroups(self.node, set())
+
+    def getSgs(self):
+        return self.sgs
+
+    def isAssigned(self):
+        for sg in self.sgs:
+            if m.sets(sg, q=True):
+                return True
+        return False
 
     def getFullAttrName(self):
         return '{}.{}'.format(self.node, self.attr)
