@@ -134,6 +134,8 @@
     <property name="title">
      <string>Actions</string>
     </property>
+    <addaction name="uiACT_deleteUnusedShadingNodes"/>
+    <addaction name="separator"/>
     <addaction name="uiACT_copyMove"/>
     <addaction name="uiACT_retarget"/>
     <addaction name="uiACT_searchReplace"/>
@@ -359,6 +361,11 @@
    </property>
    <property name="text">
     <string>Analyze Selection</string>
+   </property>
+  </action>
+  <action name="uiACT_deleteUnusedShadingNodes">
+   <property name="text">
+    <string>Delete Unused Shading Nodes</string>
    </property>
   </action>
  </widget>
@@ -659,6 +666,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>uiACT_deleteUnusedShadingNodes</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onDeleteUnusedShadingNodesTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onRefreshTriggered()</slot>
@@ -677,5 +700,6 @@
   <slot>onCopyTriggered()</slot>
   <slot>onPasteTriggered()</slot>
   <slot>onAnalyzeSelectionToggled(bool)</slot>
+  <slot>onDeleteUnusedShadingNodesTriggered()</slot>
  </slots>
 </ui>

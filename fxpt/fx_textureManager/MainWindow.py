@@ -1,5 +1,6 @@
 import os
 import maya.cmds as m
+from maya.mel import eval as meval
 from PySide import QtCore, QtGui
 
 from fxpt.side_utils import pyperclip
@@ -19,7 +20,6 @@ from fxpt.fx_textureManager.LogDialog import LogDialog
 
 #TODO!: test on huge data
 #TODO: app icon
-#TODO: delete unused nodes to Actions menu
 
 
 class TexManagerUI(QtGui.QMainWindow):
@@ -399,6 +399,10 @@ class TexManagerUI(QtGui.QMainWindow):
     def onCopyTriggered(self):
         self.clipboard = self.getSelectedFullPaths()[0]
         self.updateUiStates()
+
+    def onDeleteUnusedShadingNodesTriggered(self):
+        meval('MLdeleteUnused')
+        self.uiRefresh()
 
     # noinspection PyMethodMayBeStatic
     def checkTnsExists(self, tns):

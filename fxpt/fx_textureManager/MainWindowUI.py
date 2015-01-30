@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindowUI.ui'
 #
-# Created: Wed Jan 28 21:21:34 2015
+# Created: Fri Jan 30 18:06:08 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -149,9 +149,13 @@ class Ui_MainWindow(object):
         icon11.addPixmap(QtGui.QPixmap(":/icons/lockToSelection.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiACT_analyzeSelection.setIcon(icon11)
         self.uiACT_analyzeSelection.setObjectName("uiACT_analyzeSelection")
+        self.uiACT_deleteUnusedShadingNodes = QtGui.QAction(MainWindow)
+        self.uiACT_deleteUnusedShadingNodes.setObjectName("uiACT_deleteUnusedShadingNodes")
         self.menuFile.addAction(self.uiACT_refresh)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.uiACT_exit)
+        self.menuActions.addAction(self.uiACT_deleteUnusedShadingNodes)
+        self.menuActions.addSeparator()
         self.menuActions.addAction(self.uiACT_copyMove)
         self.menuActions.addAction(self.uiACT_retarget)
         self.menuActions.addAction(self.uiACT_searchReplace)
@@ -208,6 +212,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.uiACT_copy, QtCore.SIGNAL("triggered()"), MainWindow.onCopyTriggered)
         QtCore.QObject.connect(self.uiACT_paste, QtCore.SIGNAL("triggered()"), MainWindow.onPasteTriggered)
         QtCore.QObject.connect(self.uiACT_analyzeSelection, QtCore.SIGNAL("toggled(bool)"), MainWindow.onAnalyzeSelectionToggled)
+        QtCore.QObject.connect(self.uiACT_deleteUnusedShadingNodes, QtCore.SIGNAL("triggered()"), MainWindow.onDeleteUnusedShadingNodesTriggered)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.uiTBL_textures, self.uiLED_filter)
         MainWindow.setTabOrder(self.uiLED_filter, self.uiBTN_filter)
@@ -240,5 +245,6 @@ class Ui_MainWindow(object):
         self.uiACT_copy.setText(QtGui.QApplication.translate("MainWindow", "Copy", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_paste.setText(QtGui.QApplication.translate("MainWindow", "Paste", None, QtGui.QApplication.UnicodeUTF8))
         self.uiACT_analyzeSelection.setText(QtGui.QApplication.translate("MainWindow", "Analyze Selection", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiACT_deleteUnusedShadingNodes.setText(QtGui.QApplication.translate("MainWindow", "Delete Unused Shading Nodes", None, QtGui.QApplication.UnicodeUTF8))
 
 import resources_rc
