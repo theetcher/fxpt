@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>icons/appIcon.png</file>
     <file>icons/lockToSelection.png</file>
     <file>icons/folder.png</file>
     <file>icons/copy1.png</file>

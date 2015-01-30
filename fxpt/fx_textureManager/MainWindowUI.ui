@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Texture Manager</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/appIcon.png</normaloff>:/icons/appIcon.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">

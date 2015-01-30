@@ -19,7 +19,6 @@ from fxpt.fx_textureManager.CopyMoveDialog import CopyMoveDialog
 from fxpt.fx_textureManager.LogDialog import LogDialog
 
 #TODO!: test on huge data
-#TODO: app icon
 
 
 class TexManagerUI(QtGui.QMainWindow):
