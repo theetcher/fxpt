@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'RetargetDialogUI.ui'
 #
-# Created: Thu Jan 22 16:48:16 2015
+# Created: Fri Jan 30 23:41:59 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,13 +38,8 @@ class Ui_Dialog(object):
         self.uiLED_retargetRoot = LineEditPath(self.groupBox)
         self.uiLED_retargetRoot.setObjectName("uiLED_retargetRoot")
         self.gridLayout.addWidget(self.uiLED_retargetRoot, 0, 1, 1, 1)
-        self.label_2 = QtGui.QLabel(self.groupBox)
-        self.label_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
         self.uiCHK_forceRetarget = QtGui.QCheckBox(self.groupBox)
         self.uiCHK_forceRetarget.setMinimumSize(QtCore.QSize(0, 20))
-        self.uiCHK_forceRetarget.setText("")
         self.uiCHK_forceRetarget.setObjectName("uiCHK_forceRetarget")
         self.gridLayout.addWidget(self.uiCHK_forceRetarget, 1, 1, 1, 1)
         self.uiBTN_browse = QtGui.QToolButton(self.groupBox)
@@ -112,7 +107,7 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Retarget", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("Dialog", "Parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Dialog", "Retarget to:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("Dialog", "Force retarget", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiCHK_forceRetarget.setText(QtGui.QApplication.translate("Dialog", "Force retarget", None, QtGui.QApplication.UnicodeUTF8))
         self.uiBTN_browse.setText(QtGui.QApplication.translate("Dialog", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.uiBTN_browse.setShortcut(QtGui.QApplication.translate("Dialog", "Ctrl+S, Ctrl+R", None, QtGui.QApplication.UnicodeUTF8))
         self.uiGRP_useSourceRoot.setTitle(QtGui.QApplication.translate("Dialog", "Use source root", None, QtGui.QApplication.UnicodeUTF8))
