@@ -2,7 +2,6 @@ import maya.cmds as m
 
 from fxpt.fx_textureManager import TexNode
 
-#TODO: what if this node type does not exists?
 TEX_ATTRIBUTES = {
     'file': [
         'fileTextureName'

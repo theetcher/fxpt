@@ -69,6 +69,9 @@ class TexNode(object):
     def setAttrValue(self, value):
         m.setAttr(self.getFullAttrName(), value, typ='string')
 
+    def nodeAttrExists(self):
+        return m.objExists(self.getFullAttrName())
+
     def fileExists(self):
         fullPath = os.path.expandvars(self.getAttrValue())
         if os.path.basename(fullPath):

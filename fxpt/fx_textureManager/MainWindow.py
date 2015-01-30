@@ -18,8 +18,6 @@ from fxpt.fx_textureManager.CopyMoveDialog import CopyMoveDialog
 from fxpt.fx_textureManager.LogDialog import LogDialog
 
 #TODO!: test on huge data
-#TODO!: What if scene does not match database (new scene, deleted nodes)? TexNode set/get attr checks?
-#TODO: change icon of search and replace
 #TODO: app icon
 #TODO: delete unused nodes to Actions menu
 
@@ -291,7 +289,7 @@ class TexManagerUI(QtGui.QMainWindow):
             self.ui.statusbar.clearMessage()
 
     def selectTextureNodes(self):
-        nodes = [tn.getNode() for tn in self.getSelectedTexNodes()]
+        nodes = [tn.getNode() for tn in self.getSelectedTexNodes() if m.objExists(tn.getNode())]
         if nodes:
             m.select(nodes, r=True)
         else:
@@ -302,9 +300,11 @@ class TexManagerUI(QtGui.QMainWindow):
         for tn in self.getSelectedTexNodes():
             sgToSelect.update(tn.getSgs())
         if sgToSelect:
-            m.select(list(sgToSelect))
-        else:
-            m.select(cl=True)
+            selectionList = [sg for sg in sgToSelect if m.objExists(sg)]
+            if selectionList:
+                m.select(list(selectionList))
+            else:
+                m.select(cl=True)
 
     def uiRefresh(self):
         sortingInfo = self.getSortingInfo()
@@ -400,44 +400,76 @@ class TexManagerUI(QtGui.QMainWindow):
         self.clipboard = self.getSelectedFullPaths()[0]
         self.updateUiStates()
 
+    # noinspection PyMethodMayBeStatic
+    def checkTnsExists(self, tns):
+        log = []
+        res = True
+        for tn in tns:
+            if not tn.nodeAttrExists():
+                log.append('Texture node/attribute {0} does not exists.'.format(tn.getFullAttrName()))
+                res = False
+        if not res:
+            log.append('Processing aborted: UI is out if sync with actual scene data. Refresh Texture Manager and try again.')
+        return res, log
+
     def onPasteTriggered(self):
-        self.coordinator.processPaste(self.getSelectedTexNodes(), self.clipboard)
-        self.uiRefresh()
+        tns = self.getSelectedTexNodes()
+        tnsExists, log = self.checkTnsExists(tns)
+        if tnsExists:
+            self.coordinator.processPaste(tns, self.clipboard)
+            self.uiRefresh()
+        else:
+            self.logDlg.showLog(log)
 
     def onCopyMoveTriggered(self):
-        if self.copyMoveDlg.exec_() == QtGui.QDialog.Accepted:
-            dialogResult = self.copyMoveDlg.getDialogResult()
-            procLog = self.coordinator.processCopyMove(
-                self.getSelectedTexNodes(),
-                dialogResult
-            )
-            self.logDlg.showLog(procLog)
-            self.uiRefresh()
+        tns = self.getSelectedTexNodes()
+        tnsExists, log = self.checkTnsExists(tns)
+        if tnsExists:
+            if self.copyMoveDlg.exec_() == QtGui.QDialog.Accepted:
+                dialogResult = self.copyMoveDlg.getDialogResult()
+                procLog = self.coordinator.processCopyMove(
+                    tns,
+                    dialogResult
+                )
+                self.logDlg.showLog(procLog)
+                self.uiRefresh()
+        else:
+            self.logDlg.showLog(log)
 
     def onRetargetTriggered(self):
-        if self.retargetDlg.exec_() == QtGui.QDialog.Accepted:
-            retargetRoot, forceRetarget, useSourceRoot, sourceRoot = self.retargetDlg.getDialogResult()
-            procLog = self.coordinator.processRetarget(
-                self.getSelectedTexNodes(),
-                retargetRoot,
-                forceRetarget,
-                useSourceRoot,
-                sourceRoot
-            )
-            self.logDlg.showLog(procLog)
-            self.uiRefresh()
+        tns = self.getSelectedTexNodes()
+        tnsExists, log = self.checkTnsExists(tns)
+        if tnsExists:
+            if self.retargetDlg.exec_() == QtGui.QDialog.Accepted:
+                retargetRoot, forceRetarget, useSourceRoot, sourceRoot = self.retargetDlg.getDialogResult()
+                procLog = self.coordinator.processRetarget(
+                    tns,
+                    retargetRoot,
+                    forceRetarget,
+                    useSourceRoot,
+                    sourceRoot
+                )
+                self.logDlg.showLog(procLog)
+                self.uiRefresh()
+        else:
+            self.logDlg.showLog(log)
 
     def onSearchReplaceTriggered(self):
-        if self.searchReplaceDlg.exec_() == QtGui.QDialog.Accepted:
-            searchStr, replaceStr, caseSensitive = self.searchReplaceDlg.getDialogData()
-            procLog = self.coordinator.processSearchAndReplace(
-                self.getSelectedTexNodes(),
-                searchStr,
-                replaceStr,
-                caseSensitive
-            )
-            self.logDlg.showLog(procLog)
-            self.uiRefresh()
+        tns = self.getSelectedTexNodes()
+        tnsExists, log = self.checkTnsExists(tns)
+        if tnsExists:
+            if self.searchReplaceDlg.exec_() == QtGui.QDialog.Accepted:
+                searchStr, replaceStr, caseSensitive = self.searchReplaceDlg.getDialogData()
+                procLog = self.coordinator.processSearchAndReplace(
+                    tns,
+                    searchStr,
+                    replaceStr,
+                    caseSensitive
+                )
+                self.logDlg.showLog(procLog)
+                self.uiRefresh()
+        else:
+            self.logDlg.showLog(log)
 
     def closeEvent(self, event):
         self.ui_saveSettings()
