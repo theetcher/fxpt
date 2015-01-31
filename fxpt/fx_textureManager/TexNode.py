@@ -4,6 +4,7 @@ import maya.cmds as m
 from fxpt.fx_textureManager.com import cleanupPath
 
 
+#TODO: getShadingGroups very slow on big scenes because of listConnections. The problem arise during harvesting.
 def getShadingGroups(node, visited):
     sgs = set()
     visited.add(node)

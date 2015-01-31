@@ -18,8 +18,6 @@ from fxpt.fx_textureManager.RetargetDialog import RetargetDialog
 from fxpt.fx_textureManager.CopyMoveDialog import CopyMoveDialog
 from fxpt.fx_textureManager.LogDialog import LogDialog
 
-#TODO!: test on huge data
-
 
 class TexManagerUI(QtGui.QMainWindow):
 
