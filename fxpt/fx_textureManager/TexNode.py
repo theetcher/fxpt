@@ -1,10 +1,21 @@
 import os
 
 import maya.cmds as m
+
 from fxpt.fx_textureManager.com import cleanupPath
 
+# noinspection PySetFunctionToLiteral
+IGNORED_OBJECT_TYPES = set([
+    'defaultShaderList',
+    'defaultTextureList'
+])
+IGNORED_OBJECTS = set()
+for t in IGNORED_OBJECT_TYPES:
+    IGNORED_OBJECTS.update(m.ls(typ=t))
 
-#TODO: getShadingGroups very slow on big scenes because of listConnections. The problem arise during harvesting.
+SHADING_ENGINE_TYPE = 'kShadingEngine'
+
+
 def getShadingGroups(node, visited):
     sgs = set()
     visited.add(node)
@@ -12,7 +23,7 @@ def getShadingGroups(node, visited):
     if outConnections:
         for destinationNode in outConnections:
             if destinationNode not in visited:
-                if m.objectType(destinationNode, isType='shadingEngine'):
+                if m.nodeType(destinationNode, apiType=True) == SHADING_ENGINE_TYPE:
                     sgs.add(destinationNode)
                 else:
                     sgs.update(getShadingGroups(destinationNode, visited))
@@ -46,7 +57,7 @@ class TexNode(object):
         return self.attr
 
     def setSgs(self):
-        self.sgs = getShadingGroups(self.node, set())
+        self.sgs = getShadingGroups(self.node, set(IGNORED_OBJECTS))
 
     def getSgs(self):
         return self.sgs
