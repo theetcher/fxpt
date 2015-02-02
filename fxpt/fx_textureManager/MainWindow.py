@@ -19,6 +19,9 @@ from fxpt.fx_textureManager.CopyMoveDialog import CopyMoveDialog
 from fxpt.fx_textureManager.LogDialog import LogDialog
 
 
+#TODO: test processors in batch mode
+#TODO!: if you select a group containing, analyze selection mode will be empty
+
 class TexManagerUI(QtGui.QMainWindow):
 
     def __init__(self, parent=None):

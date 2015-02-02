@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'CopyMoveDialogUI.ui'
 #
-# Created: Mon Jan 19 14:46:35 2015
+# Created: Mon Feb 02 21:51:52 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -128,7 +128,7 @@ class Ui_Dialog(object):
         self.uiGRP_folderStructure.setTitle(QtGui.QApplication.translate("Dialog", "Copy folder structure", None, QtGui.QApplication.UnicodeUTF8))
         self.uiBTN_browseSource.setText(QtGui.QApplication.translate("Dialog", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.uiBTN_browseSource.setShortcut(QtGui.QApplication.translate("Dialog", "Ctrl+S, Ctrl+R", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_16.setText(QtGui.QApplication.translate("Dialog", "Original folder root:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_16.setText(QtGui.QApplication.translate("Dialog", "Original root folder:", None, QtGui.QApplication.UnicodeUTF8))
         self.uiGRP_addTextures.setTitle(QtGui.QApplication.translate("Dialog", "Copy additional textures", None, QtGui.QApplication.UnicodeUTF8))
         self.label_22.setText(QtGui.QApplication.translate("Dialog", "Texture suffixes:", None, QtGui.QApplication.UnicodeUTF8))
         self.uiLED_texSuffixes.setText(QtGui.QApplication.translate("Dialog", "_nm, _spec, _hdetm, _em", None, QtGui.QApplication.UnicodeUTF8))
