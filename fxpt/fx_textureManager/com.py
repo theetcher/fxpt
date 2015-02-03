@@ -5,12 +5,6 @@ try:
 except ImportError:
     QtGui = None
 
-try:
-    import maya.cmds as m
-except ImportError:
-    m = None
-
-
 # style not finished
 TOOLBAR_BUTTON_STYLE = """
 QToolButton:checked{

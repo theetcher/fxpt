@@ -20,7 +20,6 @@ from fxpt.fx_textureManager.LogDialog import LogDialog
 
 
 #TODO: test processors in batch mode
-#TODO!: if you select a group containing, analyze selection mode will be empty
 
 class TexManagerUI(QtGui.QMainWindow):
 

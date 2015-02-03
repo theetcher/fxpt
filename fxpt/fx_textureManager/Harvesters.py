@@ -78,7 +78,7 @@ class MayaSelectionHarvester(HarvesterBase):
 
     # noinspection PyMethodMayBeStatic
     def getSelectedNodes(self):
-        res = set()
+        res = set(m.ls(sl=True, dag=True, ap=True))
         for s in m.ls(sl=True):
             node = s.split('.')[0]
             res.add(node)
