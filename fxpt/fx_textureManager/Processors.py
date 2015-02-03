@@ -116,11 +116,11 @@ class ProcessorCopyMove(ProcessorBase):
     def __init__(self, filenames, targetRoot, delSrc, copyFolderStruct, sourceRoot, copyAdd, addSuffixes):
         super(ProcessorCopyMove, self).__init__()
 
-        self.filenames = filenames
-        self.targetRoot = targetRoot
+        self.filenames = [cleanupPath(f) for f in filenames]
+        self.targetRoot = cleanupPath(targetRoot)
         self.delSrc = delSrc
         self.copyFolderStruct = copyFolderStruct
-        self.sourceRoot = sourceRoot
+        self.sourceRoot = cleanupPath(sourceRoot)
         self.copyAdd = copyAdd
         self.addSuffixes = addSuffixes
 
@@ -165,7 +165,7 @@ class ProcessorCopyMove(ProcessorBase):
             for f in self.processedInfo:
                 if os.path.exists(f):
                     try:
-                        # makeWritable(f)
+                        makeWritable(f)
                         os.remove(f)
                     except OSError as e:
                         self.log('')
@@ -178,14 +178,21 @@ class ProcessorCopyMove(ProcessorBase):
     def getCopyInfoFolderStructure(self, files):
         res = []
         for f in files:
+
             srcLower = self.sourceRoot.lower() + '/'
-            if f.lower().startswith(srcLower):
-                res.append((f, '{0}/{1}'.format(self.targetRoot, f[len(srcLower):])))
+            if self.sourceRoot and f.lower().startswith(srcLower):
+                pathToAdd = f[len(srcLower):]
             else:
-                trgF = f
-                for r in ('//', ':', '$'):
-                    trgF = trgF.replace(r, '')
-                res.append((f, '{0}/{1}'.format(self.targetRoot, trgF)))
+                pathToAdd = f
+
+            for r in ('//', ':', '$'):
+                pathToAdd = pathToAdd.replace(r, '')
+
+            while pathToAdd.startswith('/'):
+                pathToAdd = pathToAdd[1:]
+
+            res.append((f, '{0}/{1}'.format(self.targetRoot, pathToAdd)))
+
         return res
 
     def getFilesToProcess(self):

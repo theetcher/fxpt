@@ -5,6 +5,11 @@ try:
 except ImportError:
     QtGui = None
 
+try:
+    import maya.cmds as m
+except ImportError:
+    m = None
+
 # style not finished
 TOOLBAR_BUTTON_STYLE = """
 QToolButton:checked{
@@ -25,7 +30,7 @@ QToolButton:checked{
 }
 """
 
-if QtGui:
+if QtGui and m:
     from fxpt.fx_utils.qtFontCreator import QtFontCreator
     from fxpt.fx_utils.utils import getFxUtilsDir
     qtFontCreator = QtFontCreator(getFxUtilsDir() + '/proggy_tiny_sz.ttf', 12)
