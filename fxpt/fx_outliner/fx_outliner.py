@@ -1,22 +1,27 @@
 #region imports
 
-import maya.cmds as m
-import maya.mel as mel
-import maya.OpenMayaUI as omui
-import maya.OpenMaya as om
 import functools as ft
 import copy
 import os
 import xml.etree.ElementTree
+
+import maya.cmds as m
+import maya.mel as mel
+import maya.OpenMayaUI as omui
+import maya.OpenMaya as om
+
 import shiboken
 from PySide import QtCore
 from PySide import QtGui
+
 
 # noinspection PyBroadException
 try:
     import cPickle as pickle
 except:
     import pickle
+
+from fxpt.fx_prefsaver import PrefSaver, Serializers
 
 from fxpt.fx_utils.qtFontCreator import QtFontCreator
 from fxpt.fx_utils.utils import getFxUtilsDir
@@ -27,20 +32,18 @@ from fxpt.fx_utils.utils import getFxUtilsDir
 
 OS_NAME = os.name
 
-SCRIPT_VERSION = 'v1.0'
+SCRIPT_VERSION = 'v1.5'
 SCRIPT_NAME = 'FX Outliner'
 UI_WIN_NAME = 'fx_outliner_win'
 UI_WIN_TITLE = SCRIPT_NAME + ' ' + SCRIPT_VERSION
 SCRIPT_DIR = os.path.dirname(__file__)
 CFG_FILE = SCRIPT_DIR + '\\fx_outliner.cfg'
+CFG_FILE_PREFSAVER = SCRIPT_DIR + '\\fx_outliner_extra.cfg'
 XML_OUTLINER_CFG_FILE = SCRIPT_DIR + '\\fx_outliner.xml'
 XML_USER_MENU_FILE = SCRIPT_DIR + '\\fx_outliner_user_menu.xml'
 README_FILE = SCRIPT_DIR + '\\readme.txt'
 FILTER_DESC = 'fx_outliner_filter'
 OUTLINER_PANEL = 'FX Outliner Panel'
-
-TAB_OUTLINER = 1
-TAB_SEARCH = 2
 
 IDX_NAME = 0
 IDX_TYPE = 1
@@ -75,6 +78,44 @@ def dummyFunc():
     pass
 
 
+def getMayaMainWindowPtr():
+    # noinspection PyArgumentList
+    ptr = omui.MQtUtil.mainWindow()
+    if not ptr:
+        raise RuntimeError('Cannot find Maya main window.')
+    else:
+        return ptr
+
+
+def getMayaQMainWindow(ptr):
+    return shiboken.wrapInstance(long(ptr), QtGui.QMainWindow)
+
+
+class SearchResultsDialog(QtGui.QDialog):
+    
+    def __init__(self):
+        mayaMainWin = getMayaQMainWindow(getMayaMainWindowPtr())
+        super(SearchResultsDialog, self).__init__(mayaMainWin)
+        self.setupUI()
+
+    # noinspection PyAttributeOutsideInit
+    def setupUI(self):
+        self.setWindowTitle('Search Results')
+        layout = QtGui.QVBoxLayout(self)
+        layout.setContentsMargins(4, 4, 4, 4)
+        self.setLayout(layout)
+        self.ui_TBL_results = QtGui.QTableView()
+        layout.addWidget(self.ui_TBL_results)
+
+    # noinspection PyMethodMayBeStatic
+    def showDlg(self):
+        self.show()
+        self.raise_()
+
+    def getResultsTable(self):
+        return self.ui_TBL_results
+
+
 # noinspection PyAttributeOutsideInit,PyMethodMayBeStatic,PyUnresolvedReferences,PyUnusedLocal
 class FXOutlinerUI:
     def __init__(self):
@@ -83,6 +124,7 @@ class FXOutlinerUI:
         self.userMenu = []  # list of tuples (command_name, command_string)
         self.ui_WND_wait = None
 
+        self.searchResultDlg = SearchResultsDialog()
         self.ui_createUI()
 
     def ui_createUI(self):
@@ -193,10 +235,6 @@ class FXOutlinerUI:
 
         # - - - - - - - - - - - - - - - - -
 
-        self.ui_TAB_main = m.tabLayout(
-            changeCommand=self.ui_TAB_mainChange
-        )
-
         self.ui_LAY_outlinerForm = m.formLayout()
 
         self.ui_BTN_modeDropDown = m.button(
@@ -301,42 +339,25 @@ class FXOutlinerUI:
 
         # - - - - - - - - - - - - - - - - -
 
-        m.setParent(self.ui_TAB_main)
-
         self.ui_LAY_attachFrame = m.frameLayout(
             marginHeight=2, marginWidth=2,
             borderVisible=False,
             labelVisible=False
         )
 
-        self.ui_QT_LAY_attachFrame = shiboken.wrapInstance(omui.MQtUtil.findLayout(self.ui_LAY_attachFrame),
-                                                           QtCore.QObject)
-        self.ui_QT_LAY_attachLayout = self.ui_QT_LAY_attachFrame.children()[-1].children()[0]
-
-        self.ui_QT_TBL_searchResult = QtGui.QTableView()
-        self.ui_QT_LAY_attachLayout.addWidget(self.ui_QT_TBL_searchResult)
+        self.ui_QT_TBL_searchResult = self.searchResultDlg.getResultsTable()
 
         self.searchResultModel = SearchResultModel()
         self.ui_searchResultTableSetProps()
         self.ui_QT_TBL_searchResult.setModel(self.searchResultModel)
-        self.ui_searchResultTableSetProps()  # double ui_searchResultTableSetProps cause some props need to be set
-                                            # before and some after setModel
+        # double ui_searchResultTableSetProps cause some props need to be set # double ui_searchResultTableSetProps cause some props need to be set
+        self.ui_searchResultTableSetProps()
 
-        self.ui_QT_TBL_searchResult.connect(
-            self.ui_QT_TBL_searchResult,
-            QtCore.SIGNAL('doubleClicked(QModelIndex)'),
-            self.ui_QT_TBL_searchResult_doubleclicked
-        )
         self.ui_QT_TBL_searchResult.connect(
             self.ui_QT_TBL_searchResult.selectionModel(),
             QtCore.SIGNAL('selectionChanged(QItemSelection, QItemSelection)'),
             self.ui_QT_TBL_searchResult_selectionChanges
         )
-
-        # - - - - - - - - - - - - - - - - -
-
-        m.tabLayout(self.ui_TAB_main, e=True,
-                    tabLabel=[(self.ui_LAY_outlinerForm, 'Outliner'), (self.ui_LAY_attachFrame, 'Search')])
 
         # - - - - - - - - - - - - - - - - -
 
@@ -352,29 +373,27 @@ class FXOutlinerUI:
         m.formLayout(self.ui_LAY_mainForm, e=True, attachForm=(self.ui_SEP_searchSeparator, 'left', 2))
 
         m.formLayout(self.ui_LAY_mainForm, e=True,
-                     attachControl=(self.ui_TAB_main, 'top', 2, self.ui_SEP_searchSeparator))
-        m.formLayout(self.ui_LAY_mainForm, e=True, attachForm=(self.ui_TAB_main, 'right', 2))
-        m.formLayout(self.ui_LAY_mainForm, e=True, attachForm=(self.ui_TAB_main, 'bottom', 2))
-        m.formLayout(self.ui_LAY_mainForm, e=True, attachForm=(self.ui_TAB_main, 'left', 2))
+                     attachControl=(self.ui_LAY_outlinerForm, 'top', 2, self.ui_SEP_searchSeparator))
+        m.formLayout(self.ui_LAY_mainForm, e=True, attachForm=(self.ui_LAY_outlinerForm, 'right', 2))
+        m.formLayout(self.ui_LAY_mainForm, e=True, attachForm=(self.ui_LAY_outlinerForm, 'bottom', 2))
+        m.formLayout(self.ui_LAY_mainForm, e=True, attachForm=(self.ui_LAY_outlinerForm, 'left', 2))
 
         # - - - - - - - - - - - - - - - - -
 
         m.showWindow(self.window)
 
-        #        m.dockControl(
-        #            content = self.window,
-        #            area = 'left',
-        #            floating = True
-        #        )
-
         # - - - - - - - - - - - - - - - - -
+
+        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerFileJson(CFG_FILE_PREFSAVER))
+        self.prefSaver.addControl(self.searchResultDlg, PrefSaver.UIType.PYSIDEWindow, (200, 200, 500, 700))
+        self.prefSaver.loadPrefs()
 
         if os.path.exists(CFG_FILE):
             self.prefsLoad()
 
         self.ui_update()
 
-        m.setFocus(self.ui_TAB_main)
+        m.setFocus(self.ui_LAY_outlinerForm)
 
     def ui_searchResultTableSetProps(self, columnMaxLengthName=10, columnMaxLengthType=10, columnMaxLengthPath=10):
         table = self.ui_QT_TBL_searchResult
@@ -398,13 +417,8 @@ class FXOutlinerUI:
         table.horizontalHeader().setStretchLastSection(True)
         table.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignLeft)
 
-    def ui_TAB_mainChange(self):
-        self.state.currentTabIndex = m.tabLayout(self.ui_TAB_main, q=True, selectTabIndex=True)
-        self.ui_update()
-
-    def ui_setCurrentTab(self, index):
-        self.state.currentTabIndex = index
-        m.tabLayout(self.ui_TAB_main, e=True, selectTabIndex=index)
+    def ui_showResultsDlg(self):
+        self.searchResultDlg.showDlg()
         self.ui_update()
 
     def ui_POP_mode_onClick(self, ov, *arg):
@@ -449,16 +463,13 @@ class FXOutlinerUI:
         for index in selectedIndexes:
             selectionList.append(index.data(role=QtCore.Qt.UserRole))
         if selectedIndexes:
-            m.select(selectionList)
+            m.select(selectionList, noExpand=True)
         else:
             m.select(clear=True)
 
-    def ui_QT_TBL_searchResult_doubleclicked(self):
-        print 'ui_QT_TBL_searchResult_doubleclicked exec'
-
     def ui_BTN_searchClick(self, arg):
 
-        self.ui_waitWindowShow()
+        # self.ui_waitWindowShow()
 
         caseSensitivity = QtCore.Qt.CaseSensitive if self.state.searchCase else QtCore.Qt.CaseInsensitive
         patternType = QtCore.QRegExp.RegExp if self.state.searchRegex else QtCore.QRegExp.Wildcard
@@ -519,9 +530,9 @@ class FXOutlinerUI:
             else:
                 m.select(clear=True)
         else:
-            self.ui_setCurrentTab(TAB_SEARCH)
+            self.ui_showResultsDlg()
 
-        self.ui_waitWindowHide()
+        # self.ui_waitWindowHide()
 
     def ui_getSearchString(self):
         textFieldString = m.textField(self.ui_TFD_search, q=True, text=True)
@@ -533,8 +544,6 @@ class FXOutlinerUI:
 
     def ui_update(self):
         self.prefsSave()
-
-        m.tabLayout(self.ui_TAB_main, e=True, selectTabIndex=self.state.currentTabIndex)
 
         m.symbolCheckBox(self.ui_BTN_searchCase, e=True, value=self.state.searchCase)
         m.symbolCheckBox(self.ui_BTN_searchRegEx, e=True, value=self.state.searchRegex)
@@ -601,6 +610,7 @@ class FXOutlinerUI:
 
     def ui_onDeleteMainWin(self):
         self.prefsSave()
+        self.searchResultDlg.close()
 
         # clean up filters
         for ov in self.state.outlinerViews:
@@ -777,9 +787,11 @@ class FXOutlinerUI:
 
     def prefsSave(self):
         self.pickleSave(self.prefsPack())
+        self.prefSaver.savePrefs()
 
     def prefsLoad(self):
         self.prefsUnPack(self.pickleLoad())
+        self.prefSaver.loadPrefs()
 
     def prefsPack(self):
         prefObj = copy.copy(self.state)
@@ -795,7 +807,6 @@ class FXOutlinerUI:
         return prefObj
 
     def prefsUnPack(self, prefObj):
-        self.state.currentTabIndex = prefObj.currentTabIndex
         self.state.searchCase = prefObj.searchCase
         self.state.searchRegex = prefObj.searchRegex
         self.state.searchType = prefObj.searchType
@@ -812,6 +823,7 @@ class FXOutlinerUI:
                 ov.showSetMembers = prefObj.outlinerViews[ov.name].showSetMembers
                 ov.selectSetMembers = prefObj.outlinerViews[ov.name].selectSetMembers
 
+    #TODO: to json format
     def pickleSave(self, prefObj):
         try:
             f = open(CFG_FILE, 'wb')
@@ -936,7 +948,6 @@ class OutlinerState():
     def __init__(self):
         self.currentView = None
         self.currentViewName = ''
-        self.currentTabIndex = 1
         self.searchCase = False
         self.searchRegex = False
         self.searchType = False
