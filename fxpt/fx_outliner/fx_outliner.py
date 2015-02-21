@@ -964,16 +964,5 @@ class OutlinerView():
         self.selectSetMembersEnable = selectSetMembersEnable
 
 
-class OutlinerViewPref():
-    def __init__(self,
-                 showShapes=False,
-                 showSetMembers=True,
-                 selectSetMembers=False
-                 ):
-        self.showShapes = showShapes
-        self.showSetMembers = showSetMembers
-        self.selectSetMembers = selectSetMembers
-
-
 def run():
     FXOutlinerUI()
