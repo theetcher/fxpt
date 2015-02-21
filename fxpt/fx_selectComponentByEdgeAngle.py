@@ -21,6 +21,8 @@ UI_APPLY_BUTTON_STRING = 'Set Target Geometry'
 OPT_VAR_NAME = 'fx_selectComponentByEdgeAngle_prefs'
 
 
+#TODO: strange selection display when highlight is off in VP2.0
+
 def getParent(node):
     parents = m.listRelatives(node, parent=True, fullPath=True)
     if parents:
