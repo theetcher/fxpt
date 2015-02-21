@@ -1,7 +1,6 @@
 #region imports
 
 import functools as ft
-import copy
 import os
 import xml.etree.ElementTree
 
@@ -13,13 +12,6 @@ import maya.OpenMaya as om
 import shiboken
 from PySide import QtCore
 from PySide import QtGui
-
-
-# noinspection PyBroadException
-try:
-    import cPickle as pickle
-except:
-    import pickle
 
 from fxpt.fx_prefsaver import PrefSaver, Serializers
 
@@ -37,8 +29,7 @@ SCRIPT_NAME = 'FX Outliner'
 UI_WIN_NAME = 'fx_outliner_win'
 UI_WIN_TITLE = SCRIPT_NAME + ' ' + SCRIPT_VERSION
 SCRIPT_DIR = os.path.dirname(__file__)
-CFG_FILE = SCRIPT_DIR + '\\fx_outliner.cfg'
-CFG_FILE_PREFSAVER = SCRIPT_DIR + '\\fx_outliner_extra.cfg'
+OPT_VAR_NAME = 'fx_outliner'
 XML_OUTLINER_CFG_FILE = SCRIPT_DIR + '\\fx_outliner.xml'
 XML_USER_MENU_FILE = SCRIPT_DIR + '\\fx_outliner_user_menu.xml'
 README_FILE = SCRIPT_DIR + '\\readme.txt'
@@ -100,6 +91,7 @@ class SearchResultsDialog(QtGui.QDialog):
 
     # noinspection PyAttributeOutsideInit
     def setupUI(self):
+        self.setObjectName('SearchResultsDialog')
         self.setWindowTitle('Search Results')
         layout = QtGui.QVBoxLayout(self)
         layout.setContentsMargins(4, 4, 4, 4)
@@ -384,13 +376,10 @@ class FXOutlinerUI:
 
         # - - - - - - - - - - - - - - - - -
 
-        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerFileJson(CFG_FILE_PREFSAVER))
+        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
         self.prefSaver.addControl(self.searchResultDlg, PrefSaver.UIType.PYSIDEWindow, (200, 200, 500, 700))
-        self.prefSaver.loadPrefs()
-
-        if os.path.exists(CFG_FILE):
-            self.prefsLoad()
-
+        self.prefSaver.addVariable('fx_outliner_state', self.prefsPack, self.prefsUnPack, None)
+        self.prefsLoad()
         self.ui_update()
 
         m.setFocus(self.ui_LAY_outlinerForm)
@@ -786,77 +775,62 @@ class FXOutlinerUI:
             self.state.outlinerViews.append(ov)
 
     def prefsSave(self):
-        self.pickleSave(self.prefsPack())
         self.prefSaver.savePrefs()
 
     def prefsLoad(self):
-        self.prefsUnPack(self.pickleLoad())
         self.prefSaver.loadPrefs()
 
     def prefsPack(self):
-        prefObj = copy.copy(self.state)
-        prefObj.currentViewName = self.state.currentView.name
-        prefObj.currentView = None
-        prefObj.outlinerViews = {}
+
+        prefDict = {}
+
+        for attrName in (
+            'searchCase',
+            'searchRegex',
+            'searchType',
+            'searchSelect',
+            'searchShape'
+        ):
+            prefDict[attrName] = getattr(self.state, attrName)
+
+        prefDict['currentViewName'] = self.state.currentView.name
+
+        ovDict = {}
+        prefDict['outlinerViews'] = ovDict
+
         for ov in self.state.outlinerViews:
-            vp = OutlinerViewPref()
-            vp.showShapes = ov.showShapes
-            vp.showSetMembers = ov.showSetMembers
-            vp.selectSetMembers = ov.selectSetMembers
-            prefObj.outlinerViews[ov.name] = vp
-        return prefObj
+            ovDict[ov.name] = {
+                'showShapes': ov.showShapes,
+                'showSetMembers': ov.showSetMembers,
+                'selectSetMembers': ov.selectSetMembers,
+            }
 
-    def prefsUnPack(self, prefObj):
-        self.state.searchCase = prefObj.searchCase
-        self.state.searchRegex = prefObj.searchRegex
-        self.state.searchType = prefObj.searchType
-        self.state.searchSelect = prefObj.searchSelect
-        self.state.searchShape = prefObj.searchShape
+        return prefDict
 
-        currentViewItem = [x for x in self.state.outlinerViews if x.name == prefObj.currentViewName]
+    def prefsUnPack(self, prefDict):
+        if not prefDict:
+            return
+
+        for attrName in (
+            'searchCase',
+            'searchRegex',
+            'searchType',
+            'searchSelect',
+            'searchShape'
+        ):
+            setattr(self.state, attrName, prefDict.get(attrName, False))
+
+        currentViewItem = [x for x in self.state.outlinerViews if x.name == prefDict.get('currentViewName', '')]
         if currentViewItem:
             self.state.currentView = currentViewItem[0]
 
         for ov in self.state.outlinerViews:
-            if ov.name in prefObj.outlinerViews:
-                ov.showShapes = prefObj.outlinerViews[ov.name].showShapes
-                ov.showSetMembers = prefObj.outlinerViews[ov.name].showSetMembers
-                ov.selectSetMembers = prefObj.outlinerViews[ov.name].selectSetMembers
-
-    #TODO: to json format
-    def pickleSave(self, prefObj):
-        try:
-            f = open(CFG_FILE, 'wb')
-            try:
-                pickle.dump(prefObj, f, -1)
-            finally:
-                f.close()
-        except IOError as e:
-            self.ui_errorDialog(
-                'Error writing user preferences.\nFilename: ' + CFG_FILE + '\n\n' +
-                'Additional exception info:\n' + str(e))
-        except Exception as e:
-            self.ui_errorDialog('Unknown error during pickle\nFilename: ' + CFG_FILE + '\n\n' +
-                                'Additional exception info:\n' + str(e))
-
-    def pickleLoad(self):
-        prefObj = OutlinerState()
-        try:
-            f = open(CFG_FILE, 'rb')
-            try:
-                prefObj = pickle.load(f)
-            finally:
-                f.close()
-        except IOError as e:
-            self.ui_errorDialog(
-                'Error loading user preferences.\nFilename: ' + CFG_FILE + '\n\n' +
-                'Additional exception info:\n' + str(e))
-        except Exception as e:
-            self.ui_errorDialog(
-                'Unknown error during unpickle\nFilename: ' + CFG_FILE + '\n\n' +
-                'Additional exception info:\n' + str(e))
-
-        return prefObj
+            if 'outlinerViews' in prefDict:
+                if ov.name in prefDict['outlinerViews']:
+                    viewDict = prefDict['outlinerViews'][ov.name]
+                    ov.showShapes = viewDict.get('showShapes', False)
+                    ov.showSetMembers = viewDict.get('showSetMembers', False)
+                    ov.selectSetMembers = viewDict.get('selectSetMembers', False)
 
     def loadUserCommandsFromXML(self):
 
