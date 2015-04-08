@@ -463,6 +463,7 @@ def getAllRefHandles():
     return getRefHandles(getAllRefShapes())
 
 
+#TODO: revise algo
 def removeRefDuplicates(tolerance=0.001):
     import math
     from operator import attrgetter
