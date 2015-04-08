@@ -480,8 +480,12 @@ def removeRefDuplicates(tolerance=0.001):
         rh = allHandles[i]
         for j in xrange(i + 1, len(allHandles)):
             rh2 = allHandles[j]
+
+            #TODO: will delete different refs in the same place?
             if (rh.originDistance - rh2.originDistance) > tolerance:
                 break
+
+            #TODO: rotation and scaling?
             if distanceBetween(rh.wsTranslation, rh2.wsTranslation) <= tolerance:
                 duplicateHandles.append(rh)
                 break
