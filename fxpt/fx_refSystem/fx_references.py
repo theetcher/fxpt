@@ -1,11 +1,16 @@
 import os
 import re
+import math
 import maya.cmds as m
 import maya.OpenMaya as om
 
-from fxpt.fx_refSystem import envTools
-from fxpt.fx_refSystem.miscMayaHelpers import getRelativePath, isPathRelative, messageBoxMaya, distanceBetween
+from fxpt.fx_refSystem.com import messageBoxMaya
 from fxpt.fx_utils.utilsMaya import getLongName, getShape, getParent
+from fxpt.fx_utils.utils import pathToSlash
+
+
+REF_ROOT_VAR_NAME = 'FX_REF_ROOT'
+REF_ROOT_VAR_NAME_P = '%{}%'.format(REF_ROOT_VAR_NAME)
 
 ATTR_REF_NODE_MESSAGE_NAMES = ('refNodeMessage', 'refNodeMessage', 'Ref Node Message')
 ATTR_REF_NODE_MESSAGE = ATTR_REF_NODE_MESSAGE_NAMES[0]
@@ -45,11 +50,22 @@ class TransformHandle(object):
 
     def getChildren(self, allDescendants=False, typ=None):
         if typ:
-            return sorted(m.listRelatives(self.transform, children=True, allDescendents=allDescendants, fullPath=True,
-                                          typ=typ) or [])
+            return sorted(
+                m.listRelatives(
+                    self.transform,
+                    children=True,
+                    allDescendents=allDescendants,
+                    fullPath=True,
+                    typ=typ
+                ) or [])
         else:
             return sorted(
-                m.listRelatives(self.transform, children=True, allDescendents=allDescendants, fullPath=True) or [])
+                m.listRelatives(
+                    self.transform,
+                    children=True,
+                    allDescendents=allDescendants,
+                    fullPath=True
+                ) or [])
 
     def exists(self):
         return (self.transform is not None) and (m.objExists(self.transform))
@@ -85,7 +101,7 @@ class RefHandle(object):
             )
 
     def loadFromRefLocatorShape(self, refLocatorShape):
-        self.refFilename = getRelativePath(m.getAttr('{}.{}'.format(refLocatorShape, ATTR_REF_FILENAME)))
+        self.refFilename = m.getAttr('{}.{}'.format(refLocatorShape, ATTR_REF_FILENAME))
         self.idString = self.generateIdString(self.refFilename)
         self.refShortName = self.generateShortName(self.refFilename)
         self.refLocator = TransformHandle(shape=refLocatorShape)
@@ -122,7 +138,7 @@ class RefHandle(object):
     def generateIdString(self, refFilename):
         s = os.path.splitext(refFilename)[0]
         if isPathRelative(refFilename):
-            s = envTools.getRefRootVarName() + s[len(envTools.getRefRootVarNamePercent()):]
+            s = REF_ROOT_VAR_NAME + s[len(REF_ROOT_VAR_NAME_P):]
         return re.sub('[^0-9a-zA-Z_]+', '__', s).lower()
 
     def generateShortName(self, longFilename):
@@ -174,8 +190,7 @@ class RefHandle(object):
             return
 
         if not self.refExists():
-            m.warning('{}: {}: Reference does not exists. Activation skipped.'.format(self.refLocator.shape,
-                                                                                      self.refFilename))
+            m.warning('{}: {}: Reference does not exists. Activation skipped.'.format(self.refLocator.shape, self.refFilename))
             return
 
         if not m.objExists(self.instanceSource):
@@ -294,12 +309,6 @@ def isRefLocatorShape(shape):
     return m.objExists('{}.{}'.format(shape, ATTR_REF_FILENAME))
 
 
-def isValidRefLocatorShape(shape):
-    if not isPathRelative(m.getAttr('{}.{}'.format(shape, ATTR_REF_FILENAME))):
-        return False
-    return True
-
-
 def maintainanceProcedure():
     for refNode in m.ls('*' + REF_NODE_SUFFIX, typ='reference'):
         if not m.connectionInfo(refNode + '.message', isSource=True):
@@ -320,7 +329,6 @@ def browseReference():
     filename = m.fileDialog2(
         dialogStyle=1,
         caption='Choose Reference Scene',
-        startingDirectory=envTools.getSourceDir(),
         fileFilter='Maya Scenes (*.mb; *.ma);;Maya Binary (*.mb);;Maya ASCII (*.ma);;All Files (*.*)',
         fileMode=1,
         returnFilter=False
@@ -486,4 +494,93 @@ def cleanupReferences():
     deactivateRefs(getAllRefHandles())
 
 
+def isPathRelative(path):
+    return path.lower().startswith(REF_ROOT_VAR_NAME_P.lower())
+
+
+def getRelativePath(path):
+    refRootValueLower = getRefRootValue().lower()
+    if not refRootValueLower:
+        return path
+
+    pathWorking = pathToSlash(path)
+    pathLower = pathToSlash(path.lower())
+
+    if isPathRelative(pathWorking):
+        return pathWorking
+
+    if pathLower.startswith(refRootValueLower):
+        return REF_ROOT_VAR_NAME_P + pathWorking[len(refRootValueLower):]
+
+    return path
+
+
+def setRefFilename(refNode, filename):
+    workingFilename = filename
+    reMatch = re.match(r'(.*)({.*})', workingFilename, re.IGNORECASE)
+    if reMatch:
+        workingFilename = reMatch.group(1)
+
+    ext = os.path.splitext(workingFilename)[1]
+    mayaFileType = 'mayaBinary' if ext == '.mb' else 'mayaAscii'
+
+    m.file(
+        filename,
+        loadReference=refNode,
+        typ=mayaFileType,
+        options='v=0'
+    )
+
+
+def cleanupEmptyRefNodes():
+    roReferences = set(m.ls(
+        l=True,
+        ro=True,
+        typ='reference'
+    ))
+
+    for refNode in m.ls(l=True, references=True):
+
+        if refNode not in roReferences:
+
+            try:
+                m.referenceQuery(refNode, filename=True, unresolvedName=True)
+            except RuntimeError:
+                print 'Empty reference node found:', refNode
+                m.delete(refNode)
+                print refNode, 'deleted.'
+
+
+def makeRefsPathRelative():
+
+    cleanupEmptyRefNodes()
+
+    if not getRefRootValue():
+        return
+
+    roReferences = set(m.ls(
+        l=True,
+        ro=True,
+        typ='reference'
+    ))
+
+    for refNode in m.ls(l=True, references=True):
+
+        if refNode in roReferences:
+            continue
+
+        refFilename = m.referenceQuery(refNode, filename=True, unresolvedName=True).replace('\\', '/')
+        relativeFilename = getRelativePath(refFilename)
+        if not (refFilename.lower() == relativeFilename.lower()):
+            setRefFilename(refNode, relativeFilename)
+
+
+def distanceBetween(firstTr, secondTr):
+    return math.sqrt((firstTr[0] - secondTr[0]) ** 2
+                     + (firstTr[1] - secondTr[1]) ** 2
+                     + (firstTr[2] - secondTr[2]) ** 2)
+
+
+def getRefRootValue():
+    return pathToSlash(os.environ.get(REF_ROOT_VAR_NAME, ''))
 

@@ -1,5 +1,5 @@
-from fxpt.fx_refSystem.fx_references import getActiveRefHandles, deactivateRefs, activateRefs, cleanupReferences
-from fxpt.fx_refSystem.miscMayaHelpers import makeRefsPathRelative
+from fxpt.fx_refSystem.fx_references import getActiveRefHandles, deactivateRefs, activateRefs, cleanupReferences, makeRefsPathRelative
+
 
 gPresaveActiveRefHandles = []
 
