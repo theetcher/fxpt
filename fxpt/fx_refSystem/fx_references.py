@@ -1,4 +1,5 @@
 import os
+import re
 import maya.cmds as m
 import maya.OpenMaya as om
 
@@ -120,8 +121,9 @@ class RefHandle(object):
 
     def generateIdString(self, refFilename):
         s = os.path.splitext(refFilename)[0]
-        s = s[len(envTools.getRefRootVarNamePercent()) + 1:].replace('/', '__')
-        return s.lower()
+        if isPathRelative(refFilename):
+            s = envTools.getRefRootVarName() + s[len(envTools.getRefRootVarNamePercent()):]
+        return re.sub('[^0-9a-zA-Z_]+', '__', s).lower()
 
     def generateShortName(self, longFilename):
         return os.path.splitext(os.path.basename(longFilename))[0]
@@ -326,24 +328,11 @@ def browseReference():
     if not filename:
         return None
 
-    refFilename = getRelativePath(filename[0])
-
-    if isPathRelative(refFilename):
-        return refFilename
-    else:
-        m.warning('{}: Reference outside ref root or bad filename. Ignored.'.format(refFilename))
-        return None
+    return getRelativePath(filename[0])
 
 
 def filterShapes(shapes):
-    refShapes = []
-    for shape in shapes:
-        if isRefLocatorShape(shape):
-            if isValidRefLocatorShape(shape):
-                refShapes.append(shape)
-            else:
-                m.warning('{}: Reference outside ref root or bad filename. Ignored.'.format(shape))
-    return refShapes
+    return [shape for shape in shapes if isRefLocatorShape(shape)]
 
 
 def getAllRefShapes():
@@ -447,6 +436,7 @@ def setReference(refHandles, refFilename):
     for refHandle in activeRefHandles:
         refHandle.activate()
 
+    maintainanceProcedure()
     restoreSelection()
 
 
