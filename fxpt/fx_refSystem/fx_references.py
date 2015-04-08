@@ -6,7 +6,7 @@ import maya.OpenMaya as om
 
 from fxpt.fx_refSystem.com import messageBoxMaya
 from fxpt.fx_utils.utilsMaya import getLongName, getShape, getParent
-from fxpt.fx_utils.utils import pathToSlash
+from fxpt.fx_utils.utils import cleanupPath
 
 
 REF_ROOT_VAR_NAME = 'FX_REF_ROOT'
@@ -101,7 +101,7 @@ class RefHandle(object):
             )
 
     def loadFromRefLocatorShape(self, refLocatorShape):
-        self.refFilename = m.getAttr('{}.{}'.format(refLocatorShape, ATTR_REF_FILENAME))
+        self.refFilename = cleanupPath(m.getAttr('{}.{}'.format(refLocatorShape, ATTR_REF_FILENAME)))
         self.idString = self.generateIdString(self.refFilename)
         self.refShortName = self.generateShortName(self.refFilename)
         self.refLocator = TransformHandle(shape=refLocatorShape)
@@ -254,11 +254,11 @@ class RefHandle(object):
         m.setAttr('{}.{}'.format(self.refLocator.shape, ATTR_REF_FILENAME), refFilename, typ='string')
         self.loadFromRefLocatorShape(self.refLocator.shape)
 
+    def getRefFilename(self):
+        return cleanupPath(self.refFilename)
+
     def refExists(self):
         return os.path.exists(os.path.expandvars(self.refFilename))
-
-    def isTheSameAs(self, other):
-        return self.idString == other.idString
 
 
 #----------------------------------------------------------------------------------------------------------------------
@@ -383,7 +383,7 @@ def activateRefs(refHandles):
     saveSelection()
 
     # this cleanup deactivation cannot be done in refHandle.activate() just before instancing - maya will crash
-    # the problem is in deletition of refGeom and instancing right after this procedure
+    # the problem is in deletion of refGeom and instancing right after this procedure
     # so the solution is: first deactivate all inactive and then activate (not deactivate/activate for each ref)
     for refHandle in refHandles:
         if not refHandle.active:
@@ -499,16 +499,16 @@ def isPathRelative(path):
 
 
 def getRelativePath(path):
+    pathWorking = cleanupPath(path)
+
     refRootValueLower = getRefRootValue().lower()
     if not refRootValueLower:
-        return path
-
-    pathWorking = pathToSlash(path)
-    pathLower = pathToSlash(path.lower())
+        return pathWorking
 
     if isPathRelative(pathWorking):
         return pathWorking
 
+    pathLower = pathWorking.lower()
     if pathLower.startswith(refRootValueLower):
         return REF_ROOT_VAR_NAME_P + pathWorking[len(refRootValueLower):]
 
@@ -558,21 +558,11 @@ def makeRefsPathRelative():
     if not getRefRootValue():
         return
 
-    roReferences = set(m.ls(
-        l=True,
-        ro=True,
-        typ='reference'
-    ))
-
-    for refNode in m.ls(l=True, references=True):
-
-        if refNode in roReferences:
-            continue
-
-        refFilename = m.referenceQuery(refNode, filename=True, unresolvedName=True).replace('\\', '/')
+    for rh in getAllRefHandles():
+        refFilename = rh.getRefFilename()
         relativeFilename = getRelativePath(refFilename)
         if not (refFilename.lower() == relativeFilename.lower()):
-            setRefFilename(refNode, relativeFilename)
+            rh.setRefFilename(relativeFilename)
 
 
 def distanceBetween(firstTr, secondTr):
@@ -582,5 +572,26 @@ def distanceBetween(firstTr, secondTr):
 
 
 def getRefRootValue():
-    return pathToSlash(os.environ.get(REF_ROOT_VAR_NAME, ''))
+    return cleanupPath(os.environ.get(REF_ROOT_VAR_NAME, ''))
 
+
+gPresaveActiveRefHandles = []
+
+
+# noinspection PyUnusedLocal
+def preSaveProcedure(callbackArg):
+    global gPresaveActiveRefHandles
+    gPresaveActiveRefHandles = getActiveRefHandles()
+    deactivateRefs(gPresaveActiveRefHandles)
+    makeRefsPathRelative()
+
+
+# noinspection PyUnusedLocal
+def postSaveProcedure(callbackArg):
+    activateRefs(gPresaveActiveRefHandles)
+
+
+# noinspection PyUnusedLocal
+def postOpenProcedure(callbackArg):
+    cleanupReferences()
+    makeRefsPathRelative()
