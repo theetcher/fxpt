@@ -2,6 +2,10 @@ import os
 import stat
 
 
+def cleanupPath(path):
+    return pathToSlash(path).strip()
+
+
 def pathToSlash(path):
     return path.replace('\\', '/')
 
