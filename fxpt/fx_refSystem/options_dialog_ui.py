@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'options_dialog_ui.ui'
 #
-# Created: Thu Apr 09 18:31:56 2015
+# Created: Thu Apr 09 22:36:03 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -52,6 +52,7 @@ class Ui_Dialog(object):
         QtCore.QObject.connect(Dialog, QtCore.SIGNAL("finished(int)"), Dialog.onDialogFinished)
         QtCore.QObject.connect(Dialog, QtCore.SIGNAL("accepted()"), Dialog.onDialogAccepted)
         QtCore.QObject.connect(self.uiBTN_add, QtCore.SIGNAL("clicked()"), Dialog.onAddClicked)
+        QtCore.QObject.connect(self.uiBTN_setActive, QtCore.SIGNAL("clicked()"), Dialog.onSetActiveClicked)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):

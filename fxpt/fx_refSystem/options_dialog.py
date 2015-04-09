@@ -8,7 +8,10 @@ from fxpt.fx_refSystem.roots_cfg_handler import RootsCfgHandler
 OPT_VAR_NAME = 'fx_refSystem_optionsDlg_prefs'
 NO_ROOT_STRING = '... use absolute paths ...'
 ACTIVE_ROOT_COLOR = QtGui.QColor(255, 174, 0)
+ACTIVE_ROOT_SUFFIX = ' [active]'
 
+
+# TODO: sorting in dialog
 
 class OptionsDialog(QtGui.QDialog):
 
@@ -20,6 +23,8 @@ class OptionsDialog(QtGui.QDialog):
         self.lastBrowsedDir = None
 
         self.rootsCfgHandler = RootsCfgHandler()
+        self.roots = self.rootsCfgHandler.getRoots()
+        self.checkForOneActiveRoot()
 
         self.fillRootsList()
 
@@ -45,20 +50,28 @@ class OptionsDialog(QtGui.QDialog):
         self.prefSaver.savePrefs()
 
     def fillRootsList(self):
-        activeIndex = self.rootsCfgHandler.getCurrentRootIndex()
-        for i, root in enumerate(self.rootsCfgHandler.getRoots()):
-            root = root if root else NO_ROOT_STRING
-            item = QtGui.QListWidgetItem(root)
-            if i == activeIndex:
+        self.ui.uiLST_roots.clear()
+        for root, isActive in self.roots.items():
+            rootDisplayText = root if root else NO_ROOT_STRING
+            item = QtGui.QListWidgetItem()
+            item.root = root
+            if isActive:
                 font = QtGui.QFont()
                 font.setBold(True)
                 item.setFont(font)
                 item.setForeground(ACTIVE_ROOT_COLOR)
+                item.setText(rootDisplayText + ACTIVE_ROOT_SUFFIX)
                 item.active = True
             else:
+                item.setText(rootDisplayText)
                 item.active = False
 
             self.ui.uiLST_roots.addItem(item)
+
+    def getSelectedItem(self):
+        items = self.ui.uiLST_roots.selectedItems()
+        if items:
+            return items[0]
 
     def onAddClicked(self):
         # noinspection PyCallByClass
@@ -70,18 +83,33 @@ class OptionsDialog(QtGui.QDialog):
         if not newRootDir:
             return
 
-        QtGui.QListWidgetItem(cleanupPath(newRootDir), self.ui.uiLST_roots)
+        self.roots[cleanupPath(newRootDir)] = False
+        self.fillRootsList()
+
+    def onSetActiveClicked(self):
+        selectedItem = self.getSelectedItem()
+        if selectedItem:
+            assert selectedItem.root in self.roots, 'selected item root not in db.'
+            self.setActive(selectedItem.root)
+            self.fillRootsList()
+
+    def setActive(self, activeRoot):
+        for root in self.roots:
+            if root == activeRoot:
+                self.roots[root] = True
+            else:
+                self.roots[root] = False
 
     def onDialogFinished(self):
         self.ui_saveSettings()
 
     def onDialogAccepted(self):
+        self.checkForOneActiveRoot()
+        self.rootsCfgHandler.setterRoots(self.roots)
         self.rootsCfgHandler.saveCfg()
-        print 'current root: {0}'.format(self.rootsCfgHandler.getCurrentRoot())
 
-
-
-
+    def checkForOneActiveRoot(self):
+        assert len([v for v in self.roots.values() if v]) == 1, 'number of active roots is not equal to 1'
 
 
 def run():

@@ -4,13 +4,10 @@ import math
 import maya.cmds as m
 import maya.OpenMaya as om
 
-from fxpt.fx_refSystem.com import messageBoxMaya
+from fxpt.fx_refSystem.com import REF_ROOT_VAR_NAME, REF_ROOT_VAR_NAME_P, messageBoxMaya
 from fxpt.fx_utils.utilsMaya import getLongName, getShape, getParent
 from fxpt.fx_utils.utils import cleanupPath
 
-
-REF_ROOT_VAR_NAME = 'FX_REF_ROOT'
-REF_ROOT_VAR_NAME_P = '%{}%'.format(REF_ROOT_VAR_NAME)
 
 ATTR_REF_NODE_MESSAGE_NAMES = ('refNodeMessage', 'refNodeMessage', 'Ref Node Message')
 ATTR_REF_NODE_MESSAGE = ATTR_REF_NODE_MESSAGE_NAMES[0]
@@ -29,9 +26,9 @@ ACTIVATION_WARNING_LIMIT = 99
 gSelection = []
 
 
-#----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 # CLASS: TransformHandle
-#----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 # noinspection PyMethodMayBeStatic
 class TransformHandle(object):
     def __init__(self, transform=None, shape=None):
@@ -71,9 +68,9 @@ class TransformHandle(object):
         return (self.transform is not None) and (m.objExists(self.transform))
 
 
-#----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 # CLASS: RefHandle
-#----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 # noinspection PyMethodMayBeStatic
 class RefHandle(object):
     def __init__(self):
@@ -261,9 +258,9 @@ class RefHandle(object):
         return os.path.exists(os.path.expandvars(self.refFilename))
 
 
-#----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 # MAIN
-#----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 def saveSelection():
     global gSelection
     gSelection = m.ls(sl=True, l=True)
@@ -463,7 +460,7 @@ def getAllRefHandles():
     return getRefHandles(getAllRefShapes())
 
 
-#TODO: revise algo
+# TODO: revise algorithm
 def removeRefDuplicates(tolerance=0.001):
     import math
     from operator import attrgetter
@@ -482,11 +479,11 @@ def removeRefDuplicates(tolerance=0.001):
         for j in xrange(i + 1, len(allHandles)):
             rh2 = allHandles[j]
 
-            #TODO: will delete different refs in the same place?
+            # TODO: will delete different refs in the same place?
             if (rh.originDistance - rh2.originDistance) > tolerance:
                 break
 
-            #TODO: rotation and scaling?
+            # TODO: rotation and scaling?
             if distanceBetween(rh.wsTranslation, rh2.wsTranslation) <= tolerance:
                 duplicateHandles.append(rh)
                 break

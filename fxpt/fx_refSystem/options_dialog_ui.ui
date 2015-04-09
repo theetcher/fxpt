@@ -171,10 +171,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>uiBTN_setActive</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>onSetActiveClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>524</x>
+     <y>296</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onDialogFinished()</slot>
   <slot>onDialogAccepted()</slot>
   <slot>onAddClicked()</slot>
+  <slot>onSetActiveClicked()</slot>
  </slots>
 </ui>
