@@ -4,6 +4,8 @@ from com import REF_ROOT_VAR_NAME
 
 ROOTS_CFG_OPT_VAR = 'fx_refSystem_roots'
 
+ROOTS_DEFAULT_VALUE = {'': True}
+
 
 # noinspection PyAttributeOutsideInit
 class RootsCfgHandler(object):
@@ -16,7 +18,8 @@ class RootsCfgHandler(object):
 
     def initCfg(self):
         self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(ROOTS_CFG_OPT_VAR))
-        self.prefSaver.addVariable('roots', self.getterRoots, self.setterRoots, {'': True})
+        # self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerFileJson(os.path.dirname(__file__) + '/test.cfg'))
+        self.prefSaver.addVariable('roots', self.getterRoots, self.setterRoots, self.getDefaultRootsValue())
 
     def getterRoots(self):
         return self.roots
@@ -24,12 +27,45 @@ class RootsCfgHandler(object):
     def setterRoots(self, value):
         self.roots = value
 
+    # noinspection PyMethodMayBeStatic
+    def getDefaultRootsValue(self):
+        return dict(ROOTS_DEFAULT_VALUE)
+
     def loadCfg(self):
-        self.prefSaver.loadPrefs()
-        # TODO: if active roots number is wrong should defaults to first record or to empty cfg
-        # TODO: try except if var is corrupted
+        # noinspection PyBroadException
+        try:
+            self.prefSaver.loadPrefs()
+        except Exception:
+            self.roots = self.getDefaultRootsValue()
+            return
+
+        self.cleanupRootsDict()
+
+    def cleanupRootsDict(self):
+        if len(self.roots) < 1:
+            self.roots = self.getDefaultRootsValue()
+            return
+
+        if '' not in self.roots:
+            self.roots = self.getDefaultRootsValue()
+            return
+
+        activeCount = len([v for v in self.roots.values() if v])
+
+        if activeCount == 1:
+            return
+        elif activeCount < 1:
+            self.roots[''] = True
+            return
+        else:
+            for root in self.roots:
+                if root == '':
+                    self.roots[root] = True
+                else:
+                    self.roots[root] = False
 
     def saveCfg(self):
+        self.cleanupRootsDict()
         self.prefSaver.savePrefs()
         self.setEnvVar()
 

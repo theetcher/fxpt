@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'options_dialog_ui.ui'
 #
-# Created: Thu Apr 09 22:36:03 2015
+# Created: Fri Apr 10 14:46:28 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -22,6 +22,7 @@ class Ui_Dialog(object):
         self.verticalLayout.setContentsMargins(6, 6, 6, 6)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiLST_roots = QtGui.QListWidget(self.groupBox)
+        self.uiLST_roots.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
         self.uiLST_roots.setAlternatingRowColors(True)
         self.uiLST_roots.setObjectName("uiLST_roots")
         self.verticalLayout.addWidget(self.uiLST_roots)
@@ -47,17 +48,21 @@ class Ui_Dialog(object):
         self.verticalLayout_2.addWidget(self.buttonBox)
 
         self.retranslateUi(Dialog)
+        self.uiLST_roots.setCurrentRow(-1)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
         QtCore.QObject.connect(Dialog, QtCore.SIGNAL("finished(int)"), Dialog.onDialogFinished)
         QtCore.QObject.connect(Dialog, QtCore.SIGNAL("accepted()"), Dialog.onDialogAccepted)
         QtCore.QObject.connect(self.uiBTN_add, QtCore.SIGNAL("clicked()"), Dialog.onAddClicked)
         QtCore.QObject.connect(self.uiBTN_setActive, QtCore.SIGNAL("clicked()"), Dialog.onSetActiveClicked)
+        QtCore.QObject.connect(self.uiLST_roots, QtCore.SIGNAL("itemSelectionChanged()"), Dialog.onSelectionChanged)
+        QtCore.QObject.connect(self.uiBTN_remove, QtCore.SIGNAL("clicked()"), Dialog.onRemoveClicked)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "FX RefSystem Options", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("Dialog", "References Location Roots", None, QtGui.QApplication.UnicodeUTF8))
+        self.uiLST_roots.setSortingEnabled(True)
         self.uiBTN_add.setText(QtGui.QApplication.translate("Dialog", "Add", None, QtGui.QApplication.UnicodeUTF8))
         self.uiBTN_remove.setText(QtGui.QApplication.translate("Dialog", "Remove", None, QtGui.QApplication.UnicodeUTF8))
         self.uiBTN_setActive.setText(QtGui.QApplication.translate("Dialog", "Set Active", None, QtGui.QApplication.UnicodeUTF8))

@@ -28,7 +28,16 @@
       </property>
       <item>
        <widget class="QListWidget" name="uiLST_roots">
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
         <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+        <property name="currentRow">
+         <number>-1</number>
+        </property>
+        <property name="sortingEnabled">
          <bool>true</bool>
         </property>
        </widget>
@@ -187,11 +196,45 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>uiLST_roots</sender>
+   <signal>itemSelectionChanged()</signal>
+   <receiver>Dialog</receiver>
+   <slot>onSelectionChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>287</x>
+     <y>151</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uiBTN_remove</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>onRemoveClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>296</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onDialogFinished()</slot>
   <slot>onDialogAccepted()</slot>
   <slot>onAddClicked()</slot>
   <slot>onSetActiveClicked()</slot>
+  <slot>onSelectionChanged()</slot>
+  <slot>onRemoveClicked()</slot>
  </slots>
 </ui>

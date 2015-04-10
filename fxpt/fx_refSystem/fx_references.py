@@ -4,9 +4,11 @@ import math
 import maya.cmds as m
 import maya.OpenMaya as om
 
-from fxpt.fx_refSystem.com import REF_ROOT_VAR_NAME, REF_ROOT_VAR_NAME_P, messageBoxMaya
+from fxpt.fx_refSystem.com import REF_ROOT_VAR_NAME, REF_ROOT_VAR_NAME_P, messageBoxMaya, globalPrefsHandler
 from fxpt.fx_utils.utilsMaya import getLongName, getShape, getParent
 from fxpt.fx_utils.utils import cleanupPath
+
+from fxpt.fx_utils.watch import watch
 
 
 ATTR_REF_NODE_MESSAGE_NAMES = ('refNodeMessage', 'refNodeMessage', 'Ref Node Message')
@@ -323,17 +325,27 @@ def maintainanceProcedure():
 
 
 def browseReference():
+
+    globalPrefsHandler.loadPrefs()
+    lastBrowsed = globalPrefsHandler.getValue(globalPrefsHandler.KEY_LAST_BROWSED_CREATE_REF) or ''
+
     filename = m.fileDialog2(
         dialogStyle=1,
         caption='Choose Reference Scene',
         fileFilter='Maya Scenes (*.mb; *.ma);;Maya Binary (*.mb);;Maya ASCII (*.ma);;All Files (*.*)',
         fileMode=1,
-        returnFilter=False
+        returnFilter=False,
+        startingDirectory=lastBrowsed
     )
     if not filename:
         return None
 
-    return getRelativePath(filename[0])
+    filename = cleanupPath(filename[0])
+
+    globalPrefsHandler.setValue(globalPrefsHandler.KEY_LAST_BROWSED_CREATE_REF, cleanupPath(os.path.dirname(filename)))
+    globalPrefsHandler.savePrefs()
+
+    return getRelativePath(filename)
 
 
 def filterShapes(shapes):

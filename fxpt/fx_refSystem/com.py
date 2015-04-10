@@ -1,5 +1,9 @@
 import maya.cmds as m
 
+from global_prefs_handler import GlobalPrefsHandler
+
+globalPrefsHandler = GlobalPrefsHandler()
+
 REF_ROOT_VAR_NAME = 'FX_REF_ROOT'
 REF_ROOT_VAR_NAME_P = '%{}%'.format(REF_ROOT_VAR_NAME)
 

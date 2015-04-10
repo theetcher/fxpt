@@ -11,8 +11,6 @@ ACTIVE_ROOT_COLOR = QtGui.QColor(255, 174, 0)
 ACTIVE_ROOT_SUFFIX = ' [active]'
 
 
-# TODO: sorting in dialog
-
 class OptionsDialog(QtGui.QDialog):
 
     def __init__(self, parent):
@@ -24,7 +22,6 @@ class OptionsDialog(QtGui.QDialog):
 
         self.rootsCfgHandler = RootsCfgHandler()
         self.roots = self.rootsCfgHandler.getRoots()
-        self.checkForOneActiveRoot()
 
         self.fillRootsList()
 
@@ -68,6 +65,9 @@ class OptionsDialog(QtGui.QDialog):
 
             self.ui.uiLST_roots.addItem(item)
 
+        self.ui.uiLST_roots.sortItems()
+        self.validateUI()
+
     def getSelectedItem(self):
         items = self.ui.uiLST_roots.selectedItems()
         if items:
@@ -75,21 +75,28 @@ class OptionsDialog(QtGui.QDialog):
 
     def onAddClicked(self):
         # noinspection PyCallByClass
-        newRootDir = QtGui.QFileDialog.getExistingDirectory(
+        newRootDir = cleanupPath(QtGui.QFileDialog.getExistingDirectory(
             self,
             'References Root Dir',
             self.getLastBrowsedDir()
-        )
+        ))
         if not newRootDir:
             return
 
-        self.roots[cleanupPath(newRootDir)] = False
+        if newRootDir not in self.roots:
+            self.roots[newRootDir] = False
+            self.fillRootsList()
+
+    def onRemoveClicked(self):
+        rootToRemove = self.getSelectedItem().root
+        if self.roots[rootToRemove]:
+            self.setActive('')
+        del self.roots[rootToRemove]
         self.fillRootsList()
 
     def onSetActiveClicked(self):
         selectedItem = self.getSelectedItem()
         if selectedItem:
-            assert selectedItem.root in self.roots, 'selected item root not in db.'
             self.setActive(selectedItem.root)
             self.fillRootsList()
 
@@ -100,16 +107,23 @@ class OptionsDialog(QtGui.QDialog):
             else:
                 self.roots[root] = False
 
+    def validateUI(self):
+        selectedItem = self.getSelectedItem()
+        somethingSelected = selectedItem is not None
+        useAbsSelected = somethingSelected and (not selectedItem.root)
+
+        self.ui.uiBTN_remove.setEnabled(somethingSelected and (not useAbsSelected))
+        self.ui.uiBTN_setActive.setEnabled(somethingSelected)
+
+    def onSelectionChanged(self):
+        self.validateUI()
+
     def onDialogFinished(self):
         self.ui_saveSettings()
 
     def onDialogAccepted(self):
-        self.checkForOneActiveRoot()
         self.rootsCfgHandler.setterRoots(self.roots)
         self.rootsCfgHandler.saveCfg()
-
-    def checkForOneActiveRoot(self):
-        assert len([v for v in self.roots.values() if v]) == 1, 'number of active roots is not equal to 1'
 
 
 def run():
