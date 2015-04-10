@@ -1,11 +1,12 @@
 from fxpt.fx_prefsaver import PrefSaver, Serializers
 
-OPT_VAR_NAME_COMMON_PREFS = 'fx_refSystem_common_prefs'
+OPT_VAR_NAME_COMMON_PREFS = 'fx_refSystem_global_prefs'
 
 
 class GlobalPrefsHandler(object):
 
     KEY_LAST_BROWSED_CREATE_REF = 'lastBrowsedCreateRef'
+    KEY_LAST_BROWSED_DIR = 'lastBrowsedDir'
 
     def __init__(self):
         self.globalPrefs = None

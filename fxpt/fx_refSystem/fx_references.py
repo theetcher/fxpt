@@ -348,6 +348,30 @@ def browseReference():
     return getRelativePath(filename)
 
 
+def browseDir():
+    globalPrefsHandler.loadPrefs()
+    lastBrowsed = globalPrefsHandler.getValue(globalPrefsHandler.KEY_LAST_BROWSED_DIR) or ''
+
+    directory = m.fileDialog2(
+        dialogStyle=1,
+        caption='Choose Directory',
+        # fileFilter='Maya Scenes (*.mb; *.ma);;Maya Binary (*.mb);;Maya ASCII (*.ma);;All Files (*.*)',
+        fileMode=3,
+        returnFilter=False,
+        startingDirectory=lastBrowsed
+    )
+
+    if not directory:
+        return None
+
+    directory = cleanupPath(directory[0])
+
+    globalPrefsHandler.setValue(globalPrefsHandler.KEY_LAST_BROWSED_DIR, cleanupPath(os.path.dirname(directory)))
+    globalPrefsHandler.savePrefs()
+
+    return directory
+
+
 def filterShapes(shapes):
     return [shape for shape in shapes if isRefLocatorShape(shape)]
 
@@ -459,9 +483,8 @@ def setReference(refHandles, refFilename):
 
 def setReferenceUI():
     refFilename = browseReference()
-    if not refFilename:
-        return
-    setReference(getRefHandles(getWorkingRefShapes()), refFilename)
+    if refFilename:
+        setReference(getRefHandles(getWorkingRefShapes()), refFilename)
 
 
 def getActiveRefHandles():
@@ -472,7 +495,65 @@ def getAllRefHandles():
     return getRefHandles(getAllRefShapes())
 
 
-# TODO: revise algorithm
+def retargetRefs(refHandles, targetDir):
+    refFilenamesToRetarget = set([os.path.basename(rh.getRefFilename()).lower() for rh in refHandles])
+    duplicatesInTargetDir = set()
+    targetsDb = {}
+    for root, directories, files in os.walk(targetDir):
+        for f in files:
+            lowCaseFilename = f.lower()
+            if lowCaseFilename not in refFilenamesToRetarget:
+                continue
+
+            fullPath = cleanupPath(os.path.join(root, f))
+            if lowCaseFilename in targetsDb:
+                duplicatesInTargetDir.add(f)
+            else:
+                targetsDb[lowCaseFilename] = fullPath
+
+    notFoundInTargetDir = set()
+    rhToRetarget = []
+    for rh in refHandles:
+        basename = os.path.basename(rh.getRefFilename())
+        basenameLower = basename.lower()
+
+        if basenameLower in notFoundInTargetDir:
+            continue
+
+        if basenameLower not in targetsDb:
+            notFoundInTargetDir.add(basename)
+            continue
+
+        rhToRetarget.append((rh, getRelativePath(targetsDb[basenameLower])))
+
+    saveSelection()
+
+    activeRefHandles = [rh for rh, target in rhToRetarget if rh.active]
+
+    # see activateRefs() for explanation why deactivate is not in activate() method
+    for refHandle, target in rhToRetarget:
+        refHandle.deactivate()
+
+    for refHandle, target in rhToRetarget:
+        refHandle.setRefFilename(target)
+
+    for refHandle in activeRefHandles:
+        refHandle.activate()
+
+    maintainanceProcedure()
+    restoreSelection()
+
+    watch(duplicatesInTargetDir, 'duplicatesInTargetDir')
+    watch(notFoundInTargetDir, 'notFoundInTargetDir')
+
+
+def retargetRefsUI():
+    targetDir = browseDir()
+    if targetDir:
+        retargetRefs(getRefHandles(getWorkingRefShapes()), targetDir)
+
+
+# TODO: revise algorithm. this one is very draft.
 def removeRefDuplicates(tolerance=0.001):
     import math
     from operator import attrgetter
