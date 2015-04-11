@@ -379,7 +379,6 @@ def retargetRefs(refHandles, targetDir):
     logText.append('')
     logText.append('Following reference(s) was not found in target directory tree (leaved intact):')
     logText.extend(sorted(notFoundInTargetDir))
-    watch(logText)
     log.showLog(logText)
 
 
