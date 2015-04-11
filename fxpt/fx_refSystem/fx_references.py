@@ -4,7 +4,7 @@ import math
 import maya.cmds as m
 import maya.OpenMaya as om
 
-from fxpt.fx_refSystem.com import REF_ROOT_VAR_NAME, REF_ROOT_VAR_NAME_P, messageBoxMaya, globalPrefsHandler
+from fxpt.fx_refSystem.com import REF_ROOT_VAR_NAME, REF_ROOT_VAR_NAME_P, messageBoxMaya, globalPrefsHandler, log
 from fxpt.fx_utils.utilsMaya import getLongName, getShape, getParent
 from fxpt.fx_utils.utils import cleanupPath
 
@@ -543,8 +543,15 @@ def retargetRefs(refHandles, targetDir):
     maintainanceProcedure()
     restoreSelection()
 
-    watch(duplicatesInTargetDir, 'duplicatesInTargetDir')
-    watch(notFoundInTargetDir, 'notFoundInTargetDir')
+    # noinspection PyListCreation
+    logText = list()
+    logText.append('Duplicates found in target directory tree for following reference(s) (retargeted to first occurence):')
+    logText.extend(sorted(duplicatesInTargetDir))
+    logText.append('')
+    logText.append('Following reference(s) was not found in target directory tree (leaved intact):')
+    logText.extend(sorted(notFoundInTargetDir))
+    watch(logText)
+    log.showLog(logText)
 
 
 def retargetRefsUI():

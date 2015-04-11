@@ -1,14 +1,18 @@
-from PySide import QtCore, QtGui
+from PySide import QtGui
 
 from fxpt.fx_utils.utils import cleanupPath
 from fxpt.fx_prefsaver import PrefSaver, Serializers
 from fxpt.fx_refSystem.options_dialog_ui import Ui_Dialog
 from fxpt.fx_refSystem.roots_cfg_handler import RootsCfgHandler
+from fxpt.fx_refSystem.com import getMayaQMainWindow
 
 OPT_VAR_NAME = 'fx_refSystem_optionsDlg_prefs'
 NO_ROOT_STRING = '... use absolute paths ...'
 ACTIVE_ROOT_COLOR = QtGui.QColor(255, 174, 0)
 ACTIVE_ROOT_SUFFIX = ' [active]'
+
+
+dlg = None
 
 
 class OptionsDialog(QtGui.QDialog):
@@ -127,5 +131,11 @@ class OptionsDialog(QtGui.QDialog):
 
 
 def run():
-    dlg = OptionsDialog(None)
+    if not dlg:
+        global dlg
+        mayaMainWin = getMayaQMainWindow()
+        dlg = OptionsDialog(mayaMainWin)
     dlg.show()
+    dlg.raise_()
+
+
