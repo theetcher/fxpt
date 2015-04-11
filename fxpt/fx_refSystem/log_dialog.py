@@ -37,3 +37,6 @@ class LogDialog(QtGui.QDialog):
 
     def onDialogFinished(self):
         self.ui_saveSettings()
+
+
+log = LogDialog()
