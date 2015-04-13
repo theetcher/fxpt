@@ -7,7 +7,6 @@ import maya.cmds as m
 from fxpt.fx_refSystem.com import messageBoxMaya, globalPrefsHandler, getRelativePath, getRefRootValue
 from fxpt.fx_refSystem.log_dialog import log
 from fxpt.fx_refSystem.ref_handle import RefHandle, ATTR_REF_FILENAME, REF_NODE_SUFFIX, INSTANCES_SOURCE_GROUP
-from fxpt.fx_refSystem.import_save import importReference
 from fxpt.fx_utils.utils import cleanupPath
 from fxpt.fx_utils.watch import watch
 
@@ -391,8 +390,33 @@ def retargetRefsUI():
         retargetRefs(getRefHandles(getWorkingRefShapes()), targetDir)
 
 
-def importReferenceUI():
-    importReference(getRefHandles(getWorkingRefShapes()))
+def importReference(refHandles):
+
+    for refHandle in refHandles:
+        refHandle.deactivate()
+
+    for refHandle in refHandles:
+        refHandle.importRef()
+
+
+def importReferenceUI(warn=True):
+    refHandles = getRefHandles(getWorkingRefShapes())
+
+    if warn:
+        activationCount = len(refHandles)
+        if activationCount > ACTIVATION_WARNING_LIMIT:
+            if messageBoxMaya(
+                    message='You are going to import {} references.\nAre you sure?'.format(activationCount),
+                    title='Confirmation',
+                    icon='question',
+                    button=['Ok', 'Cancel'],
+                    defaultButton='Cancel',
+                    cancelButton='Cancel',
+                    dismissString='Cancel'
+            ) != 'Ok':
+                return
+
+    importReference(refHandles)
 
 
 # ---------------------------------------------------------------------------------------------------------------------

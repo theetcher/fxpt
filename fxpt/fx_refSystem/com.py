@@ -1,6 +1,7 @@
 import os
 
 from PySide import QtGui
+# noinspection PyUnresolvedReferences
 import shiboken
 
 import maya.cmds as m

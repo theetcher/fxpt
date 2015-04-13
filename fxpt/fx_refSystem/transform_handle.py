@@ -1,9 +1,16 @@
 from maya import cmds as m
-from fxpt.fx_utils.utilsMaya import getShape, getParent
+from fxpt.fx_utils.utilsMaya import getShape, getParent, parentAPI
 
 
+# noinspection PyAttributeOutsideInit
 class TransformHandle(object):
     def __init__(self, transform=None, shape=None):
+        self.initHandle(transform, shape)
+
+    def __str__(self):
+        return 'transform={}, shape={}'.format(self.transform, self.shape)
+
+    def initHandle(self, transform=None, shape=None):
         if (transform is not None) and (m.objExists(transform)):
             self.transform = transform
             self.shape = getShape(transform)
@@ -13,9 +20,6 @@ class TransformHandle(object):
         else:
             self.transform = None
             self.shape = None
-
-    def __str__(self):
-        return 'transform={}, shape={}'.format(self.transform, self.shape)
 
     def getChildren(self, allDescendants=False, typ=None):
         if typ:
@@ -35,6 +39,9 @@ class TransformHandle(object):
                     allDescendents=allDescendants,
                     fullPath=True
                 ) or [])
+
+    def parent(self, newParent, absolute=True):
+        pass
 
     def exists(self):
         return (self.transform is not None) and (m.objExists(self.transform))

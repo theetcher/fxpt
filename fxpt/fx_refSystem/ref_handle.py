@@ -15,6 +15,9 @@ ATTR_REF_FILENAME = ATTR_REF_FILENAME_NAMES[0]
 ATTR_REF_NODE_MESSAGE_NAMES = ('refNodeMessage', 'refNodeMessage', 'Ref Node Message')
 ATTR_REF_NODE_MESSAGE = ATTR_REF_NODE_MESSAGE_NAMES[0]
 
+ATTR_REF_SOURCE_PATH_NAMES = ('refSource', 'refSource', 'Reference Source')
+ATTR_REF_SOURCE_PATH = ATTR_REF_SOURCE_PATH_NAMES[0]
+
 REF_NODE_SUFFIX = '_refRN'
 REF_LOCATOR_SUFFIX = '_refLoc'
 REF_INST_NAME = 'refGeom'
@@ -154,9 +157,29 @@ class RefHandle(object):
         m.setAttr(inst + '.overrideEnabled', True)
         m.setAttr(inst + '.overrideDisplayType', 2)
         lockTransformations(inst, visibility=True)
-        parentAPI(inst, self.refLocator.transform)
+        parentAPI(inst, self.refLocator.transform, absolute=False)
         # m.parent(inst, self.refLocator.transform, relative=True)
         m.connectAttr(self.refNode + '.message', self.refLocator.shape + '.refNodeMessage', force=True)
+
+        self.active = True
+
+    def importRef(self):
+
+        if not self.refExists():
+            m.warning('{}: {}: Reference does not exists. Import skipped.'.format(self.refLocator.shape, self.refFilename))
+            return
+
+        m.instance(
+            self.instanceSource,
+            name=REF_INST_NAME
+        )
+
+        inst = '|{}|{}'.format(INSTANCES_SOURCE_GROUP, REF_INST_NAME)
+        m.setAttr(inst + '.overrideEnabled', True)
+        m.setAttr(inst + '.overrideDisplayType', 2)
+        lockTransformations(inst, visibility=True)
+        parentAPI(inst, self.refLocator.transform, absolute=False)
+        # m.parent(inst, self.refLocator.transform, relative=True)
 
         self.active = True
 
