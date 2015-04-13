@@ -7,6 +7,7 @@ import maya.cmds as m
 from fxpt.fx_refSystem.com import messageBoxMaya, globalPrefsHandler, getRelativePath, getRefRootValue
 from fxpt.fx_refSystem.log_dialog import log
 from fxpt.fx_refSystem.ref_handle import RefHandle, ATTR_REF_FILENAME, REF_NODE_SUFFIX, INSTANCES_SOURCE_GROUP
+from fxpt.fx_refSystem.import_save import importReference
 from fxpt.fx_utils.utils import cleanupPath
 from fxpt.fx_utils.watch import watch
 
@@ -374,11 +375,13 @@ def retargetRefs(refHandles, targetDir):
 
     # noinspection PyListCreation
     logText = list()
-    logText.append('Duplicates found in target directory tree for following reference(s) (retargeted to first occurence):')
-    logText.extend(sorted(duplicatesInTargetDir))
-    logText.append('')
-    logText.append('Following reference(s) was not found in target directory tree (leaved intact):')
-    logText.extend(sorted(notFoundInTargetDir))
+    if duplicatesInTargetDir:
+        logText.append('Duplicates found in target directory tree for following reference(s) (retargeted to first occurence):')
+        logText.extend(sorted(duplicatesInTargetDir))
+    if notFoundInTargetDir:
+        logText.append('')
+        logText.append('Following reference(s) was not found in target directory tree (leaved intact):')
+        logText.extend(sorted(notFoundInTargetDir))
     log.showLog(logText)
 
 
@@ -386,6 +389,10 @@ def retargetRefsUI():
     targetDir = browseDir()
     if targetDir:
         retargetRefs(getRefHandles(getWorkingRefShapes()), targetDir)
+
+
+def importReferenceUI():
+    importReference(getRefHandles(getWorkingRefShapes()))
 
 
 # ---------------------------------------------------------------------------------------------------------------------

@@ -2,12 +2,11 @@ import os
 import re
 
 from maya import cmds as m
-import maya.OpenMaya as om
 
 from fxpt.fx_refSystem.com import REF_ROOT_VAR_NAME, REF_ROOT_VAR_NAME_P, isPathRelative
 from fxpt.fx_refSystem.transform_handle import TransformHandle
 from fxpt.fx_utils.utils import cleanupPath
-from fxpt.fx_utils.utilsMaya import getLongName, getShape, getParent
+from fxpt.fx_utils.utilsMaya import getLongName, getShape, getParent, parentAPI
 
 
 ATTR_REF_FILENAME_NAMES = ('refFilename', 'refFilename', 'Reference Filename')
@@ -217,22 +216,6 @@ def lockTransformations(transform, visibility=True):
         attributes.append('.v')
     for attr in attributes:
         m.setAttr(transform + attr, lock=True)
-
-
-def nodeToMObject(node):
-    selectionList = om.MSelectionList()
-    selectionList.add(node)
-    mObj = om.MObject()
-    selectionList.getDependNode(0, mObj)
-    return mObj
-
-
-def parentAPI(source, target):
-    mSource = nodeToMObject(source)
-    mTarget = nodeToMObject(target)
-    mDagMod = om.MDagModifier()
-    mDagMod.reparentNode(mSource, mTarget)
-    mDagMod.doIt()
 
 
 def stripNamespaces(name):
