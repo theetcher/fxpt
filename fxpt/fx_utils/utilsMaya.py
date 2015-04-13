@@ -38,7 +38,6 @@ def nodeToMObject(node):
 def parentAPI(source, target, absolute=True):
     # TODO: implement undo
     mSource = nodeToMObject(source)
-    mTarget = nodeToMObject(target)
 
     if absolute:
         srcFnDependencyNode = om.MFnDependencyNode(mSource)
@@ -49,7 +48,11 @@ def parentAPI(source, target, absolute=True):
         srcWMtx = fnMatrixData.transformation()
 
     mDagMod = om.MDagModifier()
-    mDagMod.reparentNode(mSource, mTarget)
+    if target:
+        mTarget = nodeToMObject(target)
+        mDagMod.reparentNode(mSource, mTarget)
+    else:
+        mDagMod.reparentNode(mSource)
     mDagMod.doIt()
 
     fnDagNode = om.MFnDagNode(mSource)

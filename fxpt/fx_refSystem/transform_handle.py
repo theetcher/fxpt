@@ -40,6 +40,23 @@ class TransformHandle(object):
                     fullPath=True
                 ) or [])
 
+    def getParents(self, typ=None):
+        if typ:
+            return sorted(
+                m.listRelatives(
+                    self.transform,
+                    parent=True,
+                    fullPath=True,
+                    typ=typ
+                ) or [])
+        else:
+            return sorted(
+                m.listRelatives(
+                    self.transform,
+                    parent=True,
+                    fullPath=True
+                ) or [])
+
     def parent(self, newParent, absolute=True):
         pass
 

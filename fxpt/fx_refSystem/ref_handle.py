@@ -8,6 +8,7 @@ from fxpt.fx_refSystem.transform_handle import TransformHandle
 from fxpt.fx_utils.utils import cleanupPath
 from fxpt.fx_utils.utilsMaya import getLongName, getShape, getParent, parentAPI
 
+from fxpt.fx_utils.watch import watch
 
 ATTR_REF_FILENAME_NAMES = ('refFilename', 'refFilename', 'Reference Filename')
 ATTR_REF_FILENAME = ATTR_REF_FILENAME_NAMES[0]
@@ -21,8 +22,10 @@ ATTR_REF_SOURCE_PATH = ATTR_REF_SOURCE_PATH_NAMES[0]
 REF_NODE_SUFFIX = '_refRN'
 REF_LOCATOR_SUFFIX = '_refLoc'
 REF_INST_NAME = 'refGeom'
+REF_IMPORTED_GROUP = 'refImported'
 
 INSTANCES_SOURCE_GROUP = 'refInstancesSource'
+IMPORT_SOURCE_GROUP = 'refImportSource'
 
 
 class RefHandle(object):
@@ -34,11 +37,12 @@ class RefHandle(object):
         self.annotation = None
         self.refNode = None
         self.instanceSource = None
+        self.importSource = None
         self.active = False
 
     def __str__(self):
         return 'refFilename={}, idString={}, refShortName={}, refLocator=[{}], annotation=[{}],' \
-               'refNode={}, instanceSource={}, active={}' \
+               'refNode={}, instanceSource={}, importSource={}, active={}' \
             .format(
                 self.refFilename,
                 self.idString,
@@ -47,6 +51,7 @@ class RefHandle(object):
                 self.annotation,
                 self.refNode,
                 self.instanceSource,
+                self.importSource,
                 self.active,
             )
 
@@ -58,6 +63,7 @@ class RefHandle(object):
         self.setAnnotation(self.refShortName)
         self.refNode = self.idString + REF_NODE_SUFFIX
         self.instanceSource = '|{}|{}'.format(INSTANCES_SOURCE_GROUP, self.idString)
+        self.importSource = '|{}|{}'.format(IMPORT_SOURCE_GROUP, self.idString)
         self.active = self.getActiveStateFromMaya()
 
     def createNew(self, refFilename):
@@ -158,28 +164,7 @@ class RefHandle(object):
         m.setAttr(inst + '.overrideDisplayType', 2)
         lockTransformations(inst, visibility=True)
         parentAPI(inst, self.refLocator.transform, absolute=False)
-        # m.parent(inst, self.refLocator.transform, relative=True)
         m.connectAttr(self.refNode + '.message', self.refLocator.shape + '.refNodeMessage', force=True)
-
-        self.active = True
-
-    def importRef(self):
-
-        if not self.refExists():
-            m.warning('{}: {}: Reference does not exists. Import skipped.'.format(self.refLocator.shape, self.refFilename))
-            return
-
-        m.instance(
-            self.instanceSource,
-            name=REF_INST_NAME
-        )
-
-        inst = '|{}|{}'.format(INSTANCES_SOURCE_GROUP, REF_INST_NAME)
-        m.setAttr(inst + '.overrideEnabled', True)
-        m.setAttr(inst + '.overrideDisplayType', 2)
-        lockTransformations(inst, visibility=True)
-        parentAPI(inst, self.refLocator.transform, absolute=False)
-        # m.parent(inst, self.refLocator.transform, relative=True)
 
         self.active = True
 
@@ -203,15 +188,58 @@ class RefHandle(object):
             options='v=0;',
         )
 
-        instSrcGroup = '|' + INSTANCES_SOURCE_GROUP
-        if not m.objExists(instSrcGroup):
-            m.createNode('unknownTransform', name=INSTANCES_SOURCE_GROUP, skipSelect=True)
+        createInvisibleGroup(INSTANCES_SOURCE_GROUP)
+        m.parent('|' + self.idString, '|' + INSTANCES_SOURCE_GROUP)
 
-            # m.group(empty=True, name=INSTANCES_SOURCE_GROUP)
-            m.setAttr(instSrcGroup + '.v', False, lock=True)
-            # m.lockNode(instSrcGroup, lock=True)
+    def importRef(self):
 
-        m.parent('|' + self.idString, instSrcGroup)
+        if not self.refExists():
+            m.warning('{}: {}: Reference does not exists. Import skipped.'.format(self.refLocator.shape, self.refFilename))
+            return
+
+        if not m.objExists(self.importSource):
+            self.createRefImportSource()
+
+        importedRefGroup = '{}_{}'.format(REF_IMPORTED_GROUP, self.refShortName)
+        obj = m.duplicate(
+            self.importSource,
+        )
+        m.rename(obj[0], importedRefGroup)
+
+        impGroup = '|{}|{}'.format(IMPORT_SOURCE_GROUP, importedRefGroup)
+
+        m.addAttr(
+            impGroup,
+            dt='string',
+            shortName=ATTR_REF_SOURCE_PATH_NAMES[0],
+            longName=ATTR_REF_SOURCE_PATH_NAMES[1],
+            niceName=ATTR_REF_SOURCE_PATH_NAMES[2]
+        )
+
+        m.setAttr('{}.{}'.format(impGroup, ATTR_REF_SOURCE_PATH), self.refFilename, typ='string')
+        impGroup = parentAPI(impGroup, self.refLocator.transform, absolute=False)
+        refLocatorParents = self.refLocator.getParents()
+        refLocatorParent = refLocatorParents[0] if refLocatorParents else None
+        parentAPI(impGroup, refLocatorParent)
+
+        m.delete(self.refLocator.transform)
+
+        # m.parent(inst, self.refLocator.transform, relative=True)
+
+    def createRefImportSource(self):
+        fileType = 'mayaAscii' if self.refFilename.endswith('.ma') else 'mayaBinary'
+        m.file(
+            self.refFilename,
+            i=True,
+            typ=fileType,
+            groupReference=True,
+            groupName=self.idString,
+            mergeNamespacesOnClash=False,
+            namespace=self.refShortName,
+            options='v=0;',
+        )
+        createInvisibleGroup(IMPORT_SOURCE_GROUP)
+        m.parent('|' + self.idString, '|' + IMPORT_SOURCE_GROUP)
 
     def deactivate(self):
         refGeom = self.refLocator.getChildren()
@@ -243,3 +271,10 @@ def lockTransformations(transform, visibility=True):
 
 def stripNamespaces(name):
     return name.split(':')[-1]
+
+
+def createInvisibleGroup(name):
+    fullName = '|' + name
+    if not m.objExists(fullName):
+        m.createNode('unknownTransform', name=name, skipSelect=True)
+        m.setAttr('{}.v'.format(fullName), False, lock=True)
