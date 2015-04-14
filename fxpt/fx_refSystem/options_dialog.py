@@ -131,8 +131,8 @@ class OptionsDialog(QtGui.QDialog):
 
 
 def run():
+    global dlg
     if not dlg:
-        global dlg
         mayaMainWin = getMayaQMainWindow()
         dlg = OptionsDialog(mayaMainWin)
     dlg.show()

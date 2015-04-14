@@ -7,6 +7,7 @@ class GlobalPrefsHandler(object):
 
     KEY_LAST_BROWSED_CREATE_REF = 'lastBrowsedCreateRef'
     KEY_LAST_BROWSED_DIR = 'lastBrowsedDir'
+    KEY_LAST_BROWSED_SOURCE = 'lastBrowsedSource'
 
     def __init__(self):
         self.globalPrefs = None

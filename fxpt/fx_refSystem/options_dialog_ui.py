@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'options_dialog_ui.ui'
 #
-# Created: Fri Apr 10 14:46:28 2015
+# Created: Tue Apr 14 16:41:04 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!

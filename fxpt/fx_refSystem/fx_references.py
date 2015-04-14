@@ -8,6 +8,7 @@ from fxpt.fx_refSystem.com import messageBoxMaya, globalPrefsHandler, getRelativ
 from fxpt.fx_refSystem.log_dialog import log
 from fxpt.fx_refSystem.ref_handle import RefHandle, ATTR_REF_FILENAME, REF_NODE_SUFFIX, INSTANCES_SOURCE_GROUP, \
     IMPORT_SOURCE_GROUP
+from fxpt.fx_refSystem.replace_ref import replaceRefs
 
 from fxpt.fx_utils.utils import cleanupPath
 from fxpt.fx_utils.watch import watch
@@ -425,6 +426,11 @@ def importReferenceUI(warn=True):
                 return
 
     importReference(refHandles)
+
+
+def replaceRefUI():
+    replaceRefs()
+
 
 
 # ---------------------------------------------------------------------------------------------------------------------
