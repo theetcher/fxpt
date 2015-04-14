@@ -4,8 +4,9 @@ import maya.cmds as m
 
 from fxpt.fx_refSystem.com import getMayaQMainWindow, globalPrefsHandler, getRelativePath
 from fxpt.fx_refSystem.replace_with_ref_dialog import ReplaceDialog
-from fxpt.fx_refSystem.ref_handle import ATTR_REF_SOURCE_PATH
+from fxpt.fx_refSystem.ref_handle import RefHandle, ATTR_REF_SOURCE_PATH
 from fxpt.fx_utils.utils import cleanupPath
+from fxpt.fx_utils.utilsMaya import getParent
 
 from fxpt.fx_utils.watch import watch, wtrace
 
@@ -48,23 +49,51 @@ def replaceRefs():
             for key in replaceDB:
                 replaceDB[key] = sourceFilename
 
-    if dlgResult == ReplaceDialog.RESULT_SAVE_REPLACE:
-        saveRefsSources(replaceDB)
+    logStrings = []
 
-    doReplacement(replaceDB)
+    if dlgResult == ReplaceDialog.RESULT_SAVE_REPLACE:
+        logStrings.extend(saveRefsSources(replaceDB))
+
+    log, createdRefs = doReplacement(replaceDB)
+    logStrings.extend(log)
+
+    savedSources = []
+
+    return logStrings, createdRefs, savedSources
 
 
 def saveRefsSources(replaceDB):
-    pass
+    logStrings = []
+    return logStrings
 
 
 def doReplacement(replaceDB):
-    pass
-    # for tr, path in replaceDB:
-    #     refHandle = RefHandle()
-    #     refHandle.createNew(refFilename)
-    #     return refHandle.refLocator.transform
+    notExistingSources = set()
+    notExistPathsToLog = set()
+    createdRefs = []
+    for tr, path in replaceDB.items():
 
+        filename = os.path.expandvars(path).lower()
+
+        if filename in notExistingSources:
+            continue
+
+        if not os.path.exists(filename):
+            notExistingSources.add(filename)
+            notExistPathsToLog.add(path)
+            continue
+
+        refHandle = RefHandle()
+        refHandle.createNew(path)
+
+        worldRP = m.xform(tr, q=True, rotatePivot=True, worldSpace=True)
+        m.move(worldRP[0], worldRP[1], worldRP[2], refHandle.refLocator.transform, absolute=True, worldSpace=True)
+
+        transformParent = getParent(tr)
+
+
+    logStrings = []
+    return logStrings, createdRefs
 
 
 def showDialog(shortcutsExists, shortcutsDuplicatesExists, anonymousExists):
