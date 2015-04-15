@@ -65,28 +65,40 @@ def saveRefsSources(replaceDB):
 
     processedPaths = set()
     for tr, path in replaceDB.items():
-        if expandPath(path) in processedPaths:
+        if not m.objExists(tr):
             continue
 
-        if not m.objExists(tr):
+        expandedPath = expandPath(path)
+        if expandedPath in processedPaths:
             continue
 
         shape = getShape(tr)
         childTransforms = getChildTransforms(tr)
 
+        # TODO: check that there is no double saves. watch saving files
+
         if not shape and not childTransforms:
             log.logAppend('Cannot save empty transform: {}. Source save skipped.'.format(tr))
             continue
         elif shape:
-            # unparent transform itself and export. then restore to old parent.
+            # cannot save local matrix and restore it cause it resets pivots positions
+            translation = m.xform(tr, q=True, translation=True)
+            rotation = m.xform(tr, q=True, rotation=True)
+            scale = m.xform(tr, q=True, scale=True)
+            shear = m.xform(tr, q=True, shear=True)
+
             oldParent = getParent(tr)
             if oldParent:
                 newObject = m.parent(tr, world=True)[0]
             else:
                 newObject = tr
 
-            print 'doing export of {}'.format(newObject)
+            worldRP = m.xform(tr, q=True, rotatePivot=True, worldSpace=True)
+            m.xform(newObject, relative=True, worldSpace=True, translation=[-x for x in worldRP])
+            m.xform(newObject, absolute=True, rotation=(0, 0, 0), scale=(1, 1, 1), shear=(0, 0, 0))
+
             ext = os.path.splitext(path)[1]
+            m.select(newObject, r=True)
             # TODO: check for read only
             m.file(
                 path,
@@ -99,9 +111,13 @@ def saveRefsSources(replaceDB):
             if oldParent:
                 m.parent(newObject, oldParent)
 
+            m.xform(absolute=True, translation=translation, rotation=rotation, scale=scale, shear=shear)
+
         else:
             # unparent children and export. then delete them
             pass
+
+        processedPaths.add(expandedPath)
 
     return []
 
@@ -124,12 +140,17 @@ def doReplacement(replaceDB):
         createdRefs.append(refHandle)
 
         worldRP = m.xform(tr, q=True, rotatePivot=True, worldSpace=True)
-        m.move(worldRP[0], worldRP[1], worldRP[2], refHandle.refLocator.transform, absolute=True, worldSpace=True)
+        m.xform(refHandle.refLocator.transform, translation=worldRP, absolute=True, worldSpace=True)
 
         transformParent = getParent(tr)
         if transformParent:
             newRefLocTransform = getLongName(m.parent(refHandle.refLocator.transform, transformParent)[0])
             refHandle.setRefLocator(TransformHandle(transform=newRefLocTransform))
+
+        rotation = m.xform(tr, q=True, rotation=True)
+        scale = m.xform(tr, q=True, scale=True)
+        shear = m.xform(tr, q=True, shear=True)
+        m.xform(refHandle.refLocator.transform, rotation=rotation, scale=scale, shear=shear)
 
         if m.objExists(tr):
             m.delete(tr)
