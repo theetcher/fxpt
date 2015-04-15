@@ -14,6 +14,8 @@ class LogDialog(QtGui.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
+        self.strings = []
+
         self.ui_initSettings()
         self.ui_loadSettings()
 
@@ -28,7 +30,17 @@ class LogDialog(QtGui.QDialog):
     def ui_saveSettings(self):
         self.prefSaver.savePrefs()
 
-    def showLog(self, strings):
+    def logAppend(self, s):
+        self.strings.append(s)
+
+    def logExtend(self, s):
+        self.strings.extend(s)
+
+    def logShow(self):
+        self.logDisplay(self.strings)
+        self.strings = []
+
+    def logDisplay(self, strings):
         if strings:
             self.ui.uiTXT_log.clear()
             for s in strings:

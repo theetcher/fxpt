@@ -9,7 +9,7 @@ import maya.OpenMayaUI as omui
 
 from fxpt.fx_utils.utils import cleanupPath
 
-from global_prefs_handler import GlobalPrefsHandler
+from fxpt.fx_refSystem.global_prefs_handler import GlobalPrefsHandler
 
 globalPrefsHandler = GlobalPrefsHandler()
 

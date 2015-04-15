@@ -379,16 +379,14 @@ def retargetRefs(refHandles, targetDir):
     maintainanceProcedure()
     restoreSelection()
 
-    # noinspection PyListCreation
-    logText = list()
     if duplicatesInTargetDir:
-        logText.append('Duplicates found in target directory tree for following reference(s) (retargeted to first occurence):')
-        logText.extend(sorted(duplicatesInTargetDir))
+        log.logAppend('Duplicates found in target directory tree for following reference(s) (retargeted to first occurence):')
+        log.logAppend(sorted(duplicatesInTargetDir))
     if notFoundInTargetDir:
-        logText.append('')
-        logText.append('Following reference(s) was not found in target directory tree (leaved intact):')
-        logText.extend(sorted(notFoundInTargetDir))
-    log.showLog(logText)
+        log.logAppend('')
+        log.logAppend('Following reference(s) was not found in target directory tree (leaved intact):')
+        log.logAppend(sorted(notFoundInTargetDir))
+    log.logShow()
 
 
 def retargetRefsUI():
@@ -430,7 +428,7 @@ def importReferenceUI(warn=True):
 
 def replaceRefUI():
     replaceRefs()
-
+    log.logShow()
 
 
 # ---------------------------------------------------------------------------------------------------------------------

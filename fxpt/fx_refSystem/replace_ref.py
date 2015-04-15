@@ -3,16 +3,19 @@ import os
 import maya.cmds as m
 
 from fxpt.fx_refSystem.com import getMayaQMainWindow, globalPrefsHandler, getRelativePath
+from fxpt.fx_refSystem.log_dialog import log
 from fxpt.fx_refSystem.replace_with_ref_dialog import ReplaceDialog
 from fxpt.fx_refSystem.ref_handle import RefHandle, ATTR_REF_SOURCE_PATH
+from fxpt.fx_refSystem.transform_handle import TransformHandle
 from fxpt.fx_utils.utils import cleanupPath
-from fxpt.fx_utils.utilsMaya import getParent
+from fxpt.fx_utils.utilsMaya import getParent, getShape, getChildTransforms, getLongName
 
 from fxpt.fx_utils.watch import watch, wtrace
 
 dlg = None
 
 # TODO: need to reload references in scene if they were saved during replace
+# TODO: check for parent and child in replacement selection
 
 
 def replaceRefs():
@@ -42,58 +45,96 @@ def replaceRefs():
         return
 
     if anonymousExists:
-        sourceFilename = browseForSource()
+        sourceFilename = browseForSource(0 if dlgResult == ReplaceDialog.RESULT_SAVE_REPLACE else 1)
         if not sourceFilename:
             return
         else:
             for key in replaceDB:
                 replaceDB[key] = sourceFilename
 
-    logStrings = []
-
-    if dlgResult == ReplaceDialog.RESULT_SAVE_REPLACE:
-        logStrings.extend(saveRefsSources(replaceDB))
-
-    log, createdRefs = doReplacement(replaceDB)
-    logStrings.extend(log)
-
     savedSources = []
+    if dlgResult == ReplaceDialog.RESULT_SAVE_REPLACE:
+        savedSources = saveRefsSources(replaceDB)
 
-    return logStrings, createdRefs, savedSources
+    createdRefs = doReplacement(replaceDB)
+
+    return createdRefs, savedSources
 
 
 def saveRefsSources(replaceDB):
-    logStrings = []
-    return logStrings
+
+    processedPaths = set()
+    for tr, path in replaceDB.items():
+        if expandPath(path) in processedPaths:
+            continue
+
+        if not m.objExists(tr):
+            continue
+
+        shape = getShape(tr)
+        childTransforms = getChildTransforms(tr)
+
+        if not shape and not childTransforms:
+            log.logAppend('Cannot save empty transform: {}. Source save skipped.'.format(tr))
+            continue
+        elif shape:
+            # unparent transform itself and export. then restore to old parent.
+            oldParent = getParent(tr)
+            if oldParent:
+                newObject = m.parent(tr, world=True)[0]
+            else:
+                newObject = tr
+
+            print 'doing export of {}'.format(newObject)
+            ext = os.path.splitext(path)[1]
+            # TODO: check for read only
+            m.file(
+                path,
+                exportSelected=True,
+                force=True,
+                typ='mayaBinary' if ext == '.mb' else 'mayaAscii',
+                options='v=0;'
+            )
+
+            if oldParent:
+                m.parent(newObject, oldParent)
+
+        else:
+            # unparent children and export. then delete them
+            pass
+
+    return []
 
 
 def doReplacement(replaceDB):
     notExistingSources = set()
-    notExistPathsToLog = set()
     createdRefs = []
     for tr, path in replaceDB.items():
 
-        filename = os.path.expandvars(path).lower()
-
-        if filename in notExistingSources:
+        if path in notExistingSources:
             continue
 
-        if not os.path.exists(filename):
-            notExistingSources.add(filename)
-            notExistPathsToLog.add(path)
+        if not os.path.exists(os.path.expandvars(path)):
+            notExistingSources.add(path)
+            log.logAppend('Path does not exists: {}. Replacement skipped.'.format(path))
             continue
 
         refHandle = RefHandle()
         refHandle.createNew(path)
+        createdRefs.append(refHandle)
 
         worldRP = m.xform(tr, q=True, rotatePivot=True, worldSpace=True)
         m.move(worldRP[0], worldRP[1], worldRP[2], refHandle.refLocator.transform, absolute=True, worldSpace=True)
 
         transformParent = getParent(tr)
+        if transformParent:
+            newRefLocTransform = getLongName(m.parent(refHandle.refLocator.transform, transformParent)[0])
+            refHandle.setRefLocator(TransformHandle(transform=newRefLocTransform))
 
+        if m.objExists(tr):
+            m.delete(tr)
 
-    logStrings = []
-    return logStrings, createdRefs
+    return createdRefs
 
 
 def showDialog(shortcutsExists, shortcutsDuplicatesExists, anonymousExists):
@@ -143,7 +184,7 @@ def generateReplaceDB(nodes):
     return res
 
 
-def browseForSource():
+def browseForSource(fileMode):
     globalPrefsHandler.loadPrefs()
     lastBrowsed = globalPrefsHandler.getValue(globalPrefsHandler.KEY_LAST_BROWSED_SOURCE) or ''
 
@@ -151,7 +192,7 @@ def browseForSource():
         dialogStyle=1,
         caption='Choose Reference Scene',
         fileFilter='Maya Scenes (*.mb; *.ma);;Maya Binary (*.mb);;Maya ASCII (*.ma);;All Files (*.*)',
-        fileMode=0,
+        fileMode=fileMode,
         returnFilter=False,
         startingDirectory=lastBrowsed
     )
@@ -164,3 +205,7 @@ def browseForSource():
     globalPrefsHandler.savePrefs()
 
     return getRelativePath(filename)
+
+
+def expandPath(path):
+    return os.path.expandvars(path).lower()

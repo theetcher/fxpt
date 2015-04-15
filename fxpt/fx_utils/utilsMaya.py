@@ -12,15 +12,22 @@ def getShortName(node):
         return node.split('|')[-1]
 
 
-def getNodeRelatives(node, parent=False, shapes=False):
+def getNodeRelatives(node, parent=False, children=False, shapes=False, typ=None):
     if m.objExists(node):
-        return m.listRelatives(node, fullPath=True, parent=parent, shapes=shapes)
+        if typ:
+            return m.listRelatives(node, fullPath=True, parent=parent, children=children, shapes=shapes, typ=typ)
+        else:
+            return m.listRelatives(node, fullPath=True, parent=parent, children=children, shapes=shapes)
 
 
 def getParent(node):
     parents = getNodeRelatives(node, parent=True)
     if parents:
         return parents[0]
+
+
+def getChildTransforms(node):
+    return getNodeRelatives(node, children=True, typ='transform')
 
 
 def getShape(node):

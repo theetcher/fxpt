@@ -257,6 +257,9 @@ class RefHandle(object):
     def getRefFilename(self):
         return cleanupPath(self.refFilename)
 
+    def setRefLocator(self, transformHandle):
+        self.refLocator = transformHandle
+
     def refExists(self):
         return os.path.exists(os.path.expandvars(self.refFilename))
 
