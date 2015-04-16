@@ -429,8 +429,6 @@ def importReferenceUI(warn=True):
 
 def replaceRefUI():
 
-    deactivateRefs(getAllRefHandles())
-
     createdRefs, savedSources = replaceRefs()
 
     if (createdRefs is None) and (savedSources is None):
@@ -452,28 +450,17 @@ def replaceRefUI():
             pathsToReload.add(path)
             rhToReload.append(rh)
 
-    # watch(pathsToReload, 'pathsToReload')
-    # for rh in rhToReload:
-    #     print rh
+    for refHandle in rhToReload:
+        print 'deactivate:', refHandle
+        refHandle.deactivate()
 
-    # for refHandle in rhToReload:
-    #     print 'deactivate:', refHandle
-    #     refHandle.deactivate()
+    maintainanceProcedure()
 
-    # getActiveRefHandles()
-    # for rh in getActiveRefHandles():
-    #     path = rh.getRefFilename()
-
-
-    # for refHandle in rhToReload:
-    #     print 'activate:', refHandle
-    #     refHandle.activate()
-
-    # maintainanceProcedure()
+    for refHandle in rhToReload:
+        print 'activate:', refHandle
+        refHandle.activate()
 
     m.select([rh.refLocator.transform for rh in createdRefs], r=True)
-
-    activateRefs(getAllRefHandles())
 
     log.logShow()
 
