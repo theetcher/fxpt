@@ -2,27 +2,30 @@ import os
 
 import maya.cmds as m
 
-from fxpt.fx_refSystem.com import getMayaQMainWindow, globalPrefsHandler, getRelativePath
+from fxpt.fx_refSystem.com import getMayaQMainWindow, globalPrefsHandler, getRelativePath, expandPath
 from fxpt.fx_refSystem.log_dialog import log
 from fxpt.fx_refSystem.replace_with_ref_dialog import ReplaceDialog
 from fxpt.fx_refSystem.ref_handle import RefHandle, ATTR_REF_SOURCE_PATH
 from fxpt.fx_refSystem.transform_handle import TransformHandle
-from fxpt.fx_utils.utils import cleanupPath
-from fxpt.fx_utils.utilsMaya import getParent, getShape, getChildTransforms, getLongName
+from fxpt.fx_utils.utils import cleanupPath, makeWritable
+from fxpt.fx_utils.utilsMaya import getParent, getShape, getChildTransforms, getLongName, getShortName
 
 from fxpt.fx_utils.watch import watch, wtrace
 
 dlg = None
 
 # TODO: need to reload references in scene if they were saved during replace
-# TODO: check for parent and child in replacement selection
 
 
 def replaceRefs():
 
     nodes = m.ls(sl=True, l=True, typ='transform')
     if not nodes:
-        return
+        return None, None
+
+    if isBadSelection(nodes):
+        log.logAppend("Invalid selection: you've selected both a parent and a child. Reference replacement aborted.")
+        return None, None
 
     replaceDB = generateReplaceDB(nodes)
 
@@ -42,12 +45,12 @@ def replaceRefs():
 
     dlgResult = dlg.getDialogResult()
     if dlgResult == ReplaceDialog.RESULT_CANCEL:
-        return
+        return None, None
 
     if anonymousExists:
         sourceFilename = browseForSource(0 if dlgResult == ReplaceDialog.RESULT_SAVE_REPLACE else 1)
         if not sourceFilename:
-            return
+            return None, None
         else:
             for key in replaceDB:
                 replaceDB[key] = sourceFilename
@@ -75,17 +78,16 @@ def saveRefsSources(replaceDB):
         shape = getShape(tr)
         childTransforms = getChildTransforms(tr)
 
-        # TODO: check that there is no double saves. watch saving files
-
         if not shape and not childTransforms:
             log.logAppend('Cannot save empty transform: {}. Source save skipped.'.format(tr))
             continue
-        elif shape:
+        else:
             # cannot save local matrix and restore it cause it resets pivots positions
-            translation = m.xform(tr, q=True, translation=True)
-            rotation = m.xform(tr, q=True, rotation=True)
-            scale = m.xform(tr, q=True, scale=True)
-            shear = m.xform(tr, q=True, shear=True)
+            translationOrig = m.xform(tr, q=True, translation=True, objectSpace=True)
+            rotationOrig = m.xform(tr, q=True, rotation=True, objectSpace=True)
+            scaleOrig = m.xform(tr, q=True, scale=True, objectSpace=True, relative=True)
+            shearOrig = m.xform(tr, q=True, shear=True, objectSpace=True, relative=True)
+            shortNameOrig = getShortName(tr)
 
             oldParent = getParent(tr)
             if oldParent:
@@ -93,13 +95,21 @@ def saveRefsSources(replaceDB):
             else:
                 newObject = tr
 
-            worldRP = m.xform(tr, q=True, rotatePivot=True, worldSpace=True)
+            worldRP = m.xform(newObject, q=True, rotatePivot=True, worldSpace=True)
             m.xform(newObject, relative=True, worldSpace=True, translation=[-x for x in worldRP])
             m.xform(newObject, absolute=True, rotation=(0, 0, 0), scale=(1, 1, 1), shear=(0, 0, 0))
 
+            if shape:
+                m.select(newObject, r=True)
+            else:
+                children = getChildTransforms(newObject)
+                if children:
+                    newChildren = m.parent(children, world=True)
+                m.select(newChildren, r=True)
+
             ext = os.path.splitext(path)[1]
-            m.select(newObject, r=True)
-            # TODO: check for read only
+            watch(path, 'saving path')
+            makeWritable(expandPath(path))
             m.file(
                 path,
                 exportSelected=True,
@@ -108,18 +118,22 @@ def saveRefsSources(replaceDB):
                 options='v=0;'
             )
 
+            if not shape:
+                m.delete(newChildren)
+
             if oldParent:
-                m.parent(newObject, oldParent)
+                newObject2 = m.parent(newObject, oldParent)[0]
+            else:
+                newObject2 = newObject
 
-            m.xform(absolute=True, translation=translation, rotation=rotation, scale=scale, shear=shear)
+            m.xform(newObject2, objectSpace=True, absolute=True, translation=translationOrig, rotation=rotationOrig, scale=scaleOrig, shear=shearOrig)
 
-        else:
-            # unparent children and export. then delete them
-            pass
+            if getShortName(newObject2) != shortNameOrig:
+                m.rename(newObject2, shortNameOrig)
 
         processedPaths.add(expandedPath)
 
-    return []
+    return processedPaths
 
 
 def doReplacement(replaceDB):
@@ -147,9 +161,9 @@ def doReplacement(replaceDB):
             newRefLocTransform = getLongName(m.parent(refHandle.refLocator.transform, transformParent)[0])
             refHandle.setRefLocator(TransformHandle(transform=newRefLocTransform))
 
-        rotation = m.xform(tr, q=True, rotation=True)
-        scale = m.xform(tr, q=True, scale=True)
-        shear = m.xform(tr, q=True, shear=True)
+        rotation = m.xform(tr, q=True, rotation=True, objectSpace=True)
+        scale = m.xform(tr, q=True, scale=True, objectSpace=True, relative=True)
+        shear = m.xform(tr, q=True, shear=True, objectSpace=True, relative=True)
         m.xform(refHandle.refLocator.transform, rotation=rotation, scale=scale, shear=shear)
 
         if m.objExists(tr):
@@ -173,9 +187,11 @@ def showDialog(shortcutsExists, shortcutsDuplicatesExists, anonymousExists):
                "Choose your option."
     elif shortcutsExists and anonymousExists:
         text = "You've got mixed selection of transforms with and without original reference source paths data.<br><br>" \
-               "<font color='DarkOrange'><b>WARNING!</b></font> If you choose <b>Save And Replace</b> or <b>Replace</b>, " \
-               "you will be prompted to choose original reference source scene and <font color='white'><b>ALL " \
-               "selected transforms will be replaced with the chosen one</b></font>.<br><br>" \
+               "<font color='DarkOrange'><b>WARNING!</b></font> " \
+               "You will be prompted to choose or save original reference source scene.<br>" \
+               "In case of <b>Save And Replace</b>, a random selected transform will be chosen to save as source scene.<br>" \
+               "In both <b>Save And Replace</b> and <b>Replace</b> cases <font color='white'><b>ALL " \
+               "selected transforms will be replaced with the chosen one</b></font><br><br>" \
                "Choose your option."
     elif not shortcutsExists and anonymousExists:
         text = "All transforms you've selected does not contain original reference source paths.<br>" \
@@ -228,5 +244,11 @@ def browseForSource(fileMode):
     return getRelativePath(filename)
 
 
-def expandPath(path):
-    return os.path.expandvars(path).lower()
+def isBadSelection(nodes):
+    nodes = [n + '|' for n in sorted(nodes)]
+    lenNodes = len(nodes)
+    for i in range(lenNodes):
+        for j in range(i + 1, lenNodes):
+            if nodes[j].startswith(nodes[i]):
+                return True
+    return False

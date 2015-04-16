@@ -61,3 +61,7 @@ def getRelativePath(path):
         return REF_ROOT_VAR_NAME_P + pathWorking[len(refRootValueLower):]
 
     return path
+
+
+def expandPath(path):
+    return os.path.expandvars(path).lower()

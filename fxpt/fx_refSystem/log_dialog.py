@@ -45,7 +45,8 @@ class LogDialog(QtGui.QDialog):
             self.ui.uiTXT_log.clear()
             for s in strings:
                 self.ui.uiTXT_log.appendPlainText(s)
-            self.exec_()
+            self.show()
+            self.raise_()
 
     def onDialogFinished(self):
         self.ui_saveSettings()

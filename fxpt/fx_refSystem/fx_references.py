@@ -1,10 +1,11 @@
 import os
 import re
 import math
+import time
 
 import maya.cmds as m
 
-from fxpt.fx_refSystem.com import messageBoxMaya, globalPrefsHandler, getRelativePath, getRefRootValue
+from fxpt.fx_refSystem.com import messageBoxMaya, globalPrefsHandler, getRelativePath, getRefRootValue, expandPath
 from fxpt.fx_refSystem.log_dialog import log
 from fxpt.fx_refSystem.ref_handle import RefHandle, ATTR_REF_FILENAME, REF_NODE_SUFFIX, INSTANCES_SOURCE_GROUP, \
     IMPORT_SOURCE_GROUP
@@ -427,7 +428,53 @@ def importReferenceUI(warn=True):
 
 
 def replaceRefUI():
-    replaceRefs()
+
+    deactivateRefs(getAllRefHandles())
+
+    createdRefs, savedSources = replaceRefs()
+
+    if (createdRefs is None) and (savedSources is None):
+        log.logShow()
+        return
+
+    pathsToReload = set()
+    rhToReload = []
+
+    for rh in getActiveRefHandles():
+
+        path = rh.getRefFilename()
+
+        if path in pathsToReload:
+            rhToReload.append(rh)
+            continue
+
+        if expandPath(path) in savedSources:
+            pathsToReload.add(path)
+            rhToReload.append(rh)
+
+    # watch(pathsToReload, 'pathsToReload')
+    # for rh in rhToReload:
+    #     print rh
+
+    # for refHandle in rhToReload:
+    #     print 'deactivate:', refHandle
+    #     refHandle.deactivate()
+
+    # getActiveRefHandles()
+    # for rh in getActiveRefHandles():
+    #     path = rh.getRefFilename()
+
+
+    # for refHandle in rhToReload:
+    #     print 'activate:', refHandle
+    #     refHandle.activate()
+
+    # maintainanceProcedure()
+
+    m.select([rh.refLocator.transform for rh in createdRefs], r=True)
+
+    activateRefs(getAllRefHandles())
+
     log.logShow()
 
 
