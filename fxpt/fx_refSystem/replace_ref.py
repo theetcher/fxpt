@@ -57,7 +57,7 @@ def replaceRefs():
 
     savedSources = []
     if dlgResult == ReplaceDialog.RESULT_SAVE_REPLACE:
-        savedSources = saveRefsSourcesScene6(replaceDB)
+        savedSources = saveRefsSources(replaceDB)
 
     createdRefs = doReplacement(replaceDB)
 
@@ -132,28 +132,6 @@ def saveRefsSources(replaceDB):
                 m.rename(newObject2, shortNameOrig)
 
         processedPaths.add(expandedPath)
-
-    return processedPaths
-
-
-def saveRefsSourcesScene6(replaceDB):
-
-    for tr, path in replaceDB.items():
-
-        oldParent = getParent(tr)
-        if oldParent:
-            newObject = m.parent(tr, world=True)[0]
-        else:
-            newObject = tr
-
-        if oldParent:
-            newObject2 = m.parent(newObject, oldParent)[0]
-        else:
-            newObject2 = newObject
-
-    processedPaths = {
-        'D:/__testRefs__/Root1/someFolder/refCube.mb'.lower()
-    }
 
     return processedPaths
 

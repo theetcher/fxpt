@@ -451,13 +451,11 @@ def replaceRefUI():
             rhToReload.append(rh)
 
     for refHandle in rhToReload:
-        print 'deactivate:', refHandle
         refHandle.deactivate()
 
     maintainanceProcedure()
 
     for refHandle in rhToReload:
-        print 'activate:', refHandle
         refHandle.activate()
 
     m.select([rh.refLocator.transform for rh in createdRefs], r=True)
