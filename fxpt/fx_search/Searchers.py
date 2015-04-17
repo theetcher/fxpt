@@ -1,7 +1,11 @@
 import re
+import os
 from PySide import QtCore, QtGui
 
 from Com import *
+
+from fxpt.fx_refSystem.ref_handle import ATTR_REF_FILENAME
+from fxpt.fx_utils.utilsMaya import getParent
 
 
 class NodeInfo(object):
@@ -351,3 +355,63 @@ class SearcherTexturedBy(SearcherTexturesBase):
                 res.extend(self.getShadingGroups(d))
 
         return res
+
+
+class SearcherFxRefs(SearcherBase):
+
+    def __init__(self, name):
+        super(SearcherFxRefs, self).__init__(name)
+
+    # noinspection PyMethodMayBeStatic
+    def getRefFilename(self, refLoc):
+        return m.getAttr('{}.{}'.format(refLoc, ATTR_REF_FILENAME))
+
+    # noinspection PyMethodMayBeStatic
+    def isRefLocator(self, refLoc):
+        return m.objExists('{}.{}'.format(refLoc, ATTR_REF_FILENAME))
+
+    def getColumnNames(self):
+        return [
+            'Exists',
+            'Name',
+            'Filename',
+            'Path'
+        ]
+
+    def gatherSearchData(self):
+        # return [(fullPathName, searchField), (fullPathName, searchField), ...]
+        if self.searchDesc.searchSelected:
+            locators = m.ls(sl=True, l=True, dag=True, ap=True, typ='locator')
+        else:
+            locators = m.ls(l=True, typ='locator')
+
+        res = []
+        for loc in locators:
+            if self.isRefLocator(loc):
+                filename = self.getRefFilename(loc)
+                shortName = os.path.splitext(os.path.basename(filename))[0]
+                res.append((loc, shortName))
+
+        return res
+
+    def prepareModelData(self, matchedData):
+        # input [(fullPathName, searchField), ....]
+        # return [(exists, shortName, filename, mayaPath, nodeInfo), ...]
+        modelData = []
+
+        for fullPathName, shortName in matchedData:
+
+            filename = self.getRefFilename(fullPathName)
+            exists = 'Yes' if os.path.exists(os.path.expandvars(filename)) else 'No'
+            mayaPath = getParent(fullPathName)
+
+            ni = NodeInfo()
+            ni.selectionString = [mayaPath]
+            ni.fullPathName = mayaPath
+            ni.shortName = shortName
+
+            modelData.append((exists, shortName, filename, mayaPath, ni))
+
+        print modelData
+
+        return modelData

@@ -1,4 +1,4 @@
-#region imports
+# region imports
 
 from fxpt.side_utils import pyperclip
 
@@ -13,11 +13,11 @@ import MainWindowUI
 import Searchers
 from Com import *
 
-#endregion imports
+# endregion imports
 
 mainWin = None
 
-#TODO: if string in table is too long, popup full string in some widget
+# TODO: if string in table is too long, popup full string in some widget
 
 OPT_VAR_NAME = 'fx_search_prefs'
 
@@ -25,6 +25,7 @@ OPT_VAR_NAME = 'fx_search_prefs'
 # noinspection PyMethodMayBeStatic,PyUnusedLocal
 class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
     def __init__(self):
+        # noinspection PyArgumentList
         ptr = omui.MQtUtil.mainWindow()
         mainWinQObject = None
         if ptr is not None:
@@ -76,6 +77,8 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
             SearcherLink(Searchers.SearcherNodes('All Nodes'), QtGui.QPushButton('All Nodes'),
                          QtGui.QTableView(), QtGui.QWidget()),
             SearcherLink(Searchers.SearcherDagNodes('DAG Nodes'), QtGui.QPushButton('DAG Nodes'),
+                         QtGui.QTableView(), QtGui.QWidget()),
+            SearcherLink(Searchers.SearcherFxRefs('FX References'), QtGui.QPushButton('FX References'),
                          QtGui.QTableView(), QtGui.QWidget()),
             SearcherLink(Searchers.SearcherTexturedBy('Textured By'), QtGui.QPushButton('Textured By'),
                          QtGui.QTableView(), QtGui.QWidget()),
@@ -388,8 +391,8 @@ class SearcherLink():
 
 def run():
 
-#    from pydev import pydevd
-#    pydevd.settrace('localhost', port=62882, stdoutToServer=True, stderrToServer=True)
+    # from pydev import pydevd
+    # pydevd.settrace('localhost', port=62882, stdoutToServer=True, stderrToServer=True)
 
     global mainWin
     if not mainWin:
