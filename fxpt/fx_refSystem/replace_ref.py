@@ -14,8 +14,6 @@ from fxpt.fx_utils.watch import watch, wtrace
 
 dlg = None
 
-# TODO: need to reload references in scene if they were saved during replace
-
 
 def replaceRefs():
 
@@ -82,18 +80,12 @@ def saveRefsSources(replaceDB):
             log.logAppend('Cannot save empty transform: {}. Source save skipped.'.format(tr))
             continue
         else:
-            # cannot save local matrix and restore it cause it resets pivots positions
-            translationOrig = m.xform(tr, q=True, translation=True, objectSpace=True)
-            rotationOrig = m.xform(tr, q=True, rotation=True, objectSpace=True)
-            scaleOrig = m.xform(tr, q=True, scale=True, objectSpace=True, relative=True)
-            shearOrig = m.xform(tr, q=True, shear=True, objectSpace=True, relative=True)
-            shortNameOrig = getShortName(tr)
-
             oldParent = getParent(tr)
+            tr2 = m.duplicate(tr, rr=True)
             if oldParent:
-                newObject = m.parent(tr, world=True)[0]
+                newObject = m.parent(tr2, world=True)[0]
             else:
-                newObject = tr
+                newObject = tr2
 
             worldRP = m.xform(newObject, q=True, rotatePivot=True, worldSpace=True)
             m.xform(newObject, relative=True, worldSpace=True, translation=[-x for x in worldRP])
@@ -121,15 +113,7 @@ def saveRefsSources(replaceDB):
             if not shape:
                 m.delete(newChildren)
 
-            if oldParent:
-                newObject2 = m.parent(newObject, oldParent)[0]
-            else:
-                newObject2 = newObject
-
-            m.xform(newObject2, objectSpace=True, absolute=True, translation=translationOrig, rotation=rotationOrig, scale=scaleOrig, shear=shearOrig)
-
-            if getShortName(newObject2) != shortNameOrig:
-                m.rename(newObject2, shortNameOrig)
+            m.delete(newObject)
 
         processedPaths.add(expandedPath)
 

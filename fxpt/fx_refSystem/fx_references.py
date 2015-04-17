@@ -455,6 +455,7 @@ def replaceRefUI():
 
     maintainanceProcedure()
 
+    rhToReload.extend(createdRefs)
     for refHandle in rhToReload:
         refHandle.activate()
 
