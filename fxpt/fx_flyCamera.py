@@ -26,6 +26,8 @@ SPD_MOVE_Z = 3  # z -> backward, -z -> forward
 SPD_ROTATE_X = 4  # x -> up, -x -> down
 SPD_ROTATE_Y = 5  # y -> left, -y -> right
 
+Y_UP = True if m.upAxis(q=True, ax=True) == 'y' else False
+
 
 # noinspection PyCallByClass,PyTypeChecker
 def moveCursorToOrigin():
@@ -432,7 +434,7 @@ class Flyer():
 
         m.xform(self.camera, relative=True, objectSpace=True, translation=(tx, ty, tz))
         m.xform(self.camera, relative=True, objectSpace=True, rotation=(self.invertMouse * rx, 0, 0))
-        m.xform(self.camera, relative=True, worldSpace=True, rotation=(0, ry, 0))
+        m.xform(self.camera, relative=True, worldSpace=True, rotation=(0, ry, 0) if Y_UP else (0, 0, ry))
 
     def calculateSpeeds(self):
 
