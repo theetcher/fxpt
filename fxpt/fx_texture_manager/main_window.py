@@ -5,18 +5,18 @@ from PySide import QtCore, QtGui
 
 from fxpt.side_utils import pyperclip
 
-from fxpt.fx_textureManager import com
+from fxpt.fx_texture_manager import com
 
-from fxpt.fx_textureManager.main_window_ui import Ui_MainWindow
-from fxpt.fx_textureManager.harvesters import MayaSceneHarvester, MayaSelectionHarvester
-from fxpt.fx_textureManager.coordinators import CoordinatorMayaUI
-from fxpt.fx_textureManager.delegates import TexNodeDelegate
+from fxpt.fx_texture_manager.main_window_ui import Ui_MainWindow
+from fxpt.fx_texture_manager.harvesters import MayaSceneHarvester, MayaSelectionHarvester
+from fxpt.fx_texture_manager.coordinators import CoordinatorMayaUI
+from fxpt.fx_texture_manager.delegates import TexNodeDelegate
 from fxpt.fx_prefsaver import prefsaver, serializers
 
-from fxpt.fx_textureManager.search_replace_dialog import SearchReplaceDialog
-from fxpt.fx_textureManager.retarget_dialog import RetargetDialog
-from fxpt.fx_textureManager.copy_move_dialog import CopyMoveDialog
-from fxpt.fx_textureManager.log_dialog import LogDialog
+from fxpt.fx_texture_manager.search_replace_dialog import SearchReplaceDialog
+from fxpt.fx_texture_manager.retarget_dialog import RetargetDialog
+from fxpt.fx_texture_manager.copy_move_dialog import CopyMoveDialog
+from fxpt.fx_texture_manager.log_dialog import LogDialog
 
 
 class TexManagerUI(QtGui.QMainWindow):

@@ -1,5 +1,5 @@
 from PySide import QtCore, QtGui
-from fxpt.fx_textureManager.line_edit_path import LineEditPath
+from fxpt.fx_texture_manager.line_edit_path import LineEditPath
 
 from com import FONT_MONOSPACE_QFONT
 

@@ -1,4 +1,4 @@
-from fxpt.fx_textureManager import processors
+from fxpt.fx_texture_manager import processors
 
 
 class CoordinatorMayaUI(object):

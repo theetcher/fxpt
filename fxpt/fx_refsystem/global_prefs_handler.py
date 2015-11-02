@@ -1,6 +1,6 @@
 from fxpt.fx_prefsaver import prefsaver, serializers
 
-OPT_VAR_NAME_COMMON_PREFS = 'fx_refSystem_global_prefs'
+OPT_VAR_NAME_COMMON_PREFS = 'fx_refsystem_global_prefs'
 
 
 class GlobalPrefsHandler(object):

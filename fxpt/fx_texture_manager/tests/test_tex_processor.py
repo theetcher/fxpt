@@ -1,7 +1,7 @@
 import unittest
 
-from fxpt.fx_textureManager import TexProcessor
-from fxpt.fx_textureManager import tex_node
+from fxpt.fx_texture_manager import TexProcessor
+from fxpt.fx_texture_manager import tex_node
 
 
 def patchName(name):

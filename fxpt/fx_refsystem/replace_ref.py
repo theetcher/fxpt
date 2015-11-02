@@ -2,11 +2,11 @@ import os
 
 import maya.cmds as m
 
-from fxpt.fx_refSystem.com import getMayaQMainWindow, globalPrefsHandler, getRelativePath, expandPath
-from fxpt.fx_refSystem.log_dialog import log
-from fxpt.fx_refSystem.replace_with_ref_dialog import ReplaceDialog
-from fxpt.fx_refSystem.ref_handle import RefHandle, ATTR_REF_SOURCE_PATH
-from fxpt.fx_refSystem.transform_handle import TransformHandle
+from fxpt.fx_refsystem.com import getMayaQMainWindow, globalPrefsHandler, getRelativePath, expandPath
+from fxpt.fx_refsystem.log_dialog import log
+from fxpt.fx_refsystem.replace_with_ref_dialog import ReplaceDialog
+from fxpt.fx_refsystem.ref_handle import RefHandle, ATTR_REF_SOURCE_PATH
+from fxpt.fx_refsystem.transform_handle import TransformHandle
 from fxpt.fx_utils.utils import cleanupPath, makeWritable
 from fxpt.fx_utils.utils_maya import getParent, getShape, getChildTransforms, getLongName, getShortName
 

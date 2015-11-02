@@ -1,9 +1,9 @@
 from PySide import QtCore, QtGui
 
 from fxpt.fx_prefsaver import prefsaver, serializers
-from fxpt.fx_textureManager.copy_move_dialog_ui import Ui_Dialog
+from fxpt.fx_texture_manager.copy_move_dialog_ui import Ui_Dialog
 
-from fxpt.fx_textureManager.copy_move_info import CopyMoveInfo
+from fxpt.fx_texture_manager.copy_move_info import CopyMoveInfo
 
 OPT_VAR_NAME_COPY_MOVE_DLG = 'fx_textureManager_copMoveDlg_prefs'
 

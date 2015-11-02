@@ -2,9 +2,9 @@ import unittest
 import types
 from PySide import QtGui
 from fxpt.side_utils.mock import patch
-from fxpt.fx_textureManager.tests.com_tests import skipInBatchMode
+from fxpt.fx_texture_manager.tests.com_tests import skipInBatchMode
 
-from fxpt.fx_textureManager import fx_texture_manager
+from fxpt.fx_texture_manager import fx_texture_manager
 
 
 def patchName(name):
@@ -14,7 +14,7 @@ def patchName(name):
 class TexManagerTestMain(unittest.TestCase):
 
     def test_run_exists(self):
-        self.assertTrue(hasattr(fx_texture_manager, 'run'), 'fx_textureManager.run() exists')
+        self.assertTrue(hasattr(fx_texture_manager, 'run'), 'fx_texture_manager.run() exists')
 
     def test_run_is_a_function(self):
         self.assertIs(
@@ -35,7 +35,7 @@ class TexManagerTestMain(unittest.TestCase):
     def test_getMayaMainWindowPtr_returns_something(self):
         self.assertTrue(fx_texture_manager.getMayaMainWindowPtr())
 
-    @patch(patchName('fx_textureManager.apiUI.MQtUtil.mainWindow'))
+    @patch(patchName('fx_texture_manager.apiUI.MQtUtil.mainWindow'))
     def test_getMayaMainWindowPtr_raises_exception(self, mockGetPtr):
         mockGetPtr.return_value = None
         self.assertRaises(RuntimeError, fx_texture_manager.getMayaMainWindowPtr)

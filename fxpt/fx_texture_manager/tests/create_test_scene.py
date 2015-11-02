@@ -5,7 +5,7 @@ import maya.cmds as m
 FILENAMES = [
     '',
     '%FXPT_LOCATION%/src/dirA/testTex_exit.png',
-    '%INVALID_ENV_VAR%/fxpt/fx_textureManager/icons/copy.png',
+    '%INVALID_ENV_VAR%/fxpt/fx_texture_manager/icons/copy.png',
     '//BLACK/C$/__testTextureManager__/src/dirB/dirB1/retarget.png',
     'C:/__testTextureManagerExternal__/AAA/testTex_exit.png',
     'C:/__testTextureManager__/src/dirB/dirB1/copy.png',

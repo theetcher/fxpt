@@ -1,7 +1,7 @@
 from PySide import QtCore, QtGui
 
 from fxpt.fx_prefsaver import prefsaver, serializers
-from fxpt.fx_textureManager.retarget_dialog_ui import Ui_Dialog
+from fxpt.fx_texture_manager.retarget_dialog_ui import Ui_Dialog
 
 
 OPT_VAR_NAME_RETARGET_DLG = 'fx_textureManager_retargetDlg_prefs'

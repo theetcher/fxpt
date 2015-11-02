@@ -2,9 +2,9 @@ from PySide import QtGui
 
 from fxpt.fx_utils.utils import cleanupPath
 from fxpt.fx_prefsaver import prefsaver, serializers
-from fxpt.fx_refSystem.replace_with_ref_dialog_ui import Ui_Dialog
+from fxpt.fx_refsystem.replace_with_ref_dialog_ui import Ui_Dialog
 
-OPT_VAR_NAME = 'fx_refSystem_replaceDlg_prefs'
+OPT_VAR_NAME = 'fx_refsystem_replaceDlg_prefs'
 
 
 class ReplaceDialog(QtGui.QDialog):

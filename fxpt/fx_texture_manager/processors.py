@@ -3,7 +3,7 @@ import re
 import shutil
 
 from fxpt.fx_utils.utils import makeWritable
-from fxpt.fx_textureManager.com import cleanupPath
+from fxpt.fx_texture_manager.com import cleanupPath
 
 
 class ProcessorBase(object):

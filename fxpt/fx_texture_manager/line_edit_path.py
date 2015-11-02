@@ -2,7 +2,7 @@ import os
 
 from PySide import QtCore, QtGui
 
-from fxpt.fx_textureManager.com import cleanupPath
+from fxpt.fx_texture_manager.com import cleanupPath
 
 
 class LineEditPath(QtGui.QLineEdit):

@@ -2,7 +2,7 @@ import maya.OpenMayaUI as apiUI
 import shiboken
 from PySide import QtGui
 
-from fxpt.fx_textureManager import main_window
+from fxpt.fx_texture_manager import main_window
 
 mainWin = None
 

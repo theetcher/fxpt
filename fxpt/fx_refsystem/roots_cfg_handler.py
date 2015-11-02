@@ -2,7 +2,7 @@ import os
 from fxpt.fx_prefsaver import prefsaver, serializers
 from com import REF_ROOT_VAR_NAME
 
-ROOTS_CFG_OPT_VAR = 'fx_refSystem_roots'
+ROOTS_CFG_OPT_VAR = 'fx_refsystem_roots'
 
 ROOTS_DEFAULT_VALUE = {'': True}
 

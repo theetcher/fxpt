@@ -1,6 +1,6 @@
 import maya.cmds as m
 
-from fxpt.fx_textureManager import tex_node
+from fxpt.fx_texture_manager import tex_node
 
 TEX_ATTRIBUTES = {
     'file': [

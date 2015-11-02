@@ -1,15 +1,15 @@
-from fxpt.fx_textureManager.processors import ProcessorCopyMove
+from fxpt.fx_texture_manager.processors import ProcessorCopyMove
 
 
 filesToProcess = [
     '',
     '%FXPT_LOCATION%/src/dirA/testTex_exit.png',
-    '%INVALID_ENV_VAR%/fxpt/fx_textureManager/icons/copy.png',
-    '%INVALID_ENV_VAR%/fxpt/fx_textureManager/icons/copy.png',
+    '%INVALID_ENV_VAR%/fxpt/fx_texture_manager/icons/copy.png',
+    '%INVALID_ENV_VAR%/fxpt/fx_texture_manager/icons/copy.png',
     '//BLACK/C$/__testTextureManager__/src/dirB/dirB1/retarget.png',
     '//BLACK/C$/__testTextureManager__/src/dirB/dirB1/retarget.png',
     '//BLACK/C$/__testTextureManager__/src/dirB/dirB1/retarget.png',
-    'C:/GitHub/fxpt/fxpt/fx_textureManager/tests/testMayaProject/sourceimages/testTex_exit.png',
+    'C:/GitHub/fxpt/fxpt/fx_texture_manager/tests/testMayaProject/sourceimages/testTex_exit.png',
 ]
 
 

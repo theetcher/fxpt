@@ -5,7 +5,7 @@ from maya.mel import eval as meval
 
 from fxpt.fx_utils.utils import getFxptLocation
 
-from fxpt.fx_textureManager import tex_node
+from fxpt.fx_texture_manager import tex_node
 from com_tests import loadMayaScene
 
 
@@ -14,12 +14,12 @@ def patchName(name):
 
 
 def setFileNodeWithAbsPath():
-    m.setAttr('fileNodeWithAbsPath.ftn', getFxptLocation() + '/fxpt/fx_textureManager/icons/filter_active.png', typ='string')
+    m.setAttr('fileNodeWithAbsPath.ftn', getFxptLocation() + '/fxpt/fx_texture_manager/icons/filter_active.png', typ='string')
 
 
 def setupScene():
-    meval('setProject "{}/fxpt/fx_textureManager/tests/testMayaProject"'.format(getFxptLocation()))
-    loadMayaScene(getFxptLocation() + '/fxpt/fx_textureManager/tests/testMayaProject/scenes/testScene_01.mb')
+    meval('setProject "{}/fxpt/fx_texture_manager/tests/testMayaProject"'.format(getFxptLocation()))
+    loadMayaScene(getFxptLocation() + '/fxpt/fx_texture_manager/tests/testMayaProject/scenes/testScene_01.mb')
     setFileNodeWithAbsPath()
     os.environ['FXPT_LOCATION'] = getFxptLocation()
 
@@ -54,16 +54,16 @@ class TexNodeTests(unittest.TestCase):
         setupScene()
 
         nodesAttrsValues = [
-            ('fileNodeWithProjPath', 'ftn', getFxptLocation() + '/fxpt/fx_textureManager/tests/testMayaProject/sourceimages/testTex_exit.png'),
-            ('fileNodeWithAbsPath', 'ftn', getFxptLocation() + '/fxpt/fx_textureManager/icons/filter_active.png'),
-            ('fileNodeWithEnvVar', 'ftn', '%FXPT_LOCATION%/fxpt/fx_textureManager/icons/copy.png'),
-            ('fileNodeWithInvalidEnvVar', 'ftn', '%INVALID_ENV_VAR%/fxpt/fx_textureManager/icons/copy.png'),
-            ('fileNodeWithNetworkPath', 'ftn', '//BLACK/C$/GitHub/fxpt/fxpt/fx_textureManager/icons/retarget.png'),
+            ('fileNodeWithProjPath', 'ftn', getFxptLocation() + '/fxpt/fx_texture_manager/tests/testMayaProject/sourceimages/testTex_exit.png'),
+            ('fileNodeWithAbsPath', 'ftn', getFxptLocation() + '/fxpt/fx_texture_manager/icons/filter_active.png'),
+            ('fileNodeWithEnvVar', 'ftn', '%FXPT_LOCATION%/fxpt/fx_texture_manager/icons/copy.png'),
+            ('fileNodeWithInvalidEnvVar', 'ftn', '%INVALID_ENV_VAR%/fxpt/fx_texture_manager/icons/copy.png'),
+            ('fileNodeWithNetworkPath', 'ftn', '//BLACK/C$/GitHub/fxpt/fxpt/fx_texture_manager/icons/retarget.png'),
             ('fileNodeWithInvalidPath', 'ftn', 'some/path/tex.png'),
-            ('someNodeWithTextures1', 'texture', '%FXPT_LOCATION%/fxpt/fx_textureManager/icons/copy.png'),
+            ('someNodeWithTextures1', 'texture', '%FXPT_LOCATION%/fxpt/fx_texture_manager/icons/copy.png'),
             ('someNodeWithTextures1', 'texture1', 'sourceimages/testTex_exit.png'),
-            ('someNodeWithTextures1', 'texture2', '//BLACK/C$/GitHub/fxpt/fxpt/fx_textureManager/icons/retarget.png'),
-            ('someNodeWithTextures2', 'texture', '%FXPT_LOCATION%/fxpt/fx_textureManager/icons/copy.png'),
+            ('someNodeWithTextures1', 'texture2', '//BLACK/C$/GitHub/fxpt/fxpt/fx_texture_manager/icons/retarget.png'),
+            ('someNodeWithTextures2', 'texture', '%FXPT_LOCATION%/fxpt/fx_texture_manager/icons/copy.png'),
             ('someNodeWithTextures2', 'texture1', 'sourceimages/testTex_exit.png'),
             ('someNodeWithTextures2', 'texture2', '')
         ]

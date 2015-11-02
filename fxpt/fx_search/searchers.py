@@ -4,7 +4,7 @@ from PySide import QtCore, QtGui
 
 from com import *
 
-from fxpt.fx_refSystem.ref_handle import ATTR_REF_FILENAME
+from fxpt.fx_refsystem.ref_handle import ATTR_REF_FILENAME
 from fxpt.fx_utils.utils_maya import getParent
 
 

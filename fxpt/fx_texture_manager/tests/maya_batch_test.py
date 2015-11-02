@@ -5,8 +5,8 @@ import maya.cmds as m
 SCRIPT_DIR = os.path.dirname(__file__)
 
 
-from fxpt.fx_textureManager.harvesters import MayaSceneHarvester
-from fxpt.fx_textureManager.processors import ProcessorPaste, ProcessorCopyMoveUI
+from fxpt.fx_texture_manager.harvesters import MayaSceneHarvester
+from fxpt.fx_texture_manager.processors import ProcessorPaste, ProcessorCopyMoveUI
 
 
 def runPaste():

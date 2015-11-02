@@ -1,8 +1,8 @@
 import maya.cmds as m
 import maya.OpenMaya as om
 
-from fxpt.fx_refSystem.fx_references import preSaveProcedure, postSaveProcedure, postOpenProcedure
-from fxpt.fx_refSystem.roots_cfg_handler import RootsCfgHandler
+from fxpt.fx_refsystem.fx_references import preSaveProcedure, postSaveProcedure, postOpenProcedure
+from fxpt.fx_refsystem.roots_cfg_handler import RootsCfgHandler
 
 
 def init():

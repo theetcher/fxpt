@@ -2,11 +2,11 @@ from PySide import QtGui
 
 from fxpt.fx_utils.utils import cleanupPath
 from fxpt.fx_prefsaver import prefsaver, serializers
-from fxpt.fx_refSystem.options_dialog_ui import Ui_Dialog
-from fxpt.fx_refSystem.roots_cfg_handler import RootsCfgHandler
-from fxpt.fx_refSystem.com import getMayaQMainWindow
+from fxpt.fx_refsystem.options_dialog_ui import Ui_Dialog
+from fxpt.fx_refsystem.roots_cfg_handler import RootsCfgHandler
+from fxpt.fx_refsystem.com import getMayaQMainWindow
 
-OPT_VAR_NAME = 'fx_refSystem_optionsDlg_prefs'
+OPT_VAR_NAME = 'fx_refsystem_optionsDlg_prefs'
 NO_ROOT_STRING = '... use absolute paths ...'
 ACTIVE_ROOT_COLOR = QtGui.QColor(255, 174, 0)
 ACTIVE_ROOT_SUFFIX = ' [active]'

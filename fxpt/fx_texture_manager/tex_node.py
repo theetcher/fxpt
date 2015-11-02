@@ -2,7 +2,7 @@ import os
 
 import maya.cmds as m
 
-from fxpt.fx_textureManager.com import cleanupPath
+from fxpt.fx_texture_manager.com import cleanupPath
 
 # noinspection PySetFunctionToLiteral
 IGNORED_OBJECT_TYPES = set([

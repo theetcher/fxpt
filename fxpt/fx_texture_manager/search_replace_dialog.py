@@ -2,7 +2,7 @@ from PySide import QtGui
 
 from fxpt.fx_prefsaver import prefsaver, serializers
 
-from fxpt.fx_textureManager.search_replace_dialog_ui import Ui_Dialog
+from fxpt.fx_texture_manager.search_replace_dialog_ui import Ui_Dialog
 
 OPT_VAR_NAME_SEARCH_REPLACE_DLG = 'fx_textureManager_searchReplaceDlg_prefs'
 
