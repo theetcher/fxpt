@@ -13,9 +13,9 @@ import shiboken
 from PySide import QtCore
 from PySide import QtGui
 
-from fxpt.fx_prefsaver import PrefSaver, Serializers
+from fxpt.fx_prefsaver import prefsaver, serializers
 
-from fxpt.fx_utils.qtFontCreator import QtFontCreator
+from fxpt.fx_utils.qt_font_creator import QtFontCreator
 from fxpt.fx_utils.utils import getFxUtilsDir
 
 #endregion
@@ -376,8 +376,8 @@ class FXOutlinerUI:
 
         # - - - - - - - - - - - - - - - - -
 
-        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
-        self.prefSaver.addControl(self.searchResultDlg, PrefSaver.UIType.PYSIDEWindow, (200, 200, 500, 700))
+        self.prefSaver = prefsaver.PrefSaver(serializers.SerializerOptVar(OPT_VAR_NAME))
+        self.prefSaver.addControl(self.searchResultDlg, prefsaver.UIType.PYSIDEWindow, (200, 200, 500, 700))
         self.prefSaver.addVariable('fx_outliner_state', self.prefsPack, self.prefsUnPack, None)
         self.prefsLoad()
         self.ui_update()
@@ -918,7 +918,7 @@ class SearchResultModel(QtGui.QSortFilterProxyModel):
         self.setFilterRegExp(QtCore.QRegExp(searchString, caseSensitivity, patternType))
 
 
-class OutlinerState():
+class OutlinerState(object):
     def __init__(self):
         self.currentView = None
         self.currentViewName = ''
@@ -931,7 +931,7 @@ class OutlinerState():
         self.outlinerViews = None
 
 
-class OutlinerView():
+class OutlinerView(object):
     def __init__(self,
                  name='Untitled',
                  mainListConnection='worldList',

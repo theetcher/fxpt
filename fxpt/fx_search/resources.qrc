@@ -1,7 +1,7 @@
 <RCC>
   <qresource>
     <file>icons/fx_search_case.png</file>
-    <file>icons/fx_search_inSelected.png</file>
+    <file>icons/fx_search_in_selected.png</file>
     <file>icons/fx_search_regex.png</file>
     <file>icons/fx_search_search.png</file>
     <file>icons/fx_search_select.png</file>

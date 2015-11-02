@@ -1,4 +1,4 @@
-from fxpt.fx_prefsaver import PrefSaver, Serializers
+from fxpt.fx_prefsaver import prefsaver, serializers
 
 OPT_VAR_NAME_COMMON_PREFS = 'fx_refSystem_global_prefs'
 
@@ -11,7 +11,7 @@ class GlobalPrefsHandler(object):
 
     def __init__(self):
         self.globalPrefs = None
-        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME_COMMON_PREFS))
+        self.prefSaver = prefsaver.PrefSaver(serializers.SerializerOptVar(OPT_VAR_NAME_COMMON_PREFS))
         self.initPrefs()
 
     def initPrefs(self):

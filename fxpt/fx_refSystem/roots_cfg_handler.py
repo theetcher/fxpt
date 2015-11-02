@@ -1,5 +1,5 @@
 import os
-from fxpt.fx_prefsaver import PrefSaver, Serializers
+from fxpt.fx_prefsaver import prefsaver, serializers
 from com import REF_ROOT_VAR_NAME
 
 ROOTS_CFG_OPT_VAR = 'fx_refSystem_roots'
@@ -17,7 +17,7 @@ class RootsCfgHandler(object):
         self.loadCfg()
 
     def initCfg(self):
-        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(ROOTS_CFG_OPT_VAR))
+        self.prefSaver = prefsaver.PrefSaver(serializers.SerializerOptVar(ROOTS_CFG_OPT_VAR))
         # self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerFileJson(os.path.dirname(__file__) + '/test.cfg'))
         self.prefSaver.addVariable('roots', self.getterRoots, self.setterRoots, self.getDefaultRootsValue())
 

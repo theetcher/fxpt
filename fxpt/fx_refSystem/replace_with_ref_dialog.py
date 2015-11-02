@@ -1,7 +1,7 @@
 from PySide import QtGui
 
 from fxpt.fx_utils.utils import cleanupPath
-from fxpt.fx_prefsaver import PrefSaver, Serializers
+from fxpt.fx_prefsaver import prefsaver, serializers
 from fxpt.fx_refSystem.replace_with_ref_dialog_ui import Ui_Dialog
 
 OPT_VAR_NAME = 'fx_refSystem_replaceDlg_prefs'
@@ -26,8 +26,8 @@ class ReplaceDialog(QtGui.QDialog):
 
     # noinspection PyAttributeOutsideInit
     def ui_initSettings(self):
-        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
-        self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (200, 200, 500, 200))
+        self.prefSaver = prefsaver.PrefSaver(serializers.SerializerOptVar(OPT_VAR_NAME))
+        self.prefSaver.addControl(self, prefsaver.UIType.PYSIDEWindow, (200, 200, 500, 200))
         self.prefSaver.addVariable('lastBrowsedDir', self.getLastBrowsedDir, self.setLastBrowsedDir, '')
 
     def getLastBrowsedDir(self):

@@ -8,7 +8,7 @@ from fxpt.fx_refSystem.replace_with_ref_dialog import ReplaceDialog
 from fxpt.fx_refSystem.ref_handle import RefHandle, ATTR_REF_SOURCE_PATH
 from fxpt.fx_refSystem.transform_handle import TransformHandle
 from fxpt.fx_utils.utils import cleanupPath, makeWritable
-from fxpt.fx_utils.utilsMaya import getParent, getShape, getChildTransforms, getLongName, getShortName
+from fxpt.fx_utils.utils_maya import getParent, getShape, getChildTransforms, getLongName, getShortName
 
 from fxpt.fx_utils.watch import watch, wtrace
 

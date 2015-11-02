@@ -1,7 +1,6 @@
 import maya.cmds as m
 import pymel.core as pm
 
-
 SCRIPT_NAME = 'FX Reorient'
 WIN_NAME = 'fx_reorientWin'
 
@@ -12,12 +11,10 @@ LOCATOR_FLY_AWAY_DISTANCE = 100
 
 win = None
 
-from fx_utils.watch import *
 
-
-#noinspection PyAttributeOutsideInit
-#noinspection PyMethodMayBeStatic
-#noinspection PyUnusedLocal
+# noinspection PyAttributeOutsideInit
+# noinspection PyMethodMayBeStatic
+# noinspection PyUnusedLocal
 class ReorientUI(object):
     def __init__(self):
         self.oriData = OriData()
@@ -36,75 +33,86 @@ class ReorientUI(object):
         )
 
         with self.window:
-            with pm.formLayout() as ui_LAY_mainForm:
-                with pm.scrollLayout(childResizable=True) as ui_LAY_mainScroll:
-                    with pm.columnLayout(adjustableColumn=True):
-                        with self.ui_createFrame('Manual Orient', collapsed=True):
-                            with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
-                                pm.separator(style='none', height=5)
 
-                                pm.button(
-                                    label='Create Tripod',
-                                    height=MAIN_BUTTONS_HEIGHT,
-                                    command=self.ui_onBtnCreateTripod
-                                )
+            pm.setUITemplate('DefaultTemplate', pushTemplate=True)
 
-                                pm.separator(style='none', height=5)
+            with pm.formLayout() as self.ui_LAY_mainForm:
 
-                        with self.ui_createFrame('Automatic Orient'):
-                            with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
-                                with self.ui_createButtonTextFieldRowLayout():
-                                    pm.button(
-                                        label='Set Object',
-                                        command=pm.Callback(self.ui_onBtnSetCompClicked, OriData.OriObject)
-                                    )
-                                    self.ui_TXTFLD_objectName = pm.textField(editable=False)
+                with pm.tabLayout(tabsVisible=False) as self.ui_TAB_top:
+                    pm.tabLayout(self.ui_TAB_top, e=True, height=1)
 
-                                with self.ui_createButtonTextFieldRowLayout():
-                                    pm.button(
-                                        label='Set Pivot',
-                                        command=pm.Callback(self.ui_onBtnSetCompClicked, OriData.OriPivot)
-                                    )
-                                    self.ui_TXTFLD_pivotVtx = pm.textField(editable=False)
+                    with pm.formLayout() as self.ui_LAY_attachForm:
 
-                                with self.ui_createButtonTextFieldRowLayout():
-                                    pm.button(
-                                        label='Set Aim',
-                                        command=pm.Callback(self.ui_onBtnSetCompClicked, OriData.OriAim)
-                                    )
-                                    self.ui_TXTFLD_aimVtx = pm.textField(editable=False)
+                        with pm.tabLayout(tabsVisible=False, scrollable=True, innerMarginWidth=4) as self.ui_TAB_inner:
 
-                                with self.ui_createButtonTextFieldRowLayout():
-                                    pm.button(
-                                        label='Set Up',
-                                        command=pm.Callback(self.ui_onBtnSetCompClicked, OriData.OriUp)
-                                    )
-                                    self.ui_TXTFLD_upVtx = pm.textField(editable=False)
+                            with pm.columnLayout(adjustableColumn=True) as self.ui_LAY_mainColumn:
 
-                                pm.separator(style='none', height=5)
+                                with self.ui_createFrame('Manual Orient', collapsed=True):
+                                    with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
+                                        # pm.separator(style='none', height=5)
 
-                                with pm.formLayout() as ui_LAY_btnForm:
-                                    ui_BTN_reset = pm.button(
-                                        label='Reset',
-                                        height=MAIN_BUTTONS_HEIGHT,
-                                        command=self.ui_onBtnResetClicked
-                                    )
+                                        pm.button(
+                                            label='Create Tripod',
+                                            height=MAIN_BUTTONS_HEIGHT,
+                                            command=self.ui_onBtnCreateTripod
+                                        )
 
-                                    self.ui_BTN_fixOrient = pm.button(
-                                        label='Fix Orientation',
-                                        height=MAIN_BUTTONS_HEIGHT,
-                                        command=self.ui_onBtnFixOrient
-                                    )
+                                        # pm.separator(style='none', height=5)
 
-                                    ui_LAY_btnForm.attachNone(ui_BTN_reset, 'top')
-                                    ui_LAY_btnForm.attachForm(ui_BTN_reset, 'left', 2)
-                                    ui_LAY_btnForm.attachPosition(ui_BTN_reset, 'right', 2, 50)
-                                    ui_LAY_btnForm.attachForm(ui_BTN_reset, 'bottom', 2)
+                                with self.ui_createFrame('Automatic Orient'):
+                                    with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
+                                        with self.ui_createButtonTextFieldRowLayout():
+                                            pm.button(
+                                                label='Set Object',
+                                                command=pm.Callback(self.ui_onBtnSetCompClicked, OriData.OriObject)
+                                            )
+                                            self.ui_TXTFLD_objectName = pm.textField(editable=False)
 
-                                    ui_LAY_btnForm.attachNone(self.ui_BTN_fixOrient, 'top')
-                                    ui_LAY_btnForm.attachPosition(self.ui_BTN_fixOrient, 'left', 2, 50)
-                                    ui_LAY_btnForm.attachForm(self.ui_BTN_fixOrient, 'right', 2)
-                                    ui_LAY_btnForm.attachForm(self.ui_BTN_fixOrient, 'bottom', 2)
+                                        with self.ui_createButtonTextFieldRowLayout():
+                                            pm.button(
+                                                label='Set Pivot',
+                                                command=pm.Callback(self.ui_onBtnSetCompClicked, OriData.OriPivot)
+                                            )
+                                            self.ui_TXTFLD_pivotVtx = pm.textField(editable=False)
+
+                                        with self.ui_createButtonTextFieldRowLayout():
+                                            pm.button(
+                                                label='Set Aim',
+                                                command=pm.Callback(self.ui_onBtnSetCompClicked, OriData.OriAim)
+                                            )
+                                            self.ui_TXTFLD_aimVtx = pm.textField(editable=False)
+
+                                        with self.ui_createButtonTextFieldRowLayout():
+                                            pm.button(
+                                                label='Set Up',
+                                                command=pm.Callback(self.ui_onBtnSetCompClicked, OriData.OriUp)
+                                            )
+                                            self.ui_TXTFLD_upVtx = pm.textField(editable=False)
+
+                                        # pm.separator(style='none', height=5)
+
+                                        with pm.formLayout() as ui_LAY_btnForm:
+                                            ui_BTN_reset = pm.button(
+                                                label='Reset',
+                                                height=MAIN_BUTTONS_HEIGHT,
+                                                command=self.ui_onBtnResetClicked
+                                            )
+
+                                            self.ui_BTN_fixOrient = pm.button(
+                                                label='Fix Orientation',
+                                                height=MAIN_BUTTONS_HEIGHT,
+                                                command=self.ui_onBtnFixOrient
+                                            )
+
+                                            ui_LAY_btnForm.attachForm(ui_BTN_reset, 'top', 5)
+                                            ui_LAY_btnForm.attachForm(ui_BTN_reset, 'left', 2)
+                                            ui_LAY_btnForm.attachPosition(ui_BTN_reset, 'right', 2, 50)
+                                            ui_LAY_btnForm.attachForm(ui_BTN_reset, 'bottom', 2)
+
+                                            ui_LAY_btnForm.attachForm(self.ui_BTN_fixOrient, 'top', 5)
+                                            ui_LAY_btnForm.attachPosition(self.ui_BTN_fixOrient, 'left', 2, 50)
+                                            ui_LAY_btnForm.attachForm(self.ui_BTN_fixOrient, 'right', 2)
+                                            ui_LAY_btnForm.attachForm(self.ui_BTN_fixOrient, 'bottom', 2)
 
                 self.ui_btn_close = pm.button(
                     label='Close',
@@ -112,15 +120,22 @@ class ReorientUI(object):
                     command=self.ui_close
                 )
 
-                ui_LAY_mainForm.attachForm(ui_LAY_mainScroll, 'top', 2)
-                ui_LAY_mainForm.attachForm(ui_LAY_mainScroll, 'left', 2)
-                ui_LAY_mainForm.attachForm(ui_LAY_mainScroll, 'right', 2)
-                ui_LAY_mainForm.attachControl(ui_LAY_mainScroll, 'bottom', 2, self.ui_btn_close)
+                pm.setUITemplate('DefaultTemplate', popTemplate=True)
 
-                ui_LAY_mainForm.attachNone(self.ui_btn_close, 'top')
-                ui_LAY_mainForm.attachForm(self.ui_btn_close, 'left', 2)
-                ui_LAY_mainForm.attachForm(self.ui_btn_close, 'right', 2)
-                ui_LAY_mainForm.attachForm(self.ui_btn_close, 'bottom', 2)
+                self.ui_LAY_attachForm.attachForm(self.ui_TAB_inner, 'top', 0)
+                self.ui_LAY_attachForm.attachForm(self.ui_TAB_inner, 'left', 0)
+                self.ui_LAY_attachForm.attachForm(self.ui_TAB_inner, 'right', 0)
+                self.ui_LAY_attachForm.attachForm(self.ui_TAB_inner, 'bottom', 0)
+
+                self.ui_LAY_mainForm.attachForm(self.ui_TAB_top, 'top', 0)
+                self.ui_LAY_mainForm.attachForm(self.ui_TAB_top, 'left', 0)
+                self.ui_LAY_mainForm.attachForm(self.ui_TAB_top, 'right', 0)
+                self.ui_LAY_mainForm.attachControl(self.ui_TAB_top, 'bottom', 5, self.ui_btn_close)
+
+                self.ui_LAY_mainForm.attachNone(self.ui_btn_close, 'top')
+                self.ui_LAY_mainForm.attachForm(self.ui_btn_close, 'left', 5)
+                self.ui_LAY_mainForm.attachForm(self.ui_btn_close, 'bottom', 5)
+                self.ui_LAY_mainForm.attachForm(self.ui_btn_close, 'right', 5)
 
     def ui_createButtonTextFieldRowLayout(self):
         return pm.rowLayout(
@@ -134,10 +149,8 @@ class ReorientUI(object):
         return pm.frameLayout(
             label=name,
             collapsable=True,
-            marginHeight=3,
-            borderStyle='etchedIn',
-            borderVisible=True,
-            collapse=collapsed
+            collapse=collapsed,
+            marginHeight=3
         )
 
     def ui_refresh(self):
@@ -175,7 +188,6 @@ class ReorientUI(object):
 
 # noinspection PyMethodMayBeStatic,PyAttributeOutsideInit
 class OriData(object):
-
     OriObject = 0
     OriPivot = 1
     OriAim = 2
@@ -249,10 +261,9 @@ class OriData(object):
         return any([oriCompName is not None for oriCompName in self.oriData.values()])
 
 
-#noinspection PyAttributeOutsideInit
-#noinspection PyMethodMayBeStatic
+# noinspection PyAttributeOutsideInit
+# noinspection PyMethodMayBeStatic
 class OrientProcessor(object):
-
     def __init__(self):
         pass
 
@@ -319,9 +330,9 @@ def run():
     win = ReorientUI()
 
 
-#----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 # Helper Functions
-#----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
 def simpleWarning(message, icon='information'):
     pm.confirmDialog(

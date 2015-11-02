@@ -1,6 +1,6 @@
 from PySide import QtGui
 
-from fxpt.fx_prefsaver import PrefSaver, Serializers
+from fxpt.fx_prefsaver import prefsaver, serializers
 from fxpt.fx_refSystem.com import getMayaQMainWindow
 from fxpt.fx_refSystem.log_dialog_ui import Ui_Dialog
 
@@ -21,8 +21,8 @@ class LogDialog(QtGui.QDialog):
 
     # noinspection PyAttributeOutsideInit
     def ui_initSettings(self):
-        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME_LOG_DLG))
-        self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (200, 200, 800, 500))
+        self.prefSaver = prefsaver.PrefSaver(serializers.SerializerOptVar(OPT_VAR_NAME_LOG_DLG))
+        self.prefSaver.addControl(self, prefsaver.UIType.PYSIDEWindow, (200, 200, 800, 500))
 
     def ui_loadSettings(self):
         self.prefSaver.loadPrefs()

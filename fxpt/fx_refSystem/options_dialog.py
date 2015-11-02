@@ -1,7 +1,7 @@
 from PySide import QtGui
 
 from fxpt.fx_utils.utils import cleanupPath
-from fxpt.fx_prefsaver import PrefSaver, Serializers
+from fxpt.fx_prefsaver import prefsaver, serializers
 from fxpt.fx_refSystem.options_dialog_ui import Ui_Dialog
 from fxpt.fx_refSystem.roots_cfg_handler import RootsCfgHandler
 from fxpt.fx_refSystem.com import getMayaQMainWindow
@@ -34,8 +34,8 @@ class OptionsDialog(QtGui.QDialog):
 
     # noinspection PyAttributeOutsideInit
     def ui_initSettings(self):
-        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
-        self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (200, 200, 600, 300))
+        self.prefSaver = prefsaver.PrefSaver(serializers.SerializerOptVar(OPT_VAR_NAME))
+        self.prefSaver.addControl(self, prefsaver.UIType.PYSIDEWindow, (200, 200, 600, 300))
         self.prefSaver.addVariable('lastBrowsedDir', self.getLastBrowsedDir, self.setLastBrowsedDir, '')
 
     def getLastBrowsedDir(self):

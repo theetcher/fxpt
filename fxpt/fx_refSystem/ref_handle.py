@@ -6,7 +6,7 @@ from maya import cmds as m
 from fxpt.fx_refSystem.com import REF_ROOT_VAR_NAME, REF_ROOT_VAR_NAME_P, isPathRelative
 from fxpt.fx_refSystem.transform_handle import TransformHandle
 from fxpt.fx_utils.utils import cleanupPath
-from fxpt.fx_utils.utilsMaya import getLongName, getShape, getParent, parentAPI
+from fxpt.fx_utils.utils_maya import getLongName, getShape, getParent, parentAPI
 
 from fxpt.fx_utils.watch import watch
 

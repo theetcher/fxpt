@@ -1,5 +1,5 @@
 from maya import cmds as m
-from fxpt.fx_utils.utilsMaya import getShape, getParent, parentAPI
+from fxpt.fx_utils.utils_maya import getShape, getParent, parentAPI
 
 
 # noinspection PyAttributeOutsideInit

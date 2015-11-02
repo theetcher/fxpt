@@ -8,10 +8,10 @@ import shiboken
 import maya.OpenMayaUI as omui
 import pymel.core as pm
 
-from fxpt.fx_prefsaver import PrefSaver, Serializers
-import MainWindowUI
-import Searchers
-from Com import *
+from fxpt.fx_prefsaver import prefsaver, serializers
+import main_window_ui
+import searchers
+from com import *
 
 # endregion imports
 
@@ -23,7 +23,7 @@ OPT_VAR_NAME = 'fx_search_prefs'
 
 
 # noinspection PyMethodMayBeStatic,PyUnusedLocal
-class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
+class SearchUI(QtGui.QMainWindow, main_window_ui.Ui_MainWindow):
     def __init__(self):
         # noinspection PyArgumentList
         ptr = omui.MQtUtil.mainWindow()
@@ -45,23 +45,23 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
 
         self.ui_setState(SEARCH_STATE_WELCOME)
 
-        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
+        self.prefSaver = prefsaver.PrefSaver(serializers.SerializerOptVar(OPT_VAR_NAME))
         self.ui_initSettings()
         self.ui_loadSettings()
 
     # noinspection PyMethodMayBeStatic
     def ui_initSettings(self):
-        self.prefSaver.addControl(self, PrefSaver.UIType.PYSIDEWindow, (100, 100, 900, 600))
-        self.prefSaver.addControl(self.ui_LED_search, PrefSaver.UIType.PYSIDELineEdit)
-        self.prefSaver.addControl(self.ui_BTN_soCaseSensitive, PrefSaver.UIType.PYSIDECheckButton, False)
-        self.prefSaver.addControl(self.ui_BTN_soRegex, PrefSaver.UIType.PYSIDECheckButton, False)
-        self.prefSaver.addControl(self.ui_BTN_soSelectFound, PrefSaver.UIType.PYSIDECheckButton, False)
-        self.prefSaver.addControl(self.ui_BTN_soIncludeShapes, PrefSaver.UIType.PYSIDECheckButton, False)
-        self.prefSaver.addControl(self.ui_BTN_soSearchSelected, PrefSaver.UIType.PYSIDECheckButton, False)
-        self.prefSaver.addControl(self.ui_ACT_useAllTabs, PrefSaver.UIType.PYSIDECheckAction, False)
+        self.prefSaver.addControl(self, prefsaver.UIType.PYSIDEWindow, (100, 100, 900, 600))
+        self.prefSaver.addControl(self.ui_LED_search, prefsaver.UIType.PYSIDELineEdit)
+        self.prefSaver.addControl(self.ui_BTN_soCaseSensitive, prefsaver.UIType.PYSIDECheckButton, False)
+        self.prefSaver.addControl(self.ui_BTN_soRegex, prefsaver.UIType.PYSIDECheckButton, False)
+        self.prefSaver.addControl(self.ui_BTN_soSelectFound, prefsaver.UIType.PYSIDECheckButton, False)
+        self.prefSaver.addControl(self.ui_BTN_soIncludeShapes, prefsaver.UIType.PYSIDECheckButton, False)
+        self.prefSaver.addControl(self.ui_BTN_soSearchSelected, prefsaver.UIType.PYSIDECheckButton, False)
+        self.prefSaver.addControl(self.ui_ACT_useAllTabs, prefsaver.UIType.PYSIDECheckAction, False)
 
         for btn in self.getCatButtons():
-            self.prefSaver.addControl(btn, PrefSaver.UIType.PYSIDECheckButton, True)
+            self.prefSaver.addControl(btn, prefsaver.UIType.PYSIDECheckButton, True)
 
     def ui_loadSettings(self):
         self.prefSaver.loadPrefs()
@@ -74,19 +74,19 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
 
     def initSearchersAndControls(self):
         self.searchers = [
-            SearcherLink(Searchers.SearcherNodes('All Nodes'), QtGui.QPushButton('All Nodes'),
+            SearcherLink(searchers.SearcherNodes('All Nodes'), QtGui.QPushButton('All Nodes'),
                          QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(Searchers.SearcherDagNodes('DAG Nodes'), QtGui.QPushButton('DAG Nodes'),
+            SearcherLink(searchers.SearcherDagNodes('DAG Nodes'), QtGui.QPushButton('DAG Nodes'),
                          QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(Searchers.SearcherFxRefs('FX References'), QtGui.QPushButton('FX References'),
+            SearcherLink(searchers.SearcherFxRefs('FX References'), QtGui.QPushButton('FX References'),
                          QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(Searchers.SearcherTexturedBy('Textured By'), QtGui.QPushButton('Textured By'),
+            SearcherLink(searchers.SearcherTexturedBy('Textured By'), QtGui.QPushButton('Textured By'),
                          QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(Searchers.SearcherTextures('Textures'), QtGui.QPushButton('Textures'),
+            SearcherLink(searchers.SearcherTextures('Textures'), QtGui.QPushButton('Textures'),
                          QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(Searchers.SearcherTransforms('Transforms'), QtGui.QPushButton('Transforms'),
+            SearcherLink(searchers.SearcherTransforms('Transforms'), QtGui.QPushButton('Transforms'),
                          QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(Searchers.SearcherType('Type'), QtGui.QPushButton('Type'),
+            SearcherLink(searchers.SearcherType('Type'), QtGui.QPushButton('Type'),
                          QtGui.QTableView(), QtGui.QWidget())
         ]
 
@@ -101,7 +101,7 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
             sl.button.setCheckable(True)
             buttonLabel = sl.button.text()
             sl.button.setObjectName('uiBTN_' + buttonLabel[0].lower() + buttonLabel[1:].replace(' ', ''))
-            sl.button.setStyleSheet(CHECKED_BUTTON_STYLE)
+            # sl.button.setStyleSheet(CHECKED_BUTTON_STYLE)
             self.ui_LAY_catButtons.addWidget(sl.button)
 
             sl.table.connect(
@@ -114,6 +114,7 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
             sl.table.connect(sl.table, QtCore.SIGNAL('customContextMenuRequested(QPoint)'),
                              self.ui_onCtxMenuPopupRequest)
 
+        # noinspection PyArgumentList
         self.ui_LAY_catButtons.addItem(QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
 
         self.resetResultTablesAndTabs()
@@ -300,7 +301,7 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
         return self.ui_ACT_useAllTabs.isChecked()
 
     def getSearchDesc(self):
-        sd = Searchers.SearchDesc()
+        sd = searchers.SearchDesc()
         sd.searchString = str(self.ui_LED_search.text()).strip()
         sd.caseSensitive = self.ui_BTN_soCaseSensitive.isChecked()
         sd.regex = self.ui_BTN_soRegex.isChecked()
@@ -337,12 +338,14 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
                 return sl
 
     def ui_onShowHelpClicked(self):
-        return
-        # QtGui.QDesktopServices.openUrl(QtCore.QUrl('http://www.site.com/somehelp', QtCore.QUrl.TolerantMode))
+        # return
+        # noinspection PyArgumentList,PyCallByClass
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl('http://davydenko.info/searcher/', QtCore.QUrl.TolerantMode))
 
     def ui_onCloseClicked(self):
         self.close()
 
+    # noinspection PyMethodOverriding
     def closeEvent(self, event):
         self.ui_saveSettings()
         self.ui_tryToSaveTabOptVar()
@@ -351,7 +354,7 @@ class SearchUI(QtGui.QMainWindow, MainWindowUI.Ui_MainWindow):
         event.accept()
 
 
-class OptionVarLink():
+class OptionVarLink(object):
 
     def __init__(self, ovName, defaultValue, getFromControlFunc, setToControlFunc):
         self.ovName = ovName
@@ -379,7 +382,7 @@ class OptionVarLink():
         self.applyToControl()
 
 
-class SearcherLink():
+class SearcherLink(object):
 
     def __init__(self, searcher, button, table, tabWidget):
         self.searcher = searcher

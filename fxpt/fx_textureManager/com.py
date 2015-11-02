@@ -31,7 +31,7 @@ QToolButton:checked{
 """
 
 if QtGui and m:
-    from fxpt.fx_utils.qtFontCreator import QtFontCreator
+    from fxpt.fx_utils.qt_font_creator import QtFontCreator
     from fxpt.fx_utils.utils import getFxUtilsDir
     qtFontCreator = QtFontCreator(getFxUtilsDir() + '/proggy_tiny_sz.ttf', 12)
     FONT_MONOSPACE_QFONT = qtFontCreator.getQFont()

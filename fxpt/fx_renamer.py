@@ -5,7 +5,7 @@ import maya.cmds as m
 import maya.OpenMaya as om
 import pymel.core as pm
 
-from fxpt.fx_prefsaver import PrefSaver, Serializers
+from fxpt.fx_prefsaver import prefsaver, serializers
 #endregion imports
 
 #region constants
@@ -40,7 +40,7 @@ def isAllSymbolsValid(s):
 
 
 # noinspection PyMethodMayBeStatic
-class NodeHandle():
+class NodeHandle(object):
     def __init__(self, fullPath):
         self.mObject = self.fullPathToMObject(fullPath)
         self.originalName = self.getName()
@@ -177,7 +177,7 @@ class NodeHandle():
         return rd
 
 
-class RenameDesc():
+class RenameDesc(object):
     def __init__(self):
         self.action = None
         self.simpleNameStr = None
@@ -189,31 +189,31 @@ class RenameDesc():
 
 
 # noinspection PyAttributeOutsideInit,PyMethodMayBeStatic
-class RenamerUI():
+class RenamerUI(object):
     def __init__(self):
         self.optionVarLinks = []
         self.ui_createUI()
 
-        self.prefSaver = PrefSaver.PrefSaver(Serializers.SerializerOptVar(OPT_VAR_NAME))
+        self.prefSaver = prefsaver.PrefSaver(serializers.SerializerOptVar(OPT_VAR_NAME))
         self.ui_initSettings()
         self.ui_loadSettings()
 
     # noinspection PyMethodMayBeStatic,PyUnresolvedReferences
     def ui_initSettings(self):
-        self.prefSaver.addControl(self.ui_RADBTNGRP_shapeProcessing, PrefSaver.UIType.PMRadioButtonGrp3, 1)
-        self.prefSaver.addControl(self.ui_TXTFLDGRP_simpleRename, PrefSaver.UIType.PMTextFieldGrp, '')
-        self.prefSaver.addControl(self.ui_TXTFLDGRP_find, PrefSaver.UIType.PMTextFieldGrp, '')
-        self.prefSaver.addControl(self.ui_TXTFLDGRP_replace, PrefSaver.UIType.PMTextFieldGrp, '')
-        self.prefSaver.addControl(self.ui_TXTFLDGRP_prefix, PrefSaver.UIType.PMTextFieldGrp, '')
-        self.prefSaver.addControl(self.ui_TXTFLDGRP_suffix, PrefSaver.UIType.PMTextFieldGrp, '')
-        self.prefSaver.addControl(self.ui_TXTFLDGRP_renameNumber, PrefSaver.UIType.PMTextFieldGrp, '')
-        self.prefSaver.addControl(self.ui_INTFLDGRP_startIndex, PrefSaver.UIType.PMIntFieldGrp1, [1])
-        self.prefSaver.addControl(self.ui_LAY_frameOptions, PrefSaver.UIType.PMFrameLayout, False)
-        self.prefSaver.addControl(self.ui_LAY_frameSimpleRename, PrefSaver.UIType.PMFrameLayout, False)
-        self.prefSaver.addControl(self.ui_LAY_frameFindReplace, PrefSaver.UIType.PMFrameLayout, False)
-        self.prefSaver.addControl(self.ui_LAY_framePrefix, PrefSaver.UIType.PMFrameLayout, False)
-        self.prefSaver.addControl(self.ui_LAY_frameSuffix, PrefSaver.UIType.PMFrameLayout, False)
-        self.prefSaver.addControl(self.ui_LAY_frameRenameNumber, PrefSaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.ui_RADBTNGRP_shapeProcessing, prefsaver.UIType.PMRadioButtonGrp3, 1)
+        self.prefSaver.addControl(self.ui_TXTFLDGRP_simpleRename, prefsaver.UIType.PMTextFieldGrp, '')
+        self.prefSaver.addControl(self.ui_TXTFLDGRP_find, prefsaver.UIType.PMTextFieldGrp, '')
+        self.prefSaver.addControl(self.ui_TXTFLDGRP_replace, prefsaver.UIType.PMTextFieldGrp, '')
+        self.prefSaver.addControl(self.ui_TXTFLDGRP_prefix, prefsaver.UIType.PMTextFieldGrp, '')
+        self.prefSaver.addControl(self.ui_TXTFLDGRP_suffix, prefsaver.UIType.PMTextFieldGrp, '')
+        self.prefSaver.addControl(self.ui_TXTFLDGRP_renameNumber, prefsaver.UIType.PMTextFieldGrp, '')
+        self.prefSaver.addControl(self.ui_INTFLDGRP_startIndex, prefsaver.UIType.PMIntFieldGrp1, [1])
+        self.prefSaver.addControl(self.ui_LAY_frameOptions, prefsaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.ui_LAY_frameSimpleRename, prefsaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.ui_LAY_frameFindReplace, prefsaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.ui_LAY_framePrefix, prefsaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.ui_LAY_frameSuffix, prefsaver.UIType.PMFrameLayout, False)
+        self.prefSaver.addControl(self.ui_LAY_frameRenameNumber, prefsaver.UIType.PMFrameLayout, False)
 
     def ui_loadSettings(self):
         self.prefSaver.loadPrefs()
@@ -229,8 +229,8 @@ class RenamerUI():
         if pm.window(WIN_NAME, exists=True):
             pm.deleteUI(WIN_NAME, window=True)
 
-        #TODO: need a window close event for saving prefs on [X] button click. pm.scriptJob(uiDeleted=(WIN_NAME, self.ui_saveSettings)) doesnt work cause ui elements already deleted. May be PythonAPI callbacks (Astus as an example)
-        #TODO: looks like prefs are saved only on Close button click. Look to other PyMel UI Scripts
+        # TODO: need a window close event for saving prefs on [X] button click. pm.scriptJob(uiDeleted=(WIN_NAME, self.ui_saveSettings)) doesnt work cause ui elements already deleted. May be PythonAPI callbacks (Astus as an example)
+        # TODO: looks like prefs are saved only on Close button click. Look to other PyMel UI Scripts
 
         with pm.window(
             WIN_NAME,
@@ -240,178 +240,185 @@ class RenamerUI():
             menuBarVisible=True
         ) as self.window:
 
+            pm.setUITemplate('DefaultTemplate', pushTemplate=True)
+
             pm.menu(label='Edit', tearOff=False)
             pm.menuItem(label='Reset Settings', command=self.ui_resetSettings)
             pm.menu(label='Help', tearOff=False)
-            pm.menuItem(label='Help on ' + WIN_TITLE, command=pm.Callback(self.ui_showHelp, 1))
-            pm.menuItem(divider=True)
-            pm.menuItem(label='Script Information', command=pm.Callback(self.ui_showHelp, 2))
+            pm.menuItem(label='Help on ' + WIN_TITLE, command=self.ui_showHelp)
 
             with pm.formLayout() as self.ui_LAY_mainForm:
 
-                with pm.scrollLayout(childResizable=True) as self.ui_LAY_mainScroll:
+                with pm.tabLayout(tabsVisible=False) as self.ui_TAB_top:
+                    pm.tabLayout(self.ui_TAB_top, e=True, height=1)
 
-                    with pm.columnLayout(adjustableColumn=True) as self.ui_LAY_mainColumn:
+                    with pm.formLayout() as self.ui_LAY_attachForm:
 
-                        # --------------------
-                        with self.ui_createFrame('ui_LAY_frameOptions', 'Options') as self.ui_LAY_frameOptions:
+                        with pm.tabLayout(tabsVisible=False, scrollable=True, innerMarginWidth=4) as self.ui_TAB_inner:
 
-                            with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
+                            with pm.columnLayout(adjustableColumn=True, rowSpacing=4) as self.ui_LAY_mainColumn:
 
-                                self.ui_RADBTNGRP_shapeProcessing = pm.radioButtonGrp(
-                                    'ui_RADBTNGRP_shapeProcessing',
-                                    label='Shape Processing:',
-                                    labelArray3=["Rename shapes according to it's transforms\n(even if it's not selected)",
-                                                 "Don't rename shapes", 'Treat shapes as ordinary nodes'],
-                                    numberOfRadioButtons=3,
-                                    columnWidth=[1, UI_LABEL_WIDTH],
-                                    columnAttach=[1, 'right', 5],
-                                    vertical=True,
-                                    select=SHAPE_PROCESSING_ACCORDING_TO_TRANSFORM
-                                )
+                                # --------------------
+                                with self.ui_createFrame('ui_LAY_frameOptions', 'Options') as self.ui_LAY_frameOptions:
 
-                                pm.separator(style='none', height=2)
+                                    with pm.columnLayout(adjustableColumn=True):  # columnOffset=('both', 2)):
 
-                        # --------------------
-                        with self.ui_createFrame('ui_LAY_frameSimpleRename', 'Rename') as self.ui_LAY_frameSimpleRename:
+                                        self.ui_RADBTNGRP_shapeProcessing = pm.radioButtonGrp(
+                                            'ui_RADBTNGRP_shapeProcessing',
+                                            label='Shape Processing:',
+                                            labelArray3=["Rename shapes according to it's transforms\n(even if it's not selected)",
+                                                         "Don't rename shapes", 'Treat shapes as ordinary nodes'],
+                                            numberOfRadioButtons=3,
+                                            columnWidth=[1, UI_LABEL_WIDTH],
+                                            columnAttach=[1, 'right', 5],
+                                            vertical=True,
+                                            select=SHAPE_PROCESSING_ACCORDING_TO_TRANSFORM
+                                        )
 
-                            with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
+                                        # pm.separator(style='none', height=2)
 
-                                self.ui_TXTFLDGRP_simpleRename = pm.textFieldGrp(
-                                    'ui_TXTFLDGRP_simpleRename',
-                                    label='New Name',
-                                    columnWidth=[1, UI_LABEL_WIDTH],
-                                    columnAttach=[1, 'right', 5],
-                                    adjustableColumn=2
-                                )
+                                # --------------------
+                                with self.ui_createFrame('ui_LAY_frameSimpleRename', 'Rename') as self.ui_LAY_frameSimpleRename:
 
-                                pm.separator(style='none', height=2)
+                                    with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
 
-                                self.ui_BTN_simpleRename = pm.button(
-                                    label='Rename',
-                                    command=pm.Callback(self.ui_onRenameClick, RENAME_ACTION_SIMPLE_RENAME)
-                                )
+                                        self.ui_TXTFLDGRP_simpleRename = pm.textFieldGrp(
+                                            'ui_TXTFLDGRP_simpleRename',
+                                            label='New Name',
+                                            columnWidth=[1, UI_LABEL_WIDTH],
+                                            columnAttach=[1, 'right', 5],
+                                            adjustableColumn=2
+                                        )
 
-                        # --------------------
-                        with self.ui_createFrame('ui_LAY_frameFindReplace', 'Find and Replace') as self.ui_LAY_frameFindReplace:
+                                        pm.separator(style='none', height=2)
 
-                            with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
+                                        self.ui_BTN_simpleRename = pm.button(
+                                            label='Rename',
+                                            command=pm.Callback(self.ui_onRenameClick, RENAME_ACTION_SIMPLE_RENAME)
+                                        )
 
-                                self.ui_TXTFLDGRP_find = pm.textFieldGrp(
-                                    'ui_TXTFLDGRP_find',
-                                    label='Find',
-                                    columnWidth=[1, UI_LABEL_WIDTH],
-                                    columnAttach=[1, 'right', 5],
-                                    adjustableColumn=2
-                                )
+                                        pm.separator(style='none', height=2)
 
-                                self.ui_TXTFLDGRP_replace = pm.textFieldGrp(
-                                    'ui_TXTFLDGRP_replace',
-                                    label='Replace With',
-                                    columnWidth=[1, UI_LABEL_WIDTH],
-                                    columnAttach=[1, 'right', 5],
-                                    adjustableColumn=2
-                                )
+                                # --------------------
+                                with self.ui_createFrame('ui_LAY_frameFindReplace', 'Find and Replace') as self.ui_LAY_frameFindReplace:
 
-                                pm.separator(style='none', height=2)
+                                    with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
 
-                                self.ui_BTN_findReplace = pm.button(
-                                    label='Find and Replace',
-                                    command=pm.Callback(self.ui_onRenameClick, RENAME_ACTION_FIND_REPLACE)
-                                )
+                                        self.ui_TXTFLDGRP_find = pm.textFieldGrp(
+                                            'ui_TXTFLDGRP_find',
+                                            label='Find',
+                                            columnWidth=[1, UI_LABEL_WIDTH],
+                                            columnAttach=[1, 'right', 5],
+                                            adjustableColumn=2
+                                        )
 
-                                pm.setParent(self.ui_LAY_mainColumn)
+                                        self.ui_TXTFLDGRP_replace = pm.textFieldGrp(
+                                            'ui_TXTFLDGRP_replace',
+                                            label='Replace With',
+                                            columnWidth=[1, UI_LABEL_WIDTH],
+                                            columnAttach=[1, 'right', 5],
+                                            adjustableColumn=2
+                                        )
 
-                        # --------------------
-                        with self.ui_createFrame('ui_LAY_framePrefix', 'Add Prefix') as self.ui_LAY_framePrefix:
+                                        pm.separator(style='none', height=2)
 
-                            with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
+                                        self.ui_BTN_findReplace = pm.button(
+                                            label='Find and Replace',
+                                            command=pm.Callback(self.ui_onRenameClick, RENAME_ACTION_FIND_REPLACE)
+                                        )
 
-                                self.ui_TXTFLDGRP_prefix = pm.textFieldGrp(
-                                    'ui_TXTFLDGRP_prefix',
-                                    label='Prefix',
-                                    columnWidth=[1, UI_LABEL_WIDTH],
-                                    columnAttach=[1, 'right', 5],
-                                    adjustableColumn=2
-                                )
+                                        pm.setParent(self.ui_LAY_mainColumn)
 
-                                pm.separator(style='none', height=2)
+                                # --------------------
+                                with self.ui_createFrame('ui_LAY_framePrefix', 'Add Prefix') as self.ui_LAY_framePrefix:
 
-                                self.ui_BTN_prefix = pm.button(
-                                    label='Add Prefix',
-                                    command=pm.Callback(self.ui_onRenameClick, RENAME_ACTION_PREFIX)
-                                )
+                                    with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
 
-                                pm.setParent(self.ui_LAY_mainColumn)
+                                        self.ui_TXTFLDGRP_prefix = pm.textFieldGrp(
+                                            'ui_TXTFLDGRP_prefix',
+                                            label='Prefix',
+                                            columnWidth=[1, UI_LABEL_WIDTH],
+                                            columnAttach=[1, 'right', 5],
+                                            adjustableColumn=2
+                                        )
 
-                        # --------------------
-                        with self.ui_createFrame('ui_LAY_frameSuffix', 'Add Suffix') as self.ui_LAY_frameSuffix:
+                                        pm.separator(style='none', height=2)
 
-                            with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
+                                        self.ui_BTN_prefix = pm.button(
+                                            label='Add Prefix',
+                                            command=pm.Callback(self.ui_onRenameClick, RENAME_ACTION_PREFIX)
+                                        )
 
-                                self.ui_TXTFLDGRP_suffix = pm.textFieldGrp(
-                                    'ui_TXTFLDGRP_suffix',
-                                    label='Suffix',
-                                    columnWidth=[1, UI_LABEL_WIDTH],
-                                    columnAttach=[1, 'right', 5],
-                                    adjustableColumn=2
-                                )
+                                        pm.setParent(self.ui_LAY_mainColumn)
 
-                                pm.separator(style='none', height=2)
+                                # --------------------
+                                with self.ui_createFrame('ui_LAY_frameSuffix', 'Add Suffix') as self.ui_LAY_frameSuffix:
 
-                                self.ui_BTN_prefix = pm.button(
-                                    label='Add Suffix',
-                                    command=pm.Callback(self.ui_onRenameClick, RENAME_ACTION_SUFFIX)
-                                )
+                                    with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
 
-                        # --------------------
-                        with self.ui_createFrame('ui_LAY_frameRenameNumber', 'Rename and Number') as self.ui_LAY_frameRenameNumber:
+                                        self.ui_TXTFLDGRP_suffix = pm.textFieldGrp(
+                                            'ui_TXTFLDGRP_suffix',
+                                            label='Suffix',
+                                            columnWidth=[1, UI_LABEL_WIDTH],
+                                            columnAttach=[1, 'right', 5],
+                                            adjustableColumn=2
+                                        )
 
-                            with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
+                                        pm.separator(style='none', height=2)
 
-                                with pm.frameLayout(
-                                    labelVisible=False,
-                                    collapsable=False,
-                                    marginHeight=3,
-                                    borderStyle='in',
-                                    borderVisible=True,
-                                    enable=False
-                                ):
-                                    with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 3)):
+                                        self.ui_BTN_prefix = pm.button(
+                                            label='Add Suffix',
+                                            command=pm.Callback(self.ui_onRenameClick, RENAME_ACTION_SUFFIX)
+                                        )
 
-                                        helpText = ''
-                                        helpText += 'Type "#" symbol(s) in New Name where you want to place numbering.\n'
-                                        helpText += 'For example:\n'
-                                        helpText += '   pCube#  ->  pCube1, pCube2, ..., pCube15, ...\n'
-                                        helpText += '   pCube####  ->  pCube0001, pCube0002, ..., pCube0015, ...\n'
-                                        helpText += '   obj_##_a  ->  obj_01_a, obj_02_a, ..., obj_15_a, ...\n'
-                                        helpText += 'Omitting "#" will result in pattern:\n'
-                                        helpText += '   pCube  ->  pCube1, pCube2, ..., pCube15, ...'
-                                        self.ui_TXT_help = pm.text(helpText, align='left')
+                                # --------------------
+                                with self.ui_createFrame('ui_LAY_frameRenameNumber', 'Rename and Number') as self.ui_LAY_frameRenameNumber:
 
-                                pm.separator(style='none', height=2)
+                                    with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 2)):
 
-                                self.ui_TXTFLDGRP_renameNumber = pm.textFieldGrp(
-                                    'ui_TXTFLDGRP_renameNumber',
-                                    label='New Name',
-                                    columnWidth=[1, UI_LABEL_WIDTH],
-                                    columnAttach=[1, 'right', 5],
-                                    adjustableColumn=2
-                                )
+                                        with pm.frameLayout(
+                                            labelVisible=False,
+                                            collapsable=False,
+                                            marginHeight=3,
+                                            # borderStyle='in',
+                                            # borderVisible=True,
+                                            enable=False
+                                        ):
+                                            with pm.columnLayout(adjustableColumn=True, columnOffset=('both', 3)):
 
-                                self.ui_INTFLDGRP_startIndex = pm.intFieldGrp(
-                                    'ui_INTFLDGRP_startIndex',
-                                    label='Start Index',
-                                    columnWidth2=[UI_LABEL_WIDTH, 60],
-                                    columnAttach=[1, 'right', 5]
-                                )
+                                                helpText = ''
+                                                helpText += 'Type "#" symbol(s) in New Name where you want to place numbering.\n'
+                                                helpText += 'For example:\n'
+                                                helpText += '   pCube#  ->  pCube1, pCube2, ..., pCube15, ...\n'
+                                                helpText += '   pCube####  ->  pCube0001, pCube0002, ..., pCube0015, ...\n'
+                                                helpText += '   obj_##_a  ->  obj_01_a, obj_02_a, ..., obj_15_a, ...\n'
+                                                helpText += 'Omitting "#" will result in pattern:\n'
+                                                helpText += '   pCube  ->  pCube1, pCube2, ..., pCube15, ...'
+                                                self.ui_TXT_help = pm.text(helpText, align='left')
 
-                                pm.separator(style='none', height=2)
+                                        pm.separator(style='none', height=2)
 
-                                self.ui_BTN_prefix = pm.button(
-                                    label='Rename and Number',
-                                    command=pm.Callback(self.ui_onRenameClick, RENAME_ACTION_NUMBER)
-                                )
+                                        self.ui_TXTFLDGRP_renameNumber = pm.textFieldGrp(
+                                            'ui_TXTFLDGRP_renameNumber',
+                                            label='New Name',
+                                            columnWidth=[1, UI_LABEL_WIDTH],
+                                            columnAttach=[1, 'right', 5],
+                                            adjustableColumn=2
+                                        )
+
+                                        self.ui_INTFLDGRP_startIndex = pm.intFieldGrp(
+                                            'ui_INTFLDGRP_startIndex',
+                                            label='Start Index',
+                                            columnWidth2=[UI_LABEL_WIDTH, 60],
+                                            columnAttach=[1, 'right', 5]
+                                        )
+
+                                        pm.separator(style='none', height=2)
+
+                                        self.ui_BTN_prefix = pm.button(
+                                            label='Rename and Number',
+                                            command=pm.Callback(self.ui_onRenameClick, RENAME_ACTION_NUMBER)
+                                        )
 
                 self.ui_BTN_close = pm.button(
                     label='Close',
@@ -419,15 +426,22 @@ class RenamerUI():
                     command=self.ui_close
                 )
 
-        self.ui_LAY_mainForm.attachForm(self.ui_LAY_mainScroll, 'top', 2)
-        self.ui_LAY_mainForm.attachForm(self.ui_LAY_mainScroll, 'left', 2)
-        self.ui_LAY_mainForm.attachForm(self.ui_LAY_mainScroll, 'right', 2)
-        self.ui_LAY_mainForm.attachControl(self.ui_LAY_mainScroll, 'bottom', 2, self.ui_BTN_close)
+        pm.setUITemplate('DefaultTemplate', popTemplate=True)
+
+        self.ui_LAY_attachForm.attachForm(self.ui_TAB_inner, 'top', 0)
+        self.ui_LAY_attachForm.attachForm(self.ui_TAB_inner, 'left', 0)
+        self.ui_LAY_attachForm.attachForm(self.ui_TAB_inner, 'right', 0)
+        self.ui_LAY_attachForm.attachForm(self.ui_TAB_inner, 'bottom', 0)
+
+        self.ui_LAY_mainForm.attachForm(self.ui_TAB_top, 'top', 0)
+        self.ui_LAY_mainForm.attachForm(self.ui_TAB_top, 'left', 0)
+        self.ui_LAY_mainForm.attachForm(self.ui_TAB_top, 'right', 0)
+        self.ui_LAY_mainForm.attachControl(self.ui_TAB_top, 'bottom', 5, self.ui_BTN_close)
 
         self.ui_LAY_mainForm.attachNone(self.ui_BTN_close, 'top')
-        self.ui_LAY_mainForm.attachForm(self.ui_BTN_close, 'left', 2)
-        self.ui_LAY_mainForm.attachForm(self.ui_BTN_close, 'right', 2)
-        self.ui_LAY_mainForm.attachForm(self.ui_BTN_close, 'bottom', 2)
+        self.ui_LAY_mainForm.attachForm(self.ui_BTN_close, 'left', 5)
+        self.ui_LAY_mainForm.attachForm(self.ui_BTN_close, 'bottom', 5)
+        self.ui_LAY_mainForm.attachForm(self.ui_BTN_close, 'right', 5)
 
         self.window.show()
         pm.refresh()
@@ -437,9 +451,10 @@ class RenamerUI():
             name,
             label=label,
             collapsable=True,
-            marginHeight=3,
-            borderStyle='etchedIn',
-            borderVisible=True
+            collapse=False,
+            marginHeight=5,
+            # borderStyle='etchedIn',
+            # borderVisible=True
         )
 
     def ui_onRenameClick(self, action):
@@ -500,7 +515,7 @@ class RenamerUI():
                 self.ui_errorInvalidSymbols('"New Name" field is empty.')
                 return
 
-            splittedName = self.getSplittedNameByNumberingPattern(pattern)
+            splittedName = self.getSplitNameByNumberingPattern(pattern)
             if not isAllSymbolsValid(splittedName[0]) or not isAllSymbolsValid(splittedName[2]):
                 self.ui_errorInvalidSymbols('"New Name" field contains an invalid Maya symbol(s).')
                 return
@@ -533,7 +548,7 @@ class RenamerUI():
             cancelButton='Close'
         )
 
-    def getSplittedNameByNumberingPattern(self, pattern):
+    def getSplitNameByNumberingPattern(self, pattern):
         match = re.search(r'^(\w*)(#*)(.*)$', pattern)
         return match.group(1), match.group(2), match.group(3)
 
@@ -557,167 +572,9 @@ class RenamerUI():
             pm.deleteUI(WIN_NAME, window=True)
 
     # noinspection PyUnusedLocal
-    def ui_showHelp(self, tab, *args):
-
-        if pm.window(WIN_HELPNAME, exists=True):
-            pm.deleteUI(WIN_HELPNAME, window=True)
-
-        with pm.window(
-            WIN_HELPNAME,
-            title=WIN_HELPTITLE,
-            maximizeButton=False
-        ) as self.helpWindow:
-
-            with pm.formLayout() as self.ui_LAY_formMainHelp:
-
-                with pm.tabLayout(innerMarginWidth=50, innerMarginHeight=50, childResizable=True) as self.ui_LAY_tabHelp:
-
-                    with pm.formLayout() as self.ui_LAY_formHelpMargin:
-
-                        with pm.scrollLayout(childResizable=True) as self.ui_LAY_scrollHelp:
-
-                            self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'top', 2)
-                            self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'left', 2)
-                            self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'right', 2)
-                            self.ui_LAY_formHelpMargin.attachForm(self.ui_LAY_scrollHelp, 'bottom', 2)
-
-                            with pm.frameLayout(
-                                label='Help on ' + WIN_TITLE,
-                                collapsable=False,
-                                marginHeight=3,
-                                borderStyle='etchedIn',
-                                borderVisible=True
-                            ):
-
-                                with pm.rowLayout(columnAttach=[1, 'both', 10]):
-
-                                    self.ui_TXT_help = pm.text('', align='left')
-
-                    with pm.formLayout() as self.ui_LAY_formAboutMargin:
-
-                        with pm.scrollLayout(childResizable=True) as self.ui_LAY_scrollAbout:
-
-                            self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'top', 2)
-                            self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'left', 2)
-                            self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'right', 2)
-                            self.ui_LAY_formAboutMargin.attachForm(self.ui_LAY_scrollAbout, 'bottom', 2)
-
-                            with pm.frameLayout(
-                                label='About ' + WIN_TITLE,
-                                collapsable=False,
-                                marginHeight=3,
-                                borderStyle='etchedIn',
-                                borderVisible=True
-                            ):
-
-                                with pm.rowLayout(columnAttach=[1, 'both', 10]):
-
-                                    self.ui_TXT_about = pm.text('', align='center')
-
-                self.ui_BTN_closeHelp = pm.button(
-                    'Close',
-                    command=lambda x: pm.deleteUI(WIN_HELPNAME)
-                )
-
-                self.ui_LAY_formMainHelp.attachForm(self.ui_LAY_tabHelp, 'top', 2)
-                self.ui_LAY_formMainHelp.attachForm(self.ui_LAY_tabHelp, 'left', 2)
-                self.ui_LAY_formMainHelp.attachForm(self.ui_LAY_tabHelp, 'right', 2)
-                self.ui_LAY_formMainHelp.attachControl(self.ui_LAY_tabHelp, 'bottom', 2, self.ui_BTN_closeHelp)
-
-                self.ui_LAY_formMainHelp.attachNone(self.ui_BTN_closeHelp, 'top')
-                self.ui_LAY_formMainHelp.attachForm(self.ui_BTN_closeHelp, 'left', 2)
-                self.ui_LAY_formMainHelp.attachForm(self.ui_BTN_closeHelp, 'right', 2)
-                self.ui_LAY_formMainHelp.attachForm(self.ui_BTN_closeHelp, 'bottom', 2)
-
-                pm.tabLayout(
-                    self.ui_LAY_tabHelp,
-                    edit=True,
-                    tabLabel=(
-                        (self.ui_LAY_formHelpMargin, 'Help'),
-                        (self.ui_LAY_formAboutMargin, 'About')
-                    )
-                )
-
-        textHelp = """
------ General Info -----
-
-This tool will rename SELECTED nodes by some patterns and rules.
-You can choose between:
-
-   - Rename - renamer will try to rename all objects to some fixed string.
-            If node with this name already exists in particular path,
-            it will add or increment index after object's name.
-
-   - Find and Replace - searches for some substring in SELECTED object's names
-                      and substitutes all appearances with another string
-
-   - Add Prefix - prefixes object names with specified string
-
-   - Add Suffix - adds provided string to end of object's names
-
-   - Rename and Number - renames sequentially all selected objects by
-                       specified pattern. Type "#" symbol(s) in New Name
-                       where you want to place numbering.
-                       For example:
-                          pCube#  ->  pCube1, pCube2, ..., pCube15, ...
-                          pCube####  ->  pCube0001, pCube0002, ..., pCube0015, ...
-                          obj_##_a  ->  obj_01_a, obj_02_a, ..., obj_15_a, ...
-                       Omitting "#" will result in pattern:
-                          pCube  ->  pCube1, pCube2, ..., pCube15, ...
-
------ Shape Processing -----
-
-This option tells FX Renamer how to rename shapes.
-   - Rename shapes according to it's transforms (even if it's not selected):
-                 will rename shapes of processed nodes according to it's transform new name.
-                 There some rules of renaming:
-
-                 1.   Only one shape under transform - most common case.
-                      Renamer will obey Maya's convention. New shape name will be:
-                            <ParentNameWithoutIndex>Shape<ParentIndex> i.e.
-                            pCube -> pCubeShape
-                            pSphere100 -> pSphereShape100
-                            obj10_A -> obj10_AShape
-
-                 2.   Several shapes under transform but all of one type.
-                      New shape names will be:
-                            pCube -> pCube_Shape1, pCube_Shape2, ....
-                            pSphere100 -> pSphere100_Shape1, pSphere100_Shape2, ...
-                            obj10_A -> obj10_A_Shape1, obj10_A_Shape2, ...
-
-                 3.   Several shapes under transform of different types.
-                      New shape names will be:
-                            pCube -> pCube_meshShape1, pCube_meshShape2, pCube_nurbsSurfaceShape1, ...
-                            pSphere100 -> pSphere100_meshShape1, pSphere100_meshShape2, pSphere100_nurbsSurfaceShape1, ...
-                            obj10_A -> obj10_A_meshShape1, obj10_A_meshShape2, obj10_A_nurbsSurfaceShape1, ...
-
-
-   - Don't rename shapes:
-                 ignores shapes at all, even if it's selected
-
-   - Treat shapes as ordinary nodes:
-                 if shape selected - rename it according to chosen rule
-                 if it is not - ignore it
-
------ Reset Settings -----
-
-Use "Edit" -> "Reset Settings" to restore defaults
-"""
-
-        textAbout = "\n" + SCRIPT_NAME + ' ' + SCRIPT_VERSION + """
-Programmed by Eugene Davydenko, 2012
-
-This script may be freely distributed.
-Modify at your own risk.
-
-email: etchermail@gmail.com
-"""
-
-        self.ui_TXT_help.setLabel(textHelp)
-        self.ui_TXT_about.setLabel(textAbout)
-
-        self.ui_LAY_tabHelp.setSelectTabIndex(tab)
-        self.helpWindow.show()
+    def ui_showHelp(self, *args):
+        import webbrowser
+        webbrowser.open('http://davydenko.info/renamer/', new=0, autoraise=True)
 
 
 def run():
