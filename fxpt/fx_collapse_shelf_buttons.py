@@ -1,5 +1,5 @@
-# fx_collapseShelfButtons.collapse_group = group_name
-# // fx_collapseShelfButtons.collapse_group = group_name
+# fx_collapse_shelf_buttons.collapse_group = group_name
+# // fx_collapse_shelf_buttons.collapse_group = group_name
 
 import re
 
@@ -8,7 +8,7 @@ import maya.cmds as m
 
 import pymel.core as pm
 
-OPT_VAR_PREFIX = 'fx_collapseShelfButtons_'
+OPT_VAR_PREFIX = 'fx_collapse_shelf_buttons_'
 
 
 def toggle(shelf, group):
@@ -29,16 +29,19 @@ def setGroupState(shelf, group, state):
     for btn in shelfButtons:
         btnCommandString = m.shelfButton(btn, q=True, command=True)
 
-        match = re.search(r'.*fx_collapseShelfButtons\.collapse_group\s*=\s*' + re.escape(group) + r'\s+.*',
+        match = re.search(r'.*fx_collapse_shelf_buttons\.collapse_group\s*=\s*' + re.escape(group) + r'\s+.*',
                           btnCommandString)
         if match:
             m.shelfButton(btn, e=True, visible=state)
 
-        match = re.search(
-            r"fx_collapseShelfButtons.toggle\(\'" + re.escape(shelf) + r"\'\,\s*\'" + re.escape(group) + r"\'\)",
-            btnCommandString)
+        pattern = r"fx_collapse_shelf_buttons.toggle\(\'" + re.escape(shelf) + r"\'\,\s*\'" + re.escape(group) + r"\'\)"
+        print
+        print 'pattern:', pattern
+        print 'btnCommandString:', btnCommandString
+        match = re.search(pattern, btnCommandString)
         if match:
             image = 'collapseBarOpened.png' if state else 'collapseBarClosed.png'
+            print 'image', image
             m.shelfButton(btn, e=True, image=image, image1=image)
 
 
@@ -51,7 +54,7 @@ def initCollapse():
         if shelfButtons is not None:
             for btn in shelfButtons:
                 btnCommandString = m.shelfButton(btn, q=True, command=True)
-                match = re.search(r"fx_collapseShelfButtons.toggle\(\'(.*)\'\,\s*\'(.*)\'\)", btnCommandString)
+                match = re.search(r"fx_collapse_shelf_buttons.toggle\(\'(.*)\'\,\s*\'(.*)\'\)", btnCommandString)
                 if match:
                     shelf, group = match.group(1), match.group(2)
                     state = getSavedState(shelf, group)
