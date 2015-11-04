@@ -35,13 +35,9 @@ def setGroupState(shelf, group, state):
             m.shelfButton(btn, e=True, visible=state)
 
         pattern = r"fx_collapse_shelf_buttons.toggle\(\'" + re.escape(shelf) + r"\'\,\s*\'" + re.escape(group) + r"\'\)"
-        print
-        print 'pattern:', pattern
-        print 'btnCommandString:', btnCommandString
         match = re.search(pattern, btnCommandString)
         if match:
             image = 'collapseBarOpened.png' if state else 'collapseBarClosed.png'
-            print 'image', image
             m.shelfButton(btn, e=True, image=image, image1=image)
 
 
