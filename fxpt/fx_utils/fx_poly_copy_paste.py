@@ -8,7 +8,8 @@ def copy():
 
 
 def paste(shader, uv, color):
-    #try because of error when selection is empty. mel command handles it without error.
+    # try because of error when selection is empty. mel command handles it without error.
+    # noinspection PyBroadException
     try:
         m.polyClipboard(paste=True, shader=shader, uv=uv, color=color)
     except:
