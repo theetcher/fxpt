@@ -74,3 +74,60 @@ def parentAPI(source, target, absolute=True):
         srcFnTransform.setShear(srcWMtx.shear(om.MSpace.kWorld))
 
     return fnDagNode.fullPathName()
+
+
+def opFlagEraser():
+    selection = m.ls(sl=True, l=True)
+
+    if selection:
+        targets = m.ls(sl=True, l=True, dag=True, ap=True, typ='mesh')
+    else:
+        targets = m.ls(l=True, typ='mesh')
+
+    if not targets:
+        return
+
+    counter = 0
+    for t in targets:
+        opAttr = t + '.opposite'
+        op = m.getAttr(opAttr)
+        if op:
+            counter += 1
+            m.polyNormal(t, nm=0, ch=False)
+            m.setAttr(opAttr, False)
+
+    print '{} opposite flag(s) erased.'.format(counter),
+
+    m.select(selection, r=True)
+
+
+def freezeRotationToWorld():
+
+    targets = m.ls(sl=True, l=True)
+
+    for t in targets:
+        node = t
+        shortName = getShortName(t)
+        parent = m.listRelatives(t, p=True, pa=True)
+        if parent:
+            node = m.parent(t, w=True)[0]
+        m.makeIdentity(node, apply=True, t=False, r=True, s=False)
+        if parent:
+            node = m.parent(node, parent[0])[0]
+            if getShortName(node) != shortName:
+                m.rename(node, shortName)
+
+
+def unfreezeTranslation():
+
+    targets = m.ls(sl=True, l=True, tr=True)
+
+    if not targets:
+        return
+
+    for t in targets:
+        m.makeIdentity(t, apply=True, t=True, r=False, s=False)
+        m.move(0, 0, 0, t, ws=True, rpr=True)
+        translate = [-1 * tr for tr in m.getAttr(t + '.translate')[0]]
+        m.makeIdentity(t, apply=True, t=True, r=False, s=False)
+        m.setAttr(t + '.translate', *translate)
