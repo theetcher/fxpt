@@ -1,7 +1,6 @@
 import os
 import re
 import math
-import time
 
 import maya.cmds as m
 
@@ -12,7 +11,6 @@ from fxpt.fx_refsystem.ref_handle import RefHandle, ATTR_REF_FILENAME, REF_NODE_
 from fxpt.fx_refsystem.replace_ref import replaceRefs
 
 from fxpt.fx_utils.utils import cleanupPath
-from fxpt.fx_utils.watch import watch
 
 ACTIVATION_WARNING_LIMIT = 99
 
@@ -21,7 +19,7 @@ ACTIVATION_WARNING_LIMIT = 99
 # misc procedures
 # ---------------------------------------------------------------------------------------------------------------------
 
-def maintainanceProcedure():
+def maintenanceProcedure():
     for refNode in m.ls('*' + REF_NODE_SUFFIX, typ='reference'):
         if not m.connectionInfo(refNode + '.message', isSource=True):
             m.file(
@@ -298,7 +296,7 @@ def deactivateRefs(refHandles):
 
     for refHandle in refHandles:
         refHandle.deactivate()
-    maintainanceProcedure()
+    maintenanceProcedure()
 
     restoreSelection()
 
@@ -322,7 +320,7 @@ def setReference(refHandles, refFilename):
     for refHandle in activeRefHandles:
         refHandle.activate()
 
-    maintainanceProcedure()
+    maintenanceProcedure()
     restoreSelection()
 
 
@@ -377,7 +375,7 @@ def retargetRefs(refHandles, targetDir):
     for refHandle in activeRefHandles:
         refHandle.activate()
 
-    maintainanceProcedure()
+    maintenanceProcedure()
     restoreSelection()
 
     if duplicatesInTargetDir:
@@ -404,7 +402,7 @@ def importReference(refHandles):
     for refHandle in refHandles:
         refHandle.importRef()
 
-    maintainanceProcedure()
+    maintenanceProcedure()
 
 
 def importReferenceUI(warn=True):
@@ -453,7 +451,7 @@ def replaceRefUI():
     for refHandle in rhToReload:
         refHandle.deactivate()
 
-    maintainanceProcedure()
+    maintenanceProcedure()
 
     rhToReload.extend(createdRefs)
     for refHandle in rhToReload:
