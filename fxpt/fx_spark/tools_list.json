@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Print AAAAA by MEL",
+    "annotation": "Print AAAAA by MEL in Script Editor",
+    "icon": "someIcon1",
+    "run": "print(\"AAAA !!!!\\n\")"
+  },
+  {
+    "name": "Print AAAAA by Python",
+    "annotation": "Print AAAAA by Python in Script Editor",
+    "icon": "someIcon2",
+    "run": "python(\"import maya.cmds as m; print 'from python AAAAA\\\n'\")"
+  },
+  {
+    "name": "List All Cameras",
+    "annotation": "List All Cameras in Script Editor",
+    "icon": "someIcon3",
+    "run": "python(\"import maya.cmds as m; print m.ls(l=True, typ='camera')\")"
+  },
+  {
+    "name": "Texture Manager",
+    "annotation": "Open Texture Manager",
+    "icon": "someIcon4",
+    "run": "python(\"from fxpt.fx_texture_manager import fx_texture_manager; from fxpt.fx_utils.rreload import rreload; rreload(fx_texture_manager); fx_texture_manager.run()\")"
+  }
+]
