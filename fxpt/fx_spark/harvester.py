@@ -1,10 +1,9 @@
 import inspect
 import types
-import json
 
 import maya.cmds as m
 
-from . import command_desc, cfg
+from . import command_desc, cfg, json_io
 
 # from fxpt.fx_utils.watch import watch
 
@@ -15,6 +14,7 @@ class Harvester(object):
             cfg.SEARCH_CATEGORY_TOOLS: {},
             cfg.SEARCH_CATEGORY_CMD: {},
             cfg.SEARCH_CATEGORY_CMD_RT: {},
+            cfg.SEARCH_CATEGORY_HELP: {},
             cfg.SEARCH_CATEGORY_ALL: {}
         }
 
@@ -22,6 +22,7 @@ class Harvester(object):
         self.harvestCommands()
         self.harvestCommandsRt()
         self.harvestTools()
+        self.harvestHelp()
         self.harvestAll()
         return self.db
 
@@ -31,17 +32,16 @@ class Harvester(object):
         for cmd in mayaCommands:
             cd = command_desc.CommandDesc(cmd)
             cd.run = cmd
+            cd.annotation = 'Maya Command: ' + cmd
             catDb[cmd.lower()] = cd
-
-        # for key, value in catDb.items():
-        #     print key, '>>>', value
 
     def harvestCommandsRt(self):
         catDb = self.db[cfg.SEARCH_CATEGORY_CMD_RT]
 
         for cmd in sorted(m.runTimeCommand(q=True, commandArray=True)):
-            annotation = m.runTimeCommand(cmd, q=True, annotation=True)
-            # category = m.runTimeCommand(c, q=True, category=True)
+            annotation = m.runTimeCommand(cmd, q=True, annotation=True).strip()
+            if not annotation:
+                annotation = cmd
             annotationL = annotation.lower()
             cmdL = cmd.lower()
             if '(press)' in annotationL \
@@ -55,29 +55,34 @@ class Harvester(object):
             cd.annotation = annotation
             catDb[cmdL] = cd
 
-        # for key, value in catDb.items():
-        #     print key, '>>>', value
-
     def harvestTools(self):
         catDb = self.db[cfg.SEARCH_CATEGORY_TOOLS]
 
-        with open(cfg.TOOLS_CFG, 'r') as f:
-            toolsJsonObj = json.load(f)
+        try:
+            toolsJsonObj = json_io.load(cfg.TOOLS_CFG)
+        except StandardError:
+            toolsJsonObj = []
+
         for rec in toolsJsonObj:
-            cd = command_desc.CommandDesc(rec['name'])
-            cd.run = rec['run']
-            cd.annotation = rec['annotation']
+            cd = command_desc.CommandDesc(rec['name'].strip())
+            cd.run = rec['run'].strip()
+            annotation = rec['annotation'].strip()
+            if not annotation:
+                annotation = rec['name']
+            cd.annotation = annotation
             catDb[cd.name.lower()] = cd
 
-        # for key, value in catDb.items():
-        #     print key, '>>>', value
+    def harvestHelp(self):
+        catDb = self.db[cfg.SEARCH_CATEGORY_HELP]
+
+        for line in cfg.HELP_LINES:
+            cd = command_desc.CommandDesc(line)
+            cd.annotation = cfg.UI_DEFAULT_ANNOTATION
+            catDb[line.lower()] = cd
 
     def harvestAll(self):
         catDb = self.db[cfg.SEARCH_CATEGORY_ALL]
 
-        for dbKey in cfg.SEARCHES_WITHOUT_ALL:
+        for dbKey in cfg.SEARCHES_TYPES_ALL:
             catDb.update(self.db[dbKey])
-
-        # for key, value in catDb.items():
-        #     print key, '>>>', value
 

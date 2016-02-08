@@ -18,20 +18,21 @@ class ResultsListWidget(QtGui.QListWidget):
         :type event: QtGui.QKeyEvent
         """
         parentClass = super(ResultsListWidget, self)
-        resultsCount = self.count()
-        currentRow = self.currentRow()
+        rCount = self.count()
+        cRow = self.currentRow()
+        lastIndex = rCount - 1
 
         if event.key() == QtCore.Qt.Key_Up:
-            if resultsCount and currentRow == 0:
-                self.searchLineEdit.setFocus()
-                self.clearSelection()
-            else:
-                parentClass.keyPressEvent(event)
+            if rCount:
+                if cRow == 0:
+                    self.setCurrentRow(lastIndex)
+                else:
+                    parentClass.keyPressEvent(event)
         elif event.key() == QtCore.Qt.Key_Down:
-            if resultsCount and currentRow == resultsCount - 1:
-                self.searchLineEdit.setFocus()
-                self.clearSelection()
-            else:
-                parentClass.keyPressEvent(event)
+            if rCount:
+                if cRow == lastIndex:
+                    self.setCurrentRow(0)
+                else:
+                    parentClass.keyPressEvent(event)
         else:
             parentClass.keyPressEvent(event)

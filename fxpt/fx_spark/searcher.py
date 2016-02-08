@@ -1,13 +1,17 @@
-from . import harvester, cfg
+from . import harvester, annalist, cfg
 
 
 ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
+
+
+from fxpt.fx_utils.watch import watch
 
 
 class Searcher(object):
     def __init__(self):
         h = harvester.Harvester()
         self.db = h.harvest()
+        self.annalist = annalist.Annalist()
 
     def search(self, s):
         s = s.strip().lower()
@@ -22,11 +26,13 @@ class Searcher(object):
         return self.doSearch(searchCategory, s)
 
     def emptySearch(self):
-        return []
+        cmds = set(self.annalist.getFavoriteCommands()) | set(self.annalist.getRecentCommands())
+        searchDb = self.db[cfg.SEARCH_CATEGORY_ALL]
+        return [searchDb[c.lower()] for c in cmds if c.lower() in searchDb]
 
     def doSearch(self, searchCategory, s):
         searchDb = self.db[searchCategory]
-        results = sorted(self.matched(s, searchDb))
+        results = self.matched(s, searchDb)
         if not results:
             results = self.suggest(s, searchDb)
         return results
@@ -47,3 +53,6 @@ class Searcher(object):
 
     def suggest(self, word, searchDb):
         return set([searchDb[key] for v in self.variants(word) for key in searchDb if v in key])
+
+    def commandExecuted(self, desc):
+        self.annalist.record(desc)

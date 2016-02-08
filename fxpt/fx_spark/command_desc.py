@@ -1,4 +1,5 @@
 from maya.mel import eval as meval
+import maya.cmds as m
 
 
 class CommandDesc(object):
@@ -11,7 +12,10 @@ class CommandDesc(object):
         self.annotation = ''
 
     def execute(self):
-        meval(self.run)
+        try:
+            meval(self.run)
+        except StandardError:
+            m.warning('Error during command execution: {}'.format(self.run))
 
     def __hash__(self):
         return hash(self.name)
