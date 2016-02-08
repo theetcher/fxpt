@@ -5,8 +5,6 @@ from PySide import QtGui, QtCore
 
 from . import search_line_edit, results_list_widget, searcher, cfg
 
-# TODO: cycle through results and not leave focus from edit
-
 # noinspection PyAttributeOutsideInit
 class SparkUI(QtGui.QFrame):
 
