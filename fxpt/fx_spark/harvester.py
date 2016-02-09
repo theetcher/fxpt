@@ -3,9 +3,10 @@ import types
 
 import maya.cmds as m
 
-from . import command_desc, cfg, json_io
+from . import command_desc, cfg, yaml_io
+from fxpt.fx_utils import message_box
 
-# from fxpt.fx_utils.watch import watch
+from fxpt.fx_utils.watch import watch
 
 
 class Harvester(object):
@@ -55,22 +56,45 @@ class Harvester(object):
             cd.annotation = annotation
             catDb[cmdL] = cd
 
+    # noinspection PyMethodMayBeStatic
+    def getToolsList(self, filename):
+        try:
+            l = yaml_io.load(filename)
+        except StandardError:
+            l = []
+        return l
+
+    # noinspection PyMethodMayBeStatic
+    def isValidToolDefinition(self, rec):
+        for f in cfg.TOOL_CFG_MANDATORY_FIELDS:
+            if f not in rec:
+                return False
+            if not isinstance(rec[f], str):
+                return False
+        return True
+
     def harvestTools(self):
         catDb = self.db[cfg.SEARCH_CATEGORY_TOOLS]
 
-        try:
-            toolsJsonObj = json_io.load(cfg.TOOLS_CFG)
-        except StandardError:
-            toolsJsonObj = []
+        toolsList = self.getToolsList(cfg.TOOLS_CFG) + self.getToolsList(cfg.TOOLS_CFG_USER)
 
-        for rec in toolsJsonObj:
-            cd = command_desc.CommandDesc(rec['name'].strip())
-            cd.run = rec['run'].strip()
-            annotation = rec['annotation'].strip()
-            if not annotation:
-                annotation = rec['name']
-            cd.annotation = annotation
-            catDb[cd.name.lower()] = cd
+        for rec in toolsList:
+            if not self.isValidToolDefinition(rec):
+                message_box.warning('Bad tool definition.', textDetailed=str(rec))
+                continue
+
+            cd = command_desc.CommandDesc(rec[cfg.TOOL_CFG_FIELD_NAME].strip())
+            cd.run = rec[cfg.TOOL_CFG_FIELD_RUN].strip()
+            cd.annotation = rec[cfg.TOOL_CFG_FIELD_ANNOTATION].strip()
+            if not cd.annotation:
+                cd.annotation = cd.name
+            nameL = cd.name.lower()
+
+            if nameL in catDb:
+                message_box.warning('Cannot add tool "{}" defined in:\n{}\nThat name already exists.'.format(cd.name, cfg.TOOLS_CFG_USER))
+                continue
+
+            catDb[nameL] = cd
 
     def harvestHelp(self):
         catDb = self.db[cfg.SEARCH_CATEGORY_HELP]

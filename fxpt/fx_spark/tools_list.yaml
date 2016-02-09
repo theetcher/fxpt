@@ -1,0 +1,15 @@
+- name: Print AAAAA by MEL
+  run: print("AAAA !!!!\n")
+  annotation: Print AAAAA by MEL in Script Editor
+
+- name: Print AAAAA by Python
+  run: python("import maya.cmds as m; print 'from python AAAAA\\n'")
+  annotation: Print AAAAA by Python in Script Editor
+
+- name: List All Cameras
+  run: python("import maya.cmds as m; print m.ls(l=True, typ='camera')")
+  annotation: List All Cameras in Script Editor
+
+- name: Texture Manager
+  run: python("from fxpt.fx_texture_manager import fx_texture_manager; from fxpt.fx_utils.rreload import rreload; rreload(fx_texture_manager); fx_texture_manager.run()")
+  annotation: Open Texture Manager

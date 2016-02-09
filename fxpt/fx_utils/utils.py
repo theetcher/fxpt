@@ -23,6 +23,10 @@ def getFxUtilsDir():
     return pathToSlash(os.path.dirname(__file__))
 
 
+def getUserCfgDir(appName):
+    return pathToSlash('{}/Damage Inc/fxpt/{}'.format(os.environ['APPDATA'], appName))
+
+
 def makeWritable(path):
     if os.path.exists(path):
         os.chmod(path, stat.S_IWRITE)
@@ -32,3 +36,4 @@ def isWritable(path):
     if os.path.exists(path):
         return os.access(path.lower().strip(), os.W_OK)
     return True
+

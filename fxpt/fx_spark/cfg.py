@@ -1,17 +1,16 @@
 import os
 import maya.cmds as m
 
-from fxpt.fx_utils.utils import pathToSlash
+from fxpt.fx_utils.utils import pathToSlash, getUserCfgDir
 
 
 MAYA_VERSION = m.about(version=True)
 TOOL_DIR = pathToSlash(os.path.dirname(__file__))
-# TODO: think about safe location of TOOLS_CFG location (%APPDATA% ?)
-# TODO: how to override this path (tools_list.path near orig with path in first line to new location?). or maybe full scope tool yaml cfg ?? with override to path ?
-# TODO: YAML as config ?????
+# TODO: update getFxUtilsDir to handle .path_override
 # TODO: initial config ? generate something like About MEL, About Python, Create Locator, ...
 # TODO: Cog button to open cfg location dir?
-TOOLS_CFG = TOOL_DIR + '/tools_list.json'
+TOOLS_CFG = TOOL_DIR + '/tools_list.yaml'
+TOOLS_CFG_USER = getUserCfgDir('fx_spark') + '/tools_list_user.yaml'
 HISTORY_FILE = TOOL_DIR + '/history.json'
 
 HISTORY_LENGTH = 5
@@ -44,3 +43,13 @@ HELP_LINES = (
 
 SPECIAL_SEARCHES = {SEARCH_CATEGORY_CMD, SEARCH_CATEGORY_CMD_RT, SEARCH_CATEGORY_HELP, SEARCH_CATEGORY_ALL}
 SEARCHES_TYPES_ALL = {SEARCH_CATEGORY_CMD, SEARCH_CATEGORY_CMD_RT, SEARCH_CATEGORY_TOOLS}
+
+TOOL_CFG_FIELD_NAME = 'name'
+TOOL_CFG_FIELD_RUN = 'run'
+TOOL_CFG_FIELD_ANNOTATION = 'annotation'
+
+TOOL_CFG_MANDATORY_FIELDS = [
+    TOOL_CFG_FIELD_NAME,
+    TOOL_CFG_FIELD_RUN,
+    TOOL_CFG_FIELD_ANNOTATION
+]
