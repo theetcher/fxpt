@@ -23,8 +23,15 @@ def getFxUtilsDir():
     return pathToSlash(os.path.dirname(__file__))
 
 
-def getUserCfgDir(appName):
-    return pathToSlash('{}/Damage Inc/fxpt/{}'.format(os.environ['APPDATA'], appName))
+def getUserCfgDir():
+    origFxptCfgDir = pathToSlash('{}/Damage Inc/fxpt'.format(os.environ['APPDATA']))
+    overrideFilename = '{}/.path_override'.format(origFxptCfgDir)
+    if os.path.exists(overrideFilename):
+        with open(overrideFilename, 'r') as f:
+            overridePath = pathToSlash(f.readline().strip())
+        return overridePath[:-1] if overridePath.endswith('/') else overridePath
+    else:
+        return origFxptCfgDir
 
 
 def makeWritable(path):

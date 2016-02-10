@@ -22,6 +22,7 @@ class SparkUI(QtGui.QFrame):
         self.uiLED_search.setFocus()
 
         self.onSearchTextChanged()
+        self.setAnnotation(cfg.UI_DEFAULT_ANNOTATION)
 
     def createUI(self):
         self.positionUi()
@@ -49,6 +50,12 @@ class SparkUI(QtGui.QFrame):
         layout.addWidget(self.uiLED_search)
         layout.addWidget(self.uiLBL_status)
         layout.addWidget(self.uiLST_results)
+
+        # self.uiLBL_help = QtGui.QLabel('Type ? to help')
+        # self.uiLBL_help.setFixedHeight(cfg.UI_LABEL_HEIGHT)
+        # self.uiLBL_help.setAlignment(QtCore.Qt.AlignHCenter)
+        # layout.addWidget(self.uiLBL_help)
+
         layout.addStretch()
 
         self.setWindowFlags(QtCore.Qt.Popup)
@@ -103,6 +110,7 @@ class SparkUI(QtGui.QFrame):
             self.setStatus(cfg.UI_DEFAULT_STATUS)
 
         self.uiLST_results.clear()
+
         for r in sorted(results):
             item = self.createResultItem(r)
             self.uiLST_results.addItem(item)
@@ -141,6 +149,7 @@ class SparkUI(QtGui.QFrame):
             (spacing if listHeight else 0) + \
             listHeight + \
             margin
+
         self.setFixedHeight(height)
 
     # noinspection PyMethodMayBeStatic

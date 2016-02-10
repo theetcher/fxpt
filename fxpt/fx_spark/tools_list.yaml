@@ -13,3 +13,11 @@
 - name: Texture Manager
   run: python("from fxpt.fx_texture_manager import fx_texture_manager; from fxpt.fx_utils.rreload import rreload; rreload(fx_texture_manager); fx_texture_manager.run()")
   annotation: Open Texture Manager
+
+- name: Create Locator
+  annotation: Create Locator
+  run: spaceLocator
+
+- name: Create Poly Plane
+  annotation: Create Poly Plane
+  run: polyPlane
