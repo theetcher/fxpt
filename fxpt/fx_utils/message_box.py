@@ -1,3 +1,4 @@
+import sys
 import traceback
 
 from PySide import QtGui
@@ -134,14 +135,13 @@ def exception(
         text,
         parent=None,
         title='Fatal Error',
-        textInformative='Press "Show Details" for more information',
         width=DEFAULT_WIDTH
 ):
     return messageBox(
         text,
         parent=parent,
         title=title,
-        textInformative=textInformative,
+        textInformative=str(sys.exc_info()[1]),
         textDetailed=traceback.format_exc(),
         icon=ICON_CRITICAL,
         width=width
