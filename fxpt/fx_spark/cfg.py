@@ -15,13 +15,13 @@ HISTORY_LENGTH = 5
 
 UI_FRAME_WIDTH = 500
 UI_FRAME_CENTER_OFFSET = -100
-UI_ITEM_SIZE = 18
-UI_LIST_SIZE_BOTTOM_MARGIN = 4
+UI_ITEM_SIZE = 24
+UI_LIST_SIZE_BOTTOM_MARGIN = 0
 UI_MAX_RESULTS_HEIGHT = 300
-UI_CONTENTS_MARGIN = 8
-UI_SPACING = 4
-UI_LABEL_HEIGHT = 20
-UI_SEARCH_FIELD_HEIGHT = 20
+UI_CONTENTS_MARGIN = 4
+UI_SPACING = 0
+UI_LABEL_HEIGHT = 30
+UI_SEARCH_FIELD_HEIGHT = 28
 
 UI_DEFAULT_ANNOTATION = 'Type something to search or type ? to help'
 UI_DEFAULT_STATUS = 'Favorite and Recent commands:'
@@ -77,3 +77,43 @@ TOOLS_CFG_USER_DEFAULT = '''
 #   run: print(size(`selectedNodes`)+" node(s) selected\\n");
 #   annotation: Prints number of selected nodes
 # '''
+
+STYLE_SHEET = '''
+.QFrame {
+    background-color: #333333;
+    border-radius: 10px;
+    }
+
+QLabel {
+    /*background-color: darkmagenta;*/
+    color: #aaaaaa;
+    font: normal italic 14px "Segoi UI";
+    margin: 0px;
+    padding: 0px 8px 0px 8px;
+    }
+
+QLineEdit {
+    color: black;
+    background-color: #ffa000;
+    border-radius: 4px;
+    padding: 0px 6px 0px 6px;
+    font: normal normal 16px "Arial"
+    }
+
+QListWidget {
+    background-color: #333333;
+    border: 0px;
+    font: normal normal 14px "Arial";
+    margin: 0px 4px 0px 4px;
+    alternate-background-color: #303030;
+    }
+
+'''
+
+'''
+    border: 5px solid Lemonchiffon;
+    border: 2px solid green;
+    padding: 2px;
+    padding: 6px;
+    margin: 4px;
+'''
