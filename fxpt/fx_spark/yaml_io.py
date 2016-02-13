@@ -1,7 +1,6 @@
 import os
 from fxpt.side_utils import yaml
 
-
 from fxpt.fx_utils import message_box
 from fxpt.fx_utils.utils import makeWritable
 

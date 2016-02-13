@@ -4,9 +4,6 @@ from . import harvester, annalist, cfg
 ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
 
 
-from fxpt.fx_utils.watch import watch
-
-
 class Searcher(object):
     def __init__(self):
         h = harvester.Harvester()

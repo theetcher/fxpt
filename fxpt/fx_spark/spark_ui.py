@@ -1,8 +1,5 @@
 from PySide import QtGui, QtCore
 
-# from fxpt.fx_utils.watch import watch
-
-
 from . import search_line_edit, results_list_widget, searcher, cfg
 
 
@@ -58,8 +55,7 @@ class SparkUI(QtGui.QWidget):
         widgetLayout.addWidget(mainFrame)
 
         layout = QtGui.QVBoxLayout()
-        # layout.setSpacing(cfg.UI_SPACING)
-        layout.setSpacing(cfg.UI_SPACING)
+        layout.setSpacing(0)
         layout.setContentsMargins(cfg.UI_CONTENTS_MARGIN, 0, cfg.UI_CONTENTS_MARGIN, cfg.UI_CONTENTS_MARGIN)
         mainFrame.setLayout(layout)
 
@@ -73,7 +69,6 @@ class SparkUI(QtGui.QWidget):
         self.uiLED_search = search_line_edit.SearchLineEdit()
         self.uiLED_search.setFixedHeight(cfg.UI_SEARCH_FIELD_HEIGHT)
         self.uiLST_results = results_list_widget.ResultsListWidget()
-        self.uiLST_results.setAlternatingRowColors(True)
         self.uiLED_search.setPartner(self.uiLST_results)
         self.uiLST_results.setPartner(self.uiLED_search)
 
@@ -81,14 +76,7 @@ class SparkUI(QtGui.QWidget):
         layout.addWidget(self.uiLBL_status)
         layout.addWidget(self.uiLST_results)
 
-        # self.uiLBL_help = QtGui.QLabel('Type ? to help')
-        # self.uiLBL_help.setFixedHeight(cfg.UI_LABEL_HEIGHT)
-        # self.uiLBL_help.setAlignment(QtCore.Qt.AlignHCenter)
-        # layout.addWidget(self.uiLBL_help)
-
         layout.addStretch()
-
-        # self.setContextMenuPolicy(QtCore.Qt.PreventContextMenu)
 
         self.uiLED_search.textChanged.connect(self.onSearchTextChanged)
         self.uiLST_results.itemActivated.connect(self.onItemActivated)
@@ -120,7 +108,6 @@ class SparkUI(QtGui.QWidget):
 
     def onResultSelectionChanged(self, i):
         if i is not None and i > -1:
-            # print i
             self.setAnnotation(self.uiLST_results.item(i).desc.annotation)
         else:
             self.setAnnotation(cfg.UI_DEFAULT_ANNOTATION)
@@ -150,9 +137,6 @@ class SparkUI(QtGui.QWidget):
 
         self.updateUiGeom()
 
-    # def getAllSearchListItems(self):
-    #     return [self.uiLST_results.item(i) for i in range(self.uiLST_results.count())]
-
     def updateUiGeom(self):
         if not self.uiLST_results.count():
             self.uiLST_results.setVisible(False)
@@ -167,16 +151,12 @@ class SparkUI(QtGui.QWidget):
         annotationHeight = self.uiLBL_annotation.height()
         ledHeight = self.uiLED_search.height()
         statusHeight = self.uiLBL_status.height()
-        spacing = cfg.UI_SPACING
 
         height = \
             margin + \
             annotationHeight + \
-            spacing + \
             ledHeight + \
-            spacing + \
             statusHeight + \
-            (spacing if listHeight else 0) + \
             listHeight + \
             margin
 
@@ -190,7 +170,3 @@ class SparkUI(QtGui.QWidget):
         sizeHint.setHeight(cfg.UI_ITEM_SIZE)
         item.setSizeHint(sizeHint)
         return item
-
-    def closeEvent(*args, **kwargs):
-        pass
-        # print 'closeEvent() fired'

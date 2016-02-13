@@ -7,8 +7,6 @@ import maya.cmds as m
 from . import command_desc, cfg, yaml_io
 from fxpt.fx_utils import message_box
 
-from fxpt.fx_utils.watch import watch
-
 
 class Harvester(object):
     def __init__(self):
@@ -82,6 +80,7 @@ class Harvester(object):
             cd.annotation = rec[cfg.TOOL_CFG_FIELD_ANNOTATION]
             catDb[cd.name.lower()] = cd
 
+    # noinspection PyMethodMayBeStatic
     def createUserToolsList(self):
         if not os.path.exists(cfg.SPARK_USER_CFG_DIR):
             os.makedirs(cfg.SPARK_USER_CFG_DIR)
@@ -132,4 +131,3 @@ class Harvester(object):
 
         for dbKey in cfg.SEARCHES_TYPES_ALL:
             catDb.update(self.db[dbKey])
-

@@ -19,7 +19,6 @@ UI_ITEM_SIZE = 24
 UI_LIST_SIZE_BOTTOM_MARGIN = 0
 UI_MAX_RESULTS_HEIGHT = 300
 UI_CONTENTS_MARGIN = 4
-UI_SPACING = 0
 UI_LABEL_HEIGHT = 30
 UI_SEARCH_FIELD_HEIGHT = 28
 
@@ -69,19 +68,12 @@ TOOLS_CFG_USER_DEFAULT = '''
 - name: Hello World (Python)
   run: python("print 'Hello World!\\\\n',")
   annotation: Hello World Python command.
-
 '''
-
-# TOOLS_CFG_USER_DEFAULT = '''
-# - name: Number of Selected Nodes
-#   run: print(size(`selectedNodes`)+" node(s) selected\\n");
-#   annotation: Prints number of selected nodes
-# '''
 
 STYLE_SHEET = '''
 .QFrame {
     background-color: #333333;
-    border-radius: 10px;
+    border-radius: 4px;
     }
 
 QLabel {
@@ -95,25 +87,29 @@ QLabel {
 QLineEdit {
     color: black;
     background-color: #ffa000;
-    border-radius: 4px;
+    border-radius: 2px;
+    margin: 0px 4px 0px 4px;
     padding: 0px 6px 0px 6px;
-    font: normal normal 16px "Arial"
+    font: normal normal 16px;
     }
 
 QListWidget {
     background-color: #333333;
     border: 0px;
-    font: normal normal 14px "Arial";
+    font: normal normal 14px;
     margin: 0px 4px 0px 4px;
-    alternate-background-color: #303030;
+    alternate-background-color: #2f2f2f;
+    outline: none;
     }
 
-'''
+QListView::item:hover {
+    color: white;
+    background-color: #333333;
+}
 
-'''
-    border: 5px solid Lemonchiffon;
-    border: 2px solid green;
-    padding: 2px;
-    padding: 6px;
-    margin: 4px;
+QListView::item:selected {
+    border-radius: 2px;
+    padding: 0px 4px 0px 4px;
+    background-color: #444444;
+}
 '''

@@ -12,6 +12,7 @@ class SearchLineEdit(QtGui.QLineEdit):
     def setPartner(self, widget):
         self.searchResultsList = widget
 
+    # noinspection PyMethodOverriding
     def keyPressEvent(self, event):
         """
         :type event: QtGui.QKeyEvent
