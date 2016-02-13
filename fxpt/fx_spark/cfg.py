@@ -77,7 +77,6 @@ STYLE_SHEET = '''
     }
 
 QLabel {
-    /*background-color: darkmagenta;*/
     color: #aaaaaa;
     font: normal italic 14px "Segoi UI";
     margin: 0px;
