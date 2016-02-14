@@ -58,7 +58,7 @@ class Harvester(object):
     # noinspection PyMethodMayBeStatic
     def getToolsList(self, filename):
         try:
-            l = yaml_io.load(filename, silent=True)
+            l = yaml_io.load(filename, alertNotExist=False)
         except StandardError:
             l = []
         return l

@@ -12,7 +12,7 @@ DEFAULT_DB = {
 class Annalist(object):
     def __init__(self):
         try:
-            self.db = json_io.load(cfg.HISTORY_FILE, silent=True)
+            self.db = json_io.load(cfg.HISTORY_FILE, showError=False, alertNotExist=False)
         except StandardError:
             self.db = DEFAULT_DB
 
