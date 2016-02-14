@@ -15,7 +15,7 @@ ENV_VARS = (
 OFFSET = '    '
 
 
-def env_print():
+def run():
     print
     for env in ENV_VARS:
         print env
