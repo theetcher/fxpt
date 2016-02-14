@@ -61,13 +61,13 @@ BUILT_IN_TOOLS = [
 ]
 
 TOOLS_CFG_USER_DEFAULT = '''
-- name: Hello World (MEL)
-  run: print("Hello World!\\n")
-  annotation: Hello World MEL command.
+- name: Script Editor
+  run: ScriptEditor
+  annotation: Show Script Editor
 
-- name: Hello World (Python)
-  run: python("print 'Hello World!\\\\n',")
-  annotation: Hello World Python command.
+- name: Print MAYA_APP_DIR
+  run: python("import os; print os.environ.get('MAYA_APP_DIR', None),")
+  annotation: Print MAYA_APP_DIR environment variable
 '''
 
 STYLE_SHEET = '''

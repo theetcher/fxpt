@@ -38,7 +38,9 @@ class Annalist(object):
             aDict[name] = 1
 
     def getFavoriteCommands(self):
-        return [item[0] for item in sorted(self.db[KEY_ACTIVITY].items(), key=lambda x: (-x[1], x[0]))][:cfg.HISTORY_LENGTH]
+        return [item[0] for item in sorted(self.db[KEY_ACTIVITY].items(), key=lambda x: (-x[1], x[0])) if
+                item[0] not in self.db[KEY_RECENT]][:cfg.HISTORY_LENGTH]
 
     def getRecentCommands(self):
         return self.db[KEY_RECENT]
+

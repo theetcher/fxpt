@@ -23,7 +23,7 @@ class Searcher(object):
         return self.doSearch(searchCategory, s)
 
     def emptySearch(self):
-        cmds = set(self.annalist.getFavoriteCommands()) | set(self.annalist.getRecentCommands())
+        cmds = self.annalist.getFavoriteCommands() + self.annalist.getRecentCommands()
         searchDb = self.db[cfg.SEARCH_CATEGORY_ALL]
         return [searchDb[c.lower()] for c in cmds if c.lower() in searchDb]
 
