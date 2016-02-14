@@ -103,9 +103,6 @@ class SparkUI(QtGui.QWidget):
             self.searcher.commandExecuted(item.desc)
             self.close()
 
-    def hasResults(self):
-        return self.uiLST_results.isVisible()
-
     def onResultSelectionChanged(self, i):
         if i is not None and i > -1:
             self.setAnnotation(self.uiLST_results.item(i).desc.annotation)
@@ -128,7 +125,7 @@ class SparkUI(QtGui.QWidget):
 
         self.uiLST_results.clear()
 
-        for r in sorted(results):
+        for r in sorted(results, key=lambda i: i.name.lower()):
             item = self.createResultItem(r)
             self.uiLST_results.addItem(item)
 
