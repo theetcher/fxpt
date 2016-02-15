@@ -39,9 +39,9 @@ def messageBox(
         textInformative=None,
         textDetailed=None,
         icon=ICON_NONE,
-        buttons=None,
-        defaultButton=None,
-        escapeButton=None,
+        buttons=BTN_OK,
+        defaultButton=BTN_OK,
+        escapeButton=BTN_OK,
         width=DEFAULT_WIDTH
 ):
 

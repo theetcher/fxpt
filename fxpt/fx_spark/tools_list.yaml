@@ -1,23 +1,61 @@
-- name: Print AAAAA by MEL
-  run: print("AAAA !!!!\n")
-  annotation: Print AAAAA by MEL in Script Editor
+#OptimizeSceneOptions;
+#ReferenceEditor;
+#DuplicateSpecialOptions;
+#CreatePolygonSphere;
+#CreatePolygonCube;
+#CreatePolygonCylinder;
+#CreatePolygonCone;
+#CreatePolygonPlane;
+#CreatePolygonTorus;
+#CreatePolygonPrism;
+#CreatePolygonPyramid;
+#CreatePolygonPipe;
+#CreatePolygonHelixOptions;
+#CreatePolygonSoccerBallOptions;
+#CreatePlatonicSolidOptions;
+# Unit Cube polyCube -w 1 -h 1 -d 1 -sx 1 -sy 1 -sz 1 -ax 0 1 0 -tx 1 -ch 1; objectMoveCommand;
+#CreateAmbientLight;
+#CreateDirectionalLight;
+#CreatePointLight;
+#CreateSpotLight;
+#CreateAreaLight;
+#CreateVolumeLight;
+#CreateAnnotateNode;
+#DistanceTool;
+#CreateQuickSelectSet
+#PolygonSelectionConstraints;
 
-- name: Print AAAAA by Python
-  run: python("import maya.cmds as m; print 'from python AAAAA\\n'")
-  annotation: Print AAAAA by Python in Script Editor
+#Freeze
+#-command "makeIdentity -apply true -t 1 -r 1 -s 1; \npython(\"from fxpt.fx_utils import utils_maya; utils_maya.opFlagEraser()\");"
+#-command "makeIdentity -apply true -t 1 -r 0 -s 0; \n"
+#-command "makeIdentity -apply true -t 0 -r 1 -s 0; \n"
+#-command "python(\"from fxpt.fx_utils import utils_maya; utils_maya.freezeRotationToWorld()\")"
+#-command "makeIdentity -apply true -t 0 -r 0 -s 1; \npython(\"from fxpt.fx_utils import utils_maya; utils_maya.opFlagEraser()\");"
+#-command "python(\"from fxpt.fx_utils import utils_maya; utils_maya.unfreezeTranslation()\");"
 
-- name: List All Cameras
-  run: python("import maya.cmds as m; print m.ls(l=True, typ='camera')")
-  annotation: List All Cameras in Script Editor
+#CenterPivot;
 
-- name: Texture Manager
-  run: python("from fxpt.fx_texture_manager import fx_texture_manager; from fxpt.fx_utils.rreload import rreload; rreload(fx_texture_manager); fx_texture_manager.run()")
-  annotation: Open Texture Manager
 
-- name: Create Locator
+- name: Env Print
+  python: from fxpt.fx_utils import env_print; env_print.run()
+  annotation: Print Maya Environment Variables
+
+- name: Create Locator ...
   annotation: Create Locator
-  run: spaceLocator
+  mel: spaceLocator
 
-- name: Create Poly Plane
-  annotation: Create Poly Plane
-  run: polyPlane
+#- name: Print AAAAA by Python
+#  run: python("import maya.cmds as m; print 'from python AAAAA\\n'")
+#  annotation: Print AAAAA by Python in Script Editor
+#
+#- name: List All Cameras
+#  run: python("import maya.cmds as m; print m.ls(l=True, typ='camera')")
+#  annotation: List All Cameras in Script Editor
+#
+#- name: Texture Manager
+#  run: python("from fxpt.fx_texture_manager import fx_texture_manager; from fxpt.fx_utils.rreload import rreload; rreload(fx_texture_manager); fx_texture_manager.run()")
+#  annotation: Open Texture Manager
+#
+#- name: Create Poly Plane
+#  annotation: Create Poly Plane
+#  run: polyPlane

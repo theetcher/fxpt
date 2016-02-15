@@ -1,8 +1,9 @@
 from maya.mel import eval as meval
-import maya.cmds as m
+
+from fxpt.fx_utils import message_box
 
 
-class CommandDesc(object):
+class CommandDescBase(object):
     def __init__(self, name):
         """
         :type name: str
@@ -12,10 +13,7 @@ class CommandDesc(object):
         self.annotation = ''
 
     def execute(self):
-        try:
-            meval(self.run)
-        except StandardError:
-            m.warning('Error during command execution: {}'.format(self.run))
+        raise NotImplementedError('Call to abstract method')
 
     def __hash__(self):
         return hash(self.name)
@@ -39,4 +37,22 @@ class CommandDesc(object):
         return not self.__eq__(other)
 
     def __str__(self):
-        return 'name:{}; run:{}; annotation:{}'.format(self.name, self.run, self.annotation)
+        return '{} -> name:{}; run:{}; annotation:{}'.format(type(self).__name__, self.name, self.run, self.annotation)
+
+
+class CommandDescPython(CommandDescBase):
+    def execute(self):
+        try:
+            exec self.run
+        except StandardError:
+            message_box.exception('Error during Python command execution')
+            raise
+
+
+class CommandDescMel(CommandDescBase):
+    def execute(self):
+        try:
+            meval(self.run)
+        except StandardError:
+            message_box.exception('Error during MEL command execution')
+            raise

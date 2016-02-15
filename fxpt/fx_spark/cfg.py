@@ -43,19 +43,14 @@ SPECIAL_SEARCHES = {SEARCH_CATEGORY_CMD, SEARCH_CATEGORY_CMD_RT, SEARCH_CATEGORY
 SEARCHES_TYPES_ALL = {SEARCH_CATEGORY_CMD, SEARCH_CATEGORY_CMD_RT, SEARCH_CATEGORY_TOOLS}
 
 TOOL_CFG_FIELD_NAME = 'name'
-TOOL_CFG_FIELD_RUN = 'run'
+TOOL_CFG_FIELD_MEL = 'mel'
+TOOL_CFG_FIELD_PYTHON = 'python'
 TOOL_CFG_FIELD_ANNOTATION = 'annotation'
-
-TOOL_CFG_MANDATORY_FIELDS = [
-    TOOL_CFG_FIELD_NAME,
-    TOOL_CFG_FIELD_RUN,
-    TOOL_CFG_FIELD_ANNOTATION
-]
 
 BUILT_IN_TOOLS = [
     {
         TOOL_CFG_FIELD_NAME: 'SparkCfgDir',
-        TOOL_CFG_FIELD_RUN: 'python("from fxpt.fx_spark import spark_config; spark_config.run()")',
+        TOOL_CFG_FIELD_PYTHON: 'from fxpt.fx_spark import spark_config; spark_config.run()',
         TOOL_CFG_FIELD_ANNOTATION: 'Open Spark Configuration Directory',
     }
 ]

@@ -30,7 +30,7 @@ class Harvester(object):
         catDb = self.db[cfg.SEARCH_CATEGORY_CMD]
         mayaCommands = [n for n, t in inspect.getmembers(m) if isinstance(t, types.BuiltinFunctionType)]
         for cmd in mayaCommands:
-            cd = command_desc.CommandDesc(cmd)
+            cd = command_desc.CommandDescMel(cmd)
             cd.run = cmd
             cd.annotation = 'Maya Command: ' + cmd
             catDb[cmd.lower()] = cd
@@ -50,7 +50,7 @@ class Harvester(object):
                     cmdL.endswith('release'):
                 continue
 
-            cd = command_desc.CommandDesc(cmd)
+            cd = command_desc.CommandDescMel(cmd)
             cd.run = cmd
             cd.annotation = annotation
             catDb[cmdL] = cd
@@ -64,20 +64,52 @@ class Harvester(object):
         return l
 
     # noinspection PyMethodMayBeStatic
-    def isValidToolDefinition(self, rec):
-        for f in cfg.TOOL_CFG_MANDATORY_FIELDS:
-            if f not in rec:
-                return False
-            if not isinstance(rec[f], str):
-                return False
-        return True
+    def getRecValue(self, rec, fieldName):
+        value = rec.get(fieldName, None)
+        if value is None:
+            return ''
+        if not isinstance(value, str):
+            message_box.warning(
+                'Bad type for field "{}". Only "str" allowed. Replaced with empty string.'.format(fieldName),
+                textDetailed=str(rec)
+            )
+            return ''
+        return value.strip()
+
+    def createCommandDesc(self, rec):
+        name = self.getRecValue(rec, cfg.TOOL_CFG_FIELD_NAME)
+        if not name:
+            message_box.warning(
+                'Tools without names not allowed. Skipped.',
+                textDetailed=str(rec)
+            )
+            return
+        mel = self.getRecValue(rec, cfg.TOOL_CFG_FIELD_MEL)
+        python = self.getRecValue(rec, cfg.TOOL_CFG_FIELD_PYTHON)
+        if mel and python:
+            message_box.warning(
+                'Both "mel" and "python" fields present in tool. Provide only one.',
+                textDetailed=str(rec)
+            )
+            return
+        annotation = self.getRecValue(rec, cfg.TOOL_CFG_FIELD_ANNOTATION)
+
+        if python:
+            cd = command_desc.CommandDescPython(name)
+            cd.run = python
+        else:
+            cd = command_desc.CommandDescMel(name)
+            cd.run = mel
+        cd.annotation = annotation
+
+        return cd
 
     # noinspection PyMethodMayBeStatic
     def generateBuiltInCommands(self, catDb):
         for rec in cfg.BUILT_IN_TOOLS:
-            cd = command_desc.CommandDesc(rec[cfg.TOOL_CFG_FIELD_NAME])
-            cd.run = rec[cfg.TOOL_CFG_FIELD_RUN]
-            cd.annotation = rec[cfg.TOOL_CFG_FIELD_ANNOTATION]
+            cd = self.createCommandDesc(rec)
+            if not cd:
+                return
             catDb[cd.name.lower()] = cd
 
     # noinspection PyMethodMayBeStatic
@@ -99,17 +131,11 @@ class Harvester(object):
             toolsList = self.getToolsList(toolsConfig)
 
             for rec in toolsList:
-                if not self.isValidToolDefinition(rec):
-                    message_box.warning('Found bad tool definition in\n{}\nIgnored.'.format(toolsConfig), textDetailed=str(rec))
+                cd = self.createCommandDesc(rec)
+                if not cd:
                     continue
 
-                cd = command_desc.CommandDesc(rec[cfg.TOOL_CFG_FIELD_NAME].strip())
-                cd.run = rec[cfg.TOOL_CFG_FIELD_RUN].strip()
-                cd.annotation = rec[cfg.TOOL_CFG_FIELD_ANNOTATION].strip()
-                if not cd.annotation:
-                    cd.annotation = cd.name
                 nameL = cd.name.lower()
-
                 if nameL in catDb or \
                         nameL in self.db[cfg.SEARCH_CATEGORY_CMD] or \
                         nameL in self.db[cfg.SEARCH_CATEGORY_CMD_RT]:
@@ -122,7 +148,7 @@ class Harvester(object):
         catDb = self.db[cfg.SEARCH_CATEGORY_HELP]
 
         for line in cfg.HELP_LINES:
-            cd = command_desc.CommandDesc(line)
+            cd = command_desc.CommandDescMel(line)
             cd.annotation = cfg.UI_DEFAULT_ANNOTATION
             catDb[line.lower()] = cd
 
