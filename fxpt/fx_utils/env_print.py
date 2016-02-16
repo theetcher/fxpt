@@ -23,5 +23,5 @@ def run():
         if value is None:
             print OFFSET + 'variable not set.'
         else:
-            for p in sorted(value.split(';')):
+            for p in value.split(';'):
                 print OFFSET + p.strip()
