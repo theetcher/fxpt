@@ -1,61 +1,281 @@
-#OptimizeSceneOptions;
-#ReferenceEditor;
-#DuplicateSpecialOptions;
-#CreatePolygonSphere;
-#CreatePolygonCube;
-#CreatePolygonCylinder;
-#CreatePolygonCone;
-#CreatePolygonPlane;
-#CreatePolygonTorus;
-#CreatePolygonPrism;
-#CreatePolygonPyramid;
-#CreatePolygonPipe;
-#CreatePolygonHelixOptions;
-#CreatePolygonSoccerBallOptions;
-#CreatePlatonicSolidOptions;
-# Unit Cube polyCube -w 1 -h 1 -d 1 -sx 1 -sy 1 -sz 1 -ax 0 1 0 -tx 1 -ch 1; objectMoveCommand;
-#CreateAmbientLight;
-#CreateDirectionalLight;
-#CreatePointLight;
-#CreateSpotLight;
-#CreateAreaLight;
-#CreateVolumeLight;
-#CreateAnnotateNode;
-#DistanceTool;
-#CreateQuickSelectSet
-#PolygonSelectionConstraints;
-
-#Freeze
-#-command "makeIdentity -apply true -t 1 -r 1 -s 1; \npython(\"from fxpt.fx_utils import utils_maya; utils_maya.opFlagEraser()\");"
-#-command "makeIdentity -apply true -t 1 -r 0 -s 0; \n"
-#-command "makeIdentity -apply true -t 0 -r 1 -s 0; \n"
-#-command "python(\"from fxpt.fx_utils import utils_maya; utils_maya.freezeRotationToWorld()\")"
-#-command "makeIdentity -apply true -t 0 -r 0 -s 1; \npython(\"from fxpt.fx_utils import utils_maya; utils_maya.opFlagEraser()\");"
-#-command "python(\"from fxpt.fx_utils import utils_maya; utils_maya.unfreezeTranslation()\");"
-
-#CenterPivot;
-
-
 - name: Env Print
   python: from fxpt.fx_utils import env_print; env_print.run()
   annotation: Print Maya Environment Variables
 
-- name: Create Locator ...
-  annotation: Create Locator
+- name: Optimize Scene Size ...
+  mel: OptimizeSceneOptions
+  annotation: Optimize Scene Size options
+  
+- name: Duplicate Special ...
+  mel: DuplicateSpecialOptions
+  annotation: Duplicate Special options
+  
+- name: Create Locator
   mel: spaceLocator
+  annotation: Create locator
+  
+- name: Annotation ...
+  mel: CreateAnnotateNode
+  annotation: Create annotation
 
-#- name: Print AAAAA by Python
-#  run: python("import maya.cmds as m; print 'from python AAAAA\\n'")
-#  annotation: Print AAAAA by Python in Script Editor
-#
-#- name: List All Cameras
-#  run: python("import maya.cmds as m; print m.ls(l=True, typ='camera')")
-#  annotation: List All Cameras in Script Editor
-#
-#- name: Texture Manager
-#  run: python("from fxpt.fx_texture_manager import fx_texture_manager; from fxpt.fx_utils.rreload import rreload; rreload(fx_texture_manager); fx_texture_manager.run()")
-#  annotation: Open Texture Manager
-#
-#- name: Create Poly Plane
-#  annotation: Create Poly Plane
-#  run: polyPlane
+- name: Distance Tool
+  mel: DistanceTool
+  annotation: Distance Tool
+
+- name: Create Quick Select Set ...
+  mel: CreateQuickSelectSet
+  annotation: Create quick select set
+
+- name: Polygon Selection Constraints ...
+  mel: PolygonSelectionConstraints
+  annotation: Polygon selection constraints
+
+- name: Reset Polygon Display
+  mel: SelectAllPolygonGeometry; PolyDisplayReset; SelectNone;
+  annotation: Reset polygon display
+
+- name: Custom Polygon Display ...
+  mel: CustomPolygonDisplayOptions
+  annotation: Custom polygon display options
+
+- name: Joints Size ...
+  mel: jdsWin
+  annotation: Customize the joint scale
+
+- name: Center Pivot
+  mel: CenterPivot
+  annotation: Set object pivot to AABB center
+
+- name: Wireframe Color
+  mel: objectColorPalette()
+  annotation: Set the wireframe color of all selected objects
+
+- name: Polygon Cleanup ...
+  mel: CleanupPolygonOptions
+  annotation: Polygon Cleanup options
+
+- name: Joint Tool
+  mel: JointTool
+  annotation: Joint Tool
+
+- name: Bind Skin
+  mel: SmoothBindSkinOptions
+  annotation: Bind skin
+
+- name: Detach Skin
+  mel: DetachSkin
+  annotation: Detach skin
+
+# FX Tools
+
+# from fxpt.fx_outliner import fx_outliner; fx_outliner.run()
+# from fxpt.fx_search import fx_search; fx_search.run()
+# from fxpt import fx_renamer; fx_renamer.run()
+# from fxpt import fx_transform_randomizer; fx_transform_randomizer.run()
+# from fxpt import fx_select_component_by_edge_angle; fx_select_component_by_edge_angle.run()
+# from fxpt import fx_grow_selection_by_edge_angle; fx_grow_selection_by_edge_angle.run()
+# from fxpt import fx_fly_camera; fx_fly_camera.run()
+# from fxpt import fx_reorient; fx_reorient.run()
+# from fxpt.fx_texture_manager import fx_texture_manager; fx_texture_manager.run()
+
+# Editors
+
+- name: Reference Editor
+  mel: ReferenceEditor
+  annotation: Reference Editor
+
+# GraphEditor;
+# CharacterAnimationEditor;
+# SequenceEditor;
+# DopeSheetEditor;
+# HIKCharacterControlsTool;
+# BlendShapeEditor;
+# ExpressionEditor;
+# AssetEditor;
+# SpreadSheetEditor;
+# ComponentEditor;
+# ConnectionEditor;
+# DisplayLayerEditorWindow;
+# FilePathEditor;
+# NamespaceEditor;
+# VisorWindow;
+# ChannelControlEditor;
+# ProfilerTool;
+# AnimLayerRelationshipEditor;
+# CameraSetEditor;
+# CharacterSetEditor;
+# from maya.app.general import creaseSetEditor; creaseSetEditor.showCreaseSetEditor()
+# DeformerSetEditor;
+# LayerRelationshipEditor;
+# DynamicRelationshipEditor;
+# LightCentricLightLinkingEditor;
+# ObjectCentricLightLinkingEditor;
+# PartitionEditor;
+# RenderLayerRelationshipEditor;
+# RenderPassSetEditor;
+# SetEditor;
+# TextureCentricUVLinkingEditor;
+# UVCentricUVLinkingEditor;
+# RenderViewWindow;
+# RenderGlobalsWindow;
+# HypershadeWindow;
+# RenderLayerEditorWindow;
+# RenderFlagsWindow;
+# ShadingGroupAttributeEditor;
+# HardwareRenderBuffer;
+# PreferencesWindow;
+# PerformanceSettingsWindow;
+# HotkeyPreferencesWindow;
+# ColorPreferencesWindow;
+# MarkingMenuPreferencesWindow;
+# PluginManager;
+# OutlinerWindow;
+# NodeEditorWindow;
+# HypergraphHierarchyWindow;
+# HypergraphDGWindow;
+# TextureViewWindow;
+# PlayblastOptions;
+
+# Create Polygons
+  
+- name: Create Polygon Cube
+  mel: CreatePolygonCube
+  annotation: Create polygon cube
+
+- name: Create Unit Polygon Cube
+  mel: polyCube -w 1 -h 1 -d 1 -sx 1 -sy 1 -sz 1 -ax 0 1 0 -tx 1 -ch 1; objectMoveCommand;
+  annotation: Create unit-size polygon cube 
+
+- name: Create Polygon Sphere
+  mel: CreatePolygonSphere
+  annotation: Create polygon sphere
+
+- name: Create Polygon Cylinder
+  mel: CreatePolygonCylinder
+  annotation: Create polygon cylinder
+
+- name: Create Polygon Cone
+  mel: CreatePolygonCone
+  annotation: Create polygon cone
+
+- name: Create Polygon Plane
+  mel: CreatePolygonPlane
+  annotation: Create polygon plane
+
+- name: Create Polygon Torus
+  mel: CreatePolygonTorus
+  annotation: Create polygon torus
+
+- name: Create Polygon Prism
+  mel: CreatePolygonPrism
+  annotation: Create polygon prism
+
+- name: Create Polygon Pyramid
+  mel: CreatePolygonPyramid
+  annotation: Create polygon pyramid
+
+- name: Create Polygon Pipe
+  mel: CreatePolygonPipe
+  annotation: Create polygon pipe
+
+- name: Create Polygon Helix ...
+  mel: CreatePolygonHelixOptions
+  annotation: Create Polygon Helix options
+
+- name: Create Polygon Soccer Ball ...
+  mel: CreatePolygonSoccerBallOptions
+  annotation: Create Polygon Soccer Ball options
+
+- name: Create Platonic Solid ...
+  mel: CreatePlatonicSolidOptions
+  annotation: Create Platonic Solid options
+
+# Create Lights
+
+- name: Create Ambient Light
+  mel: CreateAmbientLight
+  annotation: Create ambient light
+
+- name: Create Directional Light
+  mel: CreateDirectionalLight
+  annotation: Create directional light
+
+- name: Create Point Light
+  mel: CreatePointLight
+  annotation: Create point light
+
+- name: Create Spot Light
+  mel: CreateSpotLight
+  annotation: Create spot light
+
+- name: Create Area Light
+  mel: CreateAreaLight
+  annotation: Create area light
+
+- name: Create Volume Light
+  mel: CreateVolumeLight
+  annotation: Create volume light
+
+# Freeze
+
+- name: Freeze All
+  mel: catchQuiet(`makeIdentity -apply true -t 1 -r 1 -s 1`); python("from fxpt.fx_utils import utils_maya; utils_maya.opFlagEraser()");
+  annotation: Freeze translation, rotation, scale and erase opposite flag
+
+- name: Freeze Translation
+  mel: catchQuiet(`makeIdentity -apply true -t 1 -r 0 -s 0`)
+  annotation: Freeze translation
+
+- name: Freeze Rotation
+  mel: catchQuiet(`makeIdentity -apply true -t 0 -r 1 -s 0`)
+  annotation: Freeze rotation
+
+- name: Freeze Rotation To World
+  python: from fxpt.fx_utils import utils_maya; utils_maya.freezeRotationToWorld()
+  annotation: Freeze rotation to world
+
+- name: Freeze Scale
+  mel: catchQuiet(`makeIdentity -apply true -t 0 -r 0 -s 1`); python("from fxpt.fx_utils import utils_maya; utils_maya.opFlagEraser()");
+  annotation: Freeze scale and erase opposite flag
+
+- name: Unfreeze Translation
+  python: from fxpt.fx_utils import utils_maya; utils_maya.unfreezeTranslation()
+  annotation: Unfreeze translation
+
+# Toggle
+
+- name: Template
+  mel: toggle -state on -template
+  annotation: Template selection
+
+- name: Untemplate
+  mel: toggle -state off -template
+  annotation: Untemplate selection
+
+- name: Untemplate All
+  mel: toggle -global -state off -template
+  annotation: Untemplate all
+  
+- name: Show Local Rotation Axis
+  mel: toggle -state on -localAxis
+  annotation: Show local rotation axis of selected objects
+
+- name: Hide Local Rotation Axis
+  mel: toggle -state off -localAxis
+  annotation: Hide local rotation axis of selected objects
+
+- name: Hide Local Rotation Axis All
+  mel: toggle -global -state off -localAxis
+  annotation: Hide local rotation axis of all objects
+
+- name: Toggle Face Normals Display
+  mel: toggleNormalDisplay("face")
+  annotation: Toggle face normals display
+
+- name: Toggle Vertex Normals Display
+  mel: toggleNormalDisplay("vertex")
+  annotation: Toggle vertex normals display
+
+- name: Toggle Tangents Display
+  mel: toggleTangentDisplay()
+  annotation: Toggle tangents display
