@@ -600,7 +600,6 @@ def run():
 #    pydevd.settrace('localhost', port=62882, stdoutToServer=True, stderrToServer=True)
 
     global flyer
-    if not flyer:
-        flyer = Flyer()
+    flyer = Flyer()
 
     flyer.fly()
