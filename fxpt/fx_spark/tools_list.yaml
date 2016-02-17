@@ -68,15 +68,41 @@
 
 # FX Tools
 
-# from fxpt.fx_outliner import fx_outliner; fx_outliner.run()
-# from fxpt.fx_search import fx_search; fx_search.run()
-# from fxpt import fx_renamer; fx_renamer.run()
-# from fxpt import fx_transform_randomizer; fx_transform_randomizer.run()
-# from fxpt import fx_select_component_by_edge_angle; fx_select_component_by_edge_angle.run()
-# from fxpt import fx_grow_selection_by_edge_angle; fx_grow_selection_by_edge_angle.run()
-# from fxpt import fx_fly_camera; fx_fly_camera.run()
-# from fxpt import fx_reorient; fx_reorient.run()
-# from fxpt.fx_texture_manager import fx_texture_manager; fx_texture_manager.run()
+- name: FX Outliner
+  python: from fxpt.fx_outliner import fx_outliner; fx_outliner.run()
+  annotation: FX Outliner
+
+- name: FX Search
+  python: from fxpt.fx_search import fx_search; fx_search.run()
+  annotation: FX Search
+
+- name: FX Renamer
+  python: from fxpt import fx_renamer; fx_renamer.run()
+  annotation: FX Renamer
+
+- name: FX Transform Randomizer
+  python: from fxpt import fx_transform_randomizer; fx_transform_randomizer.run()
+  annotation: FX Transform Randomizer
+
+- name: FX Select Component By Edge Angle
+  python: from fxpt import fx_select_component_by_edge_angle; fx_select_component_by_edge_angle.run()
+  annotation: FX Select Component By Edge Angle
+
+- name: FX Grow Selection By Edge Angle
+  python: from fxpt import fx_grow_selection_by_edge_angle; fx_grow_selection_by_edge_angle.run()
+  annotation: FX Grow Selection By Edge Angle
+
+- name: FX Fly Camera
+  python: from fxpt import fx_fly_camera; fx_fly_camera.run()
+  annotation: FX Fly Camera
+
+- name: FX Reorient
+  python: from fxpt import fx_reorient; fx_reorient.run()
+  annotation: FX Reorient
+
+- name: FX Texture Manager
+  python: from fxpt.fx_texture_manager import fx_texture_manager; fx_texture_manager.run()
+  annotation: FX Texture Manager
 
 # Editors
 
@@ -84,57 +110,213 @@
   mel: ReferenceEditor
   annotation: Reference Editor
 
-# GraphEditor;
-# CharacterAnimationEditor;
-# SequenceEditor;
-# DopeSheetEditor;
-# HIKCharacterControlsTool;
-# BlendShapeEditor;
-# ExpressionEditor;
-# AssetEditor;
-# SpreadSheetEditor;
-# ComponentEditor;
-# ConnectionEditor;
-# DisplayLayerEditorWindow;
-# FilePathEditor;
-# NamespaceEditor;
-# VisorWindow;
-# ChannelControlEditor;
-# ProfilerTool;
-# AnimLayerRelationshipEditor;
-# CameraSetEditor;
-# CharacterSetEditor;
-# from maya.app.general import creaseSetEditor; creaseSetEditor.showCreaseSetEditor()
-# DeformerSetEditor;
-# LayerRelationshipEditor;
-# DynamicRelationshipEditor;
-# LightCentricLightLinkingEditor;
-# ObjectCentricLightLinkingEditor;
-# PartitionEditor;
-# RenderLayerRelationshipEditor;
-# RenderPassSetEditor;
-# SetEditor;
-# TextureCentricUVLinkingEditor;
-# UVCentricUVLinkingEditor;
-# RenderViewWindow;
-# RenderGlobalsWindow;
-# HypershadeWindow;
-# RenderLayerEditorWindow;
-# RenderFlagsWindow;
-# ShadingGroupAttributeEditor;
-# HardwareRenderBuffer;
-# PreferencesWindow;
-# PerformanceSettingsWindow;
-# HotkeyPreferencesWindow;
-# ColorPreferencesWindow;
-# MarkingMenuPreferencesWindow;
-# PluginManager;
-# OutlinerWindow;
-# NodeEditorWindow;
-# HypergraphHierarchyWindow;
-# HypergraphDGWindow;
-# TextureViewWindow;
-# PlayblastOptions;
+- name: Graph Editor
+  mel: GraphEditor
+  annotation: Graph Editor
+
+- name: Trax Editor
+  mel: CharacterAnimationEditor
+  annotation: Trax Editor
+
+- name: Script Editor
+  mel: ScriptEditor
+  annotation: Script Editor
+
+- name: Camera Sequencer
+  mel: SequenceEditor
+  annotation: Camera Sequencer
+
+- name: Dope Sheet
+  mel: DopeSheetEditor
+  annotation: Dope Sheet
+  
+- name: Human IK
+  mel: HIKCharacterControlsTool
+  annotation: Human IK
+
+- name: Blend Shape Editor
+  mel: BlendShapeEditor
+  annotation: Blend Shape Editor
+
+- name: Expression Editor
+  mel: ExpressionEditor
+  annotation: Expression Editor
+
+- name: Asset Editor
+  mel: AssetEditor
+  annotation: Asset Editor
+
+- name: Attribute Spread Sheet
+  mel: SpreadSheetEditor
+  annotation: Attribute Spread Sheet
+
+- name: Component Editor
+  mel: ComponentEditor
+  annotation: Component Editor
+
+- name: Connection Editor
+  mel: ConnectionEditor
+  annotation: Connection Editor
+
+- name: Display Layer Editor
+  mel: DisplayLayerEditorWindow
+  annotation: Display Layer Editor
+
+- name: File Path Editor
+  mel: FilePathEditor
+  annotation: File Path Editor
+
+- name: Namespace Editor
+  mel: NamespaceEditor
+  annotation: Namespace Editor
+
+- name: Visor Window
+  mel: VisorWindow
+  annotation: Visor Window
+
+- name: Channel Control
+  mel: ChannelControlEditor
+  annotation: Channel Control
+
+- name: Profiler Window
+  mel: ProfilerTool
+  annotation: Profiler Window
+
+- name: Relationships - Animation Layers
+  mel: AnimLayerRelationshipEditor
+  annotation: Relationships - Animation Layers
+
+- name: Relationships - Camera Sets
+  mel: CameraSetEditor
+  annotation: Relationships - Camera Sets
+
+- name: Relationships - Character Sets
+  mel: CharacterSetEditor
+  annotation: Relationships - Character Sets
+  
+- name: Relationships - Deformer Sets
+  mel: DeformerSetEditor
+  annotation: Relationships - Deformer Sets
+
+- name: Relationships - Display Layers
+  mel: LayerRelationshipEditor
+  annotation: Relationships - Display Layers
+
+- name: Relationships - Dynamic
+  mel: DynamicRelationshipEditor
+  annotation: Relationships - Dynamic
+
+- name: Light Centric Light Linking
+  mel: LightCentricLightLinkingEditor
+  annotation: Light Centric Light Linking
+
+- name: Object Centric Light Linking
+  mel: ObjectCentricLightLinkingEditor
+  annotation: Object Centric Light Linking
+
+- name: Relationships - Partitions
+  mel: PartitionEditor
+  annotation: Relationships - Partitions
+
+- name: Relationships - Render Layers
+  mel: RenderLayerRelationshipEditor
+  annotation: Relationships - Render Layers
+
+- name: Relationships - Render Pass Sets
+  mel: RenderPassSetEditor
+  annotation: elationships - Render Pass Sets
+
+- name: Relationships - Sets
+  mel: SetEditor
+  annotation: Relationships - Sets
+
+- name: Texture Centric UV Linking
+  mel: TextureCentricUVLinkingEditor
+  annotation: Texture Centric UV Linking
+
+- name: UV Centric UV Linking
+  mel: UVCentricUVLinkingEditor
+  annotation: UV Centric UV Linking
+
+- name: Render View
+  mel: RenderViewWindow
+  annotation: Render View
+
+- name: Render Settings
+  mel: RenderGlobalsWindow
+  annotation: Render Settings
+
+- name: Hypershade Window
+  mel: HypershadeWindow
+  annotation: Hypershade Window
+
+- name: Render Layer Editor
+  mel: RenderLayerEditorWindow
+  annotation: Render Layer Editor
+
+- name: Rendering Flags
+  mel: RenderFlagsWindow
+  annotation: Rendering Flags
+
+- name: Shading Group Attributes
+  mel: ShadingGroupAttributeEditor
+  annotation: Shading Group Attributes
+
+- name: Hardware Render Buffer
+  mel: HardwareRenderBuffer
+  annotation: Hardware Render Buffer
+
+- name: Preferences
+  mel: PreferencesWindow
+  annotation: Preferences
+
+- name: Performance Settings
+  mel: PerformanceSettingsWindow
+  annotation: Performance Settings
+
+- name: Hotkey Editor
+  mel: HotkeyPreferencesWindow
+  annotation: Hotkey Editor
+
+- name: Colors Settings
+  mel: ColorPreferencesWindow
+  annotation: Colors Settings
+
+- name: Marking Menu Editor
+  mel: MarkingMenuPreferencesWindow
+  annotation: Marking Menu Editor
+
+- name: Plug-in Manager
+  mel: PluginManager
+  annotation: Plug-in Manager
+
+- name: Outliner
+  mel: OutlinerWindow
+  annotation: Outliner
+
+- name: Node Editor
+  mel: NodeEditorWindow
+  annotation: Node Editor
+
+- name: Hypergraph - Hierarchy
+  mel: HypergraphHierarchyWindow
+  annotation: Hypergraph - Hierarchy
+
+- name: Hypergraph - Connections
+  mel: HypergraphDGWindow
+  annotation: Hypergraph - Connections
+
+- name: UV Editor
+  mel: TextureViewWindow
+  annotation: UV Editor
+
+- name: Playblast ...
+  mel: PlayblastOptions
+  annotation: Playblast Options
+  
+- name: Crease Sets
+  python: from maya.app.general import creaseSetEditor; creaseSetEditor.showCreaseSetEditor()
+  annotation: Crease Sets
 
 # Create Polygons
   

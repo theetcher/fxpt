@@ -14,7 +14,7 @@ HISTORY_FILE = TOOL_DIR + '/history.json'
 HISTORY_LENGTH = 5
 
 UI_FRAME_WIDTH = 500
-UI_FRAME_CENTER_OFFSET = -100
+UI_FRAME_CENTER_OFFSET = -200
 UI_ITEM_SIZE = 24
 UI_LIST_SIZE_BOTTOM_MARGIN = 0
 UI_MAX_RESULTS_HEIGHT = 300
@@ -56,9 +56,9 @@ BUILT_IN_TOOLS = [
 ]
 
 TOOLS_CFG_USER_DEFAULT = '''
-- name: Script Editor
-  run: ScriptEditor
-  annotation: Show Script Editor
+- name: Print Maya.env Location
+  mel: print(`about -environmentFile`)
+  annotation: Print maya.env location
 
 - name: Print MAYA_APP_DIR
   run: python("import os; print os.environ.get('MAYA_APP_DIR', None),")

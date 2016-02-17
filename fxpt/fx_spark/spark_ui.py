@@ -99,9 +99,9 @@ class SparkUI(QtGui.QWidget):
 
     def onItemActivated(self, item):
         if item:
+            self.close()
             item.desc.execute()
             self.searcher.commandExecuted(item.desc)
-            self.close()
 
     def onResultSelectionChanged(self, i):
         if i is not None and i > -1:
