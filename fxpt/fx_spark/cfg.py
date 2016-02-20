@@ -49,7 +49,7 @@ TOOL_CFG_FIELD_ANNOTATION = 'annotation'
 
 BUILT_IN_TOOLS = [
     {
-        TOOL_CFG_FIELD_NAME: 'SparkCfgDir',
+        TOOL_CFG_FIELD_NAME: 'Spark Configuration Directory',
         TOOL_CFG_FIELD_PYTHON: 'from fxpt.fx_spark import spark_config; spark_config.run()',
         TOOL_CFG_FIELD_ANNOTATION: 'Open Spark Configuration Directory',
     }
