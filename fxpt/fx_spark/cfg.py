@@ -61,7 +61,7 @@ TOOLS_CFG_USER_DEFAULT = '''
   annotation: Print maya.env location
 
 - name: Print MAYA_APP_DIR
-  run: python("import os; print os.environ.get('MAYA_APP_DIR', None),")
+  python: import os; print os.environ.get('MAYA_APP_DIR', None)
   annotation: Print MAYA_APP_DIR environment variable
 '''
 
