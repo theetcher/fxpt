@@ -7,7 +7,7 @@ from fxpt.fx_prefsaver import prefsaver, serializers
 
 import maya.OpenMaya as om
 
-SCRIPT_VERSION = 'v1.2'
+SCRIPT_VERSION = 'v1.5'
 SCRIPT_NAME = 'Grow Selection By Edge Angle'
 WIN_NAME = 'fx_growSelectionByAngle_win'
 WIN_HELPNAME = 'fx_growSelectionByAngle_helpwin'
@@ -26,8 +26,7 @@ class SelectComponentByAngleUI:
 
         self.prefSaver = prefsaver.PrefSaver(serializers.SerializerOptVar(OPT_VAR_NAME))
         
-        self.targetGeom = []
-        self.geometryData = GeometryData()
+        self.growProcessor = GrowProcessor()
 
         self.ui_createUI()
         self.ui_setTargetGeometry()
@@ -212,6 +211,53 @@ class SelectComponentByAngleUI:
 
     # noinspection PyUnusedLocal
     def ui_setTargetGeometry(self, *args):
+        try:
+            self.growProcessor.setTargetGeom()
+        except BadSelectionError:
+            self.ui_badSelectionWarning()
+        else:
+            self.selectValidGeometry()
+
+    # noinspection PyUnusedLocal
+    def ui_CHK_highlight_change(self, *args):
+        self.growProcessor.highlightTarget(self.ui_CHK_highlight.getValue())
+
+    # noinspection PyUnusedLocal
+    def selectValidGeometry(self, *args):
+        _min = self.ui_FLTSLGRP_minAngle.getValue()
+        _max = self.ui_FLTSLGRP_maxAngle.getValue()
+        highlightState = self.ui_CHK_highlight.getValue()
+        self.growProcessor.selectValidGeom(_min, _max, highlightState)
+
+    # noinspection PyUnusedLocal,PyMethodMayBeStatic
+    def ui_showHelp(self, *args):
+        import webbrowser
+        webbrowser.open('http://davydenko.info/edge_angle_grow/', new=0, autoraise=True)
+
+
+class GrowProcessor:
+    def __init__(self):
+        self.targetGeom = []
+        self.polyData = []
+
+    def selectValidGeom(self, _min, _max, highlightState):
+        pm.mel.eval('changeSelectMode -component; setComponentPickMask "All" 0; setComponentPickMask "Facet" true;')
+        self.highlightTarget(highlightState)
+        validEdges = self.getValidEdges(_min, _max)
+        # noinspection PyCallByClass,PyTypeChecker
+        om.MGlobal.setActiveSelectionList(validEdges)
+
+    def highlightTarget(self, state):
+        if not self.targetGeom:
+            return
+        selList = om.MSelectionList()
+        if state:
+            for obj in self.targetGeom:
+                selList.add(obj.dagPath)
+        # noinspection PyCallByClass,PyTypeChecker
+        om.MGlobal.setHiliteList(selList)
+
+    def setTargetGeom(self):
 
         self.targetGeom = []
 
@@ -220,8 +266,7 @@ class SelectComponentByAngleUI:
         om.MGlobal.getActiveSelectionList(selList)
 
         if selList.isEmpty():
-            self.ui_badSelectionWarning()
-            return
+            raise BadSelectionError()
 
         selListIter = om.MItSelectionList(selList)
         while not selListIter.isDone():
@@ -247,48 +292,11 @@ class SelectComponentByAngleUI:
             selListIter.next()
 
         if not self.targetGeom:
-            self.ui_badSelectionWarning()
-            return
+            raise BadSelectionError()
 
-        self.geometryData.generateGeometryInfo(self.targetGeom)
-        self.selectValidGeometry()
+        self.generateGeometryInfo()
 
-    # noinspection PyUnusedLocal
-    def ui_CHK_highlight_change(self, *args):
-        if not self.targetGeom:
-            return
-
-        selList = om.MSelectionList()
-        if self.ui_CHK_highlight.getValue():
-            for obj in self.targetGeom:
-                selList.add(obj.dagPath)
-        # noinspection PyCallByClass,PyTypeChecker
-        om.MGlobal.setHiliteList(selList)
-
-    # noinspection PyUnusedLocal
-    def selectValidGeometry(self, *args):
-        _min = self.ui_FLTSLGRP_minAngle.getValue()
-        _max = self.ui_FLTSLGRP_maxAngle.getValue()
-
-        pm.mel.eval('changeSelectMode -component; setComponentPickMask "All" 0; setComponentPickMask "Facet" true;')
-        self.ui_CHK_highlight_change(True)
-
-        validEdges = self.geometryData.getValidEdges(_min, _max)
-        # noinspection PyCallByClass,PyTypeChecker
-        om.MGlobal.setActiveSelectionList(validEdges)
-
-    # noinspection PyUnusedLocal,PyMethodMayBeStatic
-    def ui_showHelp(self, *args):
-        import webbrowser
-        webbrowser.open('http://davydenko.info/edge_angle_grow/', new=0, autoraise=True)
-
-
-class GeometryData:
-    def __init__(self):
-
-        self.polyData = []
-
-    def generateGeometryInfo(self, objList):
+    def generateGeometryInfo(self):
 
         pi = math.pi
         connectedFaces = om.MIntArray()
@@ -299,7 +307,7 @@ class GeometryData:
 
         self.polyData = []
 
-        for obj in objList:
+        for obj in self.targetGeom:
 
             edgeIter = om.MItMeshEdge(obj.dagPath)
             faceIter = om.MItMeshPolygon(obj.dagPath)
@@ -384,7 +392,6 @@ class GeometryData:
                     break
 
     def resetSelection(self):
-
         for obj in self.polyData:
             for poly in obj.polygons:
                 poly.selected = poly.initSelection
@@ -456,7 +463,24 @@ class SelectionItem:
         return outStr
 
 
+class BadSelectionError(StandardError):
+    pass
+
+
 def run():
     SelectComponentByAngleUI()
 
 
+def runNoUI(_min, _max, highlight):
+    growProcessor = GrowProcessor()
+    try:
+        growProcessor.setTargetGeom()
+    except BadSelectionError:
+        pm.confirmDialog(
+            title='Error',
+            message='Invalid selection.\nSelect at least one polygon.',
+            button=['OK'],
+            defaultButton='OK',
+            icon='critical'
+        )
+    growProcessor.selectValidGeom(_min, _max, highlight)
