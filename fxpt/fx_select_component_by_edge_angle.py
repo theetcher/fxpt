@@ -234,15 +234,9 @@ class SelectComponentByAngleUI:
 
         self.geometryData.generateGeometryInfo(self.targetGeom)
 
-        #TODO: fix stuff below with highlight option
-        # strange things to make highlight working on window show and "Set Target Geometry" if option is false
         if not self.getHighlightState():
-            self.setHighlight(False)
-            self.selectValidGeometry()
-            self.setHighlight(True)
-            self.selectValidGeometry()
-        else:
-            self.selectValidGeometry()
+            m.select(cl=True)
+        self.selectValidGeometry()
 
     # noinspection PyUnusedLocal
     def ui_CHK_highlight_change(self, arg):
