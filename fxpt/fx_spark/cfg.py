@@ -9,7 +9,7 @@ TOOL_DIR = pathToSlash(os.path.dirname(__file__))
 TOOLS_CFG = TOOL_DIR + '/tools_list.yaml'
 SPARK_USER_CFG_DIR = getUserCfgDir() + '/fx_spark'
 TOOLS_CFG_USER = SPARK_USER_CFG_DIR + '/tools_list_user.yaml'
-HISTORY_FILE = TOOL_DIR + '/history.json'
+HISTORY_FILE = SPARK_USER_CFG_DIR + '/history.json'
 
 HISTORY_LENGTH = 5
 
