@@ -1,4 +1,5 @@
 import maya.api.OpenMaya as om
+import maya.OpenMaya as om_
 
 from . import com, edge, vertex, polygon
 from . import debug
@@ -9,6 +10,7 @@ class GeomProcessor(object):
     """
     :type meshTransform: str
     :type dagPath: om.MDagPath
+    :type dagPath_: om_.MDagPath
     :type meshFn: om.MFnMesh
     :type vertices: list[vertex.Vertex]
     :type edges: list[edge.Edge]
@@ -18,6 +20,7 @@ class GeomProcessor(object):
     def __init__(self, meshTransform):
         self.meshTransform = meshTransform
         self.dagPath = self.getDagPath()
+        self.dagPath_ = self.getDagPath_()
         self.meshFn = self.createMeshFn()
         self.vertices = []
         self.edges = []
@@ -29,6 +32,13 @@ class GeomProcessor(object):
         selList = om.MSelectionList()
         selList.add(com.longNameOf(self.meshTransform))
         return selList.getDagPath(0)
+
+    def getDagPath_(self):
+        selList = om_.MSelectionList()
+        selList.add(com.longNameOf(self.meshTransform))
+        dagPath = om_.MDagPath()
+        selList.getDagPath(0, dagPath)
+        return dagPath
 
     def createMeshFn(self):
         return om.MFnMesh(self.dagPath)
@@ -71,7 +81,9 @@ class GeomProcessor(object):
             p.normal = self.meshFn.getPolygonNormal(ip)
             self.polygons.append(p)
             for iv in self.meshFn.getPolygonVertices(ip):
-                p.vertices.add(self.vertices[iv])
+                v = self.vertices[iv]
+                p.vertices.add(v)
+                v.polygons.add(p)
 
         for p in self.polygons:
             for v in p.vertices:
@@ -79,6 +91,14 @@ class GeomProcessor(object):
                     if e.v1 in p.vertices and e.v2 in p.vertices:
                         p.edges.add(e)
                         e.polygons.add(p)
+
+        msu = om_.MScriptUtil()
+        areaPtr = msu.asDoublePtr()
+        pIter = om_.MItMeshPolygon(self.dagPath_)
+        while not pIter.isDone():
+            pIter.getArea(areaPtr, om_.MSpace.kWorld)
+            self.polygons[pIter.index()].area = msu.getDouble(areaPtr)
+            pIter.next()
 
         self.calculateEdgeAngles()
         self.validateEdges()
@@ -98,15 +118,24 @@ class GeomProcessor(object):
     def process(self, curvThreshold, curvDisplayMaxValue):
         self.display(curvThreshold, curvDisplayMaxValue)
 
-        # self._dbgDebug3()
+        newNormals = self.meshFn.getNormals(space=om.MSpace.kWorld)
+
+        for v in self.vertices:
+            if not v.isRougher(curvThreshold):
+                continue
+            newNormals[v.normalId] = self.calculateNewNormal(v)
+
+        self.meshFn.setNormals(newNormals)
+
+    def calculateNewNormal(self, v):
+        return om.MFloatVector(1, 0, 0)
 
     def display(self, curvThreshold, curvDisplayMaxValue):
         colors = []
         verticesIds = []
         for v in self.vertices:
-            absCurvature = abs(v.curvature)
-            scaledAbsCurvature = absCurvature / curvDisplayMaxValue
-            color = om.MColor((scaledAbsCurvature, scaledAbsCurvature, scaledAbsCurvature)) if absCurvature > curvThreshold else om.MColor((0.0, 1.0, 0.0))
+            scaledAbsCurvature = v.absCurvature / curvDisplayMaxValue
+            color = om.MColor((scaledAbsCurvature, scaledAbsCurvature, scaledAbsCurvature)) if v.isRougher(curvThreshold) else om.MColor((0.0, 1.0, 0.0))
             colors.append(color)
             verticesIds.append(v.id)
 
@@ -115,7 +144,8 @@ class GeomProcessor(object):
     @staticmethod
     def _dbgDumpList(l):
         for i, x in enumerate(l):
-            print '#{}: {}'.format(i, x)
+            print '#{}: {}'.format(i, str(x))
+            print type(l)
 
     def _dbgDebug1(self):
         v = self.vertices[56]
