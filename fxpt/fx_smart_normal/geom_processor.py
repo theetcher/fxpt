@@ -34,28 +34,27 @@ class GeomProcessor(object):
         return om.MFnMesh(self.dagPath)
 
     def harvestData(self):
-        self.harvestPoints()
+        self.harvestVertices()
         self.harvestEdges()
         self.harvestPolygons()
         self.calculateVtxCurvatures()
 
-    def harvestPoints(self):
-        for iv, p in enumerate(self.meshFn.getPoints(space=om.MSpace.kWorld)):
+    def harvestVertices(self):
+        for iv, v in enumerate(self.meshFn.getPoints(space=om.MSpace.kWorld)):
             vtx = vertex.Vertex(iv)
-            vtx.point = p
+            vtx.point = v
             self.vertices.append(vtx)
 
-        # for i, n in enumerate(self.meshFn.getVertexNormals(False, space=om.MSpace.kWorld)):
-        #     self.vertices[i].normal = om.MVector(n)
-
-        vertexNormals = [None] * self.meshFn.numVertices
-        for pi in xrange(self.meshFn.numPolygons):
-            polygonVertices = self.meshFn.getPolygonVertices(pi)
-            for vi in polygonVertices:
-                vertexNormals[vi] = self.meshFn.getFaceVertexNormal(pi, vi, space=om.MSpace.kWorld)
-
-        for in_, n in enumerate(vertexNormals):
-            self.vertices[in_].normal = n
+        # verticesIds maps 1:1 to normalIds and normals without use of polygonIds only if 1 vertex = 1 normal (my case)
+        normals = self.meshFn.getNormals(space=om.MSpace.kWorld)
+        _, normalIds = self.meshFn.getNormalIds()
+        _, verticesIds = self.meshFn.getVertices()
+        for i, iv in enumerate(verticesIds):
+            normalIndex = normalIds[i]
+            normal = om.MVector(normals[normalIndex])
+            v = self.vertices[iv]
+            v.normalId = normalIndex
+            v.normal = normal
 
     def harvestEdges(self):
         for ie in xrange(self.meshFn.numEdges):
@@ -99,6 +98,8 @@ class GeomProcessor(object):
     def process(self, curvThreshold, curvDisplayMaxValue):
         self.display(curvThreshold, curvDisplayMaxValue)
 
+        # self._dbgDebug3()
+
     def display(self, curvThreshold, curvDisplayMaxValue):
         colors = []
         verticesIds = []
@@ -113,8 +114,8 @@ class GeomProcessor(object):
 
     @staticmethod
     def _dbgDumpList(l):
-        for x in l:
-            print x
+        for i, x in enumerate(l):
+            print '#{}: {}'.format(i, x)
 
     def _dbgDebug1(self):
         v = self.vertices[56]
@@ -155,3 +156,41 @@ class GeomProcessor(object):
         for n in vertexNormals:
             print n
         print
+
+    def _dbgDebug3(self):
+        print
+        print
+        print '>>> dump vertices'
+        self._dbgDumpList(self.vertices)
+
+        print '>>> meshFn.getNormals():'
+        self._dbgDumpList(self.meshFn.getNormals(space=om.MSpace.kWorld))
+
+        print '>>> meshFn.getNormalIds():'
+        print self.meshFn.getNormalIds()
+
+        print '>>> meshFn.getVertices():'
+        print self.meshFn.getVertices()
+
+        print '>>> polygon vertices:'
+        for p in xrange(self.meshFn.numPolygons):
+            print self.meshFn.getPolygonVertices(p)
+
+        print '>>> setNormals()'
+        self.meshFn.setNormals([om.MFloatVector(1, 0, 0), om.MFloatVector(0, 1, 0)], space=om.MSpace.kWorld)
+
+        print '>>> meshFn.getNormals():'
+        self._dbgDumpList(self.meshFn.getNormals(space=om.MSpace.kWorld))
+
+        print '>>> meshFn.getNormalIds():'
+        print self.meshFn.getNormalIds()
+
+        print '>>> meshFn.getVertices():'
+        print self.meshFn.getVertices()
+
+        print '>>> polygon vertices:'
+        for p in xrange(self.meshFn.numPolygons):
+            print self.meshFn.getPolygonVertices(p)
+
+        print '>>> dump vertices'
+        self._dbgDumpList(self.vertices)

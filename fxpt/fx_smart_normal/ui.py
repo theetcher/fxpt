@@ -211,6 +211,8 @@ class SmartNormalUI(object):
         pass
 
     def setTargetGeometry(self):
+        selection = m.ls(sl=True)
+
         self.normalizers = []
         meshes = m.ls(
             selection=True,
@@ -223,6 +225,8 @@ class SmartNormalUI(object):
         if meshes:
             for x in meshes:
                 transform = com.getParent(x)
+                m.polyNormalPerVertex(transform, ufn=True)
+                m.polySoftEdge(transform, a=180)
                 if transform:
                     self.normalizers.append(normalizer.Normalizer(x))
         else:
@@ -233,5 +237,7 @@ class SmartNormalUI(object):
                 defaultButton='OK',
                 icon='critical'
             )
+            return
 
+        m.select(selection, r=True)
         self.processNormalizers()
