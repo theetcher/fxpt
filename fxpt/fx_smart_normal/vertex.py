@@ -22,4 +22,4 @@ class Vertex(object):
         )
 
     def calculateCurvature(self):
-        self.curvature = com.ariMean([e.curvature for e in self.edges])
+        self.curvature = com.ariMean([abs(e.curvature) for e in self.edges])

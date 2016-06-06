@@ -20,7 +20,7 @@ class SmartNormalUI(object):
     def __init__(self):
         self.normalizers = []
         self.ui_createUI()
-        self.ui_setTargetGeometry()
+        self.setTargetGeometry()
 
     def ui_createUI(self):
         self.winName = WIN_NAME
@@ -62,16 +62,16 @@ class SmartNormalUI(object):
                                             self.ui_FLTSLGRP_curveThresh = pm.floatSliderGrp(
                                                 'ui_FLTSLGRP_curveThresh',
                                                 field=True,
-                                                minValue=0,
-                                                maxValue=180,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=180,
-                                                value=0,
+                                                minValue=0.001,
+                                                maxValue=0.2,
+                                                fieldMinValue=0.001,
+                                                fieldMaxValue=10,
+                                                value=0.001,
                                                 step=0.001,
                                                 fieldStep=0.001,
                                                 sliderStep=0.001,
-                                                changeCommand=self.dummyFunc,
-                                                dragCommand=self.dummyFunc
+                                                changeCommand=self.ui_FLTSLGRP_curveThresh_change,
+                                                dragCommand=self.ui_FLTSLGRP_curveThresh_change
                                             )
 
                                             pm.setUITemplate('DefaultTemplate', pushTemplate=True)
@@ -128,16 +128,16 @@ class SmartNormalUI(object):
                                                 self.ui_FLTSLGRP_curvatureMaxValue = pm.floatSliderGrp(
                                                     'ui_FLTSLGRP_curvatureMaxValue',
                                                     field=True,
-                                                    minValue=0,
-                                                    maxValue=10,
-                                                    fieldMinValue=0,
+                                                    minValue=0.001,
+                                                    maxValue=1,
+                                                    fieldMinValue=0.001,
                                                     fieldMaxValue=10,
-                                                    value=0,
+                                                    value=1,
                                                     step=0.001,
                                                     fieldStep=0.001,
                                                     sliderStep=0.001,
-                                                    changeCommand=self.dummyFunc,
-                                                    dragCommand=self.dummyFunc
+                                                    changeCommand=self.ui_FLTSLGRP_curvatureMaxValue_change,
+                                                    dragCommand=self.ui_FLTSLGRP_curvatureMaxValue_change
                                                 )
 
                                                 pm.setUITemplate('DefaultTemplate', pushTemplate=True)
@@ -187,10 +187,31 @@ class SmartNormalUI(object):
     def ui_CHK_displayCurvature_change(self, arg):
         pass
 
+    def getCurvatureThresholdValue(self):
+        return self.ui_FLTSLGRP_curveThresh.getValue()
+
+    def getCurvatureDisplayMaxValue(self):
+        return self.ui_FLTSLGRP_curvatureMaxValue.getValue()
+
+    def ui_FLTSLGRP_curveThresh_change(self, arg):
+        self.processNormalizers()
+
+    def ui_FLTSLGRP_curvatureMaxValue_change(self, arg):
+        self.updateNormalizersDisplay()
+
+    def processNormalizers(self):
+        for n in self.normalizers:
+            n.process(self.getCurvatureThresholdValue(), self.getCurvatureDisplayMaxValue())
+
+    def updateNormalizersDisplay(self):
+        for n in self.normalizers:
+            n.updateDisplay(self.getCurvatureThresholdValue(), self.getCurvatureDisplayMaxValue())
+
     def dummyFunc(self, *args, **kwargs):
         pass
 
     def setTargetGeometry(self):
+        self.normalizers = []
         meshes = m.ls(
             selection=True,
             long=True,
@@ -213,3 +234,4 @@ class SmartNormalUI(object):
                 icon='critical'
             )
 
+        self.processNormalizers()
