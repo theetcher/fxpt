@@ -1,6 +1,6 @@
 import maya.api.OpenMaya as om
 
-from . import com, edge, vertex
+from . import com, edge, vertex, polygon
 from . import debug
 
 
@@ -12,6 +12,7 @@ class GeomProcessor(object):
     :type meshFn: om.MFnMesh
     :type vertices: list[vertex.Vertex]
     :type edges: list[edge.Edge]
+    :type polygons: list[polygon.Polygon]
     """
 
     def __init__(self, meshTransform):
@@ -20,6 +21,7 @@ class GeomProcessor(object):
         self.meshFn = self.createMeshFn()
         self.vertices = []
         self.edges = []
+        self.polygons = []
 
         self.harvestData()
 
@@ -34,11 +36,12 @@ class GeomProcessor(object):
     def harvestData(self):
         self.harvestPoints()
         self.harvestEdges()
+        self.harvestPolygons()
         self.calculateVtxCurvatures()
 
     def harvestPoints(self):
-        for i, p in enumerate(self.meshFn.getPoints(space=om.MSpace.kWorld)):
-            vtx = vertex.Vertex(i)
+        for iv, p in enumerate(self.meshFn.getPoints(space=om.MSpace.kWorld)):
+            vtx = vertex.Vertex(iv)
             vtx.point = p
             self.vertices.append(vtx)
 
@@ -46,26 +49,52 @@ class GeomProcessor(object):
         #     self.vertices[i].normal = om.MVector(n)
 
         vertexNormals = [None] * self.meshFn.numVertices
-        for pi in range(self.meshFn.numPolygons):
+        for pi in xrange(self.meshFn.numPolygons):
             polygonVertices = self.meshFn.getPolygonVertices(pi)
             for vi in polygonVertices:
                 vertexNormals[vi] = self.meshFn.getFaceVertexNormal(pi, vi, space=om.MSpace.kWorld)
 
-        for i, n in enumerate(vertexNormals):
-            self.vertices[i].normal = n
+        for in_, n in enumerate(vertexNormals):
+            self.vertices[in_].normal = n
 
     def harvestEdges(self):
-        for i in xrange(self.meshFn.numEdges):
-            iv1, iv2 = self.meshFn.getEdgeVertices(i)
-            e = edge.Edge(i, self.vertices[iv1], self.vertices[iv2])
+        for ie in xrange(self.meshFn.numEdges):
+            iv1, iv2 = self.meshFn.getEdgeVertices(ie)
+            e = edge.Edge(ie, self.vertices[iv1], self.vertices[iv2])
             self.edges.append(e)
 
-            self.vertices[iv1].edges.append(e)
-            self.vertices[iv2].edges.append(e)
+            self.vertices[iv1].edges.add(e)
+            self.vertices[iv2].edges.add(e)
+
+    def harvestPolygons(self):
+        for ip in xrange(self.meshFn.numPolygons):
+            p = polygon.Polygon(ip)
+            p.normal = self.meshFn.getPolygonNormal(ip)
+            self.polygons.append(p)
+            for iv in self.meshFn.getPolygonVertices(ip):
+                p.vertices.add(self.vertices[iv])
+
+        for p in self.polygons:
+            for v in p.vertices:
+                for e in v.edges:
+                    if e.v1 in p.vertices and e.v2 in p.vertices:
+                        p.edges.add(e)
+                        e.polygons.add(p)
+
+        self.calculateEdgeAngles()
+        self.validateEdges()
 
     def calculateVtxCurvatures(self):
         for v in self.vertices:
             v.calculateCurvature()
+
+    def calculateEdgeAngles(self):
+        for v in self.edges:
+            v.calculateEdgeAngle()
+
+    def validateEdges(self):
+        for e in self.edges:
+            assert 0 < len(e.polygons) < 3, '{} has edge #{} with {} polygons connected'.format(self.meshTransform, e.id, len(e.polygons))
 
     def process(self, curvThreshold, curvDisplayMaxValue):
         self.display(curvThreshold, curvDisplayMaxValue)
@@ -82,12 +111,12 @@ class GeomProcessor(object):
 
         self.meshFn.setVertexColors(colors, verticesIds)
 
-    def _dbgDumpVertices(self):
-        for p in self.vertices:
-            print p
+    @staticmethod
+    def _dbgDumpList(l):
+        for x in l:
+            print x
 
     def _dbgDebug1(self):
-        # _debug
         v = self.vertices[56]
         print
         print v
@@ -117,7 +146,7 @@ class GeomProcessor(object):
         vertexNormals = [None] * self.meshFn.numVertices
         print vertexNormals
 
-        for pi in range(self.meshFn.numPolygons):
+        for pi in xrange(self.meshFn.numPolygons):
             polygonVertices = self.meshFn.getPolygonVertices(pi)
             for vi in polygonVertices:
                 vertexNormals[vi] = self.meshFn.getFaceVertexNormal(pi, vi, space=om.MSpace.kWorld)

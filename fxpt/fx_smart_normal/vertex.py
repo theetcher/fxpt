@@ -6,7 +6,7 @@ class Vertex(object):
     :type id: int
     :type point: maya.api.OpenMaya.MPoint
     :type normal: maya.api.OpenMaya.MVector
-    :type edges: list[fxpt.fx_smart_normal.edge.Edge]
+    :type edges: set[fxpt.fx_smart_normal.edge.Edge]
     :type curvature: float
     """
     def __init__(self, vtxId):
@@ -14,7 +14,7 @@ class Vertex(object):
         self.point = None
         self.normal = None
         self.curvature = None
-        self.edges = []
+        self.edges = set()
 
     def __str__(self):
         return 'vertex({}): point={}, normal={}, curvature={}, edges=({})'.format(
