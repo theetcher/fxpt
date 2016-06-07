@@ -1,7 +1,7 @@
 import maya.api.OpenMaya as om
 import maya.OpenMaya as om_
 
-from . import com, edge, vertex, polygon
+from . import com, components
 from . import debug
 
 
@@ -12,9 +12,10 @@ class GeomProcessor(object):
     :type dagPath: om.MDagPath
     :type dagPath_: om_.MDagPath
     :type meshFn: om.MFnMesh
-    :type vertices: list[vertex.Vertex]
-    :type edges: list[edge.Edge]
-    :type polygons: list[polygon.Polygon]
+    :type vertices: list[components.Vertex]
+    :type edges: list[components.Edge]
+    :type polygons: list[components.Polygon]
+    :type params: fxpt.fx_smart_normal.ui.Parameters
     """
 
     def __init__(self, meshTransform):
@@ -25,6 +26,8 @@ class GeomProcessor(object):
         self.vertices = []
         self.edges = []
         self.polygons = []
+
+        self.params = None
 
         self.harvestData()
 
@@ -51,7 +54,7 @@ class GeomProcessor(object):
 
     def harvestVertices(self):
         for iv, v in enumerate(self.meshFn.getPoints(space=om.MSpace.kWorld)):
-            vtx = vertex.Vertex(iv)
+            vtx = components.Vertex(iv)
             vtx.point = v
             self.vertices.append(vtx)
 
@@ -69,7 +72,7 @@ class GeomProcessor(object):
     def harvestEdges(self):
         for ie in xrange(self.meshFn.numEdges):
             iv1, iv2 = self.meshFn.getEdgeVertices(ie)
-            e = edge.Edge(ie, self.vertices[iv1], self.vertices[iv2])
+            e = components.Edge(ie, self.vertices[iv1], self.vertices[iv2])
             self.edges.append(e)
 
             self.vertices[iv1].edges.add(e)
@@ -77,7 +80,7 @@ class GeomProcessor(object):
 
     def harvestPolygons(self):
         for ip in xrange(self.meshFn.numPolygons):
-            p = polygon.Polygon(ip)
+            p = components.Polygon(ip)
             p.normal = self.meshFn.getPolygonNormal(ip)
             self.polygons.append(p)
             for iv in self.meshFn.getPolygonVertices(ip):
@@ -100,8 +103,8 @@ class GeomProcessor(object):
             self.polygons[pIter.index()].area = msu.getDouble(areaPtr)
             pIter.next()
 
-        self.calculateEdgeAngles()
         self.validateEdges()
+        self.calculateEdgeAngles()
 
     def calculateVtxCurvatures(self):
         for v in self.vertices:
@@ -113,29 +116,60 @@ class GeomProcessor(object):
 
     def validateEdges(self):
         for e in self.edges:
-            assert 0 < len(e.polygons) < 3, '{} has edge #{} with {} polygons connected'.format(self.meshTransform, e.id, len(e.polygons))
+            assert 0 < len(e.polygons) < 3, '{} has edge #{} with {} polygons connected. Maximum 2 allowed (manifold surfaces).'.format(
+                self.meshTransform, e.id, len(e.polygons))
 
-    def process(self, curvThreshold, curvDisplayMaxValue):
-        self.display(curvThreshold, curvDisplayMaxValue)
+    def process(self):
+        self.display()
 
         newNormals = self.meshFn.getNormals(space=om.MSpace.kWorld)
 
         for v in self.vertices:
-            if not v.isRougher(curvThreshold):
+            if not v.isRougher(self.params.curveThresh):
                 continue
             newNormals[v.normalId] = self.calculateNewNormal(v)
 
         self.meshFn.setNormals(newNormals)
 
     def calculateNewNormal(self, v):
-        return om.MFloatVector(1, 0, 0)
+        """
+        :type v: components.Vertex
+        """
+        areas = {}
+        for polygon in v.polygons:
+            area = 0.0
+            polySet = self.getGrownPolygons(polygon)
 
-    def display(self, curvThreshold, curvDisplayMaxValue):
+        return om.MFloatVector(0, 1, 0)
+
+    def getGrownPolygons(self, poly):
+        grownPolygons = {poly}
+        newFrontPolygons = {poly}
+        while True:
+            grown = False
+            frontPolygons = newFrontPolygons
+            newFrontPolygons = set()
+            for poly in frontPolygons:
+                for edge in poly.edges:
+                    if edge.edgeAngle < self.params.growAngle:
+                        otherPoly = edge.otherPoly(poly)
+                        if otherPoly is None:
+                            continue
+                        else:
+                            if otherPoly not in grownPolygons:
+                                newFrontPolygons.add(otherPoly)
+                                grownPolygons.add(otherPoly)
+                                grown = True
+            if not grown:
+                break
+        return grownPolygons
+
+    def display(self):
         colors = []
         verticesIds = []
         for v in self.vertices:
-            scaledAbsCurvature = v.absCurvature / curvDisplayMaxValue
-            color = om.MColor((scaledAbsCurvature, scaledAbsCurvature, scaledAbsCurvature)) if v.isRougher(curvThreshold) else om.MColor((0.0, 1.0, 0.0))
+            scaledAbsCurvature = v.absCurvature / self.params.curveScale
+            color = om.MColor((scaledAbsCurvature, scaledAbsCurvature, scaledAbsCurvature)) if v.isRougher(self.params.curveThresh) else om.MColor((0.0, 1.0, 0.0))
             colors.append(color)
             verticesIds.append(v.id)
 
@@ -143,9 +177,12 @@ class GeomProcessor(object):
 
     @staticmethod
     def _dbgDumpList(l):
-        for i, x in enumerate(l):
-            print '#{}: {}'.format(i, str(x))
-            print type(l)
+        if not l:
+            print []
+        else:
+            for i, x in enumerate(l):
+                print '#{}: {}'.format(i, str(x))
+                # print type(l)
 
     def _dbgDebug1(self):
         v = self.vertices[56]

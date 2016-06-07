@@ -1,7 +1,7 @@
 import maya.cmds as m
 import pymel.core as pm
 
-from . import cfg, com, normalizer
+from . import com, normalizer
 
 SCRIPT_VERSION = 'v1.0'
 SCRIPT_NAME = 'Smart Normal'
@@ -10,6 +10,15 @@ WIN_TITLE = SCRIPT_NAME + ' ' + SCRIPT_VERSION
 UI_LABEL_WIDTH = 120
 UI_INPUT_WIDTH = 240
 UI_APPLY_BUTTON_STRING = 'Set Target Geometry'
+
+
+class Parameters(object):
+    envelope = None
+    curveThresh = None
+    areaTolerance = None
+    growAngle = None
+    dispCurve = None
+    curveScale = None
 
 
 # noinspection PyAttributeOutsideInit,PyMethodMayBeStatic,PyUnusedLocal
@@ -55,6 +64,29 @@ class SmartNormalUI(object):
 
                                         with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
 
+                                            pm.text(label='Envelope')
+
+                                            pm.setUITemplate('DefaultTemplate', popTemplate=True)  # strange slider group visual with default template
+
+                                            self.ui_FLTSLGRP_envelope = pm.floatSliderGrp(
+                                                'ui_FLTSLGRP_envelope',
+                                                field=True,
+                                                minValue=0,
+                                                maxValue=1,
+                                                fieldMinValue=0,
+                                                fieldMaxValue=1,
+                                                value=1,
+                                                step=0.001,
+                                                fieldStep=0.001,
+                                                sliderStep=0.001,
+                                                changeCommand=self.ui_FLTSLGRP_envelope_change,
+                                                dragCommand=self.ui_FLTSLGRP_envelope_change
+                                            )
+
+                                            pm.setUITemplate('DefaultTemplate', pushTemplate=True)
+
+                                        with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
+
                                             pm.text(label='Curvature Threshold')
 
                                             pm.setUITemplate('DefaultTemplate', popTemplate=True)  # strange slider group visual with default template
@@ -78,6 +110,29 @@ class SmartNormalUI(object):
 
                                         with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
 
+                                            pm.text(label='Area Tolerance')
+
+                                            pm.setUITemplate('DefaultTemplate', popTemplate=True)  # strange slider group visual with default template
+
+                                            self.ui_FLTSLGRP_areaTolerance = pm.floatSliderGrp(
+                                                'ui_FLTSLGRP_areaTolerance',
+                                                field=True,
+                                                minValue=0,
+                                                maxValue=1,
+                                                fieldMinValue=0,
+                                                fieldMaxValue=1,
+                                                value=0.01,
+                                                step=0.001,
+                                                fieldStep=0.001,
+                                                sliderStep=0.001,
+                                                changeCommand=self.ui_FLTSLGRP_areaTolerance_change,
+                                                dragCommand=self.ui_FLTSLGRP_areaTolerance_change
+                                            )
+
+                                            pm.setUITemplate('DefaultTemplate', pushTemplate=True)
+
+                                        with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
+
                                             pm.text(label='Grow Angle')
 
                                             pm.setUITemplate('DefaultTemplate', popTemplate=True)  # strange slider group visual with default template
@@ -93,54 +148,52 @@ class SmartNormalUI(object):
                                                 step=0.001,
                                                 fieldStep=0.001,
                                                 sliderStep=0.001,
-                                                changeCommand=self.dummyFunc,
-                                                dragCommand=self.dummyFunc
+                                                changeCommand=self.ui_FLTSLGRP_growAngle_change,
+                                                dragCommand=self.ui_FLTSLGRP_growAngle_change
                                             )
 
                                             pm.setUITemplate('DefaultTemplate', pushTemplate=True)
 
-                                if cfg.DEBUG:
+                                with pm.frameLayout(
+                                        label='Display',
+                                        collapsable=True,
+                                        collapse=False,
+                                        marginHeight=3,
+                                ):
 
-                                    with pm.frameLayout(
-                                            label='Debug',
-                                            collapsable=True,
-                                            collapse=False,
-                                            marginHeight=3,
-                                    ):
+                                    with pm.columnLayout(adjustableColumn=True):
+                                        with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
 
-                                        with pm.columnLayout(adjustableColumn=True):
-                                            with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
+                                            pm.text(label='Display Curvature')
 
-                                                pm.text(label='Display Curvature')
+                                            self.ui_CHK_displayCurve = pm.checkBox(
+                                                'ui_CHK_highlight',
+                                                label='',
+                                                changeCommand=self.ui_CHK_displayCurve_change
+                                            )
 
-                                                self.ui_CHK_displayCurvature = pm.checkBox(
-                                                    'ui_CHK_highlight',
-                                                    label='',
-                                                    changeCommand=self.ui_CHK_displayCurvature_change
-                                                )
+                                        with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
 
-                                            with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
+                                            pm.text(label='Curvature Scale')
 
-                                                pm.text(label='Max Value')
+                                            pm.setUITemplate('DefaultTemplate', popTemplate=True)  # strange slider group visual with default template
 
-                                                pm.setUITemplate('DefaultTemplate', popTemplate=True)  # strange slider group visual with default template
+                                            self.ui_FLTSLGRP_curveScale = pm.floatSliderGrp(
+                                                'ui_FLTSLGRP_curveScale',
+                                                field=True,
+                                                minValue=0.001,
+                                                maxValue=1,
+                                                fieldMinValue=0.001,
+                                                fieldMaxValue=10,
+                                                value=1,
+                                                step=0.001,
+                                                fieldStep=0.001,
+                                                sliderStep=0.001,
+                                                changeCommand=self.ui_FLTSLGRP_curveScale_change,
+                                                dragCommand=self.ui_FLTSLGRP_curveScale_change
+                                            )
 
-                                                self.ui_FLTSLGRP_curvatureMaxValue = pm.floatSliderGrp(
-                                                    'ui_FLTSLGRP_curvatureMaxValue',
-                                                    field=True,
-                                                    minValue=0.001,
-                                                    maxValue=1,
-                                                    fieldMinValue=0.001,
-                                                    fieldMaxValue=10,
-                                                    value=1,
-                                                    step=0.001,
-                                                    fieldStep=0.001,
-                                                    sliderStep=0.001,
-                                                    changeCommand=self.ui_FLTSLGRP_curvatureMaxValue_change,
-                                                    dragCommand=self.ui_FLTSLGRP_curvatureMaxValue_change
-                                                )
-
-                                                pm.setUITemplate('DefaultTemplate', pushTemplate=True)
+                                            pm.setUITemplate('DefaultTemplate', pushTemplate=True)
 
                 self.ui_BTN_select = pm.button(
                     label=UI_APPLY_BUTTON_STRING,
@@ -184,28 +237,41 @@ class SmartNormalUI(object):
     def ui_setTargetGeometry(self, *args):
         self.setTargetGeometry()
 
-    def ui_CHK_displayCurvature_change(self, arg):
-        pass
+    def gatherParameters(self):
+        Parameters.envelope = self.ui_FLTSLGRP_envelope.getValue()
+        Parameters.curveThresh = self.ui_FLTSLGRP_curveThresh.getValue()
+        Parameters.areaTolerance = self.ui_FLTSLGRP_areaTolerance.getValue()
+        Parameters.growAngle = self.ui_FLTSLGRP_growAngle.getValue()
+        Parameters.dispCurve = self.ui_CHK_displayCurve.getValue()
+        Parameters.curveScale = self.ui_FLTSLGRP_curveScale.getValue()
 
-    def getCurvatureThresholdValue(self):
-        return self.ui_FLTSLGRP_curveThresh.getValue()
-
-    def getCurvatureDisplayMaxValue(self):
-        return self.ui_FLTSLGRP_curvatureMaxValue.getValue()
+    def ui_FLTSLGRP_envelope_change(self, arg):
+        self.processNormalizers()
 
     def ui_FLTSLGRP_curveThresh_change(self, arg):
         self.processNormalizers()
 
-    def ui_FLTSLGRP_curvatureMaxValue_change(self, arg):
+    def ui_FLTSLGRP_areaTolerance_change(self, arg):
+        self.processNormalizers()
+
+    def ui_FLTSLGRP_growAngle_change(self, arg):
+        self.processNormalizers()
+
+    def ui_CHK_displayCurve_change(self, arg):
+        self.updateNormalizersDisplay()
+
+    def ui_FLTSLGRP_curveScale_change(self, arg):
         self.updateNormalizersDisplay()
 
     def processNormalizers(self):
+        self.gatherParameters()
         for n in self.normalizers:
-            n.process(self.getCurvatureThresholdValue(), self.getCurvatureDisplayMaxValue())
+            n.process(Parameters)
 
     def updateNormalizersDisplay(self):
+        self.gatherParameters()
         for n in self.normalizers:
-            n.updateDisplay(self.getCurvatureThresholdValue(), self.getCurvatureDisplayMaxValue())
+            n.updateDisplay(Parameters)
 
     def dummyFunc(self, *args, **kwargs):
         pass
