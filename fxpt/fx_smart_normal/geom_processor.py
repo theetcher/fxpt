@@ -137,12 +137,31 @@ class GeomProcessor(object):
         """
         areas = {}
         for polygon in v.polygons:
-            area = 0.0
             polySet = self.getGrownPolygons(polygon)
+            areas[polygon] = sum([poly.area for poly in polySet])
+
+        reversedAreas = [(a, p) for p, a in areas.items()]
+        smallestAreaTuple = min(reversedAreas)
+        low = {smallestAreaTuple[1]: smallestAreaTuple[0]}
+        print smallestAreaTuple[1]
+        areas.pop(smallestAreaTuple[1], None)
+        biggestAreaTuple = max(reversedAreas)
+        high = {biggestAreaTuple[1]: biggestAreaTuple[0]}
+        print biggestAreaTuple[1]
+        areas.pop(biggestAreaTuple[1], None)
+
+        print
+        print areas
+
+
 
         return om.MFloatVector(0, 1, 0)
 
     def getGrownPolygons(self, poly):
+        """
+        :type poly: components.Polygon
+        :rtype: list[components.Polygon]
+        """
         grownPolygons = {poly}
         newFrontPolygons = {poly}
         while True:
