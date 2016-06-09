@@ -23,3 +23,9 @@ def dbgPrintList(l, on=True):
     else:
         for i, x in enumerate(l):
             print '#{}: {}'.format(i, str(x))
+
+
+def dbgSelectComps(mesh, polygonIdxs):
+    m.select(cl=True)
+    for i in polygonIdxs:
+        m.select(mesh + '[{}]'.format(i), add=True)

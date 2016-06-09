@@ -137,7 +137,7 @@ class GeomProcessor(object):
         """
         :type v: components.Vertex
         """
-        # if v.id != 11:
+        # if v.id != 41:
         #     return om.MFloatVector(0, 0, 0)
 
         _dbgPrint = False
@@ -162,61 +162,41 @@ class GeomProcessor(object):
 
         numPolySets = len(polySets)
         if numPolySets == 1:
+            debug.dbgPrint('', _dbgPrint)
+            debug.dbgPrint('numPolySets == 1', _dbgPrint)
+            debug.dbgPrint('returned ' + str(polySets[0]), _dbgPrint)
             return om.MFloatVector(polySets[0].normal)
-
-        # print
-        # print 'skipped numPolySets == 1'
 
         polySets.sort(key=operator.attrgetter('area'), reverse=True)
 
-        # print
-        # print 'sorted'
-        # self._dbgDumpList(polySets)
+        debug.dbgPrint('', _dbgPrint)
+        debug.dbgPrint('sorted polySets', _dbgPrint)
+        debug.dbgPrintList(polySets, _dbgPrint)
 
         if numPolySets == 2:
+            debug.dbgPrint('', _dbgPrint)
+            debug.dbgPrint('numPolySets == 2', _dbgPrint)
             if polySets[0] == polySets[1]:
+                debug.dbgPrint('returned ' + str(polySets[0]) + str(polySets[1]), _dbgPrint)
                 return om.MFloatVector(com.vectorsMean(polySets[0].normal, polySets[1].normal))
             else:
+                debug.dbgPrint('returned ' + str(polySets[0]), _dbgPrint)
                 return om.MFloatVector(polySets[0].normal)
 
-        # print
-        # print 'skipped numPolySets == 2'
+        midArea = polySets[0].area - (polySets[0].area - polySets[-1].area) * 0.5
+        debug.dbgPrint('', _dbgPrint)
+        debug.dbgPrint('midArea=' + str(midArea), _dbgPrint)
 
-        # TODO: if grow angle huge all will be equal. should be excluded from algo
-        midArea = (polySets[0].area - polySets[-1].area) * 0.5
-        # print
-        # print 'midArea', midArea
+        masterPolys = set()
+        for ps in [ps for ps in polySets if ps.area > midArea]:
+            masterPolys |= ps.polygons
+        debug.dbgPrint('', _dbgPrint)
+        debug.dbgPrint('masterPolys', _dbgPrint)
+        debug.dbgPrint([p.id for p in masterPolys], _dbgPrint)
 
-        masterNormals = [ps.normal for ps in polySets if ps.area > midArea]
-        # print
-        # print 'masterNormals'
-        # self._dbgDumpList(masterNormals)
-
-        # print
-        # print 'FINAL', com.vectorsMean(*masterNormals)
+        masterNormals = [ps.normal for ps in polySets if ps.area >= midArea]
 
         return om.MFloatVector(com.vectorsMean(*masterNormals))
-
-
-
-        #     areas[polygon] = sum([poly.area for poly in polySet])
-        #
-        # reversedAreas = [(a, p) for p, a in areas.items()]
-        # smallestAreaTuple = min(reversedAreas)
-        # low = {smallestAreaTuple[1]: smallestAreaTuple[0]}
-        # print smallestAreaTuple[1]
-        # areas.pop(smallestAreaTuple[1], None)
-        # biggestAreaTuple = max(reversedAreas)
-        # high = {biggestAreaTuple[1]: biggestAreaTuple[0]}
-        # print biggestAreaTuple[1]
-        # areas.pop(biggestAreaTuple[1], None)
-        #
-        # print
-        # print areas
-        #
-        #
-
-        return om.MFloatVector(0, 1, 0)
 
     def getGrownPolygons(self, poly):
         """
@@ -254,81 +234,3 @@ class GeomProcessor(object):
             verticesIds.append(v.id)
 
         self.meshFn.setVertexColors(colors, verticesIds)
-
-    def _dbgDebug1(self):
-        v = self.vertices[56]
-        print
-        print v
-        for e in v.edges:
-            print e
-
-        for eid in [459, 196]:
-            e = self.edges[eid]
-            print
-            print e
-            normDiff = e.v2.normal - e.v1.normal
-            pointDiff = e.v2.point - e.v1.point
-            print 'normDiff', normDiff.length()
-            print 'pointDiff', pointDiff.length()
-            print 'e.v1.normal', e.v1.normal
-            print 'e.v2.normal', e.v2.normal
-
-            debug.locatorByWorldPoint(e.v1.normal, name='e_{}_v1_normal'.format(eid))
-            debug.locatorByWorldPoint(e.v2.normal, name='e_{}_v2_normal'.format(eid))
-
-    def _dbgDebug2(self):
-        print '---'
-        for n in self.meshFn.getNormals(space=om.MSpace.kWorld):
-            print n
-        print
-
-        vertexNormals = [None] * self.meshFn.numVertices
-        print vertexNormals
-
-        for pi in xrange(self.meshFn.numPolygons):
-            polygonVertices = self.meshFn.getPolygonVertices(pi)
-            for vi in polygonVertices:
-                vertexNormals[vi] = self.meshFn.getFaceVertexNormal(pi, vi, space=om.MSpace.kWorld)
-
-        print '---'
-        for n in vertexNormals:
-            print n
-        print
-
-    def _dbgDebug3(self):
-        print
-        print
-        print '>>> dump vertices'
-        self._dbgDumpList(self.vertices)
-
-        print '>>> meshFn.getNormals():'
-        self._dbgDumpList(self.meshFn.getNormals(space=om.MSpace.kWorld))
-
-        print '>>> meshFn.getNormalIds():'
-        print self.meshFn.getNormalIds()
-
-        print '>>> meshFn.getVertices():'
-        print self.meshFn.getVertices()
-
-        print '>>> polygon vertices:'
-        for p in xrange(self.meshFn.numPolygons):
-            print self.meshFn.getPolygonVertices(p)
-
-        print '>>> setNormals()'
-        self.meshFn.setNormals([om.MFloatVector(1, 0, 0), om.MFloatVector(0, 1, 0)], space=om.MSpace.kWorld)
-
-        print '>>> meshFn.getNormals():'
-        self._dbgDumpList(self.meshFn.getNormals(space=om.MSpace.kWorld))
-
-        print '>>> meshFn.getNormalIds():'
-        print self.meshFn.getNormalIds()
-
-        print '>>> meshFn.getVertices():'
-        print self.meshFn.getVertices()
-
-        print '>>> polygon vertices:'
-        for p in xrange(self.meshFn.numPolygons):
-            print self.meshFn.getPolygonVertices(p)
-
-        print '>>> dump vertices'
-        self._dbgDumpList(self.vertices)
