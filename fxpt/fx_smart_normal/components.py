@@ -11,8 +11,8 @@ class Vertex(object):
     :type normalId: int
     :type curvature: float
     :type absCurvature: float
-    :type edges: set[fxpt.fx_smart_normal.components.Edge]
-    :type polygons: set[fxpt.fx_smart_normal.components.Polygon]
+    :type edges: set[Edge]
+    :type polygons: set[Polygon]
     """
     def __init__(self, vtxId):
         self.id = vtxId
@@ -40,11 +40,11 @@ class Vertex(object):
 class Edge(object):
     """
     :type id: int
-    :type v1: fxpt.fx_smart_normal.components.Vertex
-    :type v2: fxpt.fx_smart_normal.components.Vertex
-    :type p1: fxpt.fx_smart_normal.components.Polygon
-    :type p2: fxpt.fx_smart_normal.components.Polygon
-    :type polygons: set[fxpt.fx_smart_normal.components.Polygon]
+    :type v1: Vertex
+    :type v2: Vertex
+    :type p1: Polygon
+    :type p2: Polygon
+    :type polygons: set[Polygon]
     :type curvature: float
     :type edgeAngle: float
     """
@@ -87,8 +87,8 @@ class Polygon(object):
     :type id: int
     :type normal: maya.api.OpenMaya.MVector
     :type area: float
-    :type vertices: set[fxpt.fx_smart_normal.components.Vertex]
-    :type edges: set[fxpt.fx_smart_normal.components.Edge]
+    :type vertices: set[Vertex]
+    :type edges: set[Edge]
     """
 
     def __init__(self, polyId):
@@ -102,3 +102,41 @@ class Polygon(object):
         return 'polygon({}): normal={}, area={}, vertices=({}), edges=({})'.format(
             self.id, self.normal, self.area, ', '.join([str(p.id) for p in self.vertices]), ', '.join([str(p.id) for p in self.edges])
         )
+
+
+class PolySet(object):
+    """
+    :type normal: maya.api.OpenMaya.MVector
+    :type area: float
+    :type polygons: set[Polygon]
+    """
+    def __init__(self, masterPolygon):
+        self.normal = masterPolygon.normal
+        self.area = masterPolygon.area
+        self.polygons = {masterPolygon}
+
+    def __str__(self):
+        return 'polyset: normal={}, area={}, polygons=({})'.format(
+            self.normal, self.area, ', '.join([str(p.id) for p in self.polygons])
+        )
+
+    # def __iadd__(self, other):
+    #     self.normal = (self.normal + other.normal) * 0.5
+    #     self.normal.normalize()
+    #     self.area += other.area
+    #     self.polygons += other.polygons
+    #     return self
+
+    def __eq__(self, other):
+        return self.polygons == other.polygons
+
+    def __ne__(self, other):
+        return not self == other
+
+    def addPolygons(self, polygons):
+        self.polygons |= polygons
+        self.area = self.calculateArea()
+
+    def calculateArea(self):
+        return sum([p.area for p in self.polygons])
+

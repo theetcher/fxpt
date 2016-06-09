@@ -7,3 +7,19 @@ def locatorByWorldPoint(point, name='dbgLocator'):
         position=list(point)[:3],
         name=name,
     )
+
+
+def dbgPrint(s, on=True):
+    if not on:
+        return
+    print s
+
+
+def dbgPrintList(l, on=True):
+    if not on:
+        return
+    if not l:
+        print []
+    else:
+        for i, x in enumerate(l):
+            print '#{}: {}'.format(i, str(x))

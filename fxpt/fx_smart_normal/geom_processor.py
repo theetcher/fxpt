@@ -1,3 +1,5 @@
+import operator
+
 import maya.api.OpenMaya as om
 import maya.OpenMaya as om_
 
@@ -135,25 +137,84 @@ class GeomProcessor(object):
         """
         :type v: components.Vertex
         """
-        areas = {}
+        # if v.id != 11:
+        #     return om.MFloatVector(0, 0, 0)
+
+        _dbgPrint = False
+
+        debug.dbgPrint('', _dbgPrint)
+        debug.dbgPrint(v, _dbgPrint)
+
+        polySets = []
+
         for polygon in v.polygons:
-            polySet = self.getGrownPolygons(polygon)
-            areas[polygon] = sum([poly.area for poly in polySet])
+            debug.dbgPrint('------', _dbgPrint)
+            debug.dbgPrint(polygon, _dbgPrint)
 
-        reversedAreas = [(a, p) for p, a in areas.items()]
-        smallestAreaTuple = min(reversedAreas)
-        low = {smallestAreaTuple[1]: smallestAreaTuple[0]}
-        print smallestAreaTuple[1]
-        areas.pop(smallestAreaTuple[1], None)
-        biggestAreaTuple = max(reversedAreas)
-        high = {biggestAreaTuple[1]: biggestAreaTuple[0]}
-        print biggestAreaTuple[1]
-        areas.pop(biggestAreaTuple[1], None)
+            ps = components.PolySet(polygon)
+            ps.addPolygons(self.getGrownPolygons(polygon))
+            polySets.append(ps)
 
-        print
-        print areas
+            debug.dbgPrint(ps, _dbgPrint)
+
+        debug.dbgPrint('', _dbgPrint)
+        debug.dbgPrintList(polySets, _dbgPrint)
+
+        numPolySets = len(polySets)
+        if numPolySets == 1:
+            return om.MFloatVector(polySets[0].normal)
+
+        # print
+        # print 'skipped numPolySets == 1'
+
+        polySets.sort(key=operator.attrgetter('area'), reverse=True)
+
+        # print
+        # print 'sorted'
+        # self._dbgDumpList(polySets)
+
+        if numPolySets == 2:
+            if polySets[0] == polySets[1]:
+                return om.MFloatVector(com.vectorsMean(polySets[0].normal, polySets[1].normal))
+            else:
+                return om.MFloatVector(polySets[0].normal)
+
+        # print
+        # print 'skipped numPolySets == 2'
+
+        # TODO: if grow angle huge all will be equal. should be excluded from algo
+        midArea = (polySets[0].area - polySets[-1].area) * 0.5
+        # print
+        # print 'midArea', midArea
+
+        masterNormals = [ps.normal for ps in polySets if ps.area > midArea]
+        # print
+        # print 'masterNormals'
+        # self._dbgDumpList(masterNormals)
+
+        # print
+        # print 'FINAL', com.vectorsMean(*masterNormals)
+
+        return om.MFloatVector(com.vectorsMean(*masterNormals))
 
 
+
+        #     areas[polygon] = sum([poly.area for poly in polySet])
+        #
+        # reversedAreas = [(a, p) for p, a in areas.items()]
+        # smallestAreaTuple = min(reversedAreas)
+        # low = {smallestAreaTuple[1]: smallestAreaTuple[0]}
+        # print smallestAreaTuple[1]
+        # areas.pop(smallestAreaTuple[1], None)
+        # biggestAreaTuple = max(reversedAreas)
+        # high = {biggestAreaTuple[1]: biggestAreaTuple[0]}
+        # print biggestAreaTuple[1]
+        # areas.pop(biggestAreaTuple[1], None)
+        #
+        # print
+        # print areas
+        #
+        #
 
         return om.MFloatVector(0, 1, 0)
 
@@ -193,15 +254,6 @@ class GeomProcessor(object):
             verticesIds.append(v.id)
 
         self.meshFn.setVertexColors(colors, verticesIds)
-
-    @staticmethod
-    def _dbgDumpList(l):
-        if not l:
-            print []
-        else:
-            for i, x in enumerate(l):
-                print '#{}: {}'.format(i, str(x))
-                # print type(l)
 
     def _dbgDebug1(self):
         v = self.vertices[56]

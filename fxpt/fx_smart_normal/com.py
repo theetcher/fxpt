@@ -1,3 +1,5 @@
+import operator
+
 import maya.cmds as m
 
 
@@ -22,3 +24,11 @@ def geomMean(seq):
 
 def ariMean(seq):
     return float(sum(seq)) / len(seq) if len(seq) > 0 else float('nan')
+
+
+# noinspection PyUnresolvedReferences
+def vectorsMean(*args):
+    v = reduce(operator.add, args) / len(args)
+    v.normalize()
+    return v
+
