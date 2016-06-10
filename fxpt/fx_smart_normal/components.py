@@ -120,13 +120,6 @@ class PolySet(object):
             self.normal, self.area, ', '.join([str(p.id) for p in self.polygons])
         )
 
-    # def __iadd__(self, other):
-    #     self.normal = (self.normal + other.normal) * 0.5
-    #     self.normal.normalize()
-    #     self.area += other.area
-    #     self.polygons += other.polygons
-    #     return self
-
     def __eq__(self, other):
         return self.polygons == other.polygons
 

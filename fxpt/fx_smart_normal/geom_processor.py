@@ -5,7 +5,6 @@ import maya.api.OpenMaya as om
 import maya.OpenMaya as om_
 
 from . import com, components
-from . import debug
 
 
 # noinspection PyArgumentList
@@ -141,65 +140,31 @@ class GeomProcessor(object):
         """
         :type v: components.Vertex
         """
-        # if v.id != 41:
-        #     return om.MFloatVector(0, 0, 0)
-
-        _dbgPrint = False
-
-        debug.dbgPrint('', _dbgPrint)
-        debug.dbgPrint(v, _dbgPrint)
-
         polySets = []
 
         for polygon in v.polygons:
-            debug.dbgPrint('------', _dbgPrint)
-            debug.dbgPrint(polygon, _dbgPrint)
-
             ps = components.PolySet(polygon)
             ps.addPolygons(self.getGrownPolygons(polygon))
             polySets.append(ps)
 
-            debug.dbgPrint(ps, _dbgPrint)
-
-        debug.dbgPrint('', _dbgPrint)
-        debug.dbgPrintList(polySets, _dbgPrint)
-
         numPolySets = len(polySets)
         if numPolySets == 1:
-            debug.dbgPrint('', _dbgPrint)
-            debug.dbgPrint('numPolySets == 1', _dbgPrint)
-            debug.dbgPrint('returned ' + str(polySets[0]), _dbgPrint)
             return om.MFloatVector(polySets[0].normal)
 
         polySets.sort(key=operator.attrgetter('area'), reverse=True)
 
-        debug.dbgPrint('', _dbgPrint)
-        debug.dbgPrint('sorted polySets', _dbgPrint)
-        debug.dbgPrintList(polySets, _dbgPrint)
-
         if numPolySets == 2:
-            debug.dbgPrint('', _dbgPrint)
-            debug.dbgPrint('numPolySets == 2', _dbgPrint)
             if polySets[0] == polySets[1]:
-                debug.dbgPrint('returned ' + str(polySets[0]) + str(polySets[1]), _dbgPrint)
                 return om.MFloatVector(com.vectorsMean(polySets[0].normal, polySets[1].normal))
             else:
-                debug.dbgPrint('returned ' + str(polySets[0]), _dbgPrint)
                 return om.MFloatVector(polySets[0].normal)
 
         midArea = polySets[0].area - (polySets[0].area - polySets[-1].area) * 0.5
-        debug.dbgPrint('', _dbgPrint)
-        debug.dbgPrint('midArea=' + str(midArea), _dbgPrint)
-
         masterPolys = set()
         for ps in [ps for ps in polySets if ps.area > midArea]:
             masterPolys |= ps.polygons
-        debug.dbgPrint('', _dbgPrint)
-        debug.dbgPrint('masterPolys', _dbgPrint)
-        debug.dbgPrint([p.id for p in masterPolys], _dbgPrint)
 
         masterNormals = [ps.normal for ps in polySets if ps.area >= midArea]
-
         return om.MFloatVector(com.vectorsMean(*masterNormals))
 
     def getGrownPolygons(self, poly):

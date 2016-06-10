@@ -211,6 +211,7 @@ class SmartNormalUI(object):
             self.prefSaver.paramsToPrefs()
             for b in self.backupers:
                 b.restoreDisplay()
+                b.deleteBackup()
         else:
             for b in self.backupers:
                 b.restoreAll()
@@ -269,9 +270,8 @@ class SmartNormalUI(object):
             for mesh in meshes:
                 transform = com.getParent(mesh)
                 if transform:
-                    self.backupers.append(backuper.Backuper(mesh))
-
-                    m.polyNormalPerVertex(transform, ufn=True)
+                    self.backupers.append(backuper.Backuper(mesh, transform))
+                    m.polyNormalPerVertex(mesh, ufn=True)
                     m.polySoftEdge(transform, a=180, ch=False)
 
                     geomProcessor = geom_processor.GeomProcessor(mesh)
@@ -280,7 +280,7 @@ class SmartNormalUI(object):
         else:
             pm.confirmDialog(
                 title='Error',
-                message='Invalid selection.\nSelect at least one polygon object and press "' + UI_APPLY_BUTTON_STRING + '"`.',
+                message='Invalid selection.\nSelect at least one polygon object and press OK',
                 button=['OK'],
                 defaultButton='OK',
                 icon='critical'
@@ -290,5 +290,3 @@ class SmartNormalUI(object):
         m.select(selection, r=True)
         self.processAll()
 
-    def backup(self, mesh):
-        pass
