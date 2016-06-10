@@ -1,5 +1,6 @@
 import operator
 
+import maya.cmds as m
 import maya.api.OpenMaya as om
 import maya.OpenMaya as om_
 
@@ -121,9 +122,11 @@ class GeomProcessor(object):
             assert 0 < len(e.polygons) < 3, '{} has edge #{} with {} polygons connected. Maximum 2 allowed (manifold surfaces).'.format(
                 self.meshTransform, e.id, len(e.polygons))
 
-    def process(self):
-        self.display()
+    def processAll(self):
+        self.processDisplay()
+        self.processGeom()
 
+    def processGeom(self):
         newNormals = self.meshFn.getNormals(space=om.MSpace.kWorld)
 
         for v in self.vertices:
@@ -132,6 +135,7 @@ class GeomProcessor(object):
             newNormals[v.normalId] = self.calculateNewNormal(v)
 
         self.meshFn.setNormals(newNormals)
+        self.meshFn.updateSurface()
 
     def calculateNewNormal(self, v):
         """
@@ -224,7 +228,14 @@ class GeomProcessor(object):
                 break
         return grownPolygons
 
-    def display(self):
+    def processDisplay(self):
+        if not self.params.dispCurve:
+            return
+
+        m.polyOptions(self.meshTransform, colorShadedDisplay=True)
+        m.polyOptions(self.meshTransform, colorMaterialChannel='none')
+        m.polyOptions(self.meshTransform, displayNormal=True, point=True)
+
         colors = []
         verticesIds = []
         for v in self.vertices:

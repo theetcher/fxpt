@@ -1,7 +1,7 @@
 import maya.cmds as m
 import pymel.core as pm
 
-from . import com, normalizer
+from . import com, geom_processor, backuper, prefsaver
 
 SCRIPT_VERSION = 'v1.0'
 SCRIPT_NAME = 'Smart Normal'
@@ -9,27 +9,35 @@ WIN_NAME = 'fx_smartNormal_win'
 WIN_TITLE = SCRIPT_NAME + ' ' + SCRIPT_VERSION
 UI_LABEL_WIDTH = 120
 UI_INPUT_WIDTH = 240
-UI_APPLY_BUTTON_STRING = 'Set Target Geometry'
 
 
 class Parameters(object):
-    envelope = None
-    curveThresh = None
-    areaTolerance = None
-    growAngle = None
-    dispCurve = None
-    curveScale = None
+    curveThresh = 0.09
+    growAngle = 5
+    dispCurve = False
+    curveScale = 1
 
 
 # noinspection PyAttributeOutsideInit,PyMethodMayBeStatic,PyUnusedLocal
 class SmartNormalUI(object):
     """
-    :type normalizers: list[normalizer.Normalizer]
+    :type processors: list[geom_processor.GeomProcessor]
+    :type backupers: list[backuper.Backuper]
+    :type prefSaver: prefsaver.PrefSaver
+    :type accept: bool
     """
     def __init__(self):
-        self.normalizers = []
+        self.processors = []
+        self.backupers = []
+        self.accept = False
+        self.prefSaver = prefsaver.PrefSaver(Parameters)
+
         self.ui_createUI()
-        self.setTargetGeometry()
+
+        self.prefSaver.prefsToParams()
+        self.syncUiToParams()
+
+        self.initGeometry()
 
     def ui_createUI(self):
         self.winName = WIN_NAME
@@ -38,7 +46,7 @@ class SmartNormalUI(object):
         if pm.window(WIN_NAME, exists=True):
             pm.deleteUI(WIN_NAME, window=True)
 
-        with pm.window(WIN_NAME, title=WIN_TITLE, maximizeButton=False, menuBar=True, menuBarVisible=True) as window:
+        with pm.window(WIN_NAME, title=WIN_TITLE, maximizeButton=False, menuBar=True, menuBarVisible=True) as self.window:
 
             pm.setUITemplate('DefaultTemplate', pushTemplate=True)
 
@@ -61,29 +69,6 @@ class SmartNormalUI(object):
                                 ):
 
                                     with pm.columnLayout(adjustableColumn=True):
-
-                                        with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
-
-                                            pm.text(label='Envelope')
-
-                                            pm.setUITemplate('DefaultTemplate', popTemplate=True)  # strange slider group visual with default template
-
-                                            self.ui_FLTSLGRP_envelope = pm.floatSliderGrp(
-                                                'ui_FLTSLGRP_envelope',
-                                                field=True,
-                                                minValue=0,
-                                                maxValue=1,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=1,
-                                                value=1,
-                                                step=0.001,
-                                                fieldStep=0.001,
-                                                sliderStep=0.001,
-                                                changeCommand=self.ui_FLTSLGRP_envelope_change,
-                                                dragCommand=self.ui_FLTSLGRP_envelope_change
-                                            )
-
-                                            pm.setUITemplate('DefaultTemplate', pushTemplate=True)
 
                                         with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
 
@@ -110,29 +95,6 @@ class SmartNormalUI(object):
 
                                         with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
 
-                                            pm.text(label='Area Tolerance')
-
-                                            pm.setUITemplate('DefaultTemplate', popTemplate=True)  # strange slider group visual with default template
-
-                                            self.ui_FLTSLGRP_areaTolerance = pm.floatSliderGrp(
-                                                'ui_FLTSLGRP_areaTolerance',
-                                                field=True,
-                                                minValue=0,
-                                                maxValue=1,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=1,
-                                                value=0.01,
-                                                step=0.001,
-                                                fieldStep=0.001,
-                                                sliderStep=0.001,
-                                                changeCommand=self.ui_FLTSLGRP_areaTolerance_change,
-                                                dragCommand=self.ui_FLTSLGRP_areaTolerance_change
-                                            )
-
-                                            pm.setUITemplate('DefaultTemplate', pushTemplate=True)
-
-                                        with pm.rowLayout(numberOfColumns=2, columnWidth2=[UI_LABEL_WIDTH, UI_INPUT_WIDTH], columnAttach=[1, 'right', 5]):
-
                                             pm.text(label='Grow Angle')
 
                                             pm.setUITemplate('DefaultTemplate', popTemplate=True)  # strange slider group visual with default template
@@ -141,7 +103,7 @@ class SmartNormalUI(object):
                                                 'ui_FLTSLGRP_growAngle',
                                                 field=True,
                                                 minValue=0,
-                                                maxValue=30,
+                                                maxValue=10,
                                                 fieldMinValue=0,
                                                 fieldMaxValue=30,
                                                 value=5,
@@ -195,14 +157,14 @@ class SmartNormalUI(object):
 
                                             pm.setUITemplate('DefaultTemplate', pushTemplate=True)
 
-                self.ui_BTN_select = pm.button(
-                    label=UI_APPLY_BUTTON_STRING,
-                    command=self.ui_setTargetGeometry
+                self.ui_BTN_ok = pm.button(
+                    label='OK',
+                    command=self.onOkClicked
                 )
 
-                self.ui_BTN_close = pm.button(
-                    label='Close',
-                    command=self.ui_close
+                self.ui_BTN_cancel = pm.button(
+                    label='Cancel',
+                    command=self.onCancelClicked
                 )
 
             self.ui_LAY_attachForm.attachForm(self.ui_TAB_inner, 'top', 0)
@@ -213,73 +175,88 @@ class SmartNormalUI(object):
             self.ui_LAY_mainForm.attachForm(self.ui_TAB_top, 'top', 0)
             self.ui_LAY_mainForm.attachForm(self.ui_TAB_top, 'left', 0)
             self.ui_LAY_mainForm.attachForm(self.ui_TAB_top, 'right', 0)
-            self.ui_LAY_mainForm.attachControl(self.ui_TAB_top, 'bottom', 5, self.ui_BTN_select)
+            self.ui_LAY_mainForm.attachControl(self.ui_TAB_top, 'bottom', 5, self.ui_BTN_ok)
 
-            self.ui_LAY_mainForm.attachNone(self.ui_BTN_select, 'top')
-            self.ui_LAY_mainForm.attachForm(self.ui_BTN_select, 'left', 5)
-            self.ui_LAY_mainForm.attachPosition(self.ui_BTN_select, 'right', 2, 50)
-            self.ui_LAY_mainForm.attachForm(self.ui_BTN_select, 'bottom', 5)
+            self.ui_LAY_mainForm.attachNone(self.ui_BTN_ok, 'top')
+            self.ui_LAY_mainForm.attachForm(self.ui_BTN_ok, 'left', 5)
+            self.ui_LAY_mainForm.attachPosition(self.ui_BTN_ok, 'right', 2, 50)
+            self.ui_LAY_mainForm.attachForm(self.ui_BTN_ok, 'bottom', 5)
 
-            self.ui_LAY_mainForm.attachNone(self.ui_BTN_close, 'top')
-            self.ui_LAY_mainForm.attachPosition(self.ui_BTN_close, 'left', 2, 50)
-            self.ui_LAY_mainForm.attachForm(self.ui_BTN_close, 'right', 5)
-            self.ui_LAY_mainForm.attachForm(self.ui_BTN_close, 'bottom', 5)
+            self.ui_LAY_mainForm.attachNone(self.ui_BTN_cancel, 'top')
+            self.ui_LAY_mainForm.attachPosition(self.ui_BTN_cancel, 'left', 2, 50)
+            self.ui_LAY_mainForm.attachForm(self.ui_BTN_cancel, 'right', 5)
+            self.ui_LAY_mainForm.attachForm(self.ui_BTN_cancel, 'bottom', 5)
 
         pm.setUITemplate('DefaultTemplate', popTemplate=True)
 
-        window.show()
+        pm.scriptJob(uiDeleted=(self.window, self.onUiDeleted))
+
+        self.window.show()
         m.refresh()
 
-    def ui_close(self, *args):
+    def close(self):
         if pm.window(WIN_NAME, exists=True):
             pm.deleteUI(WIN_NAME, window=True)
 
-    def ui_setTargetGeometry(self, *args):
-        self.setTargetGeometry()
+    def onCancelClicked(self, *args):
+        self.accept = False
+        self.close()
+
+    def onOkClicked(self, *args):
+        self.accept = True
+        self.close()
+
+    def onUiDeleted(self):
+        if self.accept:
+            self.prefSaver.paramsToPrefs()
+            for b in self.backupers:
+                b.restoreDisplay()
+        else:
+            for b in self.backupers:
+                b.restoreAll()
+
+    def syncUiToParams(self):
+        self.ui_FLTSLGRP_curveThresh.setValue(Parameters.curveThresh)
+        self.ui_FLTSLGRP_growAngle.setValue(Parameters.growAngle)
+        self.ui_CHK_displayCurve.setValue(Parameters.dispCurve)
+        self.ui_FLTSLGRP_curveScale.setValue(Parameters.curveScale)
 
     def gatherParameters(self):
-        Parameters.envelope = self.ui_FLTSLGRP_envelope.getValue()
         Parameters.curveThresh = self.ui_FLTSLGRP_curveThresh.getValue()
-        Parameters.areaTolerance = self.ui_FLTSLGRP_areaTolerance.getValue()
         Parameters.growAngle = self.ui_FLTSLGRP_growAngle.getValue()
         Parameters.dispCurve = self.ui_CHK_displayCurve.getValue()
         Parameters.curveScale = self.ui_FLTSLGRP_curveScale.getValue()
 
-    def ui_FLTSLGRP_envelope_change(self, arg):
-        self.processNormalizers()
-
     def ui_FLTSLGRP_curveThresh_change(self, arg):
-        self.processNormalizers()
-
-    def ui_FLTSLGRP_areaTolerance_change(self, arg):
-        self.processNormalizers()
+        self.gatherParameters()
+        self.processAll()
 
     def ui_FLTSLGRP_growAngle_change(self, arg):
-        self.processNormalizers()
+        self.gatherParameters()
+        self.processAll()
 
-    def ui_CHK_displayCurve_change(self, arg):
-        self.updateNormalizersDisplay()
+    def ui_CHK_displayCurve_change(self, state):
+        self.gatherParameters()
+        if not state:
+            for b in self.backupers:
+                b.restoreDisplay()
+        self.processDisplay()
 
     def ui_FLTSLGRP_curveScale_change(self, arg):
-        self.updateNormalizersDisplay()
-
-    def processNormalizers(self):
         self.gatherParameters()
-        for n in self.normalizers:
-            n.process(Parameters)
+        self.processDisplay()
 
-    def updateNormalizersDisplay(self):
-        self.gatherParameters()
-        for n in self.normalizers:
-            n.updateDisplay(Parameters)
+    def processAll(self):
+        for n in self.processors:
+            n.processAll()
 
-    def dummyFunc(self, *args, **kwargs):
-        pass
+    def processDisplay(self):
+        for n in self.processors:
+            n.processDisplay()
 
-    def setTargetGeometry(self):
+    def initGeometry(self):
         selection = m.ls(sl=True)
 
-        self.normalizers = []
         meshes = m.ls(
             selection=True,
             long=True,
@@ -289,12 +266,17 @@ class SmartNormalUI(object):
             noIntermediate=True
         )
         if meshes:
-            for x in meshes:
-                transform = com.getParent(x)
-                m.polyNormalPerVertex(transform, ufn=True)
-                m.polySoftEdge(transform, a=180)
+            for mesh in meshes:
+                transform = com.getParent(mesh)
                 if transform:
-                    self.normalizers.append(normalizer.Normalizer(x))
+                    self.backupers.append(backuper.Backuper(mesh))
+
+                    m.polyNormalPerVertex(transform, ufn=True)
+                    m.polySoftEdge(transform, a=180, ch=False)
+
+                    geomProcessor = geom_processor.GeomProcessor(mesh)
+                    geomProcessor.params = Parameters
+                    self.processors.append(geomProcessor)
         else:
             pm.confirmDialog(
                 title='Error',
@@ -306,4 +288,7 @@ class SmartNormalUI(object):
             return
 
         m.select(selection, r=True)
-        self.processNormalizers()
+        self.processAll()
+
+    def backup(self, mesh):
+        pass
