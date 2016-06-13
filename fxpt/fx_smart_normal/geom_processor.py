@@ -57,7 +57,7 @@ class GeomProcessor(object):
     def harvestVertices(self):
         for iv, v in enumerate(self.meshFn.getPoints(space=om.MSpace.kWorld)):
             vtx = components.Vertex(iv)
-            vtx.point = v
+            vtx.point = om.MPoint(v)
             self.vertices.append(vtx)
 
         # verticesIds maps 1:1 to normalIds and normals without use of polygonIds only if 1 vertex = 1 normal (my case)
@@ -83,7 +83,7 @@ class GeomProcessor(object):
     def harvestPolygons(self):
         for ip in xrange(self.meshFn.numPolygons):
             p = components.Polygon(ip)
-            p.normal = self.meshFn.getPolygonNormal(ip)
+            p.normal = om.MVector(self.meshFn.getPolygonNormal(ip))
             self.polygons.append(p)
             for iv in self.meshFn.getPolygonVertices(ip):
                 v = self.vertices[iv]

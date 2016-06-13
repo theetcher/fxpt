@@ -29,6 +29,11 @@ class SmartNormalUI(object):
     def __init__(self):
         self.processors = []
         self.backupers = []
+        self.initGeometry()
+
+        if not self.processors:
+            return
+
         self.accept = False
         self.prefSaver = prefsaver.PrefSaver(Parameters)
 
@@ -36,8 +41,7 @@ class SmartNormalUI(object):
 
         self.prefSaver.prefsToParams()
         self.syncUiToParams()
-
-        self.initGeometry()
+        self.processAll()
 
     def ui_createUI(self):
         self.winName = WIN_NAME
@@ -280,7 +284,7 @@ class SmartNormalUI(object):
         else:
             pm.confirmDialog(
                 title='Error',
-                message='Invalid selection.\nSelect at least one polygon object and press OK',
+                message='Invalid selection. Select at least one mesh.',
                 button=['OK'],
                 defaultButton='OK',
                 icon='critical'
@@ -288,5 +292,4 @@ class SmartNormalUI(object):
             return
 
         m.select(selection, r=True)
-        self.processAll()
 
