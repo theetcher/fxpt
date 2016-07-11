@@ -160,10 +160,6 @@ class GeomProcessor(object):
                 return om.MFloatVector(polySets[0].normal)
 
         midArea = polySets[0].area - (polySets[0].area - polySets[-1].area) * 0.5
-        masterPolys = set()
-        for ps in [ps for ps in polySets if ps.area > midArea]:
-            masterPolys |= ps.polygons
-
         masterNormals = [ps.normal for ps in polySets if ps.area >= midArea]
         return om.MFloatVector(com.vectorsMean(*masterNormals))
 
@@ -175,7 +171,6 @@ class GeomProcessor(object):
         grownPolygons = {poly}
         newFrontPolygons = {poly}
         while True:
-            grown = False
             frontPolygons = newFrontPolygons
             newFrontPolygons = set()
             for poly in frontPolygons:
@@ -188,8 +183,7 @@ class GeomProcessor(object):
                             if otherPoly not in grownPolygons:
                                 newFrontPolygons.add(otherPoly)
                                 grownPolygons.add(otherPoly)
-                                grown = True
-            if not grown:
+            if not newFrontPolygons:
                 break
         return grownPolygons
 
