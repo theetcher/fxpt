@@ -71,7 +71,10 @@ def generateFlowMap():
     orientations = []
     for iv, v in enumerate(vertices):
 
-        weightsNoNorm = [(1 / ((l.position - v).length()) ** 2) * l.orientationLength for l in locators]
+        lowSlopeWidth = 50
+        bellTopWidth = 4
+
+        weightsNoNorm = [(1 / (1 + abs((l.position - v).length() / lowSlopeWidth) ** bellTopWidth)) * l.orientationLength for l in locators]
         _watch(weightsNoNorm, 'weightsNoNorm')
 
         normFactor = 1 / sum(weightsNoNorm)
@@ -84,13 +87,14 @@ def generateFlowMap():
         for i, l in enumerate(locators):
             resultOrientation = resultOrientation + l.orientation * weights[i]
 
-        orientations.append(resultOrientation)
+        # UE4 uses left handed coord system
+        orientations.append(om.MVector(-resultOrientation.x, resultOrientation.y, resultOrientation.z))
 
-    _watch(orientations)
+    _watch(orientations, 'orientations')
 
     colors = colorize(orientations)
 
-    _watch(colors)
+    _watch(colors, 'colors')
 
     meshFn.setVertexColors(colors, range(len(vertices)))
 
