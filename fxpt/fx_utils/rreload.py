@@ -22,7 +22,8 @@ IGNORE_DIRECTORIES = [
     sysconfig.get_python_lib(standard_lib=True).lower(),
     'autodesk\\maya',
     'pythonpackages',
-    'pyqt'
+    'pyqt',
+    'keyring',
 ]
 
 
@@ -51,7 +52,7 @@ def needToBeIgnored(moduleFilename):
     # if moduleFilepath.startswith(pyStdLib) and (not moduleFilepath.startswith(pySitePkg)):
     #     continue
 
-    moduleDir = os.path.dirname(moduleFilename)
+    moduleDir = os.path.dirname(moduleFilename).lower()
     for s in IGNORE_DIRECTORIES:
         if s in moduleDir:
             return True
