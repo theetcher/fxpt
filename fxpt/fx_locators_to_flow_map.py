@@ -74,7 +74,8 @@ def generateFlowMap():
         lowSlopeWidth = 50
         bellTopWidth = 4
 
-        weightsNoNorm = [(1 / (1 + abs((l.position - v).length() / lowSlopeWidth) ** bellTopWidth)) * l.orientationLength for l in locators]
+        #weightsNoNorm = [(1 / (1 + abs((l.position - v).length() / lowSlopeWidth) ** bellTopWidth)) * l.orientationLength for l in locators]
+        weightsNoNorm = [(1 / (1 + abs((l.position - v).length() / lowSlopeWidth) ** bellTopWidth)) for l in locators]
         _watch(weightsNoNorm, 'weightsNoNorm')
 
         normFactor = 1 / sum(weightsNoNorm)
@@ -86,9 +87,8 @@ def generateFlowMap():
         resultOrientation = om.MVector(0, 0, 0)
         for i, l in enumerate(locators):
             resultOrientation = resultOrientation + l.orientation * weights[i]
-
-        # UE4 uses left handed coord system
-        orientations.append(om.MVector(-resultOrientation.x, resultOrientation.y, resultOrientation.z))
+        
+        orientations.append(resultOrientation)
 
     _watch(orientations, 'orientations')
 
