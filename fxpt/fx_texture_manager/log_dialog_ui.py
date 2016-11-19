@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'log_dialog_ui.ui'
 #
-# Created: Sat Oct 31 23:37:32 2015
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Sat Nov 19 23:58:06 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
 

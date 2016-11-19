@@ -1,10 +1,11 @@
-from PySide import QtCore, QtGui
+from fxpt.qt.pyside import QtCore, QtWidgets
+
 from fxpt.fx_texture_manager.line_edit_path import LineEditPath
 
 from com import FONT_MONOSPACE_QFONT
 
 
-class TexNodeDelegate(QtGui.QItemDelegate):
+class TexNodeDelegate(QtWidgets.QItemDelegate):
 
     def __init__(self, mainWin, *args, **kwargs):
         self.mainWin = mainWin

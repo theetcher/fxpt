@@ -1,35 +1,35 @@
 import sys
 import traceback
 
-from PySide import QtGui
+from fxpt.qt.pyside import QtWidgets
 
 DEFAULT_WIDTH = 500
 
-BTN_OK = QtGui.QMessageBox.Ok
-BTN_OPEN = QtGui.QMessageBox.Open
-BTN_SAVE = QtGui.QMessageBox.Save
-BTN_CANCEL = QtGui.QMessageBox.Cancel
-BTN_CLOSE = QtGui.QMessageBox.Close
-BTN_DISCARD = QtGui.QMessageBox.Discard
-BTN_APPLY = QtGui.QMessageBox.Apply
-BTN_RESET = QtGui.QMessageBox.Reset
-BTN_RESTORE_DEFAULTS = QtGui.QMessageBox.RestoreDefaults
-BTN_HELP = QtGui.QMessageBox.Help
-BTN_SAVE_ALL = QtGui.QMessageBox.SaveAll
-BTN_YES = QtGui.QMessageBox.Yes
-BTN_YES_TO_ALL = QtGui.QMessageBox.YesToAll
-BTN_NO = QtGui.QMessageBox.No
-BTN_NO_TO_ALL = QtGui.QMessageBox.NoToAll
-BTN_ABORT = QtGui.QMessageBox.Abort
-BTN_RETRY = QtGui.QMessageBox.Retry
-BTN_IGNORE = QtGui.QMessageBox.Ignore
-BTN_NO_BUTTON = QtGui.QMessageBox.NoButton
+BTN_OK = QtWidgets.QMessageBox.Ok
+BTN_OPEN = QtWidgets.QMessageBox.Open
+BTN_SAVE = QtWidgets.QMessageBox.Save
+BTN_CANCEL = QtWidgets.QMessageBox.Cancel
+BTN_CLOSE = QtWidgets.QMessageBox.Close
+BTN_DISCARD = QtWidgets.QMessageBox.Discard
+BTN_APPLY = QtWidgets.QMessageBox.Apply
+BTN_RESET = QtWidgets.QMessageBox.Reset
+BTN_RESTORE_DEFAULTS = QtWidgets.QMessageBox.RestoreDefaults
+BTN_HELP = QtWidgets.QMessageBox.Help
+BTN_SAVE_ALL = QtWidgets.QMessageBox.SaveAll
+BTN_YES = QtWidgets.QMessageBox.Yes
+BTN_YES_TO_ALL = QtWidgets.QMessageBox.YesToAll
+BTN_NO = QtWidgets.QMessageBox.No
+BTN_NO_TO_ALL = QtWidgets.QMessageBox.NoToAll
+BTN_ABORT = QtWidgets.QMessageBox.Abort
+BTN_RETRY = QtWidgets.QMessageBox.Retry
+BTN_IGNORE = QtWidgets.QMessageBox.Ignore
+BTN_NO_BUTTON = QtWidgets.QMessageBox.NoButton
 
-ICON_NONE = QtGui.QMessageBox.NoIcon
-ICON_QUESTION = QtGui.QMessageBox.Question
-ICON_INFORMATION = QtGui.QMessageBox.Information
-ICON_WARNING = QtGui.QMessageBox.Warning
-ICON_CRITICAL = QtGui.QMessageBox.Critical
+ICON_NONE = QtWidgets.QMessageBox.NoIcon
+ICON_QUESTION = QtWidgets.QMessageBox.Question
+ICON_INFORMATION = QtWidgets.QMessageBox.Information
+ICON_WARNING = QtWidgets.QMessageBox.Warning
+ICON_CRITICAL = QtWidgets.QMessageBox.Critical
 
 
 def messageBox(
@@ -45,7 +45,7 @@ def messageBox(
         width=DEFAULT_WIDTH
 ):
 
-    dlg = QtGui.QMessageBox(parent)
+    dlg = QtWidgets.QMessageBox(parent)
     if title:
         dlg.setWindowTitle(title)
     if text:
@@ -65,7 +65,7 @@ def messageBox(
     # hack for making predefined width message box
     if width:
         # noinspection PyArgumentList
-        spacer = QtGui.QSpacerItem(width, 0, QtGui.QSizePolicy.Minimum, QtGui. QSizePolicy.Expanding)
+        spacer = QtWidgets.QSpacerItem(width, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         gridLayout = dlg.layout()
         gridLayout.addItem(spacer, gridLayout.rowCount(), 0, 1, gridLayout.columnCount())
 

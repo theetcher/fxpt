@@ -1,13 +1,16 @@
-from PySide import QtGui
+from fxpt.qt.pyside import QtWidgets, isPySide2
 
 from fxpt.fx_prefsaver import prefsaver, serializers
 
-from fxpt.fx_texture_manager.search_replace_dialog_ui import Ui_Dialog
+if isPySide2():
+    from fxpt.fx_texture_manager.search_replace_dialog_ui2 import Ui_Dialog
+else:
+    from fxpt.fx_texture_manager.search_replace_dialog_ui import Ui_Dialog
 
 OPT_VAR_NAME_SEARCH_REPLACE_DLG = 'fx_textureManager_searchReplaceDlg_prefs'
 
 
-class SearchReplaceDialog(QtGui.QDialog):
+class SearchReplaceDialog(QtWidgets.QDialog):
 
     def __init__(self, parent):
         super(SearchReplaceDialog, self).__init__(parent=parent)

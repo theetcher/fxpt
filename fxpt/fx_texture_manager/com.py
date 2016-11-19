@@ -1,7 +1,7 @@
 from fxpt.fx_utils.utils import pathToSlash
 
 try:
-    from PySide import QtGui
+    from fxpt.qt.pyside import QtGui
 except ImportError:
     QtGui = None
 

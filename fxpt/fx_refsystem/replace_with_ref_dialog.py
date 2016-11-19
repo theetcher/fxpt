@@ -1,13 +1,16 @@
-from PySide import QtGui
+from fxpt.qt.pyside import QtWidgets, isPySide2
 
-from fxpt.fx_utils.utils import cleanupPath
 from fxpt.fx_prefsaver import prefsaver, serializers
-from fxpt.fx_refsystem.replace_with_ref_dialog_ui import Ui_Dialog
+
+if isPySide2():
+    from fxpt.fx_refsystem.replace_with_ref_dialog_ui2 import Ui_Dialog
+else:
+    from fxpt.fx_refsystem.replace_with_ref_dialog_ui import Ui_Dialog
 
 OPT_VAR_NAME = 'fx_refsystem_replaceDlg_prefs'
 
 
-class ReplaceDialog(QtGui.QDialog):
+class ReplaceDialog(QtWidgets.QDialog):
 
     RESULT_CANCEL = 0
     RESULT_SAVE_REPLACE = 1
@@ -62,4 +65,3 @@ class ReplaceDialog(QtGui.QDialog):
     def onCancelClicked(self):
         self.dialogResult = self.__class__.RESULT_CANCEL
         self.reject()
-

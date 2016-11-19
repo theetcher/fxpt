@@ -1,4 +1,4 @@
-from PySide import QtGui
+from fxpt.qt.pyside import QtGui
 
 
 class QtFontCreator(object):

@@ -1,13 +1,16 @@
-from PySide import QtCore, QtGui
+from fxpt.qt.pyside import QtCore, QtWidgets, isPySide2
 
 from fxpt.fx_prefsaver import prefsaver, serializers
-from fxpt.fx_texture_manager.retarget_dialog_ui import Ui_Dialog
 
+if isPySide2():
+    from fxpt.fx_texture_manager.retarget_dialog_ui2 import Ui_Dialog
+else:
+    from fxpt.fx_texture_manager.retarget_dialog_ui import Ui_Dialog
 
 OPT_VAR_NAME_RETARGET_DLG = 'fx_textureManager_retargetDlg_prefs'
 
 
-class RetargetDialog(QtGui.QDialog):
+class RetargetDialog(QtWidgets.QDialog):
 
     def __init__(self, parent):
         super(RetargetDialog, self).__init__(parent=parent)
@@ -87,7 +90,7 @@ class RetargetDialog(QtGui.QDialog):
 
     def onBrowseClicked(self):
         # noinspection PyCallByClass
-        dialogResult = QtGui.QFileDialog.getExistingDirectory(
+        dialogResult = QtWidgets.QFileDialog.getExistingDirectory(
             self,
             'Retarget Root',
             self.getLastBrowsedDir()
@@ -100,7 +103,7 @@ class RetargetDialog(QtGui.QDialog):
 
     def onBrowseSourceClicked(self):
         # noinspection PyCallByClass
-        dialogResult = QtGui.QFileDialog.getExistingDirectory(
+        dialogResult = QtWidgets.QFileDialog.getExistingDirectory(
             self,
             'Source Root',
             self.getLastBrowsedSrcDir()

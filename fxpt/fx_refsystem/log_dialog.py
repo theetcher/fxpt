@@ -1,13 +1,17 @@
-from PySide import QtGui
+from fxpt.qt.pyside import QtWidgets, isPySide2
 
 from fxpt.fx_prefsaver import prefsaver, serializers
 from fxpt.fx_refsystem.com import getMayaQMainWindow
-from fxpt.fx_refsystem.log_dialog_ui import Ui_Dialog
+
+if isPySide2():
+    from fxpt.fx_refsystem.log_dialog_ui2 import Ui_Dialog
+else:
+    from fxpt.fx_refsystem.log_dialog_ui import Ui_Dialog
 
 OPT_VAR_NAME_LOG_DLG = 'fx_refsystem_logDlg_prefs'
 
 
-class LogDialog(QtGui.QDialog):
+class LogDialog(QtWidgets.QDialog):
 
     def __init__(self):
         super(LogDialog, self).__init__(parent=getMayaQMainWindow())

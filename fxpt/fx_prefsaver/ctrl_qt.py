@@ -1,12 +1,22 @@
 try:
     import PyQt4 as _PyQt4
+    # Qt5 -> Qt4
+    _PyQt4.QtCore.QItemSelection = _PyQt4.QtGui.QItemSelection
+    _PyQt4.QtCore.QItemSelectionModel = _PyQt4.QtGui.QItemSelectionModel
 except ImportError:
     _PyQt4 = None
 
 try:
-    import PySide as _PySide
+    import PySide2 as _PySide
 except ImportError:
-    _PySide = None
+    try:
+        import PySide as _PySide
+        # Qt5 -> Qt4
+        _PySide.QtCore.QItemSelection = _PySide.QtGui.QItemSelection
+        _PySide.QtCore.QItemSelectionModel = _PySide.QtGui.QItemSelectionModel
+    except ImportError:
+        _PySide = None
+
 
 from ctrl_base import CtrlBase
 from pstypes import UIType, Attr
@@ -293,6 +303,7 @@ class RangeSelector(SelectorBase):
         self.ctrl.setAttr(Attr.SelectedRanges, ' '.join(selectedRanges))
 
     def loadRanges(self):
+        return  # TODO: freezes window in Maya 2017. doesnt work lists and tables
         model = self.getModel()
         if model is None:
             return
@@ -301,7 +312,7 @@ class RangeSelector(SelectorBase):
         if selectionModel is None:
             return
 
-        itemSelection = self.qt.QtGui.QItemSelection()
+        itemSelection = self.qt.QtCore.QItemSelection()
         rangesPrefData = self.ctrl.getAttr(Attr.SelectedRanges)
 
         if rangesPrefData:
@@ -309,7 +320,7 @@ class RangeSelector(SelectorBase):
                 top, left, bottom, right = [int(x) for x in rangeStr.split(',')]
                 topLeft = model.index(top, left)
                 bottomRight = model.index(bottom, right)
-                itemSelection.merge(self.qt.QtGui.QItemSelection(topLeft, bottomRight), self.qt.QtGui.QItemSelectionModel.SelectCurrent)
+                itemSelection.merge(self.qt.QtCore.QItemSelection(topLeft, bottomRight), self.qt.QtCore.QItemSelectionModel.SelectCurrent)
 
             selectionModel.select(itemSelection, self.ctrl.qt.QtGui.QItemSelectionModel.Select)
 
@@ -392,10 +403,10 @@ class TreeIndexSelector(SelectorBase):
                     continue
                 indexesToSelect.append(index)
 
-        itemSelection = self.qt.QtGui.QItemSelection()
+        itemSelection = self.qt.QtCore.QItemSelection()
         for index in indexesToSelect:
-            itemSelection.merge(self.qt.QtGui.QItemSelection(index, index), self.qt.QtGui.QItemSelectionModel.SelectCurrent)
-        selectionModel.select(itemSelection, self.qt.QtGui.QItemSelectionModel.Select)
+            itemSelection.merge(self.qt.QtCore.QItemSelection(index, index), self.qt.QtCore.QItemSelectionModel.SelectCurrent)
+        selectionModel.select(itemSelection, self.qt.QtCore.QItemSelectionModel.Select)
 
         expandedIndexesPathsPrefValue = self.ctrl.getAttr(Attr.ExpandedIndexes)
         if expandedIndexesPathsPrefValue:

@@ -86,7 +86,7 @@ def generateFlowMap():
 
         resultOrientation = om.MVector(0, 0, 0)
         for i, l in enumerate(locators):
-            resultOrientation = resultOrientation + l.orientation * weights[i]
+            resultOrientation += l.orientation * weights[i]
         
         orientations.append(resultOrientation)
 

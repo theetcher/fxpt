@@ -2,61 +2,61 @@
 
 # Form implementation generated from reading ui file 'replace_with_ref_dialog_ui.ui'
 #
-# Created: Fri Nov 18 22:58:32 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.4
+# Created: Fri Nov 18 22:58:33 2016
+#      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide import QtCore, QtGui
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(520, 174)
-        self.verticalLayout = QtGui.QVBoxLayout(Dialog)
+        self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
         self.verticalLayout.setContentsMargins(6, 6, 6, 6)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.groupBox = QtGui.QGroupBox(Dialog)
+        self.groupBox = QtWidgets.QGroupBox(Dialog)
         self.groupBox.setTitle("")
         self.groupBox.setObjectName("groupBox")
-        self.horizontalLayout = QtGui.QHBoxLayout(self.groupBox)
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.groupBox)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.uiLBL_text = QtGui.QLabel(self.groupBox)
+        self.uiLBL_text = QtWidgets.QLabel(self.groupBox)
         self.uiLBL_text.setTextFormat(QtCore.Qt.RichText)
         self.uiLBL_text.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.uiLBL_text.setWordWrap(True)
         self.uiLBL_text.setObjectName("uiLBL_text")
         self.horizontalLayout.addWidget(self.uiLBL_text)
         self.verticalLayout.addWidget(self.groupBox)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
-        self.uiBTN_saveReplace = QtGui.QPushButton(Dialog)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        self.uiBTN_saveReplace = QtWidgets.QPushButton(Dialog)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiBTN_saveReplace.sizePolicy().hasHeightForWidth())
         self.uiBTN_saveReplace.setSizePolicy(sizePolicy)
         self.uiBTN_saveReplace.setObjectName("uiBTN_saveReplace")
         self.horizontalLayout_2.addWidget(self.uiBTN_saveReplace)
-        self.uiBTN_replace = QtGui.QPushButton(Dialog)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        self.uiBTN_replace = QtWidgets.QPushButton(Dialog)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiBTN_replace.sizePolicy().hasHeightForWidth())
         self.uiBTN_replace.setSizePolicy(sizePolicy)
         self.uiBTN_replace.setObjectName("uiBTN_replace")
         self.horizontalLayout_2.addWidget(self.uiBTN_replace)
-        self.uiBTN_cancel = QtGui.QPushButton(Dialog)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        self.uiBTN_cancel = QtWidgets.QPushButton(Dialog)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiBTN_cancel.sizePolicy().hasHeightForWidth())
         self.uiBTN_cancel.setSizePolicy(sizePolicy)
         self.uiBTN_cancel.setObjectName("uiBTN_cancel")
         self.horizontalLayout_2.addWidget(self.uiBTN_cancel)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
         self.horizontalLayout_2.setStretch(1, 1)
         self.horizontalLayout_2.setStretch(2, 1)
@@ -72,9 +72,9 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Replace With Reference", None, QtGui.QApplication.UnicodeUTF8))
-        self.uiLBL_text.setText(QtGui.QApplication.translate("Dialog", "Text", None, QtGui.QApplication.UnicodeUTF8))
-        self.uiBTN_saveReplace.setText(QtGui.QApplication.translate("Dialog", "Save and Replace", None, QtGui.QApplication.UnicodeUTF8))
-        self.uiBTN_replace.setText(QtGui.QApplication.translate("Dialog", "Replace", None, QtGui.QApplication.UnicodeUTF8))
-        self.uiBTN_cancel.setText(QtGui.QApplication.translate("Dialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        Dialog.setWindowTitle(QtWidgets.QApplication.translate("Dialog", "Replace With Reference", None, -1))
+        self.uiLBL_text.setText(QtWidgets.QApplication.translate("Dialog", "Text", None, -1))
+        self.uiBTN_saveReplace.setText(QtWidgets.QApplication.translate("Dialog", "Save and Replace", None, -1))
+        self.uiBTN_replace.setText(QtWidgets.QApplication.translate("Dialog", "Replace", None, -1))
+        self.uiBTN_cancel.setText(QtWidgets.QApplication.translate("Dialog", "Cancel", None, -1))
 

@@ -1,7 +1,7 @@
-from PySide import QtCore, QtGui
+from fxpt.qt.pyside import QtCore, QtWidgets
 
 
-class TexTableFilterModel(QtGui.QSortFilterProxyModel):
+class TexTableFilterModel(QtWidgets.QSortFilterProxyModel):
 
     def flags(self, index):
         return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable

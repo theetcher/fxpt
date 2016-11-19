@@ -1,8 +1,6 @@
 import os
 
-from PySide import QtGui
-# noinspection PyUnresolvedReferences
-import shiboken
+from fxpt.qt.pyside import QtWidgets, shiboken2
 
 import maya.cmds as m
 import maya.OpenMayaUI as omui
@@ -35,7 +33,7 @@ def getMayaQMainWindow():
     ptr = omui.MQtUtil.mainWindow()
     if not ptr:
         raise RuntimeError('Cannot find Maya main window.')
-    return shiboken.wrapInstance(long(ptr), QtGui.QMainWindow)
+    return shiboken2.wrapInstance(long(ptr), QtWidgets.QMainWindow)
 
 
 def getRefRootValue():

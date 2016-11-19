@@ -1,11 +1,11 @@
 import os
 
-from PySide import QtCore, QtGui
+from fxpt.qt.pyside import QtCore, QtWidgets
 
 from fxpt.fx_texture_manager.com import cleanupPath
 
 
-class LineEditPath(QtGui.QLineEdit):
+class LineEditPath(QtWidgets.QLineEdit):
 
     def __init__(self, *args, **kwargs):
         super(LineEditPath, self).__init__(*args, **kwargs)

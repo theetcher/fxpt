@@ -6,9 +6,9 @@ TEX_ATTRIBUTES = {
     'file': [
         'fileTextureName'
     ],
-    'mentalrayTexture': [
-        'fileTextureName'
-    ]
+    # 'mentalrayTexture': [
+    #     'fileTextureName'
+    # ]
 }
 
 

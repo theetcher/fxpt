@@ -1,4 +1,3 @@
-# from PyQt4 import QtGui
 import os
 
 from fxpt.fx_prefsaver import prefsaver
@@ -6,6 +5,7 @@ from fxpt.fx_prefsaver.serializers import SerializerOptVar, SerializerFileJson, 
 
 QtGui = None
 QtCore = None
+QtWidgets = None
 
 CFG_FILENAME = os.path.dirname(__file__) + '\\prefs.cfg'
 
@@ -14,31 +14,38 @@ CFG_FILENAME = os.path.dirname(__file__) + '\\prefs.cfg'
 class TestQtWindow(object):
 
     QtTypePyQt = 0
-    QtTypePySide = 1
+    QtTypePySide = 2
+    QtTypePySide2 = 3
 
     # noinspection PyArgumentList
     def __init__(self, qtType, ser, parent=None):
 
         self.qtType = qtType
 
-        global QtCore
-        global QtGui
+        global QtCore, QtGui, QtWidgets
         if self.qtType == TestQtWindow.QtTypePyQt:
             # noinspection PyUnresolvedReferences
-            from PyQt4 import QtCore
-            from PyQt4 import QtGui
+            from PyQt4 import QtCore, QtGui
+            QtWidgets = QtGui
             import pyqt_window_test_ui
             self.ui = pyqt_window_test_ui.Ui_MainWindow()
-        else:
+        elif self.qtType == TestQtWindow.QtTypePySide:
             # noinspection PyUnresolvedReferences
-            from PySide import QtCore
-            from PySide import QtGui
+            from PySide import QtCore, QtGui
+            QtWidgets = QtGui
             import pyside_window_test_ui
             self.ui = pyside_window_test_ui.Ui_MainWindow()
+        elif self.qtType == TestQtWindow.QtTypePySide2:
+            # noinspection PyUnresolvedReferences
+            from PySide2 import QtCore, QtGui, QtWidgets
+            import pyside_window_test_ui2
+            self.ui = pyside_window_test_ui2.Ui_MainWindow()
+        else:
+            assert False, 'Unknown Qt Framework/Version.'
 
-        self.win = QtGui.QMainWindow(parent=parent)
+        self.win = QtWidgets.QMainWindow(parent=parent)
 
-        self.dlg = QtGui.QDialog(parent=self.win)
+        self.dlg = QtWidgets.QDialog(parent=self.win)
         self.dlg.setObjectName('uiDLG_testDialog')
         self.dlg.setWindowTitle(str(self.dlg))
 

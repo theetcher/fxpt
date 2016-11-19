@@ -1,13 +1,18 @@
 import os
 import maya.cmds as m
 from maya.mel import eval as meval
-from PySide import QtCore, QtGui
+
+from fxpt.qt.pyside import QtCore, QtGui, QtWidgets, isPySide2
 
 from fxpt.side_utils import pyperclip
 
 from fxpt.fx_texture_manager import com
 
-from fxpt.fx_texture_manager.main_window_ui import Ui_MainWindow
+if isPySide2():
+    from fxpt.fx_texture_manager.main_window_ui2 import Ui_MainWindow
+else:
+    from fxpt.fx_texture_manager.main_window_ui import Ui_MainWindow
+
 from fxpt.fx_texture_manager.harvesters import MayaSceneHarvester, MayaSelectionHarvester
 from fxpt.fx_texture_manager.coordinators import CoordinatorMayaUI
 from fxpt.fx_texture_manager.delegates import TexNodeDelegate
@@ -19,7 +24,7 @@ from fxpt.fx_texture_manager.copy_move_dialog import CopyMoveDialog
 from fxpt.fx_texture_manager.log_dialog import LogDialog
 
 
-class TexManagerUI(QtGui.QMainWindow):
+class TexManagerUI(QtWidgets.QMainWindow):
 
     def __init__(self, parent=None):
         super(TexManagerUI, self).__init__(parent=parent)
@@ -30,7 +35,7 @@ class TexManagerUI(QtGui.QMainWindow):
         self.coordinator = CoordinatorMayaUI()
         self.clipboard = None
 
-        uiAGR_selectionBehaviour = QtGui.QActionGroup(self)
+        uiAGR_selectionBehaviour = QtWidgets.QActionGroup(self)
         self.ui.uiACT_selectNothing.setActionGroup(uiAGR_selectionBehaviour)
         self.ui.uiACT_selectTextureNode.setActionGroup(uiAGR_selectionBehaviour)
         self.ui.uiACT_selectAssigned.setActionGroup(uiAGR_selectionBehaviour)
@@ -98,14 +103,14 @@ class TexManagerUI(QtGui.QMainWindow):
         self.ui.uiTBL_textures.addAction(self.ui.uiACT_copy)
         self.ui.uiTBL_textures.addAction(self.ui.uiACT_paste)
 
-        separator = QtGui.QAction(self)
+        separator = QtWidgets.QAction(self)
         separator.setSeparator(True)
         self.ui.uiTBL_textures.addAction(separator)
 
         self.ui.uiTBL_textures.addAction(self.ui.uiACT_copyFullPath)
         self.ui.uiTBL_textures.addAction(self.ui.uiACT_copyFilename)
 
-        separator = QtGui.QAction(self)
+        separator = QtWidgets.QAction(self)
         separator.setSeparator(True)
         self.ui.uiTBL_textures.addAction(separator)
 
@@ -113,7 +118,7 @@ class TexManagerUI(QtGui.QMainWindow):
         self.ui.uiTBL_textures.addAction(self.ui.uiACT_selectInvert)
         self.ui.uiTBL_textures.addAction(self.ui.uiACT_selectNone)
 
-        separator = QtGui.QAction(self)
+        separator = QtWidgets.QAction(self)
         separator.setSeparator(True)
         self.ui.uiTBL_textures.addAction(separator)
 
@@ -126,7 +131,7 @@ class TexManagerUI(QtGui.QMainWindow):
     # noinspection PyAttributeOutsideInit
     def initModels(self):
         self.model = QtGui.QStandardItemModel()
-        self.filterModel = QtGui.QSortFilterProxyModel()
+        self.filterModel = QtCore.QSortFilterProxyModel()
         self.filterModel.setSortCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.filterModel.setSourceModel(self.model)
         self.ui.uiTBL_textures.setModel(self.filterModel)
@@ -314,7 +319,7 @@ class TexManagerUI(QtGui.QMainWindow):
 
         selectedIndexes = self.getSelectedIndexes(0)
         if selectedIndexes:
-            self.ui.uiTBL_textures.scrollTo(selectedIndexes[0], QtGui.QAbstractItemView.EnsureVisible)
+            self.ui.uiTBL_textures.scrollTo(selectedIndexes[0], QtWidgets.QAbstractItemView.EnsureVisible)
 
         self.updateUiStates()
 
@@ -358,7 +363,7 @@ class TexManagerUI(QtGui.QMainWindow):
 
     # noinspection PyMethodMayBeStatic
     def putCopyListToClipboard(self, l):
-        pyperclip.setcb('\n'.join(l))
+        pyperclip.copy('\n'.join(l))
 
     def onSelectAllTriggered(self):
         self.ui.uiTBL_textures.selectAll()
@@ -370,8 +375,8 @@ class TexManagerUI(QtGui.QMainWindow):
         topLeftIndex = model.index(0, 0)
         bottomRightIndex = model.index(model.rowCount() - 1, model.columnCount() - 1)
         # noinspection PyArgumentList
-        itemSelection = QtGui.QItemSelection(topLeftIndex, bottomRightIndex)
-        selectionModel.select(itemSelection, QtGui.QItemSelectionModel.Toggle)
+        itemSelection = QtCore.QItemSelection(topLeftIndex, bottomRightIndex)
+        selectionModel.select(itemSelection, QtCore.QItemSelectionModel.Toggle)
 
     def onSelectNoneTriggered(self):
         self.ui.uiTBL_textures.clearSelection()
@@ -428,7 +433,7 @@ class TexManagerUI(QtGui.QMainWindow):
         tns = self.getSelectedTexNodes()
         tnsExists, log = self.checkTnsExists(tns)
         if tnsExists:
-            if self.copyMoveDlg.exec_() == QtGui.QDialog.Accepted:
+            if self.copyMoveDlg.exec_() == QtWidgets.QDialog.Accepted:
                 dialogResult = self.copyMoveDlg.getDialogResult()
                 procLog = self.coordinator.processCopyMove(
                     tns,
@@ -443,7 +448,7 @@ class TexManagerUI(QtGui.QMainWindow):
         tns = self.getSelectedTexNodes()
         tnsExists, log = self.checkTnsExists(tns)
         if tnsExists:
-            if self.retargetDlg.exec_() == QtGui.QDialog.Accepted:
+            if self.retargetDlg.exec_() == QtWidgets.QDialog.Accepted:
                 retargetRoot, forceRetarget, useSourceRoot, sourceRoot = self.retargetDlg.getDialogResult()
                 procLog = self.coordinator.processRetarget(
                     tns,
@@ -461,7 +466,7 @@ class TexManagerUI(QtGui.QMainWindow):
         tns = self.getSelectedTexNodes()
         tnsExists, log = self.checkTnsExists(tns)
         if tnsExists:
-            if self.searchReplaceDlg.exec_() == QtGui.QDialog.Accepted:
+            if self.searchReplaceDlg.exec_() == QtWidgets.QDialog.Accepted:
                 searchStr, replaceStr, caseSensitive = self.searchReplaceDlg.getDialogData()
                 procLog = self.coordinator.processSearchAndReplace(
                     tns,

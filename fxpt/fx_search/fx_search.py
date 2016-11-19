@@ -255,14 +255,14 @@ class SearchUI(QtGui.QMainWindow, main_window_ui.Ui_MainWindow):
         nameString = ''
         for name in nameList:
             nameString += name + '\r\n'
-        pyperclip.setcb(nameString)
+        pyperclip.copy(nameString)
 
     def ui_onCopyShortNameClicked(self):
         nameList = [ni.shortName for ni in self.getSelectedNodeInfos() if ni.shortName]
         nameString = ''
         for name in nameList:
             nameString += name + '\r\n'
-        pyperclip.setcb(nameString)
+        pyperclip.copy(nameString)
 
     def resetResultTablesAndTabs(self):
         for sl in self.searchers:

@@ -1,14 +1,18 @@
-from PySide import QtCore, QtGui
+from fxpt.qt.pyside import QtCore, QtWidgets, isPySide2
 
 from fxpt.fx_prefsaver import prefsaver, serializers
-from fxpt.fx_texture_manager.copy_move_dialog_ui import Ui_Dialog
-
 from fxpt.fx_texture_manager.copy_move_info import CopyMoveInfo
+
+if isPySide2():
+    from fxpt.fx_texture_manager.copy_move_dialog_ui2 import Ui_Dialog
+else:
+    from fxpt.fx_texture_manager.copy_move_dialog_ui import Ui_Dialog
+
 
 OPT_VAR_NAME_COPY_MOVE_DLG = 'fx_textureManager_copMoveDlg_prefs'
 
 
-class CopyMoveDialog(QtGui.QDialog):
+class CopyMoveDialog(QtWidgets.QDialog):
 
     def __init__(self, parent):
         super(CopyMoveDialog, self).__init__(parent=parent)
@@ -113,7 +117,7 @@ class CopyMoveDialog(QtGui.QDialog):
 
     def onBrowseTargetClicked(self):
         # noinspection PyCallByClass
-        dialogResult = QtGui.QFileDialog.getExistingDirectory(
+        dialogResult = QtWidgets.QFileDialog.getExistingDirectory(
             self,
             'Select Target Directory',
             self.getLastBrowsedDirTarget()
@@ -126,7 +130,7 @@ class CopyMoveDialog(QtGui.QDialog):
 
     def onBrowseSourceClicked(self):
         # noinspection PyCallByClass
-        dialogResult = QtGui.QFileDialog.getExistingDirectory(
+        dialogResult = QtWidgets.QFileDialog.getExistingDirectory(
             self,
             'Select Original Root Directory',
             self.getLastBrowsedDirSource()

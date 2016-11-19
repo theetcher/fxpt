@@ -1,6 +1,6 @@
 import maya.OpenMayaUI as apiUI
-import shiboken
-from PySide import QtGui
+
+from fxpt.qt.pyside import QtWidgets, shiboken2
 
 from fxpt.fx_texture_manager import main_window
 
@@ -16,7 +16,7 @@ def getMayaMainWindowPtr():
 
 
 def getMayaQMainWindow(ptr):
-    return shiboken.wrapInstance(long(ptr), QtGui.QMainWindow)
+    return shiboken2.wrapInstance(long(ptr), QtWidgets.QMainWindow)
 
 
 def run():

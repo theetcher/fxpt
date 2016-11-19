@@ -17,7 +17,7 @@ def run(serializer):
             mainWinQObject = shiboken2.wrapInstance(long(ptr), QtWidgets.QMainWindow)
         else:
             raise Exception('Cannot find Maya main window.')
-        mainWin = qt_window_test.TestQtWindow(qt_window_test.TestQtWindow.QtTypePySide, serializer, parent=mainWinQObject)
+        mainWin = qt_window_test.TestQtWindow(qt_window_test.TestQtWindow.QtTypePySide2, serializer, parent=mainWinQObject)
 
     mainWin.show()
     mainWin.raise_()

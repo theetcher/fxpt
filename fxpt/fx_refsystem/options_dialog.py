@@ -1,13 +1,19 @@
-from PySide import QtGui
+from fxpt.qt.pyside import QtWidgets, QtGui, isPySide2
 
 from fxpt.fx_utils.utils import cleanupPath
 from fxpt.fx_prefsaver import prefsaver, serializers
-from fxpt.fx_refsystem.options_dialog_ui import Ui_Dialog
 from fxpt.fx_refsystem.roots_cfg_handler import RootsCfgHandler
 from fxpt.fx_refsystem.com import getMayaQMainWindow
 
+if isPySide2():
+    from fxpt.fx_refsystem.options_dialog_ui2 import Ui_Dialog
+else:
+    from fxpt.fx_refsystem.options_dialog_ui import Ui_Dialog
+
+
 OPT_VAR_NAME = 'fx_refsystem_optionsDlg_prefs'
 NO_ROOT_STRING = '... use absolute paths ...'
+# noinspection PyArgumentList
 ACTIVE_ROOT_COLOR = QtGui.QColor(255, 174, 0)
 ACTIVE_ROOT_SUFFIX = ' [active]'
 
@@ -15,7 +21,7 @@ ACTIVE_ROOT_SUFFIX = ' [active]'
 dlg = None
 
 
-class OptionsDialog(QtGui.QDialog):
+class OptionsDialog(QtWidgets.QDialog):
 
     def __init__(self, parent):
         super(OptionsDialog, self).__init__(parent=parent)
@@ -54,7 +60,7 @@ class OptionsDialog(QtGui.QDialog):
         self.ui.uiLST_roots.clear()
         for root, isActive in self.roots.items():
             rootDisplayText = root if root else NO_ROOT_STRING
-            item = QtGui.QListWidgetItem()
+            item = QtWidgets.QListWidgetItem()
             item.root = root
             if isActive:
                 font = QtGui.QFont()
@@ -79,7 +85,7 @@ class OptionsDialog(QtGui.QDialog):
 
     def onAddClicked(self):
         # noinspection PyCallByClass
-        newRootDir = cleanupPath(QtGui.QFileDialog.getExistingDirectory(
+        newRootDir = cleanupPath(QtWidgets.QFileDialog.getExistingDirectory(
             self,
             'References Root Dir',
             self.getLastBrowsedDir()
@@ -137,5 +143,3 @@ def run():
         dlg = OptionsDialog(mayaMainWin)
     dlg.show()
     dlg.raise_()
-
-

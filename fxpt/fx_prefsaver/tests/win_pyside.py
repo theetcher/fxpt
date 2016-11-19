@@ -1,12 +1,12 @@
 import sys
 
-from PySide import QtGui
+from fxpt.qt.pyside import QtWidgets
 
 import qt_window_test
 
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     win = qt_window_test.TestQtWindow(qt_window_test.TestQtWindow.QtTypePySide, 'SerializerFileJson', parent=None)
     win.show()
     app.exec_()
