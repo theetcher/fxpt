@@ -1,14 +1,10 @@
 import time
 
-from PySide import QtCore
-from PySide import QtGui
-import shiboken
+from fxpt.qt.pyside import shiboken2, QtWidgets, QtCore, QtGui
 
 import maya.cmds as m
 import maya.OpenMayaUI as omui
 import pymel.core as pm
-
-#from watch import *
 
 flyer = None
 
@@ -76,16 +72,16 @@ class EventCatcher(QtCore.QObject):
         return False
 
 
-class InfoWidget(QtGui.QFrame):
+class InfoWidget(QtWidgets.QFrame):
 
     def __init__(self, parent):
         super(InfoWidget, self).__init__(parent=parent)
-        layout = QtGui.QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
-        self.label = QtGui.QLabel()
+        self.label = QtWidgets.QLabel()
         self.label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-        self.setFrameStyle(QtGui.QFrame.Panel | QtGui.QFrame.Raised)
+        self.setFrameStyle(QtWidgets.QFrame.Panel | QtWidgets.QFrame.Raised)
         self.label.setContentsMargins(10, 10, 10, 10)
         layout.addWidget(self.label)
         self.setWindowFlags(QtCore.Qt.Popup)
@@ -96,12 +92,12 @@ class InfoWidget(QtGui.QFrame):
 
 
 # noinspection PyAttributeOutsideInit
-class FlyCamUI(QtGui.QPushButton):
+class FlyCamUI(QtWidgets.QPushButton):
 
     def __init__(self):
         ptr = omui.MQtUtil.mainWindow()
         if ptr is not None:
-            self.mainWinQObject = shiboken.wrapInstance(long(ptr), QtGui.QWidget)  # or you can use QMainWindow
+            self.mainWinQObject = shiboken2.wrapInstance(long(ptr), QtWidgets.QWidget)  # or you can use QMainWindow
         else:
             m.error('cannot find main Maya window.')
         super(FlyCamUI, self).__init__(parent=self.mainWinQObject)
@@ -362,13 +358,13 @@ class Flyer(object):
             m.setAttr(attr, self.savedCameraSettings[attr])
 
     def showError(self, txt, itxt):
-        msgBox = QtGui.QMessageBox()
+        msgBox = QtWidgets.QMessageBox()
         msgBox.setWindowTitle('Error')
         msgBox.setText(txt)
         msgBox.setInformativeText(itxt)
-        msgBox.setStandardButtons(QtGui.QMessageBox.Ok)
-        msgBox.setDefaultButton(QtGui.QMessageBox.Ok)
-        msgBox.setIcon(QtGui.QMessageBox.Critical)
+        msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        msgBox.setDefaultButton(QtWidgets.QMessageBox.Ok)
+        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
         msgBox.exec_()
 
     def fly(self):
@@ -384,7 +380,7 @@ class Flyer(object):
             self.ui.startEventsCapture()
             self.timer = Timer()
             while not self.getControlState(QtCore.Qt.Key_Escape):
-                QtGui.qApp.processEvents()
+                QtWidgets.qApp.processEvents()
                 self.getMouseData()
                 self.delta = self.timer.delta()
                 self.calculateSpeeds()
@@ -414,7 +410,7 @@ class Flyer(object):
         self.mouseData[MOUSE_VER] = pos.y() - MOUSE_ORIGIN_Y
         moveCursorToOrigin()
 
-        pressedButtons = QtGui.qApp.mouseButtons()
+        pressedButtons = QtWidgets.qApp.mouseButtons()
         if pressedButtons & QtCore.Qt.LeftButton:
             self.setControlState(QtCore.Qt.LeftButton, True)
         else:
@@ -596,8 +592,8 @@ class OptionVarLink(object):
 
 def run():
 
-#    from pydev import pydevd
-#    pydevd.settrace('localhost', port=62882, stdoutToServer=True, stderrToServer=True)
+    # from pydev import pydevd
+    # pydevd.settrace('localhost', port=62882, stdoutToServer=True, stderrToServer=True)
 
     global flyer
     flyer = Flyer()
