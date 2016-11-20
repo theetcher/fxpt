@@ -303,7 +303,6 @@ class RangeSelector(SelectorBase):
         self.ctrl.setAttr(Attr.SelectedRanges, ' '.join(selectedRanges))
 
     def loadRanges(self):
-        return  # TODO: freezes window in Maya 2017. doesnt work lists and tables
         model = self.getModel()
         if model is None:
             return
@@ -322,7 +321,7 @@ class RangeSelector(SelectorBase):
                 bottomRight = model.index(bottom, right)
                 itemSelection.merge(self.qt.QtCore.QItemSelection(topLeft, bottomRight), self.qt.QtCore.QItemSelectionModel.SelectCurrent)
 
-            selectionModel.select(itemSelection, self.ctrl.qt.QtGui.QItemSelectionModel.Select)
+            selectionModel.select(itemSelection, self.ctrl.qt.QtCore.QItemSelectionModel.Select)
 
 
 class TreeIndexSelector(SelectorBase):
