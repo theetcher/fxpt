@@ -9,9 +9,7 @@ import maya.mel as mel
 import maya.OpenMayaUI as omui
 import maya.OpenMaya as om
 
-import shiboken
-from PySide import QtCore
-from PySide import QtGui
+from fxpt.qt.pyside import shiboken2, QtWidgets, QtCore, QtGui
 
 from fxpt.fx_prefsaver import prefsaver, serializers
 
@@ -79,10 +77,10 @@ def getMayaMainWindowPtr():
 
 
 def getMayaQMainWindow(ptr):
-    return shiboken.wrapInstance(long(ptr), QtGui.QMainWindow)
+    return shiboken2.wrapInstance(long(ptr), QtWidgets.QMainWindow)
 
 
-class SearchResultsDialog(QtGui.QDialog):
+class SearchResultsDialog(QtWidgets.QDialog):
     
     def __init__(self):
         mayaMainWin = getMayaQMainWindow(getMayaMainWindowPtr())
@@ -93,10 +91,10 @@ class SearchResultsDialog(QtGui.QDialog):
     def setupUI(self):
         self.setObjectName('SearchResultsDialog')
         self.setWindowTitle('Search Results')
-        layout = QtGui.QVBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(4, 4, 4, 4)
         self.setLayout(layout)
-        self.ui_TBL_results = QtGui.QTableView()
+        self.ui_TBL_results = QtWidgets.QTableView()
         layout.addWidget(self.ui_TBL_results)
 
     # noinspection PyMethodMayBeStatic
@@ -389,15 +387,15 @@ class FXOutlinerUI:
         table.setShowGrid(False)
         table.verticalHeader().setVisible(False)
         table.verticalHeader().setDefaultSectionSize(15)
-        table.setSelectionBehavior(QtGui.QTableView.SelectRows)
-        table.setSelectionMode(QtGui.QTableView.ExtendedSelection)
+        table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
+        table.setSelectionMode(QtWidgets.QTableView.ExtendedSelection)
         table.setFont(FONT_MONOSPACE_QFONT)
-        table.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         #        table.setContextMenuPolicy(Qt.CustomContextMenu)
         table.setSortingEnabled(True)
         table.sortByColumn(0, QtCore.Qt.AscendingOrder)
         table.setAlternatingRowColors(True)
-        table.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
+        table.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
 
         table.horizontalHeader().resizeSection(IDX_NAME, columnMaxLengthName * FONT_MONOSPACE_LETTER_SIZE + 20)
         table.horizontalHeader().resizeSection(IDX_TYPE, columnMaxLengthType * FONT_MONOSPACE_LETTER_SIZE + 20)
@@ -862,7 +860,7 @@ class FXOutlinerUI:
         # don't have MacOS or Linux system to test other cases
         # so if anybody knows how to write this procedure to handle mac or linux please tell me
         if OS_NAME == 'nt':
-        #            os.startfile(filename)
+        # os.startfile(filename)
             os.system('start notepad.exe ' + filename)
         else:
             m.confirmDialog(
@@ -876,9 +874,9 @@ class FXOutlinerUI:
             )
 
 
-class SearchResultModel(QtGui.QSortFilterProxyModel):
+class SearchResultModel(QtCore.QSortFilterProxyModel):
     def __init__(self):
-        QtGui.QSortFilterProxyModel.__init__(self)
+        QtCore.QSortFilterProxyModel.__init__(self)
         self.model = QtGui.QStandardItemModel()
         self.initModel()
         self.setSourceModel(self.model)
