@@ -1,4 +1,4 @@
-from PySide import QtGui, QtCore
+from fxpt.qt.pyside import QtCore, QtWidgets
 
 from . import search_line_edit, results_list_widget, searcher, cfg
 
@@ -16,7 +16,7 @@ class ClosePopupFilter(QtCore.QObject):
 
 
 # noinspection PyAttributeOutsideInit
-class SparkUI(QtGui.QWidget):
+class SparkUI(QtWidgets.QWidget):
 
     def __init__(self, parent):
         """
@@ -36,34 +36,37 @@ class SparkUI(QtGui.QWidget):
         self.searcher = searcher.Searcher()
 
         self.setStyleSheet(cfg.STYLE_SHEET)
-        self.activateWindow()
-        self.uiLED_search.setFocus()
 
         self.onSearchTextChanged()
         self.setAnnotation(cfg.UI_DEFAULT_ANNOTATION)
 
+        self.uiLED_search.setFocus()
+        self.show()
+        self.raise_()
+        self.activateWindow()
+
     def createUI(self):
         self.positionUi()
 
-        self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
-        widgetLayout = QtGui.QVBoxLayout()
+        widgetLayout = QtWidgets.QVBoxLayout()
         widgetLayout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(widgetLayout)
 
-        mainFrame = QtGui.QFrame()
+        mainFrame = QtWidgets.QFrame()
         widgetLayout.addWidget(mainFrame)
 
-        layout = QtGui.QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(cfg.UI_CONTENTS_MARGIN, 0, cfg.UI_CONTENTS_MARGIN, cfg.UI_CONTENTS_MARGIN)
         mainFrame.setLayout(layout)
 
-        self.uiLBL_annotation = QtGui.QLabel(cfg.UI_DEFAULT_ANNOTATION)
+        self.uiLBL_annotation = QtWidgets.QLabel(cfg.UI_DEFAULT_ANNOTATION)
         self.uiLBL_annotation.setFixedHeight(cfg.UI_LABEL_HEIGHT)
         layout.addWidget(self.uiLBL_annotation)
 
-        self.uiLBL_status = QtGui.QLabel(cfg.UI_DEFAULT_STATUS)
+        self.uiLBL_status = QtWidgets.QLabel(cfg.UI_DEFAULT_STATUS)
         self.uiLBL_status.setFixedHeight(cfg.UI_LABEL_HEIGHT)
 
         self.uiLED_search = search_line_edit.SearchLineEdit()
@@ -161,7 +164,7 @@ class SparkUI(QtGui.QWidget):
 
     # noinspection PyMethodMayBeStatic
     def createResultItem(self, desc):
-        item = QtGui.QListWidgetItem(desc.name)
+        item = QtWidgets.QListWidgetItem(desc.name)
         item.desc = desc
         sizeHint = item.sizeHint()
         sizeHint.setHeight(cfg.UI_ITEM_SIZE)

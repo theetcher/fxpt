@@ -1,5 +1,4 @@
-from PySide import QtGui
-import shiboken
+from fxpt.qt.pyside import shiboken2, QtWidgets
 
 import maya.OpenMayaUI as omui
 
@@ -9,7 +8,7 @@ from . import spark_ui
 def getMayaWin():
     ptr = omui.MQtUtil.mainWindow()
     if ptr is not None:
-        return shiboken.wrapInstance(long(ptr), QtGui.QWidget)  # or you can use QMainWindow
+        return shiboken2.wrapInstance(long(ptr), QtWidgets.QWidget)  # or you can use QMainWindow
     else:
         raise RuntimeError('Cannot find main Maya window.')
 

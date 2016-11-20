@@ -1,7 +1,7 @@
-from PySide import QtGui, QtCore
+from fxpt.qt.pyside import QtCore, QtWidgets
 
 
-class SearchLineEdit(QtGui.QLineEdit):
+class SearchLineEdit(QtWidgets.QLineEdit):
     """
     :type searchResultsList: QtGui.QListWidget
     """
