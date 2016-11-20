@@ -2,18 +2,23 @@
 
 from fxpt.side_utils import pyperclip
 
-from PySide import QtCore, QtGui
-import shiboken
+from fxpt.qt.pyside import shiboken2, QtCore, QtGui, QtWidgets, isPySide2
+
 
 import maya.OpenMayaUI as omui
 import pymel.core as pm
 
 from fxpt.fx_prefsaver import prefsaver, serializers
-import main_window_ui
 import searchers
 from com import *
 
+if isPySide2():
+    from fxpt.fx_search.main_window_ui2 import Ui_MainWindow
+else:
+    from fxpt.fx_search.main_window_ui import Ui_MainWindow
+
 # endregion imports
+
 
 mainWin = None
 
@@ -23,13 +28,13 @@ OPT_VAR_NAME = 'fx_search_prefs'
 
 
 # noinspection PyMethodMayBeStatic,PyUnusedLocal
-class SearchUI(QtGui.QMainWindow, main_window_ui.Ui_MainWindow):
+class SearchUI(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         # noinspection PyArgumentList
         ptr = omui.MQtUtil.mainWindow()
         mainWinQObject = None
         if ptr is not None:
-            mainWinQObject = shiboken.wrapInstance(long(ptr), QtGui.QWidget)  # or you can use QMainWindow
+            mainWinQObject = shiboken2.wrapInstance(long(ptr), QtWidgets.QWidget)  # or you can use QMainWindow
         else:
             m.error('cannot find main Maya window.')
         super(SearchUI, self).__init__(mainWinQObject)
@@ -74,24 +79,24 @@ class SearchUI(QtGui.QMainWindow, main_window_ui.Ui_MainWindow):
 
     def initSearchersAndControls(self):
         self.searchers = [
-            SearcherLink(searchers.SearcherNodes('All Nodes'), QtGui.QPushButton('All Nodes'),
-                         QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(searchers.SearcherDagNodes('DAG Nodes'), QtGui.QPushButton('DAG Nodes'),
-                         QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(searchers.SearcherFxRefs('FX References'), QtGui.QPushButton('FX References'),
-                         QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(searchers.SearcherTexturedBy('Textured By'), QtGui.QPushButton('Textured By'),
-                         QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(searchers.SearcherTextures('Textures'), QtGui.QPushButton('Textures'),
-                         QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(searchers.SearcherTransforms('Transforms'), QtGui.QPushButton('Transforms'),
-                         QtGui.QTableView(), QtGui.QWidget()),
-            SearcherLink(searchers.SearcherType('Type'), QtGui.QPushButton('Type'),
-                         QtGui.QTableView(), QtGui.QWidget())
+            SearcherLink(searchers.SearcherNodes('All Nodes'), QtWidgets.QPushButton('All Nodes'),
+                         QtWidgets.QTableView(), QtWidgets.QWidget()),
+            SearcherLink(searchers.SearcherDagNodes('DAG Nodes'), QtWidgets.QPushButton('DAG Nodes'),
+                         QtWidgets.QTableView(), QtWidgets.QWidget()),
+            SearcherLink(searchers.SearcherFxRefs('FX References'), QtWidgets.QPushButton('FX References'),
+                         QtWidgets.QTableView(), QtWidgets.QWidget()),
+            SearcherLink(searchers.SearcherTexturedBy('Textured By'), QtWidgets.QPushButton('Textured By'),
+                         QtWidgets.QTableView(), QtWidgets.QWidget()),
+            SearcherLink(searchers.SearcherTextures('Textures'), QtWidgets.QPushButton('Textures'),
+                         QtWidgets.QTableView(), QtWidgets.QWidget()),
+            SearcherLink(searchers.SearcherTransforms('Transforms'), QtWidgets.QPushButton('Transforms'),
+                         QtWidgets.QTableView(), QtWidgets.QWidget()),
+            SearcherLink(searchers.SearcherType('Type'), QtWidgets.QPushButton('Type'),
+                         QtWidgets.QTableView(), QtWidgets.QWidget())
         ]
 
         for sl in self.searchers:
-            layout = QtGui.QHBoxLayout()
+            layout = QtWidgets.QHBoxLayout()
             sl.tabWidget.setLayout(layout)
             layout.addWidget(sl.table)
             layout.setContentsMargins(4, 4, 4, 4)
@@ -115,7 +120,7 @@ class SearchUI(QtGui.QMainWindow, main_window_ui.Ui_MainWindow):
                              self.ui_onCtxMenuPopupRequest)
 
         # noinspection PyArgumentList
-        self.ui_LAY_catButtons.addItem(QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
+        self.ui_LAY_catButtons.addItem(QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding))
 
         self.resetResultTablesAndTabs()
 
@@ -123,14 +128,14 @@ class SearchUI(QtGui.QMainWindow, main_window_ui.Ui_MainWindow):
         table.setShowGrid(False)
         table.verticalHeader().setVisible(False)
         table.verticalHeader().setDefaultSectionSize(15)
-        table.setSelectionBehavior(QtGui.QTableView.SelectRows)
-        table.setSelectionMode(QtGui.QTableView.ExtendedSelection)
+        table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
+        table.setSelectionMode(QtWidgets.QTableView.ExtendedSelection)
         table.setFont(FONT_MONOSPACE_QFONT)
-        table.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         table.setSortingEnabled(True)
         table.sortByColumn(0, QtCore.Qt.AscendingOrder)
         table.setAlternatingRowColors(True)
-        table.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
+        table.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
 
         table.horizontalHeader().setStretchLastSection(True)
         table.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignLeft)
@@ -145,7 +150,7 @@ class SearchUI(QtGui.QMainWindow, main_window_ui.Ui_MainWindow):
             table.horizontalHeader().resizeSection(col, columnMaxLength * FONT_MONOSPACE_LETTER_SIZE + TABLE_COLUMN_RIGHT_OFFSET)
 
     def generateCtxMenu(self):
-        self.ctxMenu = QtGui.QMenu()
+        self.ctxMenu = QtWidgets.QMenu()
         self.ctxMenu.addAction(self.ui_ACT_selectAll)
         self.ctxMenu.addAction(self.ui_ACT_deselectAll)
         self.ctxMenu.addSeparator()
@@ -340,7 +345,8 @@ class SearchUI(QtGui.QMainWindow, main_window_ui.Ui_MainWindow):
     def ui_onShowHelpClicked(self):
         # return
         # noinspection PyArgumentList,PyCallByClass
-        QtGui.QDesktopServices.openUrl(QtCore.QUrl('http://davydenko.info/searcher/', QtCore.QUrl.TolerantMode))
+        import webbrowser
+        webbrowser.open('http://davydenko.info/searcher/', new=0, autoraise=True)
 
     def ui_onCloseClicked(self):
         self.close()

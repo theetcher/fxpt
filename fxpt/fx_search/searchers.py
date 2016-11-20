@@ -1,6 +1,6 @@
 import re
 import os
-from PySide import QtCore, QtGui
+from fxpt.qt.pyside import QtCore, QtGui
 
 from com import *
 
