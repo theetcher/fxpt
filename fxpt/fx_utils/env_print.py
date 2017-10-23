@@ -1,3 +1,4 @@
+import sys
 import os
 import maya.cmds as m
 
@@ -30,27 +31,37 @@ INTERNAL_VARS = (
 OFFSET = '    '
 
 
+def sortedLow(l):
+    return sorted(l, key=lambda x: x.lower())
+
+
 def run():
     print
     print '--- ENVIRONMENT VARIABLES ---'
     print
-    for env in ENV_VARS:
+    for env in sortedLow(ENV_VARS):
         print env
         value = os.environ.get(env, None)
         if value is None:
             print OFFSET + 'variable not set.'
         else:
-            for p in value.split(';'):
+            for p in sorted(value.split(';')):
                 print OFFSET + p.strip()
 
     print
     print '--- INTERNAL VARIABLES ---'
     print
-    for kwarg in INTERNAL_VARS:
+    for kwarg in sortedLow(INTERNAL_VARS):
         print kwarg
         value = m.internalVar(**{kwarg: True}).strip()
         if not value:
             print OFFSET + 'variable not set.'
         else:
-            for p in value.split(';'):
+            for p in sortedLow(value.split(';')):
                 print OFFSET + p.strip()
+
+    print
+    print '--- sys.path (unsorted) ---'
+    print
+    for s in sys.path:
+        print s
