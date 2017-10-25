@@ -49,7 +49,10 @@ def initCollapse():
         shelfButtons = m.shelfLayout(shelf, query=True, childArray=True, fullPathName=True)
         if shelfButtons is not None:
             for btn in shelfButtons:
-                btnCommandString = m.shelfButton(btn, q=True, command=True)
+                try:
+                    btnCommandString = m.shelfButton(btn, q=True, command=True)
+                except RuntimeError:
+                    continue
                 match = re.search(r"fx_collapse_shelf_buttons.toggle\(\'(.*)\'\,\s*\'(.*)\'\)", btnCommandString)
                 if match:
                     shelf, group = match.group(1), match.group(2)
