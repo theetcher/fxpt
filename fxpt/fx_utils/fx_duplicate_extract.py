@@ -43,7 +43,8 @@ def run(deleteOriginals=True):
 
     if deleteOriginals:
         m.delete()
-        m.delete(wholeDuplicatedObjects)
+        if wholeDuplicatedObjects:
+            m.delete(wholeDuplicatedObjects)
 
     meval('changeSelectMode -object')
     m.select(newObjects, r=True)
