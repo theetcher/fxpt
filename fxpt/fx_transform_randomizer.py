@@ -10,6 +10,26 @@ WIN_HELP_NAME = 'fx_transformRandomizerHelpWin'
 WIN_HELP_TITLE = WIN_TITLE + ' Help'
 OPT_VAR_NAME = 'fx_randomizer_prefs'
 
+SPACE_LOCAL = 0
+SPACE_OBJECT = 1
+SPACE_WORLD = 2
+
+ATTR_LIST_TRANSLATE = ['tx', 'ty', 'tz']
+ATTR_LIST_ROTATE = ['rx', 'ry', 'rz']
+ATTR_LIST_SCALE = ['sx', 'sy', 'sz']
+ATTR_LIST_SCALE_UNIFORM = ['uniform']
+ATTR_LIST_TRANSLATE_ROTATE = ATTR_LIST_TRANSLATE + ATTR_LIST_ROTATE
+ATTR_LIST_SCALE_ALL = ATTR_LIST_SCALE + ATTR_LIST_SCALE_UNIFORM
+
+ARRAY_MAPPER = {
+    'tx': 0,
+    'ty': 1,
+    'tz': 2,
+    'rx': 0,
+    'ry': 1,
+    'rz': 2,
+}
+
 
 # noinspection PyMethodMayBeStatic,PyAttributeOutsideInit
 class RandomizerUI(object):
@@ -33,6 +53,17 @@ class RandomizerUI(object):
 
             pm.menu(label='Edit', tearOff=False)
             pm.menuItem(label='Reset Settings', command=self.ui_resetSettings)
+            pm.menu(label='Options', tearOff=False)
+            pm.radioMenuItemCollection()
+            self.ui_RADBTN_spaceLocal = pm.menuItem(label='Use Local Space', radioButton=True)
+            self.ui_RADBTN_spaceLocal.space = SPACE_LOCAL
+            self.ui_RADBTN_spaceObject = pm.menuItem(label='Use Object Space', radioButton=False)
+            self.ui_RADBTN_spaceObject.space = SPACE_OBJECT
+            self.ui_RADBTN_spaceWorld = pm.menuItem(label='Use World Space', radioButton=False)
+            self.ui_RADBTN_spaceWorld.space = SPACE_WORLD
+            self.spaceRadioList = [self.ui_RADBTN_spaceLocal, self.ui_RADBTN_spaceObject, self.ui_RADBTN_spaceWorld]
+
+            self.ui_setSpace(SPACE_OBJECT)
             pm.menu(label='Help', tearOff=False)
             pm.menuItem(label='Help on ' + WIN_TITLE, command=self.ui_showHelp)
 
@@ -260,6 +291,19 @@ class RandomizerUI(object):
         self.window.show()
         pm.refresh()
 
+    def ui_getSpace(self):
+        for rb in self.spaceRadioList:
+            if rb.getRadioButton():
+                return rb.space
+        return SPACE_LOCAL
+
+    def ui_setSpace(self, value):
+        for rb in self.spaceRadioList:
+            if rb.space == value:
+                rb.setRadioButton(True)
+            else:
+                rb.setRadioButton(False)
+
     def ui_initSettings(self):
         self.prefSaver.addControl(self.ui_FLTFLD_translateMagnitude, prefsaver.UIType.PMFloatField, 1)
         self.prefSaver.addControl(self.ui_FLTFLD_rotateMagnitude, prefsaver.UIType.PMFloatField, 180)
@@ -269,6 +313,7 @@ class RandomizerUI(object):
         self.prefSaver.addControl(self.ui_INTSLGRP_scaleBias, prefsaver.UIType.PMIntSliderGrp, 0)
         self.prefSaver.addControl(self.ui_CHK_useSeed, prefsaver.UIType.PMCheckBox, False)
         self.prefSaver.addControl(self.ui_INTSLGRP_seedValue, prefsaver.UIType.PMIntSliderGrp, 1234)
+        self.prefSaver.addVariable('space', self.ui_getSpace, self.ui_setSpace, SPACE_LOCAL)
 
     def ui_loadSettings(self):
         self.prefSaver.loadPrefs()
@@ -377,6 +422,33 @@ class RandomizerUI(object):
         bias = m.intSliderGrp(self.ui_INTSLGRP_scaleBias, q=True, value=True)
         self.doRandomize(attrs, mag, bias)
 
+    def getTransformArr(self, attr, value):
+        arr = [0.0, 0.0, 0.0]
+        arr[ARRAY_MAPPER[attr]] = value
+        return arr
+
+    def move(self, obj, attr, value, space):
+        arr = self.getTransformArr(attr, value)
+        if space == SPACE_LOCAL:
+            m.move(arr[0], arr[1], arr[2], obj, localSpace=True, relative=True, worldSpaceDistance=True)
+        elif space == SPACE_OBJECT:
+            m.move(arr[0], arr[1], arr[2], obj, objectSpace=True, relative=True, worldSpaceDistance=True)
+        elif space == SPACE_WORLD:
+            m.move(arr[0], arr[1], arr[2], obj, worldSpace=True, relative=True, worldSpaceDistance=True)
+        else:
+            assert False, 'Undefined space value during move: ' + str(space)
+
+    def rotate(self, obj, attr, value, space):
+        arr = self.getTransformArr(attr, value)
+        if space == SPACE_LOCAL:
+            m.rotate(arr[0], arr[1], arr[2], obj, euler=True, relative=True)
+        elif space == SPACE_OBJECT:
+            m.rotate(arr[0], arr[1], arr[2], obj, objectSpace=True, relative=True)
+        elif space == SPACE_WORLD:
+            m.rotate(arr[0], arr[1], arr[2], obj, worldSpace=True, relative=True)
+        else:
+            assert False, 'Undefined space value during rotate: ' + str(space)
+
     def doRandomize(self, attrs, mag, bias):
         self.ui_saveSettings()
 
@@ -385,22 +457,28 @@ class RandomizerUI(object):
         for obj in objects:
             for attr in attrs:
 
-                if attr in ['tx', 'ty', 'tz', 'rx', 'ry', 'rz']:
-                    attrValue = m.getAttr(obj + '.' + attr)
+                if attr in ATTR_LIST_TRANSLATE_ROTATE:
+                    space = self.ui_getSpace()
                     _min, _max = self.calculateMinMax(mag, bias)
-                    attrValue = random.uniform(_min, _max) + attrValue
-                    m.setAttr(obj + '.' + attr, attrValue)
+                    randomValue = random.uniform(_min, _max)
 
-                elif attr in ['sx', 'sy', 'sz']:
-                    randomValue = self.calculateRandomScale(mag, bias)
-                    attrValue = m.getAttr(obj + '.' + attr)
-                    m.setAttr(obj + '.' + attr, attrValue * randomValue)
+                    if attr in ATTR_LIST_TRANSLATE:
+                        self.move(obj, attr, randomValue, space)
 
-                elif attr in ['uniform']:
+                    elif attr in ATTR_LIST_ROTATE:
+                        self.rotate(obj, attr, randomValue, space)
+
+                elif attr in ATTR_LIST_SCALE_ALL:
                     randomValue = self.calculateRandomScale(mag, bias)
-                    for attrIn in ('sx', 'sy', 'sz'):
-                        attrValue = m.getAttr(obj + '.' + attrIn)
-                        m.setAttr(obj + '.' + attrIn, attrValue * randomValue)
+
+                    if attr in ATTR_LIST_SCALE:
+                        attrValue = m.getAttr(obj + '.' + attr)
+                        m.setAttr(obj + '.' + attr, attrValue * randomValue)
+
+                    elif attr in ATTR_LIST_SCALE_UNIFORM:
+                        for attrIn in ('sx', 'sy', 'sz'):
+                            attrValue = m.getAttr(obj + '.' + attrIn)
+                            m.setAttr(obj + '.' + attrIn, attrValue * randomValue)
 
     # noinspection PyUnusedLocal
     def ui_close(self, *args):
