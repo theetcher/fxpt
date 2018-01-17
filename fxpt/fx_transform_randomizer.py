@@ -5,7 +5,7 @@ import random
 from fxpt.fx_prefsaver import prefsaver, serializers
 
 WIN_NAME = 'fx_transformRandomizerWin'
-WIN_TITLE = 'Transform Randomizer v1.0'
+WIN_TITLE = 'Transform Randomizer v1.1'
 WIN_HELP_NAME = 'fx_transformRandomizerHelpWin'
 WIN_HELP_TITLE = WIN_TITLE + ' Help'
 OPT_VAR_NAME = 'fx_randomizer_prefs'
