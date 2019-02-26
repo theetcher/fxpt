@@ -131,3 +131,12 @@ def unfreezeTranslation():
         translate = [-1 * tr for tr in m.getAttr(t + '.translate')[0]]
         m.makeIdentity(t, apply=True, t=True, r=False, s=False)
         m.setAttr(t + '.translate', *translate)
+
+
+def fxSeparate():
+    selection = m.ls(sl=True, long=True, tr=True)
+    for s in selection:
+        try:
+            m.polySeparate(s, ch=False)
+        except RuntimeError:
+            m.warning('Mesh ignored because has only one piece: {}'.format(s))
