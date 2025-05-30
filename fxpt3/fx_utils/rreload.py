@@ -219,7 +219,7 @@ def doReload(module, remapping=False):
     dbgPhaseTitle = module.__name__ + ': reload phase: '
     if module.__name__ != '__main__':
         debugLog(dbgPhaseTitle, 'reloading module "' + module.__name__ + '".', verbosity=1)
-        # reload(module)
+        reload(module)
         _reloadedModules.add(module)
     else:
         debugLog(dbgPhaseTitle, 'cannot reload "__main__" module. Skipped', verbosity=1)
