@@ -27,6 +27,10 @@ IGNORE_DIRECTORIES = [
     'keyring',
 ]
 
+IGNORE_NAMES = [
+    'resources_rc',
+]
+
 
 def debugLog(*args, **kwargs):
     verbosity = kwargs.get('verbosity', 1)
@@ -58,6 +62,12 @@ def needToBeIgnored(moduleFilename):
     for s in IGNORE_DIRECTORIES:
         if s in moduleDir:
             return True
+
+    moduleName = os.path.basename(moduleFilename).lower()
+    for s in IGNORE_NAMES:
+        if s in moduleName:
+            return True
+
     return False
 
 
@@ -117,7 +127,6 @@ def rreload(module, remapping=False, verbosity=0):
 
 
 def doReload(module, remapping=False):
-
     changeDbgOffset(1)
 
     debugLogEmpty()
@@ -210,7 +219,7 @@ def doReload(module, remapping=False):
     dbgPhaseTitle = module.__name__ + ': reload phase: '
     if module.__name__ != '__main__':
         debugLog(dbgPhaseTitle, 'reloading module "' + module.__name__ + '".', verbosity=1)
-        reload(module)
+        # reload(module)
         _reloadedModules.add(module)
     else:
         debugLog(dbgPhaseTitle, 'cannot reload "__main__" module. Skipped', verbosity=1)
