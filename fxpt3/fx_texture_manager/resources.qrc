@@ -1,0 +1,19 @@
+<RCC>
+  <qresource>
+    <file>icons/app_icon.png</file>
+    <file>icons/lock_to_selection.png</file>
+    <file>icons/folder.png</file>
+    <file>icons/copy1.png</file>
+    <file>icons/paste.png</file>
+    <file>icons/collapse.png</file>
+    <file>icons/copy2.png</file>
+    <file>icons/copy_move.png</file>
+    <file>icons/replace.png</file>
+    <file>icons/filter_active.png</file>
+    <file>icons/filter_disabled.png</file>
+    <file>icons/exit.png</file>
+    <file>icons/retarget.png</file>
+    <file>icons/refresh.png</file>
+    <file>icons/copy.png</file>
+  </qresource>
+</RCC>
