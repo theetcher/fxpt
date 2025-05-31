@@ -142,9 +142,9 @@ class TestQtWindow(object):
         PySideControls = [
             (self.win, prefsaver.UIType.PYSIDEWindow, (200, 200, 900, 500)),
             (self.dlg, prefsaver.UIType.PYSIDEWindow, (300, 300, 200, 200)),
-            (self.ui.uiCHK_test1, prefsaver.UIType.PYSIDECheckBox, QtCore.Qt.Unchecked),
-            (self.ui.uiCHK_testTri1, prefsaver.UIType.PYSIDECheckBox, QtCore.Qt.Unchecked),
-            (self.ui.uiGRPBOX_test1, prefsaver.UIType.PYSIDEGroupBox, QtCore.Qt.Checked),
+            (self.ui.uiCHK_test1, prefsaver.UIType.PYSIDECheckBox, QtCore.Qt.CheckState.Unchecked),
+            (self.ui.uiCHK_testTri1, prefsaver.UIType.PYSIDECheckBox, QtCore.Qt.CheckState.Unchecked),
+            (self.ui.uiGRPBOX_test1, prefsaver.UIType.PYSIDEGroupBox, True),
             (self.ui.uiRAD_test1, prefsaver.UIType.PYSIDERadioButton, True),
             (self.ui.uiRAD_test2, prefsaver.UIType.PYSIDERadioButton, False),
             (self.ui.uiLED_test1, prefsaver.UIType.PYSIDELineEdit, 'defaultValue'),

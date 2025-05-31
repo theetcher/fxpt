@@ -1,33 +1,13 @@
-try:
-    import PyQt4 as _PyQt4
-    # Qt5 -> Qt4
-    _PyQt4.QtCore.QItemSelection = _PyQt4.QtGui.QItemSelection
-    _PyQt4.QtCore.QItemSelectionModel = _PyQt4.QtGui.QItemSelectionModel
-except ImportError:
-    _PyQt4 = None
-
-try:
-    import PySide2 as _PySide
-except ImportError:
-    try:
-        import PySide as _PySide
-        # Qt5 -> Qt4
-        _PySide.QtCore.QItemSelection = _PySide.QtGui.QItemSelection
-        _PySide.QtCore.QItemSelectionModel = _PySide.QtGui.QItemSelectionModel
-    except ImportError:
-        _PySide = None
-
-
+from fxpt3.qt.pyside import *
 from fxpt3.fx_prefsaver.ctrl_base import CtrlBase
 from fxpt3.fx_prefsaver.pstypes import UIType, Attr
-from fxpt3.fx_prefsaver.com import message
+# from fxpt3.fx_prefsaver.com import message
 
 
 class QtCtrlBase(CtrlBase):
 
-    def __init__(self, qt, control, defaultValue):
+    def __init__(self, control, defaultValue):
         super(QtCtrlBase, self).__init__(control, defaultValue)
-        self.qt = qt
 
     def retrieveControlName(self):
         return str(self.control.objectName())
@@ -126,7 +106,7 @@ class QtCtrlTimeEdit(QtCtrlDateTimeBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlTimeEdit, self).__init__(*args, **kwargs)
-        self.setupVars(self.control.time, self.control.setTime, self.qt.QtCore.QTime, self.qt.QtCore.QTime.currentTime())
+        self.setupVars(self.control.time, self.control.setTime, QtCore.QTime, QtCore.QTime.currentTime())
 
 
 class QtCtrlDateEdit(QtCtrlDateTimeBase):
@@ -135,7 +115,7 @@ class QtCtrlDateEdit(QtCtrlDateTimeBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlDateEdit, self).__init__(*args, **kwargs)
-        self.setupVars(self.control.date, self.control.setDate, self.qt.QtCore.QDate, self.qt.QtCore.QDate.currentDate())
+        self.setupVars(self.control.date, self.control.setDate, QtCore.QDate, QtCore.QDate.currentDate())
 
 
 class QtCtrlDateTimeEdit(QtCtrlDateTimeBase):
@@ -144,7 +124,7 @@ class QtCtrlDateTimeEdit(QtCtrlDateTimeBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlDateTimeEdit, self).__init__(*args, **kwargs)
-        self.setupVars(self.control.dateTime, self.control.setDateTime, self.qt.QtCore.QDateTime, self.qt.QtCore.QDateTime.currentDateTime())
+        self.setupVars(self.control.dateTime, self.control.setDateTime, QtCore.QDateTime, QtCore.QDateTime.currentDateTime())
 
 
 class QtCtrlWindow(QtCtrlBase):
@@ -166,20 +146,18 @@ class QtCtrlCheckBox(QtCtrlBase):
 
     def __init__(self, *args, **kwargs):
         super(QtCtrlCheckBox, self).__init__(*args, **kwargs)
-        self.defaultValueGlobal = self.qt.QtCore.Qt.Unchecked
-
-        self.intToState = {
-            0: self.qt.QtCore.Qt.Unchecked,
-            1: self.qt.QtCore.Qt.PartiallyChecked,
-            2: self.qt.QtCore.Qt.Checked,
-        }
-        self.stateToInt = dict((state, i) for i, state in self.intToState.items())
+        self.defaultValueGlobal = QtCore.Qt.CheckState.Unchecked
 
     def ctrl2DataProcedure(self):
-        self.setAttr(Attr.Value, self.stateToInt[self.control.checkState()])
+        state = self.control.checkState()
+        try:  # PySide6
+            intValue = state.value
+        except AttributeError:  # PySide2
+            intValue = int(state)
+        self.setAttr(Attr.Value, intValue)
 
     def data2CtrlProcedure(self):
-        self.control.setCheckState(self.intToState[self.getAttr(Attr.Value)])
+        self.control.setCheckState(QtCore.Qt.CheckState(self.getAttr(Attr.Value)))
 
 
 class QtCtrlComboBox(QtCtrlBase):
@@ -257,8 +235,8 @@ class ColumnSorter(object):
         self.headerGetter = headerGetter
 
         self.intToSortOrder = {
-            0: ctrl.qt.QtCore.Qt.AscendingOrder,
-            1: ctrl.qt.QtCore.Qt.DescendingOrder,
+            0: QtCore.Qt.SortOrder.AscendingOrder,
+            1: QtCore.Qt.SortOrder.DescendingOrder,
         }
         self.sortOrderToInt = dict((state, i) for i, state in self.intToSortOrder.items())
 
@@ -278,7 +256,6 @@ class SelectorBase(object):
 
     def __init__(self, ctrl):
         self.ctrl = ctrl
-        self.qt = self.ctrl.qt
 
     def getSelectionModel(self):
         return self.ctrl.control.selectionModel()
@@ -311,7 +288,7 @@ class RangeSelector(SelectorBase):
         if selectionModel is None:
             return
 
-        itemSelection = self.qt.QtCore.QItemSelection()
+        itemSelection = QtCore.QItemSelection()
         rangesPrefData = self.ctrl.getAttr(Attr.SelectedRanges)
 
         if rangesPrefData:
@@ -319,9 +296,9 @@ class RangeSelector(SelectorBase):
                 top, left, bottom, right = [int(x) for x in rangeStr.split(',')]
                 topLeft = model.index(top, left)
                 bottomRight = model.index(bottom, right)
-                itemSelection.merge(self.qt.QtCore.QItemSelection(topLeft, bottomRight), self.qt.QtCore.QItemSelectionModel.SelectCurrent)
+                itemSelection.merge(QtCore.QItemSelection(topLeft, bottomRight), QtCore.QItemSelectionModel.SelectionFlag.SelectCurrent)
 
-            selectionModel.select(itemSelection, self.ctrl.qt.QtCore.QItemSelectionModel.Select)
+            selectionModel.select(itemSelection, QtCore.QItemSelectionModel.SelectionFlag.Select)
 
 
 class TreeIndexSelector(SelectorBase):
@@ -402,10 +379,10 @@ class TreeIndexSelector(SelectorBase):
                     continue
                 indexesToSelect.append(index)
 
-        itemSelection = self.qt.QtCore.QItemSelection()
+        itemSelection = QtCore.QItemSelection()
         for index in indexesToSelect:
-            itemSelection.merge(self.qt.QtCore.QItemSelection(index, index), self.qt.QtCore.QItemSelectionModel.SelectCurrent)
-        selectionModel.select(itemSelection, self.qt.QtCore.QItemSelectionModel.Select)
+            itemSelection.merge(QtCore.QItemSelection(index, index), QtCore.QItemSelectionModel.SelectionFlag.SelectCurrent)
+        selectionModel.select(itemSelection, QtCore.QItemSelectionModel.SelectionFlag.Select)
 
         expandedIndexesPathsPrefValue = self.ctrl.getAttr(Attr.ExpandedIndexes)
         if expandedIndexesPathsPrefValue:
@@ -534,20 +511,7 @@ constructors = {
 def getController(uiType, control, defaultValue):
 
     if uiType in constructors:
-
-        if UIType.isTypeOf(uiType, UIType.TypesPYQT):
-            if _PyQt4:
-                return constructors[uiType](_PyQt4, control, defaultValue)
-            else:
-                message('Cannot create controller: PyQt is not available.')
-                return None
-
-        if UIType.isTypeOf(uiType, UIType.TypesPYSIDE):
-            if _PySide:
-                return constructors[uiType](_PySide, control, defaultValue)
-            else:
-                message('Cannot create controller: PySide is not available.')
-                return None
-
-    return None
+        return constructors[uiType](control, defaultValue)
+    else:
+        raise RuntimeError('Cannot create controller: Unknown UI Type.')
 
