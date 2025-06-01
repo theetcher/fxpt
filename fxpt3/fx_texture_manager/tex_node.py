@@ -42,7 +42,25 @@ class TexNode(object):
         self.setSgs()
 
     def __str__(self):
-        return 'TexNode: {}'.format(self.getFullAttrName())
+        return f'TexNode: {self.getFullAttrName()}: {self.getAttrValue()}'
+
+    def __eq__(self, other):
+        return self.getAttrValue() == other.getAttrValue()
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __lt__(self, other):
+        return self.getAttrValue() < other.getAttrValue()
+
+    def __le__(self, other):
+        return self.getAttrValue() <= other.getAttrValue()
+
+    def __gt__(self, other):
+        return self.getAttrValue() > other.getAttrValue()
+
+    def __ge__(self, other):
+        return self.getAttrValue() >= other.getAttrValue()
 
     def setNode(self, node):
         self.node = node
