@@ -105,5 +105,6 @@ $RECYCLE.BIN/
 prefs.cfg
 prefsM.cfg
 prefsPM.cfg
+prefs_qt.json
 .mayaSwatches/
 fxpt/fx_spark/history.json
