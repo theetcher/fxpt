@@ -99,6 +99,11 @@ $RECYCLE.BIN/
 
 .idea/
 
+# VS Code
+# =========================
+.vscode/*
+!.vscode/extensions.json
+
 # Project specific files
 # =========================
 
@@ -108,3 +113,4 @@ prefsPM.cfg
 prefs_qt.json
 .mayaSwatches/
 fxpt/fx_spark/history.json
+
