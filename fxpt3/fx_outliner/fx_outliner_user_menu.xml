@@ -1,0 +1,11 @@
+<userMenu>
+
+   <command name = 'Outliner'>
+      OutlinerWindow;
+   </command>
+
+   <command name = 'Custom Polygon Display'>
+      CustomPolygonDisplayOptions;
+   </command>
+
+</userMenu>

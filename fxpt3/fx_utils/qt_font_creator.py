@@ -2,7 +2,6 @@ from fxpt3.qt.pyside import QtGui, QtCore
 
 
 class QtFontCreator(object):
-
     def __init__(self, filename, size):
         self.filename = filename
         self.size = size
@@ -17,7 +16,7 @@ class QtFontCreator(object):
         return self.qFont
 
     def getLetterSize(self, letter):
-        return QtGui.QFontMetrics(self.qFont).boundingRect(letter).width()
+        return QtGui.QFontMetrics(self.qFont).horizontalAdvance(letter)
 
     def getMaxLetterSize(self):
         return QtGui.QFontMetrics(self.qFont).maxWidth()
