@@ -1,0 +1,9 @@
+{
+	"python.autoComplete.extraPaths": [
+		"${workspaceFolder}/../autoCompleteMaya/2025",
+	],
+	"python.analysis.extraPaths": [
+		"${workspaceFolder}/../autoCompleteMaya/2025",
+	],
+    "python.analysis.typeCheckingMode": "off",
+}

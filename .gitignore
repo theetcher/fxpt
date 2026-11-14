@@ -103,6 +103,7 @@ $RECYCLE.BIN/
 # =========================
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 
 # Project specific files
 # =========================
