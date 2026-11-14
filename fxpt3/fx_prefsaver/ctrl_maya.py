@@ -1,65 +1,234 @@
-import pymel.core.uitypes as pmui
+from functools import partial
 
-from fxpt3.fx_prefsaver.ctrl_pymel import getController as pmGetController
-from fxpt3.fx_prefsaver.pstypes import UIType
+import maya.cmds as m
+
+from fxpt3.fx_prefsaver.ctrl_base import CtrlBase
+from fxpt3.fx_prefsaver.pstypes import UIType, Attr
 from fxpt3.fx_prefsaver.com import message
 
-IDX_PM_TYPE = 0
-IDX_PM_CLASS = 1
+
+# Controllers for maya.cmds UI controls. They work with plain control names (strings)
+# and do not need PyMEL, which is an optional install in Maya 2023+.
+
+
+class MCtrlBase(CtrlBase):
+
+    def __init__(self, cmd, *args, **kwargs):
+        self.cmd = cmd
+        super(MCtrlBase, self).__init__(*args, **kwargs)
+
+    def retrieveControlName(self):
+        # short name, same as PyMEL's shortName(), so prefs saved by the old PyMEL-based version still match
+        return str(self.control).split('|')[-1]
+
+    def query(self, flag):
+        return self.cmd(self.control, q=True, **{flag: True})
+
+    def edit(self, flag, value):
+        self.cmd(self.control, e=True, **{flag: value})
+
+
+class MCtrlQueryEdit(MCtrlBase):
+
+    def __init__(self, cmd, flag, globalDefault, *args, **kwargs):
+        super(MCtrlQueryEdit, self).__init__(cmd, *args, **kwargs)
+        self.defaultValueGlobal = globalDefault
+        self.setupGetSetVars(Attr.Value, partial(self.query, flag), partial(self.edit, flag))
+
+
+class MCtrlColorSliderGrp(MCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(MCtrlColorSliderGrp, self).__init__(m.colorSliderGrp, *args, **kwargs)
+        self.defaultValueGlobal = (0, 0, 0)
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(Attr.Value, self.query('rgbValue'))
+
+    def data2CtrlProcedure(self):
+        self.edit('rgbValue', tuple(self.getAttr(Attr.Value)))
+
+
+class MCtrlRadioButton(MCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(MCtrlRadioButton, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = False
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(Attr.Value, self.query('select'))
+
+    def data2CtrlProcedure(self):
+        # radio buttons can only be selected in edit mode, not deselected.
+        # the other button in the collection deselects this one when it is selected.
+        if self.getAttr(Attr.Value):
+            self.edit('select', True)
+
+
+class MCtrlOptionMenu(MCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(MCtrlOptionMenu, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = 1
+
+    def getNumberOfItems(self):
+        return self.query('numberOfItems')
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(Attr.CurrentIndex, self.query('select'))
+
+    def data2CtrlProcedure(self):
+        prefValue = self.getAttr(Attr.CurrentIndex)
+        if 0 < prefValue <= (self.getNumberOfItems() or 0):
+            self.edit('select', prefValue)
+
+
+class MCtrlOptionMenuGrp(MCtrlOptionMenu):
+
+    def getNumberOfItems(self):
+        # optionMenuGrp has no numberOfItems flag. Ask its child optionMenu (same as PyMEL's OptionMenuGrp.menu()).
+        return m.optionMenu(self.control + '|OptionMenu', q=True, numberOfItems=True)
+
+
+class MCtrlTabLayout(MCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(MCtrlTabLayout, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = 1
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(Attr.Value, self.query('selectTabIndex'))
+
+    def data2CtrlProcedure(self):
+        prefValue = self.getAttr(Attr.Value)
+        if 0 < prefValue <= (self.query('numberOfChildren') or 0):
+            self.edit('selectTabIndex', prefValue)
+
+
+class MCtrlGrp4Simple(MCtrlBase):
+
+    def __init__(self, cmd, globalDefault, grpSize, *args, **kwargs):
+        super(MCtrlGrp4Simple, self).__init__(cmd, *args, **kwargs)
+        self.defaultValueGlobal = globalDefault
+        self.grpSize = grpSize
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(Attr.Value, [self.query('value{0}'.format(i + 1)) for i in range(self.grpSize)])
+
+    def data2CtrlProcedure(self):
+        prefValue = self.getAttr(Attr.Value)
+        for i in range(self.grpSize):
+            self.edit('value{0}'.format(i + 1), prefValue[i])
+
+
+class MCtrlScrollLayout(MCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(MCtrlScrollLayout, self).__init__(m.scrollLayout, *args, **kwargs)
+        self.defaultValueGlobal = (0, 0)
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(Attr.ScrollValues, self.query('scrollAreaValue'))
+
+    def data2CtrlProcedure(self):
+        currentScrollDown, currentScrollRight = self.query('scrollAreaValue')
+        prefValue = self.getAttr(Attr.ScrollValues)
+        self.edit('scrollByPixel', ('up', currentScrollDown))
+        self.edit('scrollByPixel', ('left', currentScrollRight))
+        self.edit('scrollByPixel', ('down', prefValue[0]))
+        self.edit('scrollByPixel', ('right', prefValue[1]))
+
+
+class MCtrlTextScrollList(MCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(MCtrlTextScrollList, self).__init__(*args, **kwargs)
+        self.defaultValueGlobal = ()
+
+    def ctrl2DataProcedure(self):
+        self.setAttr(Attr.SelectedIndexes, self.query('selectIndexedItem') or [])
+
+    def data2CtrlProcedure(self):
+        self.edit('deselectAll', True)
+        selectedIndexes = self.getAttr(Attr.SelectedIndexes)
+        if not selectedIndexes:
+            return
+        # in case of invalid index. iconTextScrollList does not have a flag for getting number of items,
+        # so I cannot check a validity of index.
+        try:
+            self.edit('selectIndexedItem', list(selectedIndexes))
+        except RuntimeError:
+            pass
+
+
+class MCtrlScriptTable(MCtrlBase):
+
+    def __init__(self, *args, **kwargs):
+        super(MCtrlScriptTable, self).__init__(m.scriptTable, *args, **kwargs)
+        self.defaultValueGlobal = (0, 0)
+
+    def ctrl2DataProcedure(self):
+        controlData = self.query('selectedCells')
+        self.setAttr(Attr.SelectedIndexes, [0, 0] if controlData is None else controlData)
+
+    def data2CtrlProcedure(self):
+        self.edit('selectedCells', list(self.getAttr(Attr.SelectedIndexes)))
+
+
+def _simple(cmd, flag, globalDefault):
+    return partial(MCtrlQueryEdit, cmd, flag, globalDefault)
+
 
 constructors = {
-    UIType.MCheckBox: [UIType.PMCheckBox, pmui.CheckBox],
-    UIType.MCheckBoxGrp1: [UIType.PMCheckBoxGrp1, pmui.CheckBoxGrp],
-    UIType.MCheckBoxGrp2: [UIType.PMCheckBoxGrp2, pmui.CheckBoxGrp],
-    UIType.MCheckBoxGrp3: [UIType.PMCheckBoxGrp3, pmui.CheckBoxGrp],
-    UIType.MCheckBoxGrp4: [UIType.PMCheckBoxGrp4, pmui.CheckBoxGrp],
-    UIType.MColorSliderGrp: [UIType.PMColorSliderGrp, pmui.ColorSliderGrp],
-    UIType.MFloatField: [UIType.PMFloatField, pmui.FloatField],
-    UIType.MFloatFieldGrp1: [UIType.PMFloatFieldGrp1, pmui.FloatFieldGrp],
-    UIType.MFloatFieldGrp2: [UIType.PMFloatFieldGrp2, pmui.FloatFieldGrp],
-    UIType.MFloatFieldGrp3: [UIType.PMFloatFieldGrp3, pmui.FloatFieldGrp],
-    UIType.MFloatFieldGrp4: [UIType.PMFloatFieldGrp4, pmui.FloatFieldGrp],
-    UIType.MFloatScrollBar: [UIType.PMFloatScrollBar, pmui.FloatScrollBar],
-    UIType.MFloatSlider: [UIType.PMFloatSlider, pmui.FloatSlider],
-    UIType.MFloatSliderGrp: [UIType.PMFloatSliderGrp, pmui.FloatSliderGrp],
-    UIType.MFrameLayout: [UIType.PMFrameLayout, pmui.FrameLayout],
-    UIType.MIconTextCheckBox: [UIType.PMIconTextCheckBox, pmui.IconTextCheckBox],
-    UIType.MIconTextRadioButton: [UIType.PMIconTextRadioButton, pmui.IconTextRadioButton],
-    UIType.MIconTextScrollList: [UIType.PMIconTextScrollList, pmui.IconTextScrollList],
-    UIType.MIntField: [UIType.PMIntField, pmui.IntField],
-    UIType.MIntFieldGrp1: [UIType.PMIntFieldGrp1, pmui.IntFieldGrp],
-    UIType.MIntFieldGrp2: [UIType.PMIntFieldGrp2, pmui.IntFieldGrp],
-    UIType.MIntFieldGrp3: [UIType.PMIntFieldGrp3, pmui.IntFieldGrp],
-    UIType.MIntFieldGrp4: [UIType.PMIntFieldGrp4, pmui.IntFieldGrp],
-    UIType.MIntScrollBar: [UIType.PMIntScrollBar, pmui.IntScrollBar],
-    UIType.MIntSlider: [UIType.PMIntSlider, pmui.IntSlider],
-    UIType.MIntSliderGrp: [UIType.PMIntSliderGrp, pmui.IntSliderGrp],
-    UIType.MOptionMenu: [UIType.PMOptionMenu, pmui.OptionMenu],
-    UIType.MOptionMenuGrp: [UIType.PMOptionMenuGrp, pmui.OptionMenuGrp],
-    UIType.MRadioButton: [UIType.PMRadioButton, pmui.RadioButton],
-    UIType.MRadioButtonGrp1: [UIType.PMRadioButtonGrp1, pmui.RadioButtonGrp],
-    UIType.MRadioButtonGrp2: [UIType.PMRadioButtonGrp2, pmui.RadioButtonGrp],
-    UIType.MRadioButtonGrp3: [UIType.PMRadioButtonGrp3, pmui.RadioButtonGrp],
-    UIType.MRadioButtonGrp4: [UIType.PMRadioButtonGrp4, pmui.RadioButtonGrp],
-    UIType.MSymbolCheckBox: [UIType.PMSymbolCheckBox, pmui.SymbolCheckBox],
-    UIType.MScriptTable: [UIType.PMScriptTable, pmui.ScriptTable],
-    UIType.MScrollField: [UIType.PMScrollField, pmui.ScrollField],
-    UIType.MScrollLayout: [UIType.PMScrollLayout, pmui.ScrollLayout],
-    UIType.MShelfTabLayout: [UIType.PMShelfTabLayout, pmui.ShelfTabLayout],
-    UIType.MTabLayout: [UIType.PMTabLayout, pmui.TabLayout],
-    UIType.MTextField: [UIType.PMTextField, pmui.TextField],
-    UIType.MTextFieldButtonGrp: [UIType.PMTextFieldButtonGrp, pmui.TextFieldButtonGrp],
-    UIType.MTextFieldGrp: [UIType.PMTextFieldGrp, pmui.TextFieldGrp],
-    UIType.MTextScrollList: [UIType.PMTextScrollList, pmui.TextScrollList]
-    
+    UIType.MCheckBox: _simple(m.checkBox, 'value', False),
+    UIType.MCheckBoxGrp1: partial(MCtrlGrp4Simple, m.checkBoxGrp, [False], 1),
+    UIType.MCheckBoxGrp2: partial(MCtrlGrp4Simple, m.checkBoxGrp, [False, False], 2),
+    UIType.MCheckBoxGrp3: partial(MCtrlGrp4Simple, m.checkBoxGrp, [False, False, False], 3),
+    UIType.MCheckBoxGrp4: partial(MCtrlGrp4Simple, m.checkBoxGrp, [False, False, False, False], 4),
+    UIType.MColorSliderGrp: MCtrlColorSliderGrp,
+    UIType.MFloatField: _simple(m.floatField, 'value', 0),
+    UIType.MFloatFieldGrp1: partial(MCtrlGrp4Simple, m.floatFieldGrp, [0], 1),
+    UIType.MFloatFieldGrp2: partial(MCtrlGrp4Simple, m.floatFieldGrp, [0, 0], 2),
+    UIType.MFloatFieldGrp3: partial(MCtrlGrp4Simple, m.floatFieldGrp, [0, 0, 0], 3),
+    UIType.MFloatFieldGrp4: partial(MCtrlGrp4Simple, m.floatFieldGrp, [0, 0, 0, 0], 4),
+    UIType.MFloatScrollBar: _simple(m.floatScrollBar, 'value', 0),
+    UIType.MFloatSlider: _simple(m.floatSlider, 'value', 0),
+    UIType.MFloatSliderGrp: _simple(m.floatSliderGrp, 'value', 0),
+    UIType.MFrameLayout: _simple(m.frameLayout, 'collapse', False),
+    UIType.MIconTextCheckBox: _simple(m.iconTextCheckBox, 'value', False),
+    UIType.MIconTextRadioButton: partial(MCtrlRadioButton, m.iconTextRadioButton),
+    UIType.MIconTextScrollList: partial(MCtrlTextScrollList, m.iconTextScrollList),
+    UIType.MIntField: _simple(m.intField, 'value', 0),
+    UIType.MIntFieldGrp1: partial(MCtrlGrp4Simple, m.intFieldGrp, [0], 1),
+    UIType.MIntFieldGrp2: partial(MCtrlGrp4Simple, m.intFieldGrp, [0, 0], 2),
+    UIType.MIntFieldGrp3: partial(MCtrlGrp4Simple, m.intFieldGrp, [0, 0, 0], 3),
+    UIType.MIntFieldGrp4: partial(MCtrlGrp4Simple, m.intFieldGrp, [0, 0, 0, 0], 4),
+    UIType.MIntScrollBar: _simple(m.intScrollBar, 'value', 0),
+    UIType.MIntSlider: _simple(m.intSlider, 'value', 0),
+    UIType.MIntSliderGrp: _simple(m.intSliderGrp, 'value', 0),
+    UIType.MOptionMenu: partial(MCtrlOptionMenu, m.optionMenu),
+    UIType.MOptionMenuGrp: partial(MCtrlOptionMenuGrp, m.optionMenuGrp),
+    UIType.MRadioButton: partial(MCtrlRadioButton, m.radioButton),
+    UIType.MRadioButtonGrp1: _simple(m.radioButtonGrp, 'select', 1),
+    UIType.MRadioButtonGrp2: _simple(m.radioButtonGrp, 'select', 1),
+    UIType.MRadioButtonGrp3: _simple(m.radioButtonGrp, 'select', 1),
+    UIType.MRadioButtonGrp4: _simple(m.radioButtonGrp, 'select', 1),
+    UIType.MSymbolCheckBox: _simple(m.symbolCheckBox, 'value', False),
+    UIType.MScriptTable: MCtrlScriptTable,
+    UIType.MScrollField: _simple(m.scrollField, 'text', ''),
+    UIType.MScrollLayout: MCtrlScrollLayout,
+    UIType.MShelfTabLayout: partial(MCtrlTabLayout, m.shelfTabLayout),
+    UIType.MTabLayout: partial(MCtrlTabLayout, m.tabLayout),
+    UIType.MTextField: _simple(m.textField, 'text', ''),
+    UIType.MTextFieldButtonGrp: _simple(m.textFieldButtonGrp, 'text', ''),
+    UIType.MTextFieldGrp: _simple(m.textFieldGrp, 'text', ''),
+    UIType.MTextScrollList: partial(MCtrlTextScrollList, m.textScrollList)
 }
 
 
 def getController(uiType, control, defaultValue):
     if uiType in constructors:
-        pmUiType = constructors[uiType][IDX_PM_TYPE]
-        pmClass = constructors[uiType][IDX_PM_CLASS]
-        return pmGetController(pmUiType, pmClass(control), defaultValue)
+        return constructors[uiType](control, defaultValue)
     else:
         message('Cannot create controller: Unknown controller type: {0}.'.format(str(uiType)))
         return None

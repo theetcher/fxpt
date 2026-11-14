@@ -7,8 +7,8 @@ It is suitable for standalone applications and for apps run within Maya.
 Currently supported UI frameworks are:
     PyQt,
     PySide,
-    Maya PyMel UI,
-    Maya UI
+    Maya PyMel UI (needs PyMEL, which is an optional install in Maya 2023+),
+    Maya UI (maya.cmds, does not need PyMEL)
 
 Typical usage:
 
@@ -270,15 +270,17 @@ class PrefSaver(object):
             return
 
         if UIType.isTypeOf(uiType, UIType.TypesM):
-            if ctrl_maya:
-                self.controllers.append(ctrl_maya.getController(uiType, control, defaultValue))
+            controller = ctrl_maya.getController(uiType, control, defaultValue) if ctrl_maya else None
+            if controller:
+                self.controllers.append(controller)
             else:
                 message('Failed to add controller (type={0}) for {1}'.format(uiType, str(control)))
             return
 
         if UIType.isTypeOf(uiType, UIType.TypesPM):
-            if ctrl_pymel:
-                self.controllers.append(ctrl_pymel.getController(uiType, control, defaultValue))
+            controller = ctrl_pymel.getController(uiType, control, defaultValue) if ctrl_pymel else None
+            if controller:
+                self.controllers.append(controller)
             else:
                 message('Failed to add controller (type={0}) for {1}'.format(uiType, str(control)))
             return
