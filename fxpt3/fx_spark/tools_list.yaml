@@ -105,6 +105,10 @@
   python: from fxpt3.fx_texture_manager import fx_texture_manager; fx_texture_manager.run()
   annotation: FX Texture Manager
 
+- name: FX Create Box
+  python: from fxpt3.fx_utils import fx_create_aabb; fx_create_aabb.run()
+  annotation: Create an axis-aligned box from min/max extents
+
 # Editors
 
 - name: Reference Editor
