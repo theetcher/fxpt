@@ -77,9 +77,9 @@
   python: from fxpt3.fx_search import fx_search; fx_search.run()
   annotation: FX Search
 
-# - name: FX Renamer
-#   python: from fxpt3 import fx_renamer; fx_renamer.run()
-#   annotation: FX Renamer
+- name: FX Renamer
+  python: from fxpt3 import fx_renamer; fx_renamer.run()
+  annotation: FX Renamer
 
 # - name: FX Transform Randomizer
 #   python: from fxpt3 import fx_transform_randomizer; fx_transform_randomizer.run()
