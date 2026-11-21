@@ -85,13 +85,13 @@
   python: from fxpt3 import fx_transform_randomizer; fx_transform_randomizer.run()
   annotation: FX Transform Randomizer
 
-# - name: FX Select Component By Edge Angle
-#   python: from fxpt3 import fx_select_component_by_edge_angle; fx_select_component_by_edge_angle.run()
-#   annotation: FX Select Component By Edge Angle
+- name: FX Select Component By Edge Angle
+  python: from fxpt3 import fx_select_component_by_edge_angle; fx_select_component_by_edge_angle.run()
+  annotation: FX Select Component By Edge Angle
 
-# - name: FX Grow Selection By Edge Angle
-#   python: from fxpt3 import fx_grow_selection_by_edge_angle; fx_grow_selection_by_edge_angle.run()
-#   annotation: FX Grow Selection By Edge Angle
+- name: FX Grow Selection By Edge Angle
+  python: from fxpt3 import fx_grow_selection_by_edge_angle; fx_grow_selection_by_edge_angle.run()
+  annotation: FX Grow Selection By Edge Angle
 
 - name: FX Fly Camera
   python: from fxpt3 import fx_fly_camera; fx_fly_camera.run()
