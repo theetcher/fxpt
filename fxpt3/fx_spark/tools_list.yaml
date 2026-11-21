@@ -109,6 +109,10 @@
   python: from fxpt3.fx_utils import fx_create_aabb; fx_create_aabb.run()
   annotation: Create an axis-aligned box from min/max extents
 
+- name: FX Smart Normal
+  python: from fxpt3.fx_smart_normal import fx_smart_normal; fx_smart_normal.run()
+  annotation: Smooth vertex normals by the dominant flat areas around each vertex
+
 # Editors
 
 - name: Reference Editor
