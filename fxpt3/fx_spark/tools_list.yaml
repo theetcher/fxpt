@@ -113,6 +113,10 @@
   python: from fxpt3.fx_smart_normal import fx_smart_normal; fx_smart_normal.run()
   annotation: Smooth vertex normals by the dominant flat areas around each vertex
 
+- name: FX Locators To Flow Map
+  python: from fxpt3 import fx_locators_to_flow_map; fx_locators_to_flow_map.run()
+  annotation: Bake the up axes of visible locators into vertex colors of the selected mesh as a flow map
+
 # Editors
 
 - name: Reference Editor
