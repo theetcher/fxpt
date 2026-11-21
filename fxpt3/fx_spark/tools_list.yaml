@@ -97,9 +97,9 @@
   python: from fxpt3 import fx_fly_camera; fx_fly_camera.run()
   annotation: FX Fly Camera
 
-# - name: FX Reorient
-#   python: from fxpt3 import fx_reorient; fx_reorient.run()
-#   annotation: FX Reorient
+- name: FX Reorient
+  python: from fxpt3 import fx_reorient; fx_reorient.run()
+  annotation: FX Reorient
 
 - name: FX Texture Manager
   python: from fxpt3.fx_texture_manager import fx_texture_manager; fx_texture_manager.run()
