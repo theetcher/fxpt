@@ -81,9 +81,9 @@
   python: from fxpt3 import fx_renamer; fx_renamer.run()
   annotation: FX Renamer
 
-# - name: FX Transform Randomizer
-#   python: from fxpt3 import fx_transform_randomizer; fx_transform_randomizer.run()
-#   annotation: FX Transform Randomizer
+- name: FX Transform Randomizer
+  python: from fxpt3 import fx_transform_randomizer; fx_transform_randomizer.run()
+  annotation: FX Transform Randomizer
 
 # - name: FX Select Component By Edge Angle
 #   python: from fxpt3 import fx_select_component_by_edge_angle; fx_select_component_by_edge_angle.run()
